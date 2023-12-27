@@ -1,0 +1,268 @@
+.overlay-pdv {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.63);
+  z-index: 999;
+}
+
+/* PDV */
+
+.names {
+  display: flex;
+  align-items: center;
+  font-size: 18px;
+  color: #000;
+  cursor: default;
+}
+
+.new-sales {
+  background: transparent;
+  cursor: pointer;
+  border: none;
+  text-align: center;
+  padding: 2px;
+  margin: 2px;
+}
+
+.new-sales:hover {
+  background: #a7a7a7;
+  color: #fff;
+  padding: 2px;
+  margin: 2px;
+  border-radius: 4px;
+}
+
+.search-product {
+  display: flex;
+}
+
+.search-product input {
+  padding: 4px;
+  margin: 4px;
+  font-size: 14px;
+  font-weight: normal;
+  color: #ccc;
+  outline: none !important;
+  height: 30px;
+  background: #323232 !important;
+  border: 1px solid #1b1b1b;
+}
+
+.register-sales {
+  border-radius: 4px;
+  padding: 6px;
+  display: flex;
+  gap: 5px;
+  background: #202020;
+  border: 1px solid #1b1b1b;
+  justify-content: start;
+  overflow-x: auto;
+}
+
+.info-products {
+  cursor: pointer;
+  border: 1px solid #1b1b1b;
+  border-radius: 6px;
+  background: #323232;
+  width: 256px;
+  height: 288px;
+  justify-content: center;
+  align-items: center;
+}
+
+.img-product {
+  padding-top: 4px;
+  display: flex;
+  justify-content: center;
+  background-size: cover;
+  background-position: center;
+  position: relative;
+}
+
+.img-product img {
+  width: 210px;
+  height: 210px;
+  background-size: cover;
+  background-position: center;
+  border-radius: 100%;
+}
+
+.sales-h2 {
+  text-align: center;
+  font-size: 24px;
+}
+
+.sales-p {
+  font-size: 18px;
+  color: #ccc;
+  font-style: italic;
+  font-weight: bold;
+  text-align: center;
+}
+
+.table-sales {
+  margin-top: 12px;
+  background: #202020;
+  border-radius: 4px;
+  padding: 30px;
+  overflow-y: auto;
+  display: inline-block;
+  height: 260px;
+}
+
+#product-result,
+.table-product-select {
+  width: 100%;
+  min-width: 100px;
+}
+
+.info-select {
+  white-space: nowrap;
+}
+
+select {
+  width: 100%;
+  height: 30px;
+  font-size: 18px;
+  border: 1px solid #1b1b1b;
+  outline: none;
+  color: #ccc;
+  background: #323232;
+}
+
+h1 {
+  font-size: 30px;
+  color: #ccc;
+  text-align: center;
+}
+
+.name-h4 {
+  display: flex;
+  align-items: center;
+  padding-left: 20px;
+  font-size: 23px;
+  padding-top: 14px;
+  color: #cccccc;
+}
+
+h3 {
+  font-size: 22px;
+  color: #ccc;
+  text-align: center;
+  font-weight: bold;
+}
+
+.payment-method {
+  display: flex;
+  background: #202020;
+  border: 1px solid #1b1b1b;
+  height: 260px;
+  width: 400px;
+  justify-content: center;
+  align-items: center;
+  margin-top: 12px;
+  border-radius: 6px;
+}
+
+.info-sales {
+  width: 100%;
+}
+
+.name-h4 {
+  display: flex;
+}
+
+.form-sales {
+  padding: 20px;
+}
+
+.finish-button {
+  margin-top: 20px;
+  width: 100%;
+}
+
+.finish-sales {
+  padding: 10px;
+  border-radius: 4px;
+  font-size: 14px;
+  background: #1b1b1b;
+  border: 1px solid #323232;
+  color: #ccc;
+  font-weight: bold;
+  cursor: pointer;
+  width: 100%;
+  transition: background 0.3s, color 0.3s;
+}
+
+.finish-sales:hover {
+  background: #323232;
+  color: #fff;
+}
+
+.client-search-sales {
+  display: none;
+  padding: 20px;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  width: 50%;
+  transform: translate(-40%, -50%);
+  background: #0a162e;
+  border: 1px solid #fff;
+  border-radius: 10px;
+}
+
+.edit-product {
+  display: none !important;
+  overflow-x: auto;
+  height: 20%;
+  padding: 10px 0;
+  float: left;
+  position: fixed;
+  background: #202020;
+  border: 1px solid #fff;
+  border-radius: 4px;
+  top: 50%;
+  left: 50%;
+  width: 30%;
+  transform: translate(-50%, -50%);
+}
+
+#error-message-container {
+  display: none;
+  background-color: #ff6262;
+  color: #fff;
+  margin-bottom: 10px;
+  border-radius: 5px;
+  padding: 20px;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  width: 50%;
+  transform: translate(-40%, -50%);
+  background: #0a162e;
+  border: 1px solid #fff;
+  border-radius: 10px;
+}
+
+
+@media only screen and (max-width: 1600px) {
+  .payment-method {
+    width: 100%;
+    display: flex;
+    margin-top: 12px;
+  }
+
+  .table-sales {
+    width: 100%;
+  }
+
+  .finish-sales {
+    font-size: 12px;
+    padding: 8px;
+  }
+}
