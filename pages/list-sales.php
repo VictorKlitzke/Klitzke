@@ -9,7 +9,7 @@ if (isset($_GET['delete'])) {
 $currentPage = isset($_GET['page']) ? (int)($_GET['page']) : 1;
 $porPage = 20;
 
-$sales = Controllers::SelectAll('sales', ($currentPage - 1) * $porPage, $porPage);
+$sales = Controllers::SelectSales('sales', ($currentPage - 1) * $porPage, $porPage);
 
 ?>
 
@@ -19,15 +19,13 @@ $sales = Controllers::SelectAll('sales', ($currentPage - 1) * $porPage, $porPage
         <table>
             <thead>
             <tr>
-                <td>Cliente</td>
+                <td>Usuario</td>
+                <p><td>Cliente</td></p>
+                <p><td>Forma de Pagamento</td></p>
+                <td>Produto</td>
                 <p><td>Quantidade</td></p>
-                <p><td>Codigo de barras</td></p>
-                <td>Valor</td>
-                <td>Valor Custo</td>
-                <p><td>Quantidade em estoque</td></p>
-                <td>Referencia</td>
-                <p><td>Usuário cadastro</td></p>
-                <td>Modelo</td>
+                <p><td>Valor</td></p>
+ 
             </tr>
             </thead>
 
@@ -39,15 +37,12 @@ $sales = Controllers::SelectAll('sales', ($currentPage - 1) * $porPage, $porPage
 
                 <tbody>
                 <tr>
-                    <p><td><?php echo $value['name']; ?></td></p>
-                    <td><?php echo $value['quantity']; ?></td>
-                    <td><?php echo $value['barcode']; ?></td>
-                    <td>R$ <?php echo $value['value_product']; ?>,00</td>
-                    <td>R$ <?php echo $value['cost_value']; ?>,00</td>
-                    <td><?php echo $value['stock_quantity']; ?></td>
-                    <td><?php echo $value['reference']; ?></td>
-                    <td><?php echo $value['id_users']; ?></td>
-                    <td><?php echo $value['model']; ?></td>
+                    <p><td><?php echo $value['users']; ?></td></p>
+                    <td><?php echo $value['clients']; ?></td>
+                    <td><?php echo $value['form_payment']; ?></td>
+                    <td>R$ <?php echo $value['products']; ?>,00</td>
+                    <td>R$ <?php echo $value['quantity']; ?>,00</td>
+                    <td><?php echo $value['value']; ?></td>
 
                     <td style="display: flex; justify-content: center; gap: 10px; margin: 6px; padding: 6px;">
                         <div>

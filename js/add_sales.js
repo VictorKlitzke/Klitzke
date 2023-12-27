@@ -1,6 +1,7 @@
-const selectedProducts = []; 
+const selectedProducts = [];
 
 const trProduct = document.getElementById("product-result");
+const tdButton = document.getElementById("button-product");
 
 function AddSelectProducts(index, id, name, stock_quantity, value) {
     let productAlreadyExists = false;
@@ -12,6 +13,10 @@ function AddSelectProducts(index, id, name, stock_quantity, value) {
 
             if (validateStock(stock_quantity, number)) {
                 selectedProducts[i].stock_quantity = number;
+                let productQuantityCell = document.getElementById("product-quantity-" + id);
+                if (productQuantityCell) {
+                    productQuantityCell.textContent = number;
+                }
             }
 
             updateProductQuantity(id, number);
@@ -29,16 +34,16 @@ function AddSelectProducts(index, id, name, stock_quantity, value) {
         };
 
         validateStock(stock_quantity, 1);
-        selectedProducts.push(newProduct); 
+        selectedProducts.push(newProduct);
 
         let newRow = trProduct.insertRow();
         newRow.innerHTML = "<td id='product-id'>" + id + "</td>" +
             "<td id='product-name'>" + name + "</td>" +
-            "<td id='product-quantity'>" + 1 + "</td>" +
+            "<td id='product-quantity-" + id + "'>" + 1 + "</td>" +
             "<td id='product-value' class='content-form'>" +
             "<input type='text' id='value" + id + "' value='" + value + "' />" +
             "</td>" +
-            "<td id='total-item'>" + stock_quantity * value + "</td>" +
+            "<td id='total-item'>" + productQuantityCell * value + "</td>" +
             "<td style='margin: 6px; padding: 6px;'>" +
             "<div>" +
             "<a class='btn-delete' href='' onclick='removeProduct(" + id + ")' id='button-delete-" + id + "'>" +
@@ -62,7 +67,7 @@ async function finalizeSale() {
     let requestData = {
         id_payment_method: selectedPaymentMethod,
         sales_id_client: idSalesClient,
-        products: selectedProducts 
+        products: selectedProducts
     };
 
     console.log(requestData);

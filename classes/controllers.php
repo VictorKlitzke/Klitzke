@@ -67,36 +67,84 @@ class Controllers
     {
         $sql = Db::Connection();
         if ($start == null && $end == null) {
-            $exec = $sql->prepare("SELECT
-                                            sales.*,
-                                            sales_items.*,
-                                            products.name as products,
-                                            clients.name as clients
-                                            
-                                        FROM
-                                         $name_table 
-                                         LEFT JOIN sales_items ON sales_items.id_sales = sales.id
-                                         LEFT JOIN clients ON clients.id = sales.id_client
-                                         LEFT JOIN products ON products.id = sales_items.id_product
-                                         ");
+            $exec = $sql->prepare("SELECT 
+                sales.*,
+                users.name users,
+                clients.name clients,
+                form_payment.name form_payment,
+                products.name products,
+                sales_items.amount quantity,
+                sales_items.price_sales value
+                FROM
+                sales 
+                INNER JOIN sales_items ON sales_items.id_sales = sales.id
+                INNER JOIN products ON products.id = sales_items.id_product
+                INNER JOIN form_payment ON form_payment.id = sales.id_payment_method
+                INNER JOIN clients ON clients.id = sales.id_client
+                LEFT JOIN boxpdv ON boxpdv.id = sales.id_boxpdv
+                LEFT JOIN users ON users.id = sales.id_users
+                ORDER BY id ASC"
+            );
         } else {
-            $exec = $sql->prepare("SELECT
-                                            sales.*,
-                                            sales_items.*,
-                                            products.name as products,
-                                            clients.name as clients
-                                            
-                                        FROM
-                                         $name_table 
-                                         LEFT JOIN sales_items ON sales_items.id_sales = sales.id
-                                         LEFT JOIN clients ON clients.id = sales.id_client
-                                         LEFT JOIN products ON products.id = sales_items.id_product
-                                         LIMIT $start,$end");
+            $exec = $sql->prepare("SELECT 
+                sales.*,
+                users.name users,
+                clients.name clients,
+                form_payment.name form_payment,
+                products.name products,
+                sales_items.amount quantity,
+                sales_items.price_sales value
+                FROM
+                sales 
+                INNER JOIN sales_items ON sales_items.id_sales = sales.id
+                INNER JOIN products ON products.id = sales_items.id_product
+                INNER JOIN form_payment ON form_payment.id = sales.id_payment_method
+                INNER JOIN clients ON clients.id = sales.id_client
+                LEFT JOIN boxpdv ON boxpdv.id = sales.id_boxpdv
+                LEFT JOIN users ON users.id = sales.id_users
+                ORDER BY id ASC"
+            );
         }
+
         $exec->execute();
 
         return $exec->fetchAll();
     }
+
+    // public static function SelectSales($name_table, $start = null, $end = null)
+    // {
+    //     $sql = Db::Connection();
+    //     if ($start == null && $end == null) {
+    //         $exec = $sql->prepare("SELECT
+    //                                         sales.*,
+    //                                         sales_items.*,
+    //                                         products.name as products,
+    //                                         clients.name as clients
+                                            
+    //                                     FROM
+    //                                      $name_table 
+    //                                      LEFT JOIN sales_items ON sales_items.id_sales = sales.id
+    //                                      LEFT JOIN clients ON clients.id = sales.id_client
+    //                                      LEFT JOIN products ON products.id = sales_items.id_product
+    //                                      ");
+    //     } else {
+    //         $exec = $sql->prepare("SELECT
+    //                                         sales.*,
+    //                                         sales_items.*,
+    //                                         products.name as products,
+    //                                         clients.name as clients
+                                            
+    //                                     FROM
+    //                                      $name_table 
+    //                                      LEFT JOIN sales_items ON sales_items.id_sales = sales.id
+    //                                      LEFT JOIN clients ON clients.id = sales.id_client
+    //                                      LEFT JOIN products ON products.id = sales_items.id_product
+    //                                      LIMIT $start,$end");
+    //     }
+    //     $exec->execute();
+
+    //     return $exec->fetchAll();
+    // }
 
     public static function Select($name_table, $query = '', $ts = '')
     {

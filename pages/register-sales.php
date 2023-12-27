@@ -1,5 +1,5 @@
 
-<form class="" action="../ajax/add_sales.php" method="POST" enctype="multipart/form-data">
+<form class="" method="POST" enctype="multipart/form-data">
     <div class="names left">
         <svg fill="#000" xmlns="http://www.w3.org/2000/svg" height="40" viewBox="0 -960 960 960" width="40">
             <path

@@ -19,20 +19,22 @@
                         $open_date = $_POST['open_date'];
                         $observation = $_POST['observation'];
                         $id_company = $values['id'];
+                        $status = $_POST['status'];
                         $id_users = $id_users['id'];
 
                         if ($value == '' || $open_date == '') {
                             Panel::Alert('attention', 'Os campo não podem ficar vázios!');
                         } else {
                             $verification = Db::Connection()->prepare("SELECT value, open_date, observation FROM `boxpdv` WHERE value = ? AND open_date = ? AND observation = ? 
-                                                                AND id_company = ? AND id_users = ?");
+                                                                    AND id_company = ? AND status = ? AND id_users = ?");
                             $verification->execute(
                                 array(
                                     $_POST['value'],
                                     $_POST['open_date'],
                                     $_POST['observation'],
                                     $_POST['id_company'],
-                                    $id_users['id']
+                                    $id_users['id'],
+                                    $status['status']
                                 )
                             );
 
@@ -43,6 +45,7 @@
                                         'open_date' => $open_date,
                                         'observation' => $observation,
                                         'id_company' => $id_company,
+                                        'status' => 1,
                                         'id_users' => $id_users,
                                         'name_table' => 'boxpdv'
                                     ];
@@ -81,6 +84,7 @@
         <div class="content-form">
             <input type="hidden" name="id_users"/>
             <input type="hidden" name="id_company"/>
+            <input type="hidden" name="status"/>
             <input type="hidden" name="name_table" value="boxpdv"/>
             <input type="submit" name="action" value="Abrir caixa">
         </div>

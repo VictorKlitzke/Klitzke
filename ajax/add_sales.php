@@ -3,10 +3,17 @@
 include_once '../config/config.php';
 include_once '../services/db.php';
 
-$id_users = base64_decode($_POST['id']);
-$id_boxpdv = base64_decode($_POST['id']);
+function status_boxpdv($status)
+{
+    $status = 1;
+    $sql = Db::Connection();
 
-// var_dump($id_boxpdv, $id_users);die();
+    $exec = $sql->prepare("SELECT COUNT(*) FROM boxpdv WHERE status = :status");
+    $exec->bindParam(':status', $status, PDO::PARAM_INT);
+    $exec->execute();
+
+    return $exec->fetchColumn() > 0;
+}
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $requestData = json_decode(file_get_contents('php://input'), true);
@@ -17,52 +24,64 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     try {
 
-        // var_dump($id_boxpdv, $id_users);die();
-
         $sql = Db::Connection();
         $sql->beginTransaction();
 
-        $exec = $sql->prepare("INSERT INTO sales (id_payment_method, id_client, id_boxpdv, id_users, date_sales, status) 
-                            VALUES (:paymentMethod, :salesClient, :id_boxpdv, :id_users, NOW(), :status)");
-        $exec->bindParam(':paymentMethod', $selectedPaymentMethod, PDO::PARAM_INT);
-        $exec->bindParam(':salesClient', $id_sales_client, PDO::PARAM_INT);
-        $exec->bindParam(':id_users', $id_users, PDO::PARAM_INT);
-        $exec->bindParam(':id_boxpdv', $id_boxpdv, PDO::PARAM_INT);
-        $status = 1;
-        $exec->bindParam(':status', $status, PDO::PARAM_INT);
-        $exec->execute();
+        $boxpdv_open = status_boxpdv($status);
 
-        $lastSaleId = $sql->lastInsertId();
+        if (!$boxpdv_open) {
+            throw new Exception('O caixa está fechado. Não é possível registrar a venda.');
+        } else {
 
-        foreach ($selectedProducts as $product) {
-            $productId = $product['id'];
-            $productQuantity = $product['stock_quantity'];
-            $productValue = $product['value'];
-            $productValue = floatval($productValue);
+            $exec = $sql->prepare("INSERT INTO sales (id_payment_method, id_client, date_sales, status) 
+                            VALUES (:paymentMethod, :salesClient, NOW(), :status)");
+            $exec->bindParam(':paymentMethod', $selectedPaymentMethod, PDO::PARAM_INT);
+            $exec->bindParam(':salesClient', $id_sales_client, PDO::PARAM_INT);
+            // $exec->bindParam(':id_users', $id_users, PDO::PARAM_INT);
+            // $exec->bindParam(':id_boxpdv', $id_boxpdv, PDO::PARAM_INT);
+            $status = 1;
+            $exec->bindParam(':status', $status, PDO::PARAM_INT);
+            $exec->execute();
 
-            $exec = $sql->prepare("INSERT INTO sales_items (id_sales, id_product, amount, price_sales) 
+            $lastSaleId = $sql->lastInsertId();
+
+            foreach ($selectedProducts as $product) {
+                $productId = $product['id'];
+                $productQuantity = $product['stock_quantity'];
+                $productValue = $product['value'];
+                $productValue = floatval($productValue);
+
+                $exec = $sql->prepare("INSERT INTO sales_items (id_sales, id_product, amount, price_sales) 
                                 VALUES (:lastSaleId, :productId, :productQuantity, :productValue)");
-            $exec->bindParam(':lastSaleId', $lastSaleId, PDO::PARAM_INT);
+                $exec->bindParam(':lastSaleId', $lastSaleId, PDO::PARAM_INT);
+                $exec->bindParam(':productId', $productId, PDO::PARAM_INT);
+                $exec->bindParam(':productQuantity', $productQuantity, PDO::PARAM_INT);
+                $exec->bindParam(':productValue', $productValue, PDO::PARAM_STR);
+                $exec->execute();
+            }
+
+            $exec = $sql->prepare("UPDATE products SET stock_quantity = stock_quantity - :productQuantity WHERE id = :productId");
             $exec->bindParam(':productId', $productId, PDO::PARAM_INT);
             $exec->bindParam(':productQuantity', $productQuantity, PDO::PARAM_INT);
-            $exec->bindParam(':productValue', $productValue, PDO::PARAM_STR);
             $exec->execute();
+
+            $exec = $sql->prepare("SELECT SUM(amount * price_sales) AS total FROM sales_items WHERE id_sales = :lastSaleId");
+            $exec->bindParam(':lastSaleId', $lastSaleId, PDO::PARAM_INT);
+            $exec->execute();
+
+            $totalValue = $exec->fetchColumn();
+
+            $exec = $sql->prepare("UPDATE sales SET total_value = :totalValue WHERE id = :lastSaleId");
+            $exec->bindParam(':totalValue', $totalValue, PDO::PARAM_STR);
+            $exec->bindParam(':lastSaleId', $lastSaleId, PDO::PARAM_INT);
+            $exec->execute();
+
+            $sql->commit();
+
+            echo json_encode(['success' => true, 'message' => 'Venda registrada com sucesso']);
+
         }
 
-        $exec = $sql->prepare("SELECT SUM(amount * price_sales) AS total FROM sales_items WHERE id_sales = :lastSaleId");
-        $exec->bindParam(':lastSaleId', $lastSaleId, PDO::PARAM_INT);
-        $exec->execute();
-
-        $totalValue = $exec->fetchColumn();
-
-        $exec = $sql->prepare("UPDATE sales SET total_value = :totalValue WHERE id = :lastSaleId");
-        $exec->bindParam(':totalValue', $totalValue, PDO::PARAM_STR);
-        $exec->bindParam(':lastSaleId', $lastSaleId, PDO::PARAM_INT);
-        $exec->execute();
-
-        $sql->commit();
-
-        echo json_encode(['success' => true, 'message' => 'Venda registrada com sucesso']);
     } catch (PDOException $e) {
         $sql->rollBack();
         http_response_code(500);
@@ -71,4 +90,5 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $sql = null;
     }
 }
+
 ?>

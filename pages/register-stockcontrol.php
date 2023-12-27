@@ -31,8 +31,8 @@ if ($users['id'] == $users['id']) {
             $verification->execute([$_POST['name'], $users['id']]);
 
             if ($verification->rowCount() > 0) {
-                $updateQuery = Db::Connection()->prepare("UPDATE `products` SET quantity = quantity + ? WHERE name = ? AND id_users = ?");
-                $updateQuery->execute([$_POST['quantity'], $_POST['name'], $users['id']]);
+                $updateQuery = Db::Connection()->prepare("UPDATE `products` SET stock_quantity = stock_quantity + ? WHERE name = ? AND id_users = ?");
+                $updateQuery->execute([$_POST['stock_quantity'], $_POST['name'], $users['id']]);
                 Panel::Alert('sucess', 'O cadastro do produto ' . $name . ' foi realizado com sucesso!');
             } else {
                 $arr = [
