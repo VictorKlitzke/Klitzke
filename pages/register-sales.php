@@ -255,8 +255,36 @@
     </div>
 </form>
 
-<div id="error-message" style="color: red;"></div>
-<div id="success-message" style="color: green;"></div>
+<div id="error-container" style="
+                            color: black; 
+                            display: none; 
+                            background: #f75353; 
+                            display: flex; 
+                            align-items: center; 
+                            justify-content: center; 
+                            padding: 20px; 
+                            top: 50%; 
+                            left: 50%; 
+                            width: 100%;
+                            ">
+    <span id="error-message"></span>
+
+</div>
+
+<div class="sucess-container" style="
+                            color: black; 
+                            display: none; 
+                            background: green; 
+                            display: flex; 
+                            align-items: center; 
+                            justify-content: center; 
+                            padding: 20px; 
+                            top: 50%; 
+                            left: 50%; 
+                            width: 100%;
+                            ">
+    <span id="success-message"></span>
+</div>
 
 <script src="<?php echo INCLUDE_PATH_PANEL; ?>../js/selected_clients.js"></script>
 <script src="<?php echo INCLUDE_PATH_PANEL; ?>../js/add_sales.js"></script>

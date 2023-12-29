@@ -40,8 +40,8 @@ $sales = Controllers::SelectSales('sales', ($currentPage - 1) * $porPage, $porPa
                     <p><td><?php echo $value['users']; ?></td></p>
                     <td><?php echo $value['clients']; ?></td>
                     <td><?php echo $value['form_payment']; ?></td>
-                    <td>R$ <?php echo $value['products']; ?>,00</td>
-                    <td>R$ <?php echo $value['quantity']; ?>,00</td>
+                    <td><?php echo $value['products']; ?></td>
+                    <td><?php echo $value['quantity']; ?>,00</td>
                     <td><?php echo $value['value']; ?></td>
 
                     <td style="display: flex; justify-content: center; gap: 10px; margin: 6px; padding: 6px;">

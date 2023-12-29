@@ -37,27 +37,32 @@ function AddSelectProducts(index, id, name, stock_quantity, value) {
         selectedProducts.push(newProduct);
 
         let newRow = trProduct.insertRow();
+        newRow.id = "row-" + id;
         newRow.innerHTML = "<td id='product-id'>" + id + "</td>" +
             "<td id='product-name'>" + name + "</td>" +
             "<td id='product-quantity-" + id + "'>" + 1 + "</td>" +
             "<td id='product-value' class='content-form'>" +
             "<input type='text' id='value" + id + "' value='" + value + "' />" +
             "</td>" +
-            "<td id='total-item'>" + productQuantityCell * value + "</td>" +
+            "<td id='total-item'>" + id + "</td>" +
             "<td style='margin: 6px; padding: 6px;'>" +
             "<div>" +
-            "<a class='btn-delete' href='' onclick='removeProduct(" + id + ")' id='button-delete-" + id + "'>" +
-            "<button class='btn-delete' type='button'>Deletar</button></a>" +
+            "<a class='btn-delete'>" +
+            "<button onclick='removeProduct(" + id +")' id='button-delete-" + id + "' class='btn-delete' type='button'>Deletar</button></a>" +
             "</div>" +
             "</td>";
     }
 }
 
-function removeProduct(id) {
-    // Adicione o código para remover o produto da tabela e da lista
+async function removeProduct(id) {
+    
+    let rowToRemove = document.getElementById("row-" + id);
+    if (rowToRemove) {
+        rowToRemove.remove();
+    }
+    // selectedProducts = selectedProducts.filter(product => product.id !== id);
 
-    // Aqui está um exemplo de como você pode remover o produto da lista pelo ID
-    selectedProducts = selectedProducts.filter(product => product.id !== id);
+    console.log("Quantidade removida:");
 }
 
 async function finalizeSale() {
@@ -88,18 +93,38 @@ async function finalizeSale() {
         } catch (error) {
             console.error('Erro ao enviar dados para o PHP:', error);
         }
+        showSuccessMessage('Venda finalizada com sucesso!')
     }
 }
 
 
 function showErrorMessage(message) {
+    const errorContainer = document.getElementById('error-container');
     const errorMessageElement = document.getElementById('error-message');
+
     errorMessageElement.textContent = message;
+    errorContainer.style.display = 'none';
+
+    setTimeout(() => {
+        errorMessageElement.textContent = '';
+        errorContainer.style.display = 'flex';
+    }, 3000);
 }
 
 function showSuccessMessage(message) {
+    const sucesscontainer = document.getElementById('success-container');
     const successMessageElement = document.getElementById('success-message');
+
     successMessageElement.textContent = message;
+
+    if (sucesscontainer.style.display === 'none') {
+
+        sucesscontainer.style.display = 'flex';
+
+    }setTimeout(() => {
+        successMessageElement.textContent = '';
+
+    }, 3000);
 }
 
 const finishButton = document.getElementById('finish-sales');
