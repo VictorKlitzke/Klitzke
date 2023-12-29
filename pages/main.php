@@ -92,6 +92,12 @@ $users = Controllers::Select('users');
 </div>
 
 <div class="center">
+  <div class="box-content">
+    <h2>Produtos negativados</h2>
+  </div>
+</div>
+
+<div class="center">
 <div class="box-content">
   <div class="list">
     <h2>Lista das 10 ultimas vendas</h2>
