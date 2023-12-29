@@ -481,6 +481,14 @@ table tr {
   color: #ccc;
 }
 
+.btn-reopen {
+  padding: 4px;
+  background: #7b308a;
+  border: none;
+  border-radius: 4px;
+  color: #ccc;
+}
+
 .btn-edit {
   padding: 4px;
   background: #7b8d16;

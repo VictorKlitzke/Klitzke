@@ -31,7 +31,24 @@ $sales = $sql->prepare("SELECT
 $sales->execute();
 $result_sales = $sales->fetchAll();
 
-  ?>
+?>
+
+<?php
+
+$users = Controllers::Select('users');
+
+?>
+
+<div class="center">
+  <div class="box-content">
+    <h1 style="display: flex; justify-content: start;">
+      Ola, <?php echo $users['name']; ?>
+    </h1>
+    <p style="color: #ccc; padding-top: 10px;">
+      Aqui esta tudo que aconteceu hoje!
+    </p>
+  </div>
+</div>
 
 <div class="center">
   <div class="dashboard">
@@ -74,6 +91,7 @@ $result_sales = $sales->fetchAll();
   </div>
 </div>
 
+<div class="center">
 <div class="box-content">
   <div class="list">
     <h2>Lista das 10 ultimas vendas</h2>
@@ -82,52 +100,75 @@ $result_sales = $sales->fetchAll();
         <tr>
 
           <td>Usuario</td>
-          <p><td>Cliente</td></p>
-          <p><td>Forma de Pagamento</td></p>
+          <p>
+            <td>Cliente</td>
+          </p>
+          <p>
+            <td>Forma de Pagamento</td>
+          </p>
           <td>Produto</td>
-          <p><td>Quantidade</td></p>
-          <p><td>Valor</td></p>
+          <p>
+            <td>Quantidade</td>
+          </p>
+          <p>
+            <td>Valor</td>
+          </p>
 
         </tr>
       </thead>
 
       <?php
 
-        foreach ($result_sales as $key => $value) {
+      foreach ($result_sales as $key => $value) {
 
-      ?>
+        ?>
 
-      <tbody>
+        <tbody>
 
-        <tr>
-          <p><td><?php echo $value['users']; ?></td></p>
-          <td><?php echo $value['clients']; ?></td>
-          <td><?php echo $value['form_payment']; ?></td>
-          <td><?php echo $value['products']; ?></td>
-          <td><?php echo $value['quantity']; ?>,00</td>
-          <td><?php echo $value['value']; ?></td>
+          <tr>
+            <p>
+              <td>
+                <?php echo $value['users']; ?>
+              </td>
+            </p>
+            <td>
+              <?php echo $value['clients']; ?>
+            </td>
+            <td>
+              <?php echo $value['form_payment']; ?>
+            </td>
+            <td>
+              <?php echo $value['products']; ?>
+            </td>
+            <td>
+              <?php echo $value['quantity']; ?>,00
+            </td>
+            <td>
+              <?php echo $value['value']; ?>
+            </td>
 
-          <td style="display: flex; justify-content: center; gap: 10px; margin: 6px; padding: 6px;">
-            <div>
-              <a class="btn-edit"
-                href="<?php echo INCLUDE_PATH ?>edit-sales?id=<?php echo base64_encode($value['id']); ?>">Reabrir
-                venda</a>
-            </div>
-            <div>
-              <a class="btn-edit"
-                href="<?php echo INCLUDE_PATH ?>edit-sales?id=<?php echo base64_encode($value['id']); ?>">Cancelar
-                venda</a>
-            </div>
-            <div>
-              <a class="btn-delete"
-                href="<?php echo INCLUDE_PATH ?>list-sales?delete=<?php echo base64_encode($value['id']); ?>">Imprimir</a>
-            </div>
-          </td>
-        </tr>
-      </tbody>
+            <td style="display: flex; justify-content: center; gap: 10px; margin: 6px; padding: 6px;">
+              <div>
+                <a class="btn-reopen"
+                  href="<?php echo INCLUDE_PATH ?>edit-sales?id=<?php echo base64_encode($value['id']); ?>">Reabrir
+                  venda</a>
+              </div>
+              <div>
+                <a class="btn-edit"
+                  href="<?php echo INCLUDE_PATH ?>edit-sales?id=<?php echo base64_encode($value['id']); ?>">Cancelar
+                  venda</a>
+              </div>
+              <div>
+                <a class="btn-delete"
+                  href="<?php echo INCLUDE_PATH ?>list-sales?delete=<?php echo base64_encode($value['id']); ?>">Imprimir</a>
+              </div>
+            </td>
+          </tr>
+        </tbody>
 
       <?php } ?>
 
     </table>
   </div>
+</div>
 </div>
