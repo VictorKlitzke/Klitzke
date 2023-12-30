@@ -250,39 +250,24 @@
         ?>
         <input type="hidden" id="sales_id_client" name="sales_id_client" value="<?php echo $client_id['id']; ?>">
         <div class="w100">
-            <h3 id="sales-page">Nenhum Cliente Selecionado</h3>
+            <p><h3 id="sales-page">Nenhum Cliente Selecionado</h3></p>
         </div>
     </div>
 </form>
 
-<div id="error-container" style="
-                            color: black; 
-                            display: none; 
-                            background: #f75353; 
-                            display: flex; 
-                            align-items: center; 
-                            justify-content: center; 
-                            padding: 20px; 
-                            top: 50%; 
-                            left: 50%; 
-                            width: 100%;
-                            ">
-    <span id="error-message"></span>
+<?php
 
+    $user_id = Controllers::SelectAll('users');
+
+?>
+
+<input type="hidden" id="user_id" name="user_id" value="<?php echo $user_id['id']; ?>">
+
+<div id="error-container" style="color: black; display: none; background: #f75353; display: none; align-items: center; justify-content: center; padding: 20px; top: 50%; left: 50%; width: 100%;">
+    <span id="error-message"></span>
 </div>
 
-<div class="sucess-container" style="
-                            color: black; 
-                            display: none; 
-                            background: green; 
-                            display: flex; 
-                            align-items: center; 
-                            justify-content: center; 
-                            padding: 20px; 
-                            top: 50%; 
-                            left: 50%; 
-                            width: 100%;
-                            ">
+<div id="success-container" style="color: black; display: none; background: green; display: none; align-items: center; justify-content: center; padding: 20px; top: 50%; left: 50%; width: 100%;">
     <span id="success-message"></span>
 </div>
 

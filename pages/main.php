@@ -42,7 +42,7 @@ $users = Controllers::Select('users');
 <div class="center">
   <div class="box-content">
     <h1 style="display: flex; justify-content: start;">
-      Ola, <?php echo $users['name']; ?>
+      Ola, <?php echo $_SESSION['name']; ?>
     </h1>
     <p style="color: #ccc; padding-top: 10px;">
       Aqui esta tudo que aconteceu hoje!
@@ -103,24 +103,16 @@ $users = Controllers::Select('users');
     <h2>Lista das 10 ultimas vendas</h2>
     <table>
       <thead>
+
         <tr>
-
           <td>Usuario</td>
-          <p>
-            <td>Cliente</td>
-          </p>
-          <p>
-            <td>Forma de Pagamento</td>
-          </p>
+          <p><td>Cliente</td> </p>
+          <p><td>Forma de Pagamento</td></p>
           <td>Produto</td>
-          <p>
-            <td>Quantidade</td>
-          </p>
-          <p>
-            <td>Valor</td>
-          </p>
-
+          <p><td>Quantidade</td></p>
+          <p><td>Valor</td></p>
         </tr>
+
       </thead>
 
       <?php
