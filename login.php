@@ -6,11 +6,13 @@ if (isset($_POST['action'])) {
     $login = $_POST['name'];
     $password = $_POST['password'];
 
-    $sql = Db::Connection()->prepare("SELECT * FROM `users` WHERE name = ? AND password = ?");
-    $sql->execute(array($login, $password));
+    $sql = Db::Connection();
 
-    if ($sql->rowCount() == 1) {
-        $info = $sql->fetch();
+    $exec = $sql->prepare("SELECT * FROM `users` WHERE name = ? AND password = ?");
+    $exec->execute(array($login, $password));
+
+    if ($exec->rowCount() == 1) {
+        $info = $exec->fetch();
         $_SESSION['login'] = true;
         $_SESSION['name'] = $login;
         $_SESSION['password'] = $password;

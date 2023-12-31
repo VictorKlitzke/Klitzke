@@ -553,9 +553,23 @@ table tr {
   cursor: default;
 }
 
+.finish-box {
+  padding-left: 12px;
+  padding: 10px;
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: 300;
+  background: #1b1b1b;
+  border: 1px solid #323232;
+  color: #ccc;
+  cursor: pointer;
+  width: 100%;
+  transition: background 0.3s, color 0.3s;
+}
+
 .close-boxpdv {
   display: none;
-  height: 40%;
+  height: 55%;
   padding: 20px;
   float: left;
   position: fixed;

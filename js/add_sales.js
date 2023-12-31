@@ -1,4 +1,5 @@
 const selectedProducts = [];
+let selectedClientId;
 
 const trProduct = document.getElementById("product-result");
 const tdButton = document.getElementById("button-product");
@@ -78,101 +79,142 @@ function removeProduct(id) {
         } else {
             console.error("Produto não encontrado no array.");
         }
-    }else {
+    } else {
         console.error("Array de produtos está vazio");
     }
 }
 
-    async function finalizeSale() {
-        let selectedPaymentMethod = document.getElementById('id_payment_method').value;
-        let idSalesClient = document.getElementById("sales_id_client").value;
-        let idSalesUser = document.getElementById("user_id").value;
-        let requestData = {
-            id_payment_method: selectedPaymentMethod,
-            sales_id_client: idSalesClient,
-            idSalesUser: idSalesUser,
-            products: selectedProducts
-        };
+document
+  .getElementById("sales-search-form")
+  .addEventListener("submit", function (event) {
+    event.preventDefault();
 
-        if (selectedProducts.length === 0) {
-            showErrorMessage('Erro ao registrar venda, nenhum produto selecionado');
-            return;
-        } else {
-            try {
-                const response = await fetch('http://localhost/Klitzke/ajax/add_sales.php', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(requestData)
-                });
+    let searchInput = document.getElementById("clientSelectedSales").value;
+    let tableRows = document.querySelectorAll(".tbody-selected tr");
 
-                if (!response.ok) {
-                    throw new Error('Erro na solicitação erro na url do backend: ' + response.statusText);
-                }
+    tableRows.forEach(function (row) {
+      let clientName = row
+        .querySelector("td:nth-child(2)")
+        .textContent.toLowerCase();
+      if (clientName.includes(searchInput.toLowerCase())) {
+        row.style.display = "";
+      } else {
+        row.style.display = "none";
+      }
+    });
+  });
 
-                const data = await response.json();
+document.addEventListener("DOMContentLoaded", function () {
+  let tableRows = document.querySelectorAll(".tbody-selected");
+  tableRows.forEach(function (row) {
+    row.addEventListener("dblclick", function () {
+      let clientName = row.querySelector("td:nth-child(2)").textContent;
+      let salesPageElement = document.getElementById("sales-page");
+      
+      selectedClientId = row.querySelector("td:first-child").textContent;
 
-                if (data && data.success) {
-                    showSuccessMessage('Venda finalizada com sucesso!');
-                    const saleId = data.id;
-                    window.location.href = 'pages/proof.php?sale_id=' + id;
-                } else {
-                    console.error('Erro ao registrar venda:', data ? data.error : 'Resposta vazia');
-                }
-            } catch (error) {
-                console.error('Erro ao enviar dados para o PHP:', error);
+      if (salesPageElement) {
+        salesPageElement.innerHTML =
+          "Codigo do cliente: " + selectedClientId + " Nome do cliente: " + clientName;
+      }
+    });
+  });
+});
+
+async function finalizeSale() {
+
+    let selectedPaymentMethod = document.getElementById('id_payment_method').value;
+    let idSalesUser = document.getElementById("user_id").value;
+    let idSalesClient = selectedClientId;
+    
+    console.log(selectedClientId);
+
+    let requestData = {
+        id_payment_method: selectedPaymentMethod,
+        sales_id_client: idSalesClient,
+        idSalesUser: idSalesUser,
+        products: selectedProducts
+    };
+
+    if (selectedProducts.length === 0) {
+        showErrorMessage('Erro ao registrar venda, nenhum produto selecionado');
+        return;
+    } else {
+        try {
+            const response = await fetch('http://localhost/Klitzke/ajax/add_sales.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(requestData)
+            });
+
+            if (!response.ok) {
+                throw new Error('Erro na solicitação erro na url do backend: ' + response.statusText);
             }
-        }
-    }
 
-    function showErrorMessage(message) {
-        const errorContainer = document.getElementById('error-container');
-        const errorMessageElement = document.getElementById('error-message');
-        errorMessageElement.textContent = message;
-        errorContainer.style.display = 'flex';
-        setTimeout(() => {
-            errorMessageElement.textContent = '';
-            errorContainer.style.display = 'none';
-        }, 3000);
-    }
+            const data = await response.json();
 
-    function showSuccessMessage(message) {
-        const successContainer = document.getElementById('success-container');
-        const successMessageElement = document.getElementById('success-message');
-        successMessageElement.textContent = message;
-        successContainer.style.display = 'flex';
-        setTimeout(() => {
-            successMessageElement.textContent = '';
-            successContainer.style.display = 'none';
-        }, 3000);
-    }
-
-    const finishButton = document.getElementById('finish-sales');
-
-    if (finishButton) {
-        finishButton.onclick = finalizeSale;
-    }
-
-    function updateProductQuantity(id, stock_quantity) {
-
-        for (let i = 0; i < selectedProducts.length; i++) {
-            if (selectedProducts[i].id === id) {
-                selectedProducts[i].stock_quantity = stock_quantity;
-                break;
+            if (data && data.success) {
+                showSuccessMessage('Venda finalizada com sucesso!');
+                const saleId = data.id;
+                window.location.href = 'pages/proof.php?sale_id=' + id;
+            } else {
+                console.error('Erro ao registrar venda:', data ? data.error : 'Resposta vazia');
             }
+        } catch (error) {
+            console.error('Erro ao enviar dados para o PHP:', error);
         }
     }
+}
 
-    function addProductToArray(id, name, stock_quantity, value) {
-        selectedProducts.push({ id, name, stock_quantity, value });
-    }
+function showErrorMessage(message) {
+    const errorContainer = document.getElementById('error-container');
+    const errorMessageElement = document.getElementById('error-message');
+    errorMessageElement.textContent = message;
+    errorContainer.style.display = 'flex';
+    setTimeout(() => {
+        errorMessageElement.textContent = '';
+        errorContainer.style.display = 'none';
+    }, 3000);
+}
 
-    function validateStock(stock_quantity, qnt) {
+function showSuccessMessage(message) {
+    const successContainer = document.getElementById('success-container');
+    const successMessageElement = document.getElementById('success-message');
+    successMessageElement.textContent = message;
+    successContainer.style.display = 'flex';
+    setTimeout(() => {
+        successMessageElement.textContent = '';
+        successContainer.style.display = 'none';
+    }, 3000);
+}
 
-        if (stock_quantity < qnt) {
-            window.alert("Você não possui estoque suficiente!");
-            return false;
+const finishButton = document.getElementById('finish-sales');
+
+if (finishButton) {
+    finishButton.onclick = finalizeSale;
+}
+
+function updateProductQuantity(id, stock_quantity) {
+
+    for (let i = 0; i < selectedProducts.length; i++) {
+        if (selectedProducts[i].id === id) {
+            selectedProducts[i].stock_quantity = stock_quantity;
+            break;
         }
-        return true;
     }
+}
+
+function addProductToArray(id, name, stock_quantity, value) {
+    selectedProducts.push({ id, name, stock_quantity, value });
+}
+
+function validateStock(stock_quantity, qnt) {
+
+    if (stock_quantity < qnt) {
+        window.alert("Você não possui estoque suficiente!");
+        return false;
+    }
+    return true;
+}

@@ -30,26 +30,29 @@ include_once 'config/config.php';
 
             <?php
 
-            $boxpdv = Controllers::Select('boxpdv');
+            $_SESSION['id'] = $user_id;
 
-            if ($boxpdv['open_date'] == true) {
+            // $user_id = Controllers::Select('users');
+            // $user_login = $user_id['id'];
 
+            $boxpdv = Controllers::Select('boxpdv', ['id_users' => $user_id]);
+
+            echo $user_id;
+
+            if ($boxpdv['status'] == 1) {
                 ?>
-
                 <div class="boxpdv" id="open-boxpdv">
                     <span>Caixa aberto</span>
                     <form action="">
                         <input type="hidden" name="id_box" value="<?php echo base64_encode($boxpdv['id']); ?>">
                     </form>
                 </div>
-
             <?php } else { ?>
-
                 <div class="boxpdv-close">
                     <span>Caixa Fechado</span>
                 </div>
-
             <?php } ?>
+
 
             <h2>Cadastros</h2>
             <div class="items-menu">
@@ -154,17 +157,31 @@ include_once 'config/config.php';
                 </div>
                 <div class="box-content">
                     <div class="center">
-                        <form class="form" action=".././ajax/close_boxpdv.php" method="post">
+                        <form class="form" method="POST" enctype="multipart/form-data">
                             <div class="content-form">
-                                <label for="">Valor</label>
-                                <input type="text" placeholder="Valor" name="value_close">
+                                <label for="">Debito</label>
+                                <input id="value_debit" type="text" placeholder="Debito" name="value_debit">
+                            </div>
+                            <div class="content-form">
+                                <label for="">Credito</label>
+                                <input id="value_credit" type="text" placeholder="Credito" name="value_credit">
+                            </div>
+                            <div class="content-form">
+                                <label for="">PIX</label>
+                                <input id="value_pix" type="text" placeholder="PIX" name="value_pix">
+                            </div>
+                            <div class="content-form">
+                                <label for="">Dinheiro</label>
+                                <input id="value_money" type="text" placeholder="Dinheiro" name="value_money">
                             </div>
                             <div class="content-form">
                                 <label for="">Data fechamento</label>
-                                <input type="date" placeholder="Data fechamento" name="close_date">
+                                <input id="date_close" type="date" placeholder="Data fechamento" name="date_close">
                             </div>
                             <div class="content-form">
-                                <input type="submit" name="action" value="Fechar caixa">
+                                <input type="hidden" id="id_boxpdv" name="id_boxpdv">
+                                <button id="finish-sales" onclick="closeBox()" type="button" class="finish-box">Fechar
+                                    caixa</button>
                             </div>
                         </form>
                     </div>
