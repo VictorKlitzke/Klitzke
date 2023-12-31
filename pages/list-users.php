@@ -48,18 +48,18 @@ $users = Controllers::SelectAll('users', ($currentPage - 1) * $porPage, $porPage
             <div>
               <a class="btn-edit" href="<?php echo INCLUDE_PATH ?>edit-users?id=<?php echo base64_encode($value['id']); ?>">Editar</a>
             </div>
-            <div>
+            <!-- <div>
               <a href="">
                 <form method="post" action="./ajax/disable.php">
                   <input type="hidden" name="id" value="<?php echo base64_encode($value['id']); ?>">
-                  <!-- <input type="hidden" name="disable_id" value="<?php //echo base64_encode($value['disable']); 
-                                                                      ?>"> -->
+                    <input type="hidden" name="disable_id" value="<?php //echo base64_encode($value['disable']); 
+                                                                      ?>"> 
                   <button onclick="confirmDesativar()" class="btn-disable">
                     Desativar
                   </button>
                 </form>
               </a>
-            </div>
+            </div> -->
             <div>
               <a class="btn-delete" href="<?php echo INCLUDE_PATH ?>list-users?delete=<?php echo base64_encode($value['id']); ?>">Deletar</a>
             </div>
@@ -85,9 +85,9 @@ $users = Controllers::SelectAll('users', ($currentPage - 1) * $porPage, $porPage
 
   ?>
 </div>
-<div id="confirm-box" class="confirm-box">
+<!-- <div id="confirm-box" class="confirm-box">
   <p>Deseja realmente desativar o usuário?</p>
   <button id="confirm-yes" class="confirm-yes">Sim</button>
   <button id="confirm-no" class="confirm-no">Não</button>
-</div>
+</div> -->
 <div id="message" class="message"></div>

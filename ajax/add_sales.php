@@ -63,10 +63,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $exec->execute();
             }
 
-            $exec = $sql->prepare("UPDATE products SET stock_quantity = stock_quantity - :productQuantity WHERE id = :productId");
-            $exec->bindParam(':productId', $productId, PDO::PARAM_INT);
-            $exec->bindParam(':productQuantity', $productQuantity, PDO::PARAM_INT);
-            $exec->execute();
+            $check_stock = $sql->prepare("SELECT id FROM products WHERE id = :productId AND stock_quantity - :productQuantity < 0");
+            $check_stock->bindParam(':productId', $productId, PDO::PARAM_INT);
+            $check_stock->bindParam(':productQuantity', $productQuantity, PDO::PARAM_INT);
+            $check_stock->execute();
+
+            if ($check_stock->rowCount() > 0) {
+                $exec = $sql->prepare("UPDATE products SET stock_quantity = stock_quantity - :productQuantity AND status_product = 'Negativado' WHERE id = :productId");
+                $exec->bindParam(':productId', $productId, PDO::PARAM_INT);
+                $exec->bindParam(':productQuantity', $productQuantity, PDO::PARAM_INT);
+                $exec->execute();
+            } else {
+                $exec = $sql->prepare("UPDATE products SET stock_quantity = stock_quantity - :productQuantity AND status_product = 'Em estoque' WHERE id = :productId");
+                $exec->bindParam(':productId', $productId, PDO::PARAM_INT);
+                $exec->bindParam(':productQuantity', $productQuantity, PDO::PARAM_INT);
+                $exec->execute();
+            }
 
             $exec = $sql->prepare("SELECT SUM(amount * price_sales) - SUM(discount) AS total FROM sales_items WHERE id_sales = :lastSaleId");
             $exec->bindParam(':lastSaleId', $lastSaleId, PDO::PARAM_INT);

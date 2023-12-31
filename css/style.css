@@ -222,28 +222,6 @@ header {
   font-size: 16px;
 }
 
-.boxpdv {
-  color: #ccc;
-  background: rgb(91, 173, 91);
-  padding: 6px;
-  margin: 6px;
-  font-size: 18px;
-  text-align: center;
-  cursor: default;
-  border-radius: 7px;
-}
-
-.boxpdv-close {
-  color: #ccc;
-  background: rgb(173, 91, 91);
-  padding: 6px;
-  margin: 6px;
-  font-size: 18px;
-  text-align: center;
-  cursor: default;
-  border-radius: 7px;
-}
-
 .perfil {
   position: absolute;
   display: flex;
@@ -541,6 +519,53 @@ table tr {
 
 .page a.page-selected {
   background: #191919;
+}
+
+/* BOXPDV */
+
+.navbar-boxpdv {
+  display: flex;
+  justify-content: space-between;
+  padding-bottom: 12px;
+}
+
+.boxpdv {
+  color: #ccc;
+  background: rgb(91, 173, 91);
+  padding: 6px;
+  margin: 6px;
+  font-size: 18px;
+  text-align: center;
+  cursor: pointer;
+}
+
+.boxpdv:hover {
+  background: rgb(87, 138, 87);
+}
+
+.boxpdv-close {
+  color: #ccc;
+  background: rgb(173, 91, 91);
+  padding: 6px;
+  margin: 6px;
+  font-size: 18px;
+  text-align: center;
+  cursor: default;
+}
+
+.close-boxpdv {
+  display: none;
+  height: 40%;
+  padding: 20px;
+  float: left;
+  position: fixed;
+  background: #202020;
+  border: 1px solid #fff;
+  border-radius: 4px;
+  top: 50%;
+  left: 50%;
+  width: 50%;
+  transform: translate(-50%, -50%);
 }
 
 /* BOTÃO PERSONALIZADO PARA PERGUNTA */

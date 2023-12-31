@@ -4,7 +4,7 @@ include_once 'classes/controllers.php';
 include_once 'config/config.php';
 ?>
 
-<?php if(isset($_GET['loggout'])) {
+<?php if (isset($_GET['loggout'])) {
     Panel::Loggout();
 } ?>
 
@@ -27,24 +27,27 @@ include_once 'config/config.php';
 <body>
     <div class="menu">
         <div class="container-menu">
-        
+
             <?php
 
-                $boxpdv = Controllers::Select('boxpdv');
+            $boxpdv = Controllers::Select('boxpdv');
 
-                if ($boxpdv['open_date'] == true){
+            if ($boxpdv['open_date'] == true) {
 
-            ?>
+                ?>
 
-            <div class="boxpdv">
-                <span>Caixa aberto</span>
-            </div> 
+                <div class="boxpdv" id="open-boxpdv">
+                    <span>Caixa aberto</span>
+                    <form action="">
+                        <input type="hidden" name="id_box" value="<?php echo base64_encode($boxpdv['id']); ?>">
+                    </form>
+                </div>
 
             <?php } else { ?>
 
-            <div class="boxpdv-close">
-                <span>Caixa Fechado</span>
-            </div> 
+                <div class="boxpdv-close">
+                    <span>Caixa Fechado</span>
+                </div>
 
             <?php } ?>
 
@@ -53,16 +56,13 @@ include_once 'config/config.php';
                 <a <?php SelectedMenu('register-users') ?> href="<?php echo INCLUDE_PATH; ?>register-users">Cadastrar
                     Usuários
                 </a>
-                <a <?php SelectedMenu('register-suppliers') ?>
-                    href="<?php echo INCLUDE_PATH; ?>register-suppliers">
+                <a <?php SelectedMenu('register-suppliers') ?> href="<?php echo INCLUDE_PATH; ?>register-suppliers">
                     Cadastrar Fornecedores
                 </a>
-                <a <?php SelectedMenu('register-clients') ?>
-                    href="<?php echo INCLUDE_PATH; ?>register-clients">
+                <a <?php SelectedMenu('register-clients') ?> href="<?php echo INCLUDE_PATH; ?>register-clients">
                     Cadastrar Clientes
                 </a>
-                <a <?php SelectedMenu('register-companys') ?>
-                    href="<?php echo INCLUDE_PATH; ?>register-companys">
+                <a <?php SelectedMenu('register-companys') ?> href="<?php echo INCLUDE_PATH; ?>register-companys">
                     Cadastrar Empresa
                 </a>
                 <a <?php SelectedMenu('register-stockcontrol') ?>
@@ -75,23 +75,23 @@ include_once 'config/config.php';
                 Lista de Usuários
             </a>
             <a <?php SelectedMenu('list-clients') ?> href="<?php echo INCLUDE_PATH; ?>list-clients">
-            Lista de Clientes
+                Lista de Clientes
             </a>
             <a <?php SelectedMenu('list-suppliers') ?> href="<?php echo INCLUDE_PATH; ?>list-suppliers">
-            Lista de Fornecedores
+                Lista de Fornecedores
             </a>
             <a <?php SelectedMenu('list-boxpdv') ?> href="<?php echo INCLUDE_PATH; ?>list-boxpdv">
                 Lista de Caixas
             </a>
             <a <?php SelectedMenu('list-products') ?> href="<?php echo INCLUDE_PATH; ?>list-products">
-            Lista de Produtos
+                Lista de Produtos
             </a>
             <a href="<?php echo INCLUDE_PATH; ?>list-sales">
                 Lista de Vendas
             </a>
             <h2>Faturamento</h2>
             <a <?php SelectedMenu('register-boxpdv') ?> href="<?php echo INCLUDE_PATH; ?>register-boxpdv">
-            Abrir Caixa
+                Abrir Caixa
             </a>
             <a href="<?php echo INCLUDE_PATH; ?>register-sales">Vendas</a>
             <h2>Minha Empresa</h2>
@@ -109,7 +109,7 @@ include_once 'config/config.php';
                 </svg>
             </div>
             <div class="loggout right">
-                <a <?php if(@$_GET['url'] == '') { ?> style="background: #323232; padding: 15px;" <?php } ?>
+                <a <?php if (@$_GET['url'] == '') { ?> style="background: #323232; padding: 15px;" <?php } ?>
                     href="<?php echo INCLUDE_PATH ?>"><span><svg xmlns="http://www.w3.org/2000/svg" height="18"
                             viewBox="0 -960 960 960" width="20">
                             <path fill="#fff"
@@ -138,7 +138,39 @@ include_once 'config/config.php';
     </header>
 
     <div class="content">
+
         <?php Panel::LoadPage(); ?>
+
+        <div class="overlay" id="overlay">
+            <div class="close-boxpdv" id="close-boxpdv">
+                <div class="navbar-boxpdv">
+                    <h2>Fechamento do caixa</h2>
+                    <svg id="close-boxpdv-modal" style="cursor: pointer;" fill="#fff" xmlns="http://www.w3.org/2000/svg"
+                        height="24px" viewBox="0 0 24 24" width="24px" fill="#000000">
+                        <path d="M0 0h24v24H0z" fill="none" />
+                        <path
+                            d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" />
+                    </svg>
+                </div>
+                <div class="box-content">
+                    <div class="center">
+                        <form class="form" action=".././ajax/close_boxpdv.php" method="post">
+                            <div class="content-form">
+                                <label for="">Valor</label>
+                                <input type="text" placeholder="Valor" name="value_close">
+                            </div>
+                            <div class="content-form">
+                                <label for="">Data fechamento</label>
+                                <input type="date" placeholder="Data fechamento" name="close_date">
+                            </div>
+                            <div class="content-form">
+                                <input type="submit" name="action" value="Fechar caixa">
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
     <script src="<?php echo INCLUDE_PATH; ?>./js/main.js"></script>
