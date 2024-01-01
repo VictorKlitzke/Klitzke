@@ -8,25 +8,33 @@ if (isset($_POST['action'])) {
 
     $sql = Db::Connection();
 
-    $exec = $sql->prepare("SELECT * FROM `users` WHERE name = ? AND password = ?");
+    $exec = $sql->prepare("SELECT id FROM `users` WHERE name = ? AND password = ?");
     $exec->execute(array($login, $password));
 
     if ($exec->rowCount() == 1) {
         $info = $exec->fetch();
+        $_SESSION['id'] = $info['id'];
         $_SESSION['login'] = true;
-        $_SESSION['name'] = $login;
+        $_SESSION['name'] = $login; 
         $_SESSION['password'] = $password;
         $_SESSION['phone'] = $info['phone'];
         $_SESSION['function'] = $info['function'];
         $_SESSION['commission'] = $info['commission'];
         $_SESSION['target_commission'] = $info['target_commission'];
-        $_SESSION['disable'] = $info['disebla'];
+        $_SESSION['disable'] = $info['disable'];
         header('Location: ' . INCLUDE_PATH);
         die();
-    } elseif ($_SESSION['disable' == 1]) {
-        Panel::Alert('error', 'Ocorreu um erro ao fazer login');
     }
+    if ($_SESSION['disable'] == 1) {
+        Panel::Alert('error', 'Usuário desabilitado. Ocorreu um erro ao fazer login.');
+    } else {
+        header('Location: ' . INCLUDE_PATH);
+        die();
+    }
+} else {
+    Panel::Alert('error', 'Credenciais inválidas. Ocorreu um erro ao fazer login.');
 }
+
 
 ?>
 

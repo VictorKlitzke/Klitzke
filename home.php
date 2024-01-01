@@ -28,31 +28,41 @@ include_once 'config/config.php';
     <div class="menu">
         <div class="container-menu">
 
-            <?php
+            <!-- <?php
 
-            $_SESSION['id'] = $user_id;
+            // $sql = Db::Connection();
 
-            // $user_id = Controllers::Select('users');
-            // $user_login = $user_id['id'];
+            // $user_id = $_SESSION['id'] = $info['id'];
 
-            $boxpdv = Controllers::Select('boxpdv', ['id_users' => $user_id]);
+            // if (!empty($user_id)) {
+            //     $query = $sql->prepare("SELECT * FROM users WHERE id = ?");
+            //     $query->execute([$user_id]);
 
-            echo $user_id;
+            //     $user_info = $query->fetch(PDO::FETCH_ASSOC);
 
-            if ($boxpdv['status'] == 1) {
-                ?>
-                <div class="boxpdv" id="open-boxpdv">
-                    <span>Caixa aberto</span>
-                    <form action="">
-                        <input type="hidden" name="id_box" value="<?php echo base64_encode($boxpdv['id']); ?>">
-                    </form>
-                </div>
-            <?php } else { ?>
-                <div class="boxpdv-close">
-                    <span>Caixa Fechado</span>
-                </div>
-            <?php } ?>
+            //     if ($user_info) {
+            //         $boxpdv = Controllers::Select('boxpdv', ['id_users' => $user_id]);
 
+            //         if ($boxpdv['status'] == 1) {
+                        ?>
+                        <div class="boxpdv" id="open-boxpdv">
+                            <span>Caixa aberto</span>
+                            <form action="">
+                                <input type="hidden" name="id_box" value="<?php echo base64_encode($boxpdv['id']); ?>">
+                            </form>
+                        </div>
+                     <?php // } else { ?>
+                        <div class="boxpdv-close">
+                            <span>Caixa Fechado</span>
+                        </div> -->
+                    <?php //}
+            //     } else {
+            //         echo "Erro ao recuperar informações do usuário.";
+            //     }
+            // } else {
+            //     echo "ID do usuário não está definido na sessão.";
+            // }
+            ?>
 
             <h2>Cadastros</h2>
             <div class="items-menu">
