@@ -29,7 +29,6 @@ if (isset($_POST['action'])) {
       )
     );
     if ($verification->rowCount() == 0) {
-      $slug = Panel::generateSlug($name);
 
       $arr = [
         'name' => $name,

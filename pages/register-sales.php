@@ -255,14 +255,6 @@
     </div>
 </form>
 
-<?php
-
-    $user_id = Controllers::SelectAll('users');
-
-?>
-
-<input type="hidden" id="user_id" name="user_id" value="<?php echo $user_id['id']; ?>">
-
 <div id="error-container" style="color: black; display: none; background: #f75353; display: none; align-items: center; justify-content: center; padding: 20px; top: 50%; left: 50%; width: 100%;">
     <span id="error-message"></span>
 </div>

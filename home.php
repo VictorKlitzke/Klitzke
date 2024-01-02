@@ -28,22 +28,21 @@ include_once 'config/config.php';
     <div class="menu">
         <div class="container-menu">
 
-            <!-- <?php
+            <?php
+            $sql = Db::Connection();
 
-            // $sql = Db::Connection();
+            if (!empty($_SESSION['id'])) {
+                $user_id = $_SESSION['id'];
 
-            // $user_id = $_SESSION['id'] = $info['id'];
+                $exec = $sql->prepare("SELECT * FROM boxpdv WHERE id_users = :user_id ORDER BY id DESC LIMIT 1");
+                $exec->bindParam(':user_id', $user_id, PDO::PARAM_INT);
+                $exec->execute();
+                $result = $exec->fetchAll(PDO::FETCH_ASSOC);
 
-            // if (!empty($user_id)) {
-            //     $query = $sql->prepare("SELECT * FROM users WHERE id = ?");
-            //     $query->execute([$user_id]);
+                if ($result) {
+                    $boxpdv = $result[0];
 
-            //     $user_info = $query->fetch(PDO::FETCH_ASSOC);
-
-            //     if ($user_info) {
-            //         $boxpdv = Controllers::Select('boxpdv', ['id_users' => $user_id]);
-
-            //         if ($boxpdv['status'] == 1) {
+                    if ($boxpdv["status"] == 1) {
                         ?>
                         <div class="boxpdv" id="open-boxpdv">
                             <span>Caixa aberto</span>
@@ -51,17 +50,19 @@ include_once 'config/config.php';
                                 <input type="hidden" name="id_box" value="<?php echo base64_encode($boxpdv['id']); ?>">
                             </form>
                         </div>
-                     <?php // } else { ?>
+                    <?php } else {
+                        ?>
                         <div class="boxpdv-close">
                             <span>Caixa Fechado</span>
-                        </div> -->
-                    <?php //}
-            //     } else {
-            //         echo "Erro ao recuperar informações do usuário.";
-            //     }
-            // } else {
-            //     echo "ID do usuário não está definido na sessão.";
-            // }
+                        </div>
+                    <?php }
+                } else {
+                    ?>
+                    <div class="boxpdv-reopen">
+                        <span>Nenhum caixa aberto</span>
+                    </div>
+                <?php }
+            }
             ?>
 
             <h2>Cadastros</h2>

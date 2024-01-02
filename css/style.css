@@ -553,6 +553,16 @@ table tr {
   cursor: default;
 }
 
+.boxpdv-reopen {
+  color: #ccc;
+  background: rgb(173, 91, 150);
+  padding: 6px;
+  margin: 6px;
+  font-size: 18px;
+  text-align: center;
+  cursor: default;
+}
+
 .finish-box {
   padding-left: 12px;
   padding: 10px;

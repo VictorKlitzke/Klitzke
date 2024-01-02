@@ -3,7 +3,7 @@
 if (isset($_POST['action'])) {
   $name = $_POST['name'];
   $email = $_POST['email'];
-  $password = password_hash($_POST['password'], PASSWORD_BCRYPT);
+  $password = $_POST['password'];
   $phone = $_POST['phone'];
   $function = $_POST['function'];
   $commission = $_POST['commission'];
@@ -17,7 +17,6 @@ if (isset($_POST['action'])) {
 
       $arr = ['name' => $name, 'email' => $email, 'password' => $password, 'phone' => $phone, 'function' => $function, 'commission' => $commission, 'target_commission' => $target_commission, 'name_table' => 'users'];
       Controllers::Insert($arr);
-      $_SESSION['id'] = $info['id'];
       Panel::Alert('sucess', $name . ' foi cadastrado com sucesso!');
     } else {
       Panel::Alert('error', 'Já existe uma usuario com este nome!');

@@ -124,7 +124,6 @@ document.addEventListener("DOMContentLoaded", function () {
 async function finalizeSale() {
 
     let selectedPaymentMethod = document.getElementById('id_payment_method').value;
-    let idSalesUser = document.getElementById("user_id").value;
     let idSalesClient = selectedClientId;
     
     console.log(selectedClientId);
@@ -132,7 +131,6 @@ async function finalizeSale() {
     let requestData = {
         id_payment_method: selectedPaymentMethod,
         sales_id_client: idSalesClient,
-        idSalesUser: idSalesUser,
         products: selectedProducts
     };
 

@@ -120,7 +120,7 @@ class Controllers
     //                                         sales_items.*,
     //                                         products.name as products,
     //                                         clients.name as clients
-                                            
+
     //                                     FROM
     //                                      $name_table 
     //                                      LEFT JOIN sales_items ON sales_items.id_sales = sales.id
@@ -133,7 +133,7 @@ class Controllers
     //                                         sales_items.*,
     //                                         products.name as products,
     //                                         clients.name as clients
-                                            
+
     //                                     FROM
     //                                      $name_table 
     //                                      LEFT JOIN sales_items ON sales_items.id_sales = sales.id
@@ -158,6 +158,33 @@ class Controllers
         }
         return $exec->fetch();
     }
+
+    public static function SelectBox($name_table, $conditions = array())
+    {
+        $sql = Db::Connection();
+
+        $where = "";
+        $values = array();
+
+        if (!empty($conditions)) {
+            $where = " WHERE ";
+
+            foreach ($conditions as $field => $value) {
+                $where .= "`$field` = :$field AND ";
+                $values[":$field"] = $value;
+            }
+
+            $where = rtrim($where, " AND ");
+        }
+
+        $sqlString = "SELECT * FROM `$name_table`" . $where;
+
+        $exec = $sql->prepare($sqlString);
+        $exec->execute($values);
+
+        return $exec->fetchAll(PDO::FETCH_ASSOC);
+    }
+
 
     public static function Insert($arr)
     {
