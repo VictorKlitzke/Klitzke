@@ -26,7 +26,7 @@
                             Panel::Alert('attention', 'Os campo não podem ficar vázios!');
                         } else {
                             $verification = Db::Connection()->prepare("SELECT value, open_date, observation FROM `boxpdv` WHERE value = ? AND open_date = ? AND observation = ? 
-                                                                    AND id_company = ? AND status = ? AND id_users = ?");
+                                                                AND id_company = ? AND status = ? AND id_users = ?");
                             $verification->execute(
                                 array(
                                     $_POST['value'],
@@ -82,12 +82,32 @@
             <input type="text" name="observation">
         </div>
         <div class="content-form">
-            <input type="hidden" name="id_users"/>
-            <input type="hidden" name="id_company"/>
-            <input type="hidden" name="status"/>
-            <input type="hidden" name="name_table" value="boxpdv"/>
+            <input type="hidden" name="id_users" />
+            <input type="hidden" name="id_company" />
+            <input type="hidden" name="status" />
+            <input type="hidden" name="name_table" value="boxpdv" />
             <input type="submit" name="action" value="Abrir caixa">
         </div>
     </form>
 
     <script src="<?php echo INCLUDE_PATH_PANEL; ?>../js/values.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var form = document.querySelector('.form');
+
+            form.addEventListener('keydown', function (event) {
+                if (event.key === 'Enter') {
+                    event.preventDefault();
+
+                    var currentInput = event.target;
+                    var formElements = form.elements;
+                    var currentIndex = Array.from(formElements).indexOf(currentInput);
+
+                    if (currentIndex < formElements.length - 1) {
+                        formElements[currentIndex + 1].focus();
+                    }
+                }
+            });
+        });
+    </script>

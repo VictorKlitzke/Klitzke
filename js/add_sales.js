@@ -125,8 +125,6 @@ async function finalizeSale() {
 
     let selectedPaymentMethod = document.getElementById('id_payment_method').value;
     let idSalesClient = selectedClientId;
-    
-    console.log(selectedClientId);
 
     let requestData = {
         id_payment_method: selectedPaymentMethod,

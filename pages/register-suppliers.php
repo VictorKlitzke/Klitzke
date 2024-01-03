@@ -65,7 +65,7 @@ if (isset($_POST['action'])) {
     </div>
     <div class="content-form">
       <label for="">Telefone</label>
-      <input type="number" name="phone">
+      <input type="text" name="phone">
     </div>
     <div class="content-form">
       <label for="">Endereco</label>
@@ -89,3 +89,23 @@ if (isset($_POST['action'])) {
     </div>
   </form>
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var form = document.querySelector('.form');
+
+        form.addEventListener('keydown', function (event) {
+            if (event.key === 'Enter') {
+                event.preventDefault(); 
+
+                var currentInput = event.target;
+                var formElements = form.elements;
+                var currentIndex = Array.from(formElements).indexOf(currentInput);
+
+                if (currentIndex < formElements.length - 1) {
+                    formElements[currentIndex + 1].focus();
+                }
+            }
+        });
+    });
+</script>

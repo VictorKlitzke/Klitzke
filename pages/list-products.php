@@ -19,7 +19,7 @@ $products = Controllers::SelectAll('products', ($currentPage - 1) * $porPage, $p
         <table>
             <thead>
             <tr>
-                <td>Cliente</td>
+                <td>Produtos</td>
                 <p><td>Quantidade</td></p>
                 <p><td>Codigo de barras</td></p>
                 <td>Valor</td>
@@ -50,9 +50,9 @@ $products = Controllers::SelectAll('products', ($currentPage - 1) * $porPage, $p
                     <td><?php echo $value['model']; ?></td>
 
                     <td style="display: flex; justify-content: center; gap: 10px; margin: 6px; padding: 6px;">
-                        <div>
-                            <a class="btn-edit" href="<?php echo INCLUDE_PATH ?>edit-products?id=<?php echo base64_encode($value['id']); ?>">Editar</a>
-                        </div>
+                        <!-- <div>
+                            <a class="btn-edit" href="<?php //echo INCLUDE_PATH ?>edit-products?id=<?php //echo base64_encode($value['id']); ?>">Editar</a>
+                        </div> -->
                         <div>
                             <a class="btn-delete" href="<?php echo INCLUDE_PATH ?>list-products?delete=<?php echo base64_encode($value['id']); ?>">Deletar</a>
                         </div>

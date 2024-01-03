@@ -15,7 +15,16 @@ if (isset($_POST['action'])) {
     $verification->execute(array($_POST['name'], $_POST['email'], $_POST['password'], $_POST['phone'], $_POST['function'], $_POST['commission'], $_POST['target_commission']));
     if ($verification->rowCount() == 0) {
 
-      $arr = ['name' => $name, 'email' => $email, 'password' => $password, 'phone' => $phone, 'function' => $function, 'commission' => $commission, 'target_commission' => $target_commission, 'name_table' => 'users'];
+      $arr = [
+        'name' => $name, 
+        'email' => $email, 
+        'password' => $password, 
+        'phone' => $phone, 
+        'function' => $function, 
+        'commission' => $commission, 
+        'target_commission' => $target_commission, 
+        'name_table' => 'users'
+      ];
       Controllers::Insert($arr);
       Panel::Alert('sucess', $name . ' foi cadastrado com sucesso!');
     } else {
@@ -59,8 +68,28 @@ if (isset($_POST['action'])) {
       <input type="number" name="target_commission">
     </div>
     <div class="content-form">
-      <input type="hidden" name="nome_tabela" value="users" />
+      <input type="hidden" name="name_table" value="users" />
       <input type="submit" name="action" value="Cadastrar">
     </div>
   </form>
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var form = document.querySelector('.form');
+
+        form.addEventListener('keydown', function (event) {
+            if (event.key === 'Enter') {
+                event.preventDefault(); 
+
+                var currentInput = event.target;
+                var formElements = form.elements;
+                var currentIndex = Array.from(formElements).indexOf(currentInput);
+
+                if (currentIndex < formElements.length - 1) {
+                    formElements[currentIndex + 1].focus();
+                }
+            }
+        });
+    });
+</script>

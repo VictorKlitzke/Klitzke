@@ -1,7 +1,12 @@
 <?php
 
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
+$status_product = 'Em estoque';
+
 $users = Controllers::Select('users');
-if ($users['id'] == $users['id']) {
+if (isset($users['id'])) {
 
     if (isset($_POST['action'])) {
 
@@ -21,6 +26,7 @@ if ($users['id'] == $users['id']) {
         $register_date = $_POST['register_date'];
         $id_users = $users['id'];
         $flow = $_FILES['flow'];
+        $status_product = $_POST['status_product'];
 
         $name_img = Panel::UploadsImg($flow);
 
@@ -31,8 +37,8 @@ if ($users['id'] == $users['id']) {
             $verification->execute([$_POST['name'], $users['id']]);
 
             if ($verification->rowCount() > 0) {
-                $updateQuery = Db::Connection()->prepare("UPDATE `products` SET stock_quantity = stock_quantity + ? WHERE name = ? AND id_users = ?");
-                $updateQuery->execute([$_POST['stock_quantity'], $_POST['name'], $users['id']]);
+                $updateQuery = Db::Connection()->prepare("UPDATE `products` SET stock_quantity = stock_quantity + ?, status_product = 'Em estoque' WHERE name = ? AND id_users = ?");
+                $updateQuery->execute([$_POST['stock_quantity'], $_POST['status_product'], $_POST['name'], $users['id']]);
                 Panel::Alert('sucess', 'O cadastro do produto ' . $name . ' foi realizado com sucesso!');
             } else {
                 $arr = [
@@ -48,6 +54,7 @@ if ($users['id'] == $users['id']) {
                     'register_date' => $register_date,
                     'id_users' => $id_users,
                     'flow' => $name_img,
+                    'status_product' => 'Em estoque',
                     'name_table' => 'products'
                 ];
                 Controllers::Insert($arr);
@@ -107,7 +114,8 @@ if ($users['id'] == $users['id']) {
             <input type="date" name="register_date">
         </div>
         <div class="content-form">
-            <input type="hidden" name="id_users" value=""/>
+            <input type="hidden" name="id_users"/>
+            <input type="hidden" name="status_product"/>
             <input type="hidden" name="name_table" value="products"/>
             <input type="submit" name="action" value="Cadastrar">
         </div>
@@ -115,3 +123,23 @@ if ($users['id'] == $users['id']) {
 </div>
 
 <script src="<?php echo INCLUDE_PATH_PANEL; ?>../js/values.js"></script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var form = document.querySelector('.form');
+
+        form.addEventListener('keydown', function (event) {
+            if (event.key === 'Enter') {
+                event.preventDefault(); 
+
+                var currentInput = event.target;
+                var formElements = form.elements;
+                var currentIndex = Array.from(formElements).indexOf(currentInput);
+
+                if (currentIndex < formElements.length - 1) {
+                    formElements[currentIndex + 1].focus();
+                }
+            }
+        });
+    });
+</script>

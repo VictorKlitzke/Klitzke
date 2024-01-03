@@ -1,5 +1,8 @@
 <?php
 
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
 if (isset($_POST['action'])) {
   $name = $_POST['name'];
   $email = $_POST['email'];
@@ -8,7 +11,7 @@ if (isset($_POST['action'])) {
   $phone = $_POST['phone'];
   $city = $_POST['city'];
   $address = $_POST['address'];
-  $cpf = $_POST['cpf'];
+  $cpf = preg_replace("/[^0-9]/", "", $_POST['cpf']);
   $neighborhood = $_POST['neighborhood'];
   if ($name == '' || $social_reason == '' || $phone == '' || $cpf == '') {
     Panel::Alert('attention', 'Os campos não podem ficar vázios!');
@@ -60,7 +63,7 @@ if (isset($_POST['action'])) {
     </div>
     <div class="content-form">
       <label for="">Email</label>
-      <input type="text" name="email">
+      <input type="email" name="email">
     </div>
     <div class="content-form">
       <label for="">Nome Social</label>
@@ -96,3 +99,23 @@ if (isset($_POST['action'])) {
     </div>
   </form>
 </div>  
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var form = document.querySelector('.form');
+
+        form.addEventListener('keydown', function (event) {
+            if (event.key === 'Enter') {
+                event.preventDefault(); 
+
+                var currentInput = event.target;
+                var formElements = form.elements;
+                var currentIndex = Array.from(formElements).indexOf(currentInput);
+
+                if (currentIndex < formElements.length - 1) {
+                    formElements[currentIndex + 1].focus();
+                }
+            }
+        });
+    });
+</script>
