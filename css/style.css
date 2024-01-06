@@ -592,6 +592,45 @@ table tr {
   transform: translate(-50%, -50%);
 }
 
+.filter-form {
+  display: flex;
+  gap: 5px;
+  justify-content: start;
+  align-items: center;
+  padding-bottom: 12px;
+}
+
+#userFilter, #form_filter {
+  width: auto;
+  height: 30px;
+  border-radius: 5px;
+  padding: 3px 8px;
+  cursor: pointer;
+  margin-top: 10px;
+  font-size: 16px;
+  background: #323232;
+  color: white;
+  border: 0;
+}
+
+.filter {
+  width: auto;
+  height: 30px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  padding: 3px 8px;
+  cursor: pointer;
+  margin-top: 10px;
+  font-size: 16px;
+  background: #464646;
+  color: white;
+  border: 0;
+}
+
+.filter:hover {
+  background: #191919;
+}
+
 /* BOTÃO PERSONALIZADO PARA PERGUNTA */
 
 /* .confirm-box {

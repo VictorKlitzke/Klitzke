@@ -63,11 +63,11 @@ class Controllers
         return $exec->fetchAll();
     }
 
-    public static function SelectSales($name_table, $start = null, $end = null)
+    public static function SelectSales($name_table, $start = null, $end = null, $userFilter = null, $form_payment = null)
     {
         $sql = Db::Connection();
-        if ($start == null && $end == null) {
-            $exec = $sql->prepare("SELECT 
+
+        $query = "SELECT 
                 sales.*,
                 users.name users,
                 clients.name clients,
@@ -75,41 +75,45 @@ class Controllers
                 products.name products,
                 sales_items.amount quantity,
                 sales_items.price_sales value
-                FROM
+              FROM
                 sales 
                 INNER JOIN sales_items ON sales_items.id_sales = sales.id
                 INNER JOIN products ON products.id = sales_items.id_product
                 INNER JOIN form_payment ON form_payment.id = sales.id_payment_method
                 INNER JOIN clients ON clients.id = sales.id_client
                 LEFT JOIN boxpdv ON boxpdv.id = sales.id_boxpdv
-                LEFT JOIN users ON users.id = sales.id_users
-                ORDER BY id ASC"
-            );
-        } else {
-            $exec = $sql->prepare("SELECT 
-                sales.*,
-                users.name users,
-                clients.name clients,
-                form_payment.name form_payment,
-                products.name products,
-                sales_items.amount quantity,
-                sales_items.price_sales value
-                FROM
-                sales 
-                INNER JOIN sales_items ON sales_items.id_sales = sales.id
-                INNER JOIN products ON products.id = sales_items.id_product
-                INNER JOIN form_payment ON form_payment.id = sales.id_payment_method
-                INNER JOIN clients ON clients.id = sales.id_client
-                LEFT JOIN boxpdv ON boxpdv.id = sales.id_boxpdv
-                LEFT JOIN users ON users.id = sales.id_users
-                ORDER BY id ASC"
-            );
+                LEFT JOIN users ON users.id = sales.id_users";
+
+        $conditions = [];
+
+        if ($userFilter !== null) {
+            $conditions[] = "users.id = :userFilter";
         }
 
+        if ($form_payment !== null) {
+            $conditions[] = "form_payment.id = :form_filter";
+        }
+
+        if (!empty($conditions)) {
+            $query .= " WHERE " . implode(" AND ", $conditions);
+        }
+
+        $query .= " ORDER BY id ASC";
+
+        $exec = $sql->prepare($query);
+
+        if ($userFilter !== null) {
+            $exec->bindParam(':userFilter', $userFilter, PDO::PARAM_INT);
+        }
+    
+        if ($form_payment !== null) {
+            $exec->bindParam(':form_filter', $form_payment, PDO::PARAM_INT);
+        }
         $exec->execute();
 
         return $exec->fetchAll();
     }
+
 
     // public static function SelectSales($name_table, $start = null, $end = null)
     // {

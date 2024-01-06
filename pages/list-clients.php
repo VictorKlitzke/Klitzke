@@ -57,7 +57,7 @@ $clients = Controllers::SelectAll('clients', ($currentPage - 1) * $porPage, $por
 								<a class="btn-disable" href="<?php echo INCLUDE_PATH ?>">Desativar</a>
 							</div>
 							<div>
-								<a class="btn-delete" href="<?php echo INCLUDE_PATH ?>list-clients?delete=<?php echo base64_encode($value['id']); ?>">Deletar</a>
+								<a class="btn-delete" href="<?php echo INCLUDE_PATH ?>list-clients?delete?id=<?php echo base64_encode($value['id']); ?>">Deletar</a>
 							</div>
 						</td>
 					</tr>

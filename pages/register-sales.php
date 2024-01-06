@@ -17,21 +17,7 @@
 
             ?>
 
-            <?php 
-            
-            $id_users = Controllers::Select("users");
-            
-            ?>
-
-            <?php
-            
-                $id_boxpdv = Controllers::Select("boxpdv");
-            
-            ?>
-
             <input type="hidden" id="id_sales" name="sales_id" value="<?php echo $sales_new['id'] ?>">
-            <input type="hidden" id="id_users" name="id_users" value="<?php echo base64_encode($id_users['id']); ?>">
-            <input type="hidden" id="id_boxpdv" name="id_boxpdv" value="<?php echo base64_encode($id_boxpdv['id']); ?>">
 
             <button type="button" id="selected-client" class="new-sales right">
                 <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24">
@@ -108,7 +94,6 @@
                         <td>Produto</td>
                         <td>Quantidade</td>
                         <td>Preço</td>
-                        <td>Total</td>
                     </tr>
                 </thead>
                 <tbody>
@@ -122,7 +107,7 @@
     <div class="payment-method right">
         <div class="info-sales">
             <h1>Total</h1>
-            <h3>R$ 1200</h3>
+            <h3 id="totalAmount">R$ 0.00</h3>
             <div class="name-h4">
                 <svg fill="#fff" xmlns="http://www.w3.org/2000/svg" height="20" viewBox="0 -960 960 960" width="20">
                     <path

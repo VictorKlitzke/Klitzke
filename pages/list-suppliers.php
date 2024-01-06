@@ -52,7 +52,7 @@ $suppliers = Controllers::SelectAll('suppliers', ($currentPage - 1) * $porPage, 
                 <a class="btn-edit" href="<?php echo INCLUDE_PATH; ?>edit-suppliers?id=<?php echo base64_encode($value['id']); ?>">Editar</a>
               </div>
               <div>
-                <a class="btn-delete" href="<?php echo INCLUDE_PATH; ?>list-suppliers?delete=<?php echo base64_encode($value['id']); ?>">Deletar</a>
+                <a class="btn-delete" href="<?php echo INCLUDE_PATH; ?>list-suppliers?delete?id=<?php echo base64_encode($value['id']); ?>">Deletar</a>
               </div>
             </td>
           </tr>

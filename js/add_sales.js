@@ -45,13 +45,36 @@ function AddSelectProducts(index, id, name, stock_quantity, value) {
             "<td id='product-value' class='content-form'>" +
             "<input type='text' id='value" + id + "' value='" + value + "' />" +
             "</td>" +
-            "<td id='total-item'>" + id + "</td>" +
             "<td style='margin: 6px; padding: 6px;'>" +
             "<div>" +
             "<button onclick='removeProduct(" + id + ")' id='button-delete-" + id + "' class='btn-delete' type='button'>Deletar</button>" +
             "</div>" +
             "</td>";
     }
+    calculateTotal();
+}
+
+function calculateTotal() {
+    let total = 0;
+
+    selectedProducts.forEach(product => {
+        const quantityElement = document.getElementById('product-quantity-' + product.id);
+        const valueElement = document.getElementById('value' + product.id);
+
+        if (quantityElement && valueElement) {
+            const quantityElementTotal = parseInt(quantityElement.textContent) || 0;
+            const value = parseFloat(valueElement.value) || 0;
+
+            total += quantityElementTotal * value;
+        }
+    });
+
+    const totalAmountElement = document.getElementById('totalAmount');
+    if (totalAmountElement) {
+        totalAmountElement.textContent = 'R$ ' + total.toFixed(2);
+    }
+
+    return total.toFixed(2);
 }
 
 function removeProduct(id) {
@@ -85,43 +108,50 @@ function removeProduct(id) {
 }
 
 document
-  .getElementById("sales-search-form")
-  .addEventListener("submit", function (event) {
-    event.preventDefault();
+    .getElementById("sales-search-form")
+    .addEventListener("submit", function (event) {
+        event.preventDefault();
 
-    let searchInput = document.getElementById("clientSelectedSales").value;
-    let tableRows = document.querySelectorAll(".tbody-selected tr");
+        let searchInput = document.getElementById("clientSelectedSales").value;
+        let tableRows = document.querySelectorAll(".tbody-selected tr");
 
-    tableRows.forEach(function (row) {
-      let clientName = row
-        .querySelector("td:nth-child(2)")
-        .textContent.toLowerCase();
-      if (clientName.includes(searchInput.toLowerCase())) {
-        row.style.display = "";
-      } else {
-        row.style.display = "none";
-      }
+        tableRows.forEach(function (row) {
+            let clientName = row
+                .querySelector("td:nth-child(2)")
+                .textContent.toLowerCase();
+            if (clientName.includes(searchInput.toLowerCase())) {
+                row.style.display = "";
+            } else {
+                row.style.display = "none";
+            }
+        });
     });
-  });
 
 document.addEventListener("DOMContentLoaded", function () {
-  let tableRows = document.querySelectorAll(".tbody-selected");
-  tableRows.forEach(function (row) {
-    row.addEventListener("dblclick", function () {
-      let clientName = row.querySelector("td:nth-child(2)").textContent;
-      let salesPageElement = document.getElementById("sales-page");
-      
-      selectedClientId = row.querySelector("td:first-child").textContent;
+    let tableRows = document.querySelectorAll(".tbody-selected");
+    tableRows.forEach(function (row) {
+        row.addEventListener("dblclick", function () {
+            let clientName = row.querySelector("td:nth-child(2)").textContent;
+            let salesPageElement = document.getElementById("sales-page");
 
-      if (salesPageElement) {
-        salesPageElement.innerHTML =
-          "Codigo do cliente: " + selectedClientId + " Nome do cliente: " + clientName;
-      }
+            selectedClientId = row.querySelector("td:first-child").textContent;
+
+            if (salesPageElement) {
+                salesPageElement.innerHTML =
+                    "Codigo do cliente: " + selectedClientId + " Nome do cliente: " + clientName;
+            }
+        });
     });
-  });
 });
 
 async function finalizeSale() {
+
+    let totalAmountElement = document.getElementById('totalAmount');
+    let totalValue = 0;
+    if (totalAmountElement) {
+        totalValue = parseFloat(totalAmountElement.textContent.replace('R$ ', '')) || 0;
+        console.log('Total Value:', totalValue);
+    }
 
     let selectedPaymentMethod = document.getElementById('id_payment_method').value;
     let idSalesClient = selectedClientId;
@@ -129,6 +159,7 @@ async function finalizeSale() {
     let requestData = {
         id_payment_method: selectedPaymentMethod,
         sales_id_client: idSalesClient,
+        totalValue: totalValue,
         products: selectedProducts
     };
 
@@ -140,23 +171,19 @@ async function finalizeSale() {
             const response = await fetch('http://localhost/Klitzke/ajax/add_sales.php', {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
                 },
-                body: JSON.stringify(requestData)
+                body: JSON.stringify(requestData),
             });
 
-            if (!response.ok) {
-                throw new Error('Erro na solicitação erro na url do backend: ' + response.statusText);
-            }
+            const responseData = await response.json();
 
-            const data = await response.json();
-
-            if (data && data.success) {
+            if (responseData && responseData.success) {
                 showSuccessMessage('Venda finalizada com sucesso!');
-                const saleId = data.id;
-                window.location.href = 'pages/proof.php?sale_id=' + id;
+                const saleId = responseData.id;
+                window.location.href = 'pages/proof.php?sale_id=' + saleId;
             } else {
-                console.error('Erro ao registrar venda:', data ? data.error : 'Resposta vazia');
+                console.error('Erro ao registrar venda:', responseData ? responseData.error : 'Resposta vazia');
             }
         } catch (error) {
             console.error('Erro ao enviar dados para o PHP:', error);

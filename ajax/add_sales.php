@@ -1,9 +1,10 @@
 <?php
 
-session_status();
-
 include_once '../config/config.php';
 include_once '../services/db.php';
+
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
 
 function status_boxpdv($status)
 {
@@ -41,8 +42,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             $user_id = isset($_SESSION['id']) ? $_SESSION['id'] : null;
 
-            var_dump($_SESSION);
-
             $exec = $sql->prepare("SELECT * FROM sales WHERE id_users = :user_id");
             $exec->bindParam(':user_id', $user_id, PDO::PARAM_INT);
             $exec->execute();
@@ -61,20 +60,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $lastSaleId = $sql->lastInsertId();
 
             foreach ($selectedProducts as $product) {
-                $productId = $product['id'];
-                $productQuantity = $product['stock_quantity'];
-                $productValue = $product['value'];
-                $productValue = floatval($productValue);
+                $productId = isset($product['id']) ? $product['id'] : null;
+                if ($productId === null) {
+                    break;
+                } else {
 
-                $exec = $sql->prepare("INSERT INTO sales_items (id_sales, id_product, amount, price_sales, status_item) 
+                    $productQuantity = $product['stock_quantity'];
+                    $productValue = $product['value'];
+                    $productValue = floatval($productValue);
+
+                    $exec = $sql->prepare("INSERT INTO sales_items (id_sales, id_product, amount, price_sales, status_item) 
                                 VALUES (:lastSaleId, :productId, :productQuantity, :productValue, :status_item)");
-                $exec->bindParam(':lastSaleId', $lastSaleId, PDO::PARAM_INT);
-                $exec->bindParam(':productId', $productId, PDO::PARAM_INT);
-                $exec->bindParam(':productQuantity', $productQuantity, PDO::PARAM_INT);
-                $exec->bindParam(':productValue', $productValue, PDO::PARAM_STR);
-                $status_item = 1;
-                $exec->bindParam(':status_item', $status_item, PDO::PARAM_INT);
-                $exec->execute();
+                    $exec->bindParam(':lastSaleId', $lastSaleId, PDO::PARAM_INT);
+                    $exec->bindParam(':productId', $productId, PDO::PARAM_INT);
+                    $exec->bindParam(':productQuantity', $productQuantity, PDO::PARAM_INT);
+                    $exec->bindParam(':productValue', $productValue, PDO::PARAM_STR);
+                    $status_item = 1;
+                    $exec->bindParam(':status_item', $status_item, PDO::PARAM_INT);
+                    $exec->execute();
+
+                }
             }
 
             $checkStock = $sql->prepare("SELECT id FROM products WHERE id = :productId AND stock_quantity - :productQuantity < 0");
@@ -94,21 +99,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $updateStock->execute();
             }
 
-            $exec = $sql->prepare("SELECT SUM(amount * price_sales) - SUM(discount) AS total FROM sales_items WHERE id_sales = :lastSaleId");
+            $exec = $sql->prepare("UPDATE sales SET total_value = :totalValue WHERE id = :lastSaleId");
+            $exec->bindParam(':totalValue', $requestData['totalValue'], PDO::PARAM_STR);
             $exec->bindParam(':lastSaleId', $lastSaleId, PDO::PARAM_INT);
             $exec->execute();
-
-            $exec = $sql->prepare("UPDATE sales_items SET total_items = :total_items WHERE id_sales = :lastSaleId");
-            $exec->bindParam(':total_items', $totalValue, PDO::PARAM_STR);
-            $exec->bindParam(':lastSaleId', $lastSaleId, PDO::PARAM_INT);
-            $exec->execute();
-
-            $totalValue = $exec->fetchColumn();
-
-            // $exec = $sql->prepare("UPDATE sales SET total_value = :totalValue WHERE id = :lastSaleId");
-            // $exec->bindParam(':totalValue', $totalValue, PDO::PARAM_STR);
-            // $exec->bindParam(':lastSaleId', $lastSaleId, PDO::PARAM_INT);
-            // $exec->execute();
 
             $sql->commit();
 
@@ -118,10 +112,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } catch (PDOException $e) {
         $sql->rollBack();
         http_response_code(500);
-        echo json_encode(['error' => 'Erro ao adicionar venda ao banco de dados: ' . $e->getMessage()]);
+        echo json_encode(['error' => 'Erro no banco de dados: ' . $e->getMessage(), 'code' => $e->getCode()]);
     } finally {
         $sql = null;
     }
+
 }
 
 ?>

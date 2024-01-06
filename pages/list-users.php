@@ -61,7 +61,7 @@ $users = Controllers::SelectAll('users', ($currentPage - 1) * $porPage, $porPage
               </a>
             </div> -->
             <div>
-              <a class="btn-delete" href="<?php echo INCLUDE_PATH ?>list-users?delete=<?php echo base64_encode($value['id']); ?>">Deletar</a>
+              <a class="btn-delete" href="<?php echo INCLUDE_PATH ?>list-users?delete?id=<?php echo base64_encode($value['id']); ?>">Deletar</a>
             </div>
           </td>
         </tr>

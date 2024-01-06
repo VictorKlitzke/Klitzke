@@ -54,7 +54,7 @@ $products = Controllers::SelectAll('products', ($currentPage - 1) * $porPage, $p
                             <a class="btn-edit" href="<?php //echo INCLUDE_PATH ?>edit-products?id=<?php //echo base64_encode($value['id']); ?>">Editar</a>
                         </div> -->
                         <div>
-                            <a class="btn-delete" href="<?php echo INCLUDE_PATH ?>list-products?delete=<?php echo base64_encode($value['id']); ?>">Deletar</a>
+                            <a class="btn-delete" href="<?php echo INCLUDE_PATH ?>list-products?delete?id=<?php echo base64_encode($value['id']); ?>">Deletar</a>
                         </div>
                     </td>
                 </tr>

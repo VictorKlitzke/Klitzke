@@ -47,7 +47,7 @@ $boxpdv = Controllers::SelectBoxPdv('boxpdv', ($currentPage - 1) * $porPage, $po
               </div>
 
               <div>
-                <a class="btn-delete" href="<?php echo INCLUDE_PATH ?>delete?id=<?php echo base64_encode($value['id']); ?>">Deletar</a>
+                <a class="btn-delete" href="<?php echo INCLUDE_PATH ?>list-boxpdv=delete?id=<?php echo base64_encode($value['id']); ?>">Deletar</a>
               </div>
             </td>
           </tr>
