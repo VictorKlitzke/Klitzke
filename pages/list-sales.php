@@ -1,12 +1,14 @@
 <?php
 
+$user_id = isset($_SESSION['id']) ? $_SESSION['id'] : null;
+
 if (isset($_GET['delete'])) {
     $delete = intval($_GET['delete']);
     Controllers::Delete('sales', $delete);
     header('Location: ' . INCLUDE_PATH . 'list-sales');
 }
 
-$userFilter = isset($_POST['userFilter']) ? intval($_POST['userFilter']) : null;
+$userFilter = isset($_POST['userFilter']) ? intval($_POST['userFilter']) : $user_id;
 
 $form_payment = isset($_POST['form_filter']) ? intval($_POST['form_filter']) : null;
 

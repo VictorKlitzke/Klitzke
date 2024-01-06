@@ -5,46 +5,81 @@ include_once 'services/db.php';
 class Controllers
 {
 
-    public static function SelectOne($table, $id)
+    public static function InfoProductsSales($name_table, $query = '', $ts = '')
     {
-        $db = Db::Connection();
-
-        try {
-            $stmt = $db->prepare("SELECT * FROM $table WHERE id = :id");
-            $stmt->bindParam(':id', $id, PDO::PARAM_INT);
-            $stmt->execute();
-            $result = $stmt->fetch(PDO::FETCH_ASSOC);
-            return $result;
-        } catch (PDOException $e) {
-            echo "Erro: " . $e->getMessage();
-            return false;
+        if ($query != false) {
+            $exec = Db::Connection()->prepare("SELECT 
+                                                    sales.*,
+                                                    users.name users,
+                                                    clients.name clients,
+                                                    form_payment.name form_payment,
+                                                    products.name products,
+                                                    sales_items.amount quantity,
+                                                    sales_items.price_sales value
+                                                FROM
+                                                    $name_table 
+                                                    INNER JOIN sales_items ON sales_items.id_sales = sales.id
+                                                    INNER JOIN products ON products.id = sales_items.id_product
+                                                    INNER JOIN form_payment ON form_payment.id = sales.id_payment_method
+                                                    INNER JOIN clients ON clients.id = sales.id_client
+                                                    LEFT JOIN boxpdv ON boxpdv.id = sales.id_boxpdv
+                                                    LEFT JOIN users ON users.id = sales.id_users");
+            $exec->execute($ts);
+        } else {
+            $exec = Db::Connection()->prepare("SELECT 
+                                                    sales.*,
+                                                    users.name users,
+                                                    clients.name clients,
+                                                    form_payment.name form_payment,
+                                                    products.name products,
+                                                    sales_items.amount quantity,
+                                                    sales_items.price_sales value
+                                                FROM
+                                                    $name_table 
+                                                    INNER JOIN sales_items ON sales_items.id_sales = sales.id
+                                                    INNER JOIN products ON products.id = sales_items.id_product
+                                                    INNER JOIN form_payment ON form_payment.id = sales.id_payment_method
+                                                    INNER JOIN clients ON clients.id = sales.id_client
+                                                    LEFT JOIN boxpdv ON boxpdv.id = sales.id_boxpdv
+                                                    LEFT JOIN users ON users.id = sales.id_users");
+            $exec->execute();
         }
+        return $exec->fetchAll();
     }
 
-    public static function SelectBoxPdv($name_table, $start = null, $end = null)
+    public static function SelectBoxPdv($name_table, $start = null, $end = null, $user_filter = null)
     {
         $sql = Db::Connection();
-        if ($start == null && $end == null) {
-            $exec = $sql->prepare("SELECT
-				boxpdv.*,
-				users.name users,
-        (SELECT sangria_boxpdv.value FROM sangria_boxpdv WHERE sangria_boxpdv.id_boxpdv = boxpdv.id LIMIT 1) Withdrawal,
-				company.name company
-			FROM
-				$name_table
-				INNER JOIN users ON users.id = boxpdv.id_users
-				INNER JOIN company ON company.id = boxpdv.id_company");
-        } else {
-            $exec = $sql->prepare("SELECT
-			boxpdv.*,
-			users.name users,
-			(SELECT sangria_boxpdv.value FROM sangria_boxpdv WHERE sangria_boxpdv.id_boxpdv = boxpdv.id LIMIT 1) Withdrawal,
-			company.name company
-		FROM
-			$name_table
-			INNER JOIN users ON users.id = boxpdv.id_users
-			INNER JOIN company ON company.id = boxpdv.id_company");
+
+        $query = "SELECT
+                boxpdv.*,
+                users.name users,
+                (SELECT sangria_boxpdv.value FROM sangria_boxpdv WHERE sangria_boxpdv.id_boxpdv = boxpdv.id LIMIT 1) Withdrawal,
+                company.name company
+            FROM
+                $name_table
+                INNER JOIN users ON users.id = boxpdv.id_users
+                INNER JOIN company ON company.id = boxpdv.id_company
+        ";
+
+        $conditions = [];
+
+        if ($user_filter !== null) {
+            $conditions[] = "users.id = :user_filter";
         }
+
+        if (!empty($conditions)) {
+            $query .= " WHERE " . implode(" AND ", $conditions);
+        }
+
+        $query .= " ORDER BY id ASC";
+
+        $exec = $sql->prepare($query);
+
+        if ($user_filter !== null) {
+            $exec->bindParam(':user_filter', $user_filter, PDO::PARAM_INT);
+        }
+
         $exec->execute();
 
         return $exec->fetchAll();
@@ -105,7 +140,7 @@ class Controllers
         if ($userFilter !== null) {
             $exec->bindParam(':userFilter', $userFilter, PDO::PARAM_INT);
         }
-    
+
         if ($form_payment !== null) {
             $exec->bindParam(':form_filter', $form_payment, PDO::PARAM_INT);
         }
@@ -113,42 +148,6 @@ class Controllers
 
         return $exec->fetchAll();
     }
-
-
-    // public static function SelectSales($name_table, $start = null, $end = null)
-    // {
-    //     $sql = Db::Connection();
-    //     if ($start == null && $end == null) {
-    //         $exec = $sql->prepare("SELECT
-    //                                         sales.*,
-    //                                         sales_items.*,
-    //                                         products.name as products,
-    //                                         clients.name as clients
-
-    //                                     FROM
-    //                                      $name_table 
-    //                                      LEFT JOIN sales_items ON sales_items.id_sales = sales.id
-    //                                      LEFT JOIN clients ON clients.id = sales.id_client
-    //                                      LEFT JOIN products ON products.id = sales_items.id_product
-    //                                      ");
-    //     } else {
-    //         $exec = $sql->prepare("SELECT
-    //                                         sales.*,
-    //                                         sales_items.*,
-    //                                         products.name as products,
-    //                                         clients.name as clients
-
-    //                                     FROM
-    //                                      $name_table 
-    //                                      LEFT JOIN sales_items ON sales_items.id_sales = sales.id
-    //                                      LEFT JOIN clients ON clients.id = sales.id_client
-    //                                      LEFT JOIN products ON products.id = sales_items.id_product
-    //                                      LIMIT $start,$end");
-    //     }
-    //     $exec->execute();
-
-    //     return $exec->fetchAll();
-    // }
 
     public static function Select($name_table, $query = '', $ts = '')
     {
@@ -162,33 +161,6 @@ class Controllers
         }
         return $exec->fetch();
     }
-
-    public static function SelectBox($name_table, $conditions = array())
-    {
-        $sql = Db::Connection();
-
-        $where = "";
-        $values = array();
-
-        if (!empty($conditions)) {
-            $where = " WHERE ";
-
-            foreach ($conditions as $field => $value) {
-                $where .= "`$field` = :$field AND ";
-                $values[":$field"] = $value;
-            }
-
-            $where = rtrim($where, " AND ");
-        }
-
-        $sqlString = "SELECT * FROM `$name_table`" . $where;
-
-        $exec = $sql->prepare($sqlString);
-        $exec->execute($values);
-
-        return $exec->fetchAll(PDO::FETCH_ASSOC);
-    }
-
 
     public static function Insert($arr)
     {

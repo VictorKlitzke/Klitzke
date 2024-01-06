@@ -467,6 +467,24 @@ table tr {
   color: #ccc;
 }
 
+.btn-details {
+  padding: 4px;
+  background: #308a72;
+  border: none;
+  border-radius: 4px;
+  color: #ccc;
+  cursor: pointer;
+}
+
+.btn-details:hover {
+  padding: 4px;
+  background: #538274;
+  border: none;
+  border-radius: 4px;
+  color: #ccc;
+  cursor: pointer;
+}
+
 .btn-edit {
   padding: 4px;
   background: #7b8d16;
@@ -597,10 +615,9 @@ table tr {
   gap: 5px;
   justify-content: start;
   align-items: center;
-  padding-bottom: 12px;
 }
 
-#userFilter, #form_filter {
+#userFilter, #user_filter, #form_filter {
   width: auto;
   height: 30px;
   border-radius: 5px;
@@ -620,7 +637,6 @@ table tr {
   border: 1px solid #ccc;
   padding: 3px 8px;
   cursor: pointer;
-  margin-top: 10px;
   font-size: 16px;
   background: #464646;
   color: white;

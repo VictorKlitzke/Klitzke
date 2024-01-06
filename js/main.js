@@ -91,5 +91,4 @@ async function closeBox() {
         console.log('Erro ao fechar o caixa. Tente novamente.');
       });
   }
-}
-
+} 

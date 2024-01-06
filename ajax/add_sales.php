@@ -36,11 +36,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             throw new Exception('O caixa está fechado. Não é possível registrar a venda.');
         } else {
 
-            $checkBoxOpen = $sql->prepare("SELECT id FROM boxpdv WHERE status = 1");
+            $user_id = isset($_SESSION['id']) ? $_SESSION['id'] : null;
+
+            $checkBoxOpen = $sql->prepare("SELECT id FROM boxpdv WHERE id_users = :user_id AND status = 1");
+            $checkBoxOpen->bindParam(':user_id', $user_id, PDO::PARAM_INT);
             $checkBoxOpen->execute();
             $id_boxpdv = $checkBoxOpen->fetchColumn();
-
-            $user_id = isset($_SESSION['id']) ? $_SESSION['id'] : null;
 
             $exec = $sql->prepare("SELECT * FROM sales WHERE id_users = :user_id");
             $exec->bindParam(':user_id', $user_id, PDO::PARAM_INT);

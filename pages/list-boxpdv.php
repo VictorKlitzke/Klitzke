@@ -1,19 +1,42 @@
 <?php
 
+$user_id = isset($_SESSION['id']) ? $_SESSION['id'] : null;
+
 if (isset($_GET['delete'])) {
   $id = intval($_GET['delete']);
   Controllers::delete('boxpdv', $id);
   header('Location: ' . INCLUDE_PATH . 'list-boxpdv');
 }
 
-$currentPage = isset($_GET['page']) ? (int)($_GET['page']) : 1;
-$porPage = 20;
+$user_filter = isset($_POST['user_filter']) ? intval($_POST['user_filter']) : $user_id;
 
-$boxpdv = Controllers::SelectBoxPdv('boxpdv', ($currentPage - 1) * $porPage, $porPage);
+$currentPage = isset($_GET['page']) ? (int)($_GET['page']) : 1;
+$porPage = 2;
+
+$boxpdv = Controllers::SelectBoxPdv('boxpdv', ($currentPage - 1) * $porPage, $porPage, $user_filter);
 
 ?>
 
 <div class="box-content">
+  <h2>Filtro</h2>
+  <div class="filter-form">
+    <form method="post">
+      <select name="user_filter" id="user_filter">
+
+          <?php
+
+          $users = Controllers::SelectAll('users');
+
+          foreach ($users as $user) {
+              echo '<option value="' . $user['id'] . '">' . $user['name'] . '</option>';
+          }
+
+          ?>
+
+      </select>
+      </form>
+      <button class="filter" type="submit">Filtrar</button>
+  </div>
   <div class="list">
     <h2>Lista de Caixas</h2>
     <table>
@@ -59,7 +82,7 @@ $boxpdv = Controllers::SelectBoxPdv('boxpdv', ($currentPage - 1) * $porPage, $po
 
 <div class="page">
   <?php
-  $totalPage = ceil(count(Controllers::selectAll('boxpdv')) / $porPage);
+  $totalPage = ceil(count(Controllers::SelectBoxPdv('boxpdv')) / $porPage);
 
   for ($i = 1; $i <= $totalPage; $i++) {
     if ($i == $currentPage)
