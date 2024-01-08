@@ -13,7 +13,7 @@ $userFilter = isset($_POST['userFilter']) ? intval($_POST['userFilter']) : $user
 $form_payment = isset($_POST['form_filter']) ? intval($_POST['form_filter']) : null;
 
 $currentPage = isset($_GET['page']) ? (int) ($_GET['page']) : 1;
-$porPage = 20;
+$porPage = 100;
 
 $sales = Controllers::SelectSales('sales', ($currentPage - 1) * $porPage, $porPage, $userFilter, $form_payment);
 

@@ -135,6 +135,10 @@ class Controllers
 
         $query .= " ORDER BY id ASC";
 
+        if ($start !== null && $end !== null) {
+            $query .= " LIMIT :start, :end";
+        }
+
         $exec = $sql->prepare($query);
 
         if ($userFilter !== null) {
@@ -144,11 +148,17 @@ class Controllers
         if ($form_payment !== null) {
             $exec->bindParam(':form_filter', $form_payment, PDO::PARAM_INT);
         }
+
+        if ($start !== null && $end !== null) {
+            $exec->bindParam(':start', $start, PDO::PARAM_INT);
+            $exec->bindParam(':end', $end, PDO::PARAM_INT);
+        }
+
         $exec->execute();
 
         return $exec->fetchAll();
     }
-
+    
     public static function Select($name_table, $query = '', $ts = '')
     {
         $sql = Db::Connection();
