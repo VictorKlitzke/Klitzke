@@ -92,34 +92,3 @@ async function closeBox() {
       });
   }
 } 
-
-document.addEventListener("DOMContentLoaded", function () {
-  const menuBtn = document.querySelector('.menu-btn');
-  const menu = document.querySelector('.menu');
-
-  console.log(menuBtn);
-
-  menuBtn.addEventListener('click', function () {
-      menu.classList.toggle('show-menu');
-  });
-
-  // Close the menu when a menu item is clicked
-  const menuItems = document.querySelectorAll('.items-menu a');
-  menuItems.forEach(function (item) {
-      item.addEventListener('click', function () {
-          menu.classList.remove('show-menu');
-      });
-  });
-
-  // Close the menu when the overlay is clicked
-  const overlay = document.querySelector('.overlay');
-  overlay.addEventListener('click', function () {
-      menu.classList.remove('show-menu');
-  });
-
-  // Close the menu when the close button in the overlay is clicked
-  const closeBoxpdv = document.querySelector('#close-boxpdv-modal');
-  closeBoxpdv.addEventListener('click', function () {
-      menu.classList.remove('show-menu');
-  });
-});

@@ -47,7 +47,10 @@ function AddSelectProducts(index, id, name, stock_quantity, value) {
             "</td>" +
             "<td style='margin: 6px; padding: 6px;'>" +
             "<div>" +
+            "<div>" +
             "<button onclick='removeProduct(" + id + ")' id='button-delete-" + id + "' class='btn-delete' type='button'>Deletar</button>" +
+            "<button onclick='editProductValue(" + id + ")' class='btn-edit' style='margin-left: 5px;' type='button'>Editar Valor</button>" +
+            "</div>" +
             "</div>" +
             "</td>";
     }
@@ -144,13 +147,37 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 });
 
-async function finalizeSale() {
+function editProductValue(id) {
+    let valueInput = document.getElementById("value" + id);
+    let newValue = prompt("Digite o novo valor do produto:", valueInput.value);
+
+    if (newValue === null || newValue.trim() === "") {
+        return;
+    }
+
+    for (let i = 0; i < selectedProducts.length; i++) {
+        if (selectedProducts[i].id === id) {
+            selectedProducts[i].value = parseFloat(newValue);
+            break;
+        }
+    }
+
+    valueInput.value = newValue;
+
+    calculateTotal();
+
+    // document.getElementById('finish-sales').addEventListener('click', function() {
+    //     finalizeSale(id, newValue);
+    // });
+
+}
+
+async function finalizeSale(id, newValue) {
 
     let totalAmountElement = document.getElementById('totalAmount');
     let totalValue = 0;
     if (totalAmountElement) {
         totalValue = parseFloat(totalAmountElement.textContent.replace('R$ ', '')) || 0;
-        console.log('Total Value:', totalValue);
     }
 
     let selectedPaymentMethod = document.getElementById('id_payment_method').value;
@@ -158,10 +185,13 @@ async function finalizeSale() {
 
     let requestData = {
         id_payment_method: selectedPaymentMethod,
+        newValue: newValue,
         sales_id_client: idSalesClient,
         totalValue: totalValue,
         products: selectedProducts
     };
+
+    console.log(newValue);
 
     if (selectedProducts.length === 0) {
         showErrorMessage('Erro ao registrar venda, nenhum produto selecionado');
@@ -180,8 +210,8 @@ async function finalizeSale() {
 
             if (responseData && responseData.success) {
                 showSuccessMessage('Venda finalizada com sucesso!');
-                const saleId = responseData.id;
-                window.location.href = 'pages/proof.php?sale_id=' + saleId;
+                // const saleId = responseData.id;
+                // window.location.href = 'pages/proof.php?sale_id=' + saleId;
             } else {
                 console.error('Erro ao registrar venda:', responseData ? responseData.error : 'Resposta vazia');
             }
@@ -189,6 +219,7 @@ async function finalizeSale() {
             console.error('Erro ao enviar dados para o PHP:', error);
         }
     }
+    editProductValue(id, newValue);
 }
 
 function showErrorMessage(message) {

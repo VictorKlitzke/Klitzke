@@ -191,8 +191,7 @@ include_once 'config/config.php';
                             </div>
                             <div class="content-form">
                                 <input type="hidden" id="id_boxpdv" name="id_boxpdv">
-                                <button id="finish-sales" onclick="closeBox()" type="button" class="finish-box">Fechar
-                                    caixa</button>
+                                <button id="finish-sales" onclick="closeBox()" type="button" class="finish-box">Fechar caixa</button>
                             </div>
                         </form>
                     </div>
@@ -204,6 +203,7 @@ include_once 'config/config.php';
     <script src="<?php echo INCLUDE_PATH; ?>./js/main.js"></script>
     <script src="<?php echo INCLUDE_PATH; ?>./js/alert.js"></script>
     <script src="<?php echo INCLUDE_PATH; ?>./js/values.js"></script>
+    <script src="<?php echo INCLUDE_PATH; ?>./js/menu.js"></script>
 
 </body>
 
