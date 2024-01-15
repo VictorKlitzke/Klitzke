@@ -42,8 +42,8 @@ $products = Controllers::SelectAll('products', ($currentPage - 1) * $porPage, $p
                     <p><td><?php echo $value['name']; ?></td></p>
                     <td><?php echo $value['quantity']; ?></td>
                     <td><?php echo $value['barcode']; ?></td>
-                    <td>R$ <?php echo $value['value_product']; ?>,00</td>
-                    <td>R$ <?php echo $value['cost_value']; ?>,00</td>
+                    <td>R$ <?php echo $value['total_value']; ?></td>
+                    <td>R$ <?php echo $value['cost_value']; ?></td>
                     <td><?php echo $value['stock_quantity']; ?></td>
                     <td><?php echo $value['reference']; ?></td>
                     <td><?php echo $value['id_users']; ?></td>

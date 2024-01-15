@@ -4,6 +4,15 @@ let selectedClientId;
 const trProduct = document.getElementById("product-result");
 const tdButton = document.getElementById("button-product");
 
+let Portion;
+let OverlayPortion;
+
+document.addEventListener('DOMContentLoaded', function () {
+    Portion = document.querySelector('.portion-sales');
+    OverlayPortion = document.querySelector('.overlay-portion');
+});
+
+
 function AddSelectProducts(index, id, name, stock_quantity, value) {
     let productAlreadyExists = false;
 
@@ -31,7 +40,7 @@ function AddSelectProducts(index, id, name, stock_quantity, value) {
             id: id,
             name: name,
             stock_quantity: 1,
-            value: value
+            value: parseFloat(value.replace(',', '.'))
         };
 
         validateStock(stock_quantity, 1);
@@ -57,6 +66,124 @@ function AddSelectProducts(index, id, name, stock_quantity, value) {
     calculateTotal();
 }
 
+function editProductValue(id) {
+    let valueInput = document.getElementById("value" + id);
+
+    if (!valueInput) {
+        console.error('Elemento valueInput não encontrado.');
+        return;
+    }
+
+    let promptResult = prompt("Digite o novo valor do produto:", valueInput.value);
+
+    if (promptResult !== null && !isNaN(promptResult.trim())) {
+        let editedValue = parseFloat(promptResult.replace(',', '.'));
+
+        if (!isNaN(editedValue)) {
+            valueInput.value = editedValue;
+
+
+            let productIndex = selectedProducts.findIndex(product => product.id === String(id));
+
+            if (productIndex !== -1) {
+                selectedProducts[productIndex].value = editedValue;
+
+            } else {
+                console.error('Produto não encontrado no array selectedProducts.');
+            }
+        } else {
+            console.error('O valor do produto não é um número válido.');
+        }
+    }
+    calculateTotal();
+}
+
+document.addEventListener('DOMContentLoaded', function () {
+  
+    function openCreditModal() {
+        if (Portion && OverlayPortion) {
+            Portion.style.display = 'block';
+            OverlayPortion.style.display = 'block';
+        }
+    }
+
+    function closeCreditModal() {
+        if (Portion && OverlayPortion) {
+            Portion.style.display = 'none';
+            OverlayPortion.style.display = 'none';
+        }
+    }
+
+    function checkPaymentMethod() {
+        var selectedPaymentMethod = document.getElementById('id_payment_method').value;
+        if (selectedPaymentMethod === '3') {
+            openCreditModal();
+        } else {
+            closeCreditModal();
+        }
+    }
+
+    document.getElementById('id_payment_method').addEventListener('change', checkPaymentMethod);
+
+});
+
+async function finalizeSale() {
+    try {
+
+        let totalAmountElement = document.getElementById('totalAmount');
+        let totalValue = 0;
+        if (totalAmountElement) {
+            totalValue = parseFloat(totalAmountElement.textContent.replace('R$ ', '')) || 0;
+        }
+
+
+        let selectedPaymentMethod = document.getElementById('id_payment_method').value;
+        console.log(selectedPaymentMethod);
+        if (selectedPaymentMethod === '3') {
+            checkPaymentMethod();
+        }
+        let idSalesClient = selectedClientId;
+
+        let requestData = {
+            id_payment_method: selectedPaymentMethod,
+            sales_id_client: idSalesClient,
+            totalValue: totalValue,
+            products: selectedProducts
+        };
+
+        if (selectedProducts.length === 0) {
+            showErrorMessage('Erro ao registrar venda, nenhum produto selecionado');
+            return;
+        } else {
+            const response = await fetch('http://localhost/Klitzke/ajax/add_sales.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(requestData),
+            });
+
+            const responseBody = await response.text();
+
+            const responseData = JSON.parse(responseBody);
+
+            if (responseData && responseData.success) {
+                showSuccessMessage('Venda finalizada com sucesso!');
+                // const saleId = responseData.id;
+                // window.location.href = 'pages/proof.php?sale_id=' + saleId;
+            } else {
+                console.error('Erro ao registrar venda:', responseData ? responseData.error : 'Resposta vazia');
+            }
+        }
+    } catch (error) {
+        console.error('Erro ao enviar dados para o PHP:', error);
+    }
+}
+
+document.getElementById('id_payment_method').addEventListener('change', checkPaymentMethod);
+
+document.addEventListener('DOMContentLoaded', checkPaymentMethod);
+
 function calculateTotal() {
     let total = 0;
 
@@ -69,12 +196,16 @@ function calculateTotal() {
             const value = parseFloat(valueElement.value) || 0;
 
             total += quantityElementTotal * value;
+        } else {
+            console.error('Elementos não encontrados para o produto ID:', product.id);
         }
     });
 
     const totalAmountElement = document.getElementById('totalAmount');
     if (totalAmountElement) {
         totalAmountElement.textContent = 'R$ ' + total.toFixed(2);
+    } else {
+        console.error('Elemento totalAmount não encontrado.');
     }
 
     return total.toFixed(2);
@@ -108,6 +239,7 @@ function removeProduct(id) {
     } else {
         console.error("Array de produtos está vazio");
     }
+    calculateTotal();
 }
 
 document
@@ -146,81 +278,6 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     });
 });
-
-function editProductValue(id) {
-    let valueInput = document.getElementById("value" + id);
-    let newValue = prompt("Digite o novo valor do produto:", valueInput.value);
-
-    if (newValue === null || newValue.trim() === "") {
-        return;
-    }
-
-    for (let i = 0; i < selectedProducts.length; i++) {
-        if (selectedProducts[i].id === id) {
-            selectedProducts[i].value = parseFloat(newValue);
-            break;
-        }
-    }
-
-    valueInput.value = newValue;
-
-    calculateTotal();
-
-    // document.getElementById('finish-sales').addEventListener('click', function() {
-    //     finalizeSale(id, newValue);
-    // });
-
-}
-
-async function finalizeSale(id, newValue) {
-
-    let totalAmountElement = document.getElementById('totalAmount');
-    let totalValue = 0;
-    if (totalAmountElement) {
-        totalValue = parseFloat(totalAmountElement.textContent.replace('R$ ', '')) || 0;
-    }
-
-    let selectedPaymentMethod = document.getElementById('id_payment_method').value;
-    let idSalesClient = selectedClientId;
-
-    let requestData = {
-        id_payment_method: selectedPaymentMethod,
-        newValue: newValue,
-        sales_id_client: idSalesClient,
-        totalValue: totalValue,
-        products: selectedProducts
-    };
-
-    console.log(newValue);
-
-    if (selectedProducts.length === 0) {
-        showErrorMessage('Erro ao registrar venda, nenhum produto selecionado');
-        return;
-    } else {
-        try {
-            const response = await fetch('http://localhost/Klitzke/ajax/add_sales.php', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(requestData),
-            });
-
-            const responseData = await response.json();
-
-            if (responseData && responseData.success) {
-                showSuccessMessage('Venda finalizada com sucesso!');
-                // const saleId = responseData.id;
-                // window.location.href = 'pages/proof.php?sale_id=' + saleId;
-            } else {
-                console.error('Erro ao registrar venda:', responseData ? responseData.error : 'Resposta vazia');
-            }
-        } catch (error) {
-            console.error('Erro ao enviar dados para o PHP:', error);
-        }
-    }
-    editProductValue(id, newValue);
-}
 
 function showErrorMessage(message) {
     const errorContainer = document.getElementById('error-container');

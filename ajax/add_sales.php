@@ -3,8 +3,12 @@
 include_once '../config/config.php';
 include_once '../services/db.php';
 
-error_reporting(E_ALL);
 ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
+header("Access-Control-Allow-Origin: *");
+header("Content-Type: application/json");
 
 function status_boxpdv($status)
 {
@@ -22,7 +26,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $selectedPaymentMethod = $requestData['id_payment_method'] ?? '';
     $id_sales_client = $requestData['sales_id_client'] ?? '';
-    $editedValue = $requestData['newValue'] ?? '';
     $selectedProducts = $requestData['products'] ?? [];
 
     try {
@@ -68,13 +71,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 } else {
 
                     $productQuantity = $product['stock_quantity'];
+                    $productValue = floatval($product['value']);
 
                     $exec = $sql->prepare("INSERT INTO sales_items (id_sales, id_product, amount, price_sales, status_item) 
-                                VALUES (:lastSaleId, :productId, :productQuantity, :newValue, :status_item)");
+                                VALUES (:lastSaleId, :productId, :productQuantity, :productValue, :status_item)");
                     $exec->bindParam(':lastSaleId', $lastSaleId, PDO::PARAM_INT);
                     $exec->bindParam(':productId', $productId, PDO::PARAM_INT);
                     $exec->bindParam(':productQuantity', $productQuantity, PDO::PARAM_INT);
-                    $exec->bindParam(':newValue', $requestData['newValue'], PDO::PARAM_STR);
+                    $exec->bindParam(':productValue', $productValue, PDO::PARAM_STR);
                     $status_item = 1;
                     $exec->bindParam(':status_item', $status_item, PDO::PARAM_INT);
                     $exec->execute();

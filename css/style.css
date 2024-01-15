@@ -610,6 +610,10 @@ table tr {
   transform: translate(-50%, -50%);
 }
 
+.filter-container {
+  background: #538274;
+}
+
 .filter-form {
   display: flex;
   gap: 5px;

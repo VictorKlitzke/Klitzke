@@ -10,32 +10,34 @@ if (isset($_GET['delete'])) {
 
 $user_filter = isset($_POST['user_filter']) ? intval($_POST['user_filter']) : $user_id;
 
-$currentPage = isset($_GET['page']) ? (int)($_GET['page']) : 1;
-$porPage = 2;
+$currentPage = isset($_GET['page']) ? (int) ($_GET['page']) : 1;
+$porPage = 25;
 
 $boxpdv = Controllers::SelectBoxPdv('boxpdv', ($currentPage - 1) * $porPage, $porPage, $user_filter);
 
 ?>
 
 <div class="box-content">
-  <h2>Filtro</h2>
-  <div class="filter-form">
-    <form method="post">
-      <select name="user_filter" id="user_filter">
+  <div class="filter-container">
+    <h2>Filtro</h2>
+    <div class="filter-form">
+      <form method="post">
+        <select name="user_filter" id="user_filter">
 
           <?php
 
           $users = Controllers::SelectAll('users');
 
           foreach ($users as $user) {
-              echo '<option value="' . $user['id'] . '">' . $user['name'] . '</option>';
+            echo '<option value="' . $user['id'] . '">' . $user['name'] . '</option>';
           }
 
           ?>
 
-      </select>
+        </select>
+        <button class="filter" type="submit">Filtrar</button>
       </form>
-      <button class="filter" type="submit">Filtrar</button>
+    </div>
   </div>
   <div class="list">
     <h2>Lista de Caixas</h2>
@@ -53,24 +55,38 @@ $boxpdv = Controllers::SelectBoxPdv('boxpdv', ($currentPage - 1) * $porPage, $po
 
       <?php
       foreach ($boxpdv as $key => $value) {
-      ?>
+        ?>
 
         <tbody>
           <tr>
-            <td><?php echo $value['users']; ?></td>
-            <td><?php echo $value['value']; ?>,00</td>
-            <td><?php echo $value['observation']; ?></td>
-            <td><?php echo $value['open_date']; ?></td>
-            <td><?php echo $value['Withdrawal']; ?></td>
-            <td><?php echo $value['company']; ?></td>
+            <td>
+              <?php echo $value['users']; ?>
+            </td>
+            <td>
+              <?php echo $value['value']; ?>
+            </td>
+            <td>
+              <?php echo $value['observation']; ?>
+            </td>
+            <td>
+              <?php echo $value['open_date']; ?>
+            </td>
+            <td>
+              <?php echo $value['Withdrawal']; ?>
+            </td>
+            <td>
+              <?php echo $value['company']; ?>
+            </td>
 
             <td style="display: flex; justify-content: center; gap: 10px; margin: 6px; padding: 6px;">
               <div>
-                <a class="btn-edit" href="<?php echo INCLUDE_PATH ?>boxpdv-sangria?id=<?php echo base64_encode($value['id']); ?>">Sagria</a>
+                <a class="btn-edit"
+                  href="<?php echo INCLUDE_PATH ?>boxpdv-sangria?id=<?php echo base64_encode($value['id']); ?>">Sagria</a>
               </div>
 
               <div>
-                <a class="btn-delete" href="<?php echo INCLUDE_PATH ?>list-boxpdv=delete?id=<?php echo base64_encode($value['id']); ?>">Deletar</a>
+                <a class="btn-delete"
+                  href="<?php echo INCLUDE_PATH ?>list-boxpdv=delete?id=<?php echo base64_encode($value['id']); ?>">Deletar</a>
               </div>
             </td>
           </tr>
@@ -82,13 +98,13 @@ $boxpdv = Controllers::SelectBoxPdv('boxpdv', ($currentPage - 1) * $porPage, $po
 
 <div class="page">
   <?php
-  $totalPage = ceil(count(Controllers::SelectBoxPdv('boxpdv')) / $porPage);
+  $totalPage = ceil(count(Controllers::SelectBoxPdv('boxpdv', 0, 0, $user_filter)) / $porPage);
 
   for ($i = 1; $i <= $totalPage; $i++) {
     if ($i == $currentPage)
-      echo '<a class="page-selected" href="' . INCLUDE_PATH . 'list-boxpdv?page=' . $i . '">' . $i . '</a>';
+      echo '<a class="page-selected" href="' . INCLUDE_PATH . 'list-boxpdv?page=' . $i . '&user_filter=' . $user_filter . '">' . $i . '</a>';
     else
-      echo '<a href="' . INCLUDE_PATH . 'list-boxpdv?page=' . $i . '">' . $i . '</a>';
+      echo '<a href="' . INCLUDE_PATH . 'list-boxpdv?page=' . $i . '&user_filter=' . $user_filter . '">' . $i . '</a>';
   }
 
   ?>

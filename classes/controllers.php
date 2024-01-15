@@ -74,10 +74,20 @@ class Controllers
 
         $query .= " ORDER BY id ASC";
 
+        if ($start !== null && $end !== null) {
+            $query .= " LIMIT :start, :end";
+        }
+
+
         $exec = $sql->prepare($query);
 
         if ($user_filter !== null) {
             $exec->bindParam(':user_filter', $user_filter, PDO::PARAM_INT);
+        }
+
+        if ($start !== null && $end !== null) {
+            $exec->bindParam(':start', $start, PDO::PARAM_INT);
+            $exec->bindParam(':end', $end, PDO::PARAM_INT);
         }
 
         $exec->execute();
@@ -115,7 +125,7 @@ class Controllers
                 INNER JOIN sales_items ON sales_items.id_sales = sales.id
                 INNER JOIN products ON products.id = sales_items.id_product
                 INNER JOIN form_payment ON form_payment.id = sales.id_payment_method
-                INNER JOIN clients ON clients.id = sales.id_client
+                LEFT JOIN clients ON clients.id = sales.id_client
                 LEFT JOIN boxpdv ON boxpdv.id = sales.id_boxpdv
                 LEFT JOIN users ON users.id = sales.id_users";
 

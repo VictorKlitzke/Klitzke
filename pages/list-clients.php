@@ -41,7 +41,7 @@ $clients = Controllers::SelectAll('clients', ($currentPage - 1) * $porPage, $por
 					<tr>
 						<td><?php echo $value['name']; ?></td>
 						<td><?php echo $value['social_reason']; ?></td>
-						<td><?php echo $value['social_reason']; ?></td>
+						<td><?php echo $value['email']; ?></td>
 						<td><?php echo $value['phone']; ?></td>
 						<td><?php echo $value['cep']; ?></td>
 						<td><?php echo $value['city']; ?></td>

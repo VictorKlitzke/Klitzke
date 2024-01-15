@@ -17,8 +17,8 @@ include_once 'config/config.php';
     <link rel="stylesheet" href="<?php echo INCLUDE_PATH_PANEL; ?>../css/style.css" />
     <link rel="stylesheet" href="<?php echo INCLUDE_PATH_PANEL; ?>../css/sales.css" />
     <link rel="stylesheet" href="<?php echo INCLUDE_PATH_PANEL; ?>../css/main.css" />
-    <link rel="stylesheet" href="<?php echo INCLUDE_PATH_PANEL; ?>../css/SelectedClients.css" />
-    <link rel="stylesheet" href="<?php echo INCLUDE_PATH_PANEL; ?>../css/ModalValueSales.css" />
+    <link rel="stylesheet" href="<?php echo INCLUDE_PATH_PANEL; ?>../css/selectedClients.css" />
+    <link rel="stylesheet" href="<?php echo INCLUDE_PATH_PANEL; ?>../css/modalPortion.css" />
     <link rel="stylesheet" href="<?php echo INCLUDE_PATH_PANEL; ?>../css/font-awesome.min.css">
     <link rel="icon" href="<?php echo INCLUDE_PATH; ?>./public/logo/favicon.ico" type="image/x-icon" />
     <title>Klitzke Software - Admin</title>
@@ -67,8 +67,8 @@ include_once 'config/config.php';
 
             <h2>Cadastros</h2>
             <div class="items-menu">
-                <a <?php SelectedMenu('register-users') ?> href="<?php echo INCLUDE_PATH; ?>register-users">Cadastrar
-                    Usuários
+                <a <?php SelectedMenu('register-users') ?> href="<?php echo INCLUDE_PATH; ?>register-users">
+                    Cadastrar Usuários
                 </a>
                 <a <?php SelectedMenu('register-suppliers') ?> href="<?php echo INCLUDE_PATH; ?>register-suppliers">
                     Cadastrar Fornecedores
@@ -82,6 +82,9 @@ include_once 'config/config.php';
                 <a <?php SelectedMenu('register-stockcontrol') ?>
                     href="<?php echo INCLUDE_PATH; ?>register-stockcontrol">
                     Cadastrar Produtos
+                </a>
+                <a <?php SelectedMenu('register-back-account') ?>
+                    href="<?php echo INCLUDE_PATH; ?>register-back-account">Cadastrar conta bancaria
                 </a>
             </div>
             <h2>Listagens</h2>
@@ -100,14 +103,14 @@ include_once 'config/config.php';
             <a <?php SelectedMenu('list-products') ?> href="<?php echo INCLUDE_PATH; ?>list-products">
                 Lista de Produtos
             </a>
-            <a href="<?php echo INCLUDE_PATH; ?>list-sales">
+            <a <?php SelectedMenu('list-sales') ?> href="<?php echo INCLUDE_PATH; ?>list-sales">
                 Lista de Vendas
             </a>
             <h2>Faturamento</h2>
             <a <?php SelectedMenu('register-boxpdv') ?> href="<?php echo INCLUDE_PATH; ?>register-boxpdv">
                 Abrir Caixa
             </a>
-            <a href="<?php echo INCLUDE_PATH; ?>register-sales">Vendas</a>
+            <a <?php SelectedMenu('register-sales') ?> href="<?php echo INCLUDE_PATH; ?>register-sales">Vendas</a>
             <h2>Minha Empresa</h2>
             <a <?php echo VerificationMenu(); ?> <?php SelectedMenu('list-companys'); ?>
                 href="<?php echo INCLUDE_PATH; ?>list-companys">Empresa</a>
@@ -191,7 +194,8 @@ include_once 'config/config.php';
                             </div>
                             <div class="content-form">
                                 <input type="hidden" id="id_boxpdv" name="id_boxpdv">
-                                <button id="finish-sales" onclick="closeBox()" type="button" class="finish-box">Fechar caixa</button>
+                                <button id="finish-sales" onclick="closeBox()" type="button" class="finish-box">Fechar
+                                    caixa</button>
                             </div>
                         </form>
                     </div>
