@@ -3,8 +3,8 @@
 $user_id = isset($_SESSION['id']) ? $_SESSION['id'] : null;
 
 if (isset($_GET['delete'])) {
-  $id = intval($_GET['delete']);
-  Controllers::delete('boxpdv', $id);
+  $del = intval($_GET['delete']);
+  Controllers::delete('boxpdv', $del);
   header('Location: ' . INCLUDE_PATH . 'list-boxpdv');
 }
 
@@ -59,24 +59,12 @@ $boxpdv = Controllers::SelectBoxPdv('boxpdv', ($currentPage - 1) * $porPage, $po
 
         <tbody>
           <tr>
-            <td>
-              <?php echo $value['users']; ?>
-            </td>
-            <td>
-              <?php echo $value['value']; ?>
-            </td>
-            <td>
-              <?php echo $value['observation']; ?>
-            </td>
-            <td>
-              <?php echo $value['open_date']; ?>
-            </td>
-            <td>
-              <?php echo $value['Withdrawal']; ?>
-            </td>
-            <td>
-              <?php echo $value['company']; ?>
-            </td>
+            <td><?php echo htmlspecialchars($value['users']); ?></td>
+            <td><?php echo htmlspecialchars($value['value']); ?></td>
+            <td><?php echo htmlspecialchars($value['observation']); ?></td>
+            <td><?php echo htmlspecialchars($value['open_date']); ?></td>
+            <td><?php echo htmlspecialchars($value['Withdrawal']); ?></td>
+            <td><?php echo htmlspecialchars($value['company']); ?></td>
 
             <td style="display: flex; justify-content: center; gap: 10px; margin: 6px; padding: 6px;">
               <div>
@@ -85,8 +73,7 @@ $boxpdv = Controllers::SelectBoxPdv('boxpdv', ($currentPage - 1) * $porPage, $po
               </div>
 
               <div>
-                <a class="btn-delete"
-                  href="<?php echo INCLUDE_PATH ?>list-boxpdv=delete?id=<?php echo base64_encode($value['id']); ?>">Deletar</a>
+                <a actionBtn="delete" class="btn-delete" href="<?php echo INCLUDE_PATH ?>list-boxpdv?delete=<?php echo $value['id']; ?>">Deletar</a>
               </div>
             </td>
           </tr>

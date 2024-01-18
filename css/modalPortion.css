@@ -9,6 +9,19 @@
     z-index: 999;
 }
 
+.h2-portion {
+    padding-left: 10px;
+    color: #ccc;
+}
+
+.p-portion {
+    color: #ccc;
+    background: #323232;
+    padding: 4px;
+    margin: 4px;
+    border-radius: 6px;
+}
+
 .portion-sales {
     display: block;
     overflow-x: auto;
@@ -35,9 +48,20 @@
     background: #323232 !important;
     border: 1px solid #1b1b1b;
     padding: 4px;
+    cursor: pointer;
+}
+
+.button-portion:hover {
+    background: #1b1b1b;
 }
 
 .form-portion-sales {
     border: 1px solid #1b1b1b;
-    padding: 7px;
+    padding: 10px;
+    margin: 10px;
+    display: flex;
+}
+
+.list-table {
+    margin: 10px;
 }

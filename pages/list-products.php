@@ -1,13 +1,13 @@
 <?php
 
 if (isset($_GET['delete'])) {
-    $delete = intval($_GET['delete']);
-    Controllers::Delete('products', $delete);
+    $del = intval($_GET['delete']);
+    Controllers::Delete('products', $del);
     header('Location: ' . INCLUDE_PATH . 'list-products');
 }
 
 $currentPage = isset($_GET['page']) ? (int)($_GET['page']) : 1;
-$porPage = 20;
+$porPage = 100;
 
 $products = Controllers::SelectAll('products', ($currentPage - 1) * $porPage, $porPage);
 
@@ -39,22 +39,22 @@ $products = Controllers::SelectAll('products', ($currentPage - 1) * $porPage, $p
 
                 <tbody>
                 <tr>
-                    <p><td><?php echo $value['name']; ?></td></p>
-                    <td><?php echo $value['quantity']; ?></td>
-                    <td><?php echo $value['barcode']; ?></td>
-                    <td>R$ <?php echo $value['total_value']; ?></td>
-                    <td>R$ <?php echo $value['cost_value']; ?></td>
-                    <td><?php echo $value['stock_quantity']; ?></td>
-                    <td><?php echo $value['reference']; ?></td>
-                    <td><?php echo $value['id_users']; ?></td>
-                    <td><?php echo $value['model']; ?></td>
+                    <p><td><?php echo htmlspecialchars($value['name']); ?></td></p>
+                    <td><?php echo htmlspecialchars($value['quantity']); ?></td>
+                    <td><?php echo htmlspecialchars($value['barcode']); ?></td>
+                    <td>R$ <?php echo htmlspecialchars($value['total_value']); ?></td>
+                    <td>R$ <?php echo htmlspecialchars($value['cost_value']); ?></td>
+                    <td><?php echo htmlspecialchars($value['stock_quantity']); ?></td>
+                    <td><?php echo htmlspecialchars($value['reference']); ?></td>
+                    <td><?php echo htmlspecialchars($value['id_users']); ?></td>
+                    <td><?php echo htmlspecialchars($value['model']); ?></td>
 
                     <td style="display: flex; justify-content: center; gap: 10px; margin: 6px; padding: 6px;">
                         <!-- <div>
                             <a class="btn-edit" href="<?php //echo INCLUDE_PATH ?>edit-products?id=<?php //echo base64_encode($value['id']); ?>">Editar</a>
                         </div> -->
                         <div>
-                            <a class="btn-delete" href="<?php echo INCLUDE_PATH ?>list-products?delete?id=<?php echo base64_encode($value['id']); ?>">Deletar</a>
+                            <a actionBtn="delete" class="btn-delete" href="<?php echo INCLUDE_PATH ?>list-products?delete=<?php echo $value['id']; ?>">Deletar</a>
                         </div>
                     </td>
                 </tr>

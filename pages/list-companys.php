@@ -1,7 +1,7 @@
 <?php
 
 if (isset($_GET['delete'])) {
-	$delete = intval($_GET['delete']);
+	$del = intval($_GET['delete']);
 	Controllers::Delete('company', $del);
 	header('Location: ' . INCLUDE_PATH . 'list-company');
 }
@@ -39,14 +39,14 @@ $company = Controllers::SelectAll('company', ($currentPage - 1) * $porPage, $por
 
 				<tbody>
 					<tr>
-						<td><?php echo $value['name']; ?></td>
-						<td><?php echo $value['cnpj']; ?></td>
-						<td><?php echo $value['state_registration']; ?></td>
-						<td><?php echo $value['email']; ?></td>
-						<td><?php echo $value['phone']; ?></td>
-						<td><?php echo $value['city']; ?></td>
-						<td><?php echo $value['address']; ?></td>					
-						<td><?php echo $value['state']; ?></td>
+						<td><?php echo htmlspecialchars($value['name']); ?></td>
+						<td><?php echo htmlspecialchars($value['cnpj']); ?></td>
+						<td><?php echo htmlspecialchars($value['state_registration']); ?></td>
+						<td><?php echo htmlspecialchars($value['email']); ?></td>
+						<td><?php echo htmlspecialchars($value['phone']); ?></td>
+						<td><?php echo htmlspecialchars($value['city']); ?></td>
+						<td><?php echo htmlspecialchars($value['address']); ?></td>					
+						<td><?php echo htmlspecialchars($value['state']); ?></td>
 
 						<td style="display: flex; justify-content: center; gap: 10px; margin: 6px; padding: 6px;">
 							<div>
@@ -56,7 +56,7 @@ $company = Controllers::SelectAll('company', ($currentPage - 1) * $porPage, $por
 								<a class="btn-disable" href="<?php echo INCLUDE_PATH ?>">Desativar</a>
 							</div>
 							<div>
-								<a class="btn-delete" href="<?php echo INCLUDE_PATH ?>list-companys?delete?id=<?php echo base64_encode($value['id']); ?>">Deletar</a>
+								<a actionBtn="delete" class="btn-delete" href="<?php echo INCLUDE_PATH ?>list-companys?delete=<?php echo $value['id']; ?>">Deletar</a>
 							</div>
 						</td>
 					</tr>

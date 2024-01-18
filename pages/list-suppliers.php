@@ -38,21 +38,21 @@ $suppliers = Controllers::SelectAll('suppliers', ($currentPage - 1) * $porPage, 
 
         <tbody>
           <tr>
-            <td><?php echo $value['company']; ?></td>
-            <td><?php echo $value['fantasy_name']; ?></td>
-            <td><?php echo $value['email']; ?></td>
-            <td><?php echo $value['phone']; ?></td>
-            <td><?php echo $value['address']; ?></td>
-            <td><?php echo $value['city']; ?></td>
-            <td><?php echo $value['state']; ?></td>
-            <td><?php echo $value['cnpjcpf']; ?></td>
+            <td><?php echo htmlspecialchars($value['company']); ?></td>
+            <td><?php echo htmlspecialchars($value['fantasy_name']); ?></td>
+            <td><?php echo htmlspecialchars($value['email']); ?></td>
+            <td><?php echo htmlspecialchars($value['phone']); ?></td>
+            <td><?php echo htmlspecialchars($value['address']); ?></td>
+            <td><?php echo htmlspecialchars($value['city']); ?></td>
+            <td><?php echo htmlspecialchars($value['state']); ?></td>
+            <td><?php echo htmlspecialchars($value['cnpjcpf']); ?></td>
 
             <td style="display: flex; justify-content: center; gap: 10px; margin: 6px; padding: 6px;">
               <div>
                 <a class="btn-edit" href="<?php echo INCLUDE_PATH; ?>edit-suppliers?id=<?php echo base64_encode($value['id']); ?>">Editar</a>
               </div>
               <div>
-                <a class="btn-delete" href="<?php echo INCLUDE_PATH; ?>list-suppliers?delete?id=<?php echo base64_encode($value['id']); ?>">Deletar</a>
+                <a actionBtn="delete" class="btn-delete" href="<?php echo INCLUDE_PATH; ?>list-suppliers?delete=<?php echo $value['id']; ?>">Deletar</a>
               </div>
             </td>
           </tr>

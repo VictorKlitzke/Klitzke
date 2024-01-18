@@ -253,28 +253,37 @@
 
 <div class="overlay-portion">
     <div class="portion-sales">
-        <h2>Adicionar parcela da venda</h2>
+        <h2 class="h2-portion">Adicionar parcelas</h2>
         <div class="form-portion-sales">
             <form class="form" action="">
                 <div class="content-form">
-                    <label class="h2" for="">Parcelas</label>
-                    <input type="text" name="" id="">
-                </div>
-                <div class="content-form">
-                    <input class="button-portion" type="submit" name="action" value="Salvar">
+                    <input type="text" name="portion-total" id="portion-total" placeholder="Parcelas">
                 </div>
             </form>
-        </div>
-        <div class="box-content">
-            <div class="list">
-                <table>
-                    <thead>
-                        <td>Parcelas</td>
-                        <td>Valor das parcelas</td>
-                    </thead>
-                </table>
+            <div class="content-form">
+                <input class="button-portion right" type="button" name="action" value="Salvar">
             </div>
         </div>
+        <div class="list-table">
+            <div class="box-content">
+                <div class="list">
+                    <table>
+                        <thead>
+                            <td>#</td>
+                            <td>Parcelas</td>
+                            <td>Valor das parcelas</td>
+                        </thead>
+
+                        <tbody>
+                            <td>1</td>
+                            <td>1</td>
+                            <td>12,00</td>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <p id="totalPortion" class="p-portion right">R$ 0.00</p>
     </div>
 </div>
 

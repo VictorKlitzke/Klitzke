@@ -35,14 +35,12 @@ $users = Controllers::SelectAll('users', ($currentPage - 1) * $porPage, $porPage
       ?>
 
         <tr>
-          <td>
-            <p><?php echo $value['name']; ?></p>
-          </td>
-          <td><?php echo $value['email']; ?></td>
-          <td><?php echo $value['phone']; ?></td>
-          <td><?php echo $value['function']; ?></td>
-          <td> <?php echo $value['commission']; ?> %</td>
-          <td><?php echo $value['target_commission']; ?> % </td>
+          <td><p><?php echo htmlspecialchars($value['name']); ?></p></td>
+          <td><?php echo htmlspecialchars($value['email']); ?></td>
+          <td><?php echo htmlspecialchars($value['phone']); ?></td>
+          <td><?php echo htmlspecialchars($value['function']); ?></td>
+          <td> <?php echo htmlspecialchars($value['commission']); ?> %</td>
+          <td><?php echo htmlspecialchars($value['target_commission']); ?> % </td>
 
           <td style="display: flex; justify-content: center; gap: 10px; margin: 6px; padding: 6px;">
             <div>
@@ -61,7 +59,7 @@ $users = Controllers::SelectAll('users', ($currentPage - 1) * $porPage, $porPage
               </a>
             </div> -->
             <div>
-              <a class="btn-delete" href="<?php echo INCLUDE_PATH ?>list-users?delete?id=<?php echo base64_encode($value['id']); ?>">Deletar</a>
+              <a actionBtn="delete" class="btn-delete" href="<?php echo INCLUDE_PATH ?>list-users?delete=<?php echo $value['id']; ?>">Deletar</a>
             </div>
           </td>
         </tr>

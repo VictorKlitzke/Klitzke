@@ -7,7 +7,7 @@ const tdButton = document.getElementById("button-product");
 let Portion;
 let OverlayPortion;
 
-document.addEventListener('DOMContentLoaded', function () {
+document.addEventListener('DOMContentLoaded', function() {
     Portion = document.querySelector('.portion-sales');
     OverlayPortion = document.querySelector('.overlay-portion');
 });
@@ -98,8 +98,8 @@ function editProductValue(id) {
     calculateTotal();
 }
 
-document.addEventListener('DOMContentLoaded', function () {
-  
+document.addEventListener('DOMContentLoaded', function() {
+
     function openCreditModal() {
         if (Portion && OverlayPortion) {
             Portion.style.display = 'block';
@@ -140,13 +140,13 @@ async function finalizeSale() {
         let selectedPaymentMethod = document.getElementById('id_payment_method').value;
         console.log(selectedPaymentMethod);
         if (selectedPaymentMethod === '3') {
-            checkPaymentMethod();
+            openCreditModal();
         }
         let idSalesClient = selectedClientId;
 
         let requestData = {
-            id_payment_method: selectedPaymentMethod,
-            sales_id_client: idSalesClient,
+            idPaymentMethod: selectedPaymentMethod,
+            salesIdClient: idSalesClient,
             totalValue: totalValue,
             products: selectedProducts
         };
@@ -180,9 +180,12 @@ async function finalizeSale() {
     }
 }
 
-document.getElementById('id_payment_method').addEventListener('change', checkPaymentMethod);
+function PortionSales() {
+    let portionInput = document.createElement('portion-total').value;
 
-document.addEventListener('DOMContentLoaded', checkPaymentMethod);
+    // portionInput \ calculateTotal()
+
+}
 
 function calculateTotal() {
     let total = 0;
@@ -206,6 +209,13 @@ function calculateTotal() {
         totalAmountElement.textContent = 'R$ ' + total.toFixed(2);
     } else {
         console.error('Elemento totalAmount não encontrado.');
+    }
+
+    const totalPortion = document.getElementById('totalPortion');
+    if (totalPortion) {
+        totalPortion.textContent = 'R$ ' + total.toFixed(2);
+    } else {
+        console.error('Elemento totalPortion não encontrado.');
     }
 
     return total.toFixed(2);
@@ -244,13 +254,13 @@ function removeProduct(id) {
 
 document
     .getElementById("sales-search-form")
-    .addEventListener("submit", function (event) {
+    .addEventListener("submit", function(event) {
         event.preventDefault();
 
         let searchInput = document.getElementById("clientSelectedSales").value;
         let tableRows = document.querySelectorAll(".tbody-selected tr");
 
-        tableRows.forEach(function (row) {
+        tableRows.forEach(function(row) {
             let clientName = row
                 .querySelector("td:nth-child(2)")
                 .textContent.toLowerCase();
@@ -262,10 +272,10 @@ document
         });
     });
 
-document.addEventListener("DOMContentLoaded", function () {
+document.addEventListener("DOMContentLoaded", function() {
     let tableRows = document.querySelectorAll(".tbody-selected");
-    tableRows.forEach(function (row) {
-        row.addEventListener("dblclick", function () {
+    tableRows.forEach(function(row) {
+        row.addEventListener("dblclick", function() {
             let clientName = row.querySelector("td:nth-child(2)").textContent;
             let salesPageElement = document.getElementById("sales-page");
 
