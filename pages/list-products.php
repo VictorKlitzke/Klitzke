@@ -42,7 +42,7 @@ $products = Controllers::SelectAll('products', ($currentPage - 1) * $porPage, $p
                     <p><td><?php echo htmlspecialchars($value['name']); ?></td></p>
                     <td><?php echo htmlspecialchars($value['quantity']); ?></td>
                     <td><?php echo htmlspecialchars($value['barcode']); ?></td>
-                    <td>R$ <?php echo htmlspecialchars($value['total_value']); ?></td>
+                    <td>R$ <?php echo htmlspecialchars($value['value_product']); ?></td>
                     <td>R$ <?php echo htmlspecialchars($value['cost_value']); ?></td>
                     <td><?php echo htmlspecialchars($value['stock_quantity']); ?></td>
                     <td><?php echo htmlspecialchars($value['reference']); ?></td>
@@ -63,6 +63,34 @@ $products = Controllers::SelectAll('products', ($currentPage - 1) * $porPage, $p
             <?php } ?>
 
         </table>
+
+        <?php 
+        
+            $sql = Db::Connection();
+            $exec = $sql->prepare("SELECT SUM(value_product) as value_product FROM products");
+            $exec->execute();
+            $result_value_product = $exec->fetch(PDO::FETCH_ASSOC);
+        
+        ?>
+
+        <?php 
+        
+            $sql = Db::Connection();
+            $exec = $sql->prepare("SELECT SUM(quantity) as quantity FROM products");
+            $exec->execute();
+            $result_quantity_product = $exec->fetch(PDO::FETCH_ASSOC);
+    
+        ?>
+
+
+        <div class="totalizator">
+            <h4>Quantidade total de itens</h4>
+            <p><?php echo $result_quantity_product['$quantity']; ?></p>
+        </div>
+        <div class="totalizator right">
+            <h4>Total valores produtos</h4>
+        </div>
+        <h2><?php echo $result_value_product['$value_product']; ?></h2>
     </div>
 </div>
 

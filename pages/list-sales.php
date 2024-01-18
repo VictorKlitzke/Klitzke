@@ -61,19 +61,11 @@ $sales = Controllers::SelectSales('sales', ($currentPage - 1) * $porPage, $porPa
             <thead>
                 <tr>
                     <td>Usuario</td>
-                    <p>
-                        <td>Cliente</td>
-                    </p>
-                    <p>
-                        <td>Forma de Pagamento</td>
-                    </p>
+                    <p><td>Cliente</td></p>
+                    <p><td>Forma de Pagamento</td></p>
                     <td>Produto</td>
-                    <p>
-                        <td>Quantidade</td>
-                    </p>
-                    <p>
-                        <td>Valor</td>
-                    </p>
+                    <p><td>Quantidade</td></p>
+                    <p><td>Valor</td></p>
 
                 </tr>
             </thead>
@@ -82,30 +74,16 @@ $sales = Controllers::SelectSales('sales', ($currentPage - 1) * $porPage, $porPa
 
             foreach ($sales as $key => $value) {
 
-                ?>
+            ?>
 
                 <tbody>
                     <tr>
-                        <p>
-                            <td>
-                                <?php echo $value['users']; ?>
-                            </td>
-                        </p>
-                        <td>
-                            <?php echo $value['clients']; ?>
-                        </td>
-                        <td>
-                            <?php echo $value['form_payment']; ?>
-                        </td>
-                        <td>
-                            <?php echo $value['products']; ?>
-                        </td>
-                        <td>
-                            <?php echo $value['quantity']; ?>,00
-                        </td>
-                        <td>
-                            <?php echo $value['value']; ?>
-                        </td>
+                        <p><td><?php echo htmlspecialchars($value['users']); ?></td></p>
+                        <td><?php echo htmlspecialchars($value['clients']); ?></td>
+                        <td><?php echo htmlspecialchars($value['form_payment']); ?></td>
+                        <td><?php echo htmlspecialchars($value['products']); ?></td>
+                        <td><?php echo htmlspecialchars($value['quantity']); ?></td>
+                        <td><?php echo htmlspecialchars($value['value']); ?></td>
 
                         <td style="display: flex; justify-content: center; gap: 10px; margin: 6px; padding: 6px;">
                             <div>

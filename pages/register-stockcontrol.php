@@ -5,64 +5,65 @@ ini_set('display_errors', 1);
 
 $status_product = 'Em estoque';
 
-$users = Controllers::Select('users');
-if (isset($users['id'])) {
+$user_id = isset($_SESSION['id']) ? $_SESSION['id'] : null;
 
-    if (isset($_POST['action'])) {
+if (isset($_POST['action'])) {
 
-        $name = $_POST['name'];
-        $quantity = $_POST['quantity'];
-        $barcode = $_POST['barcode'];
-        $value_product = $_POST['value_product'];
-        $value_product = str_replace(',', '.', preg_replace("/[^0-9,.]/", "", $value_product));
-        number_format($value_product);
-        $cost_value = $_POST['cost_value'];
-        $cost_value = str_replace(',', '.', preg_replace("/[^0-9,.]/", "", $cost_value));
-        number_format($cost_value);
-        $model = $_POST['model'];
-        $brand = $_POST['brand'];
-        $reference = $_POST['reference'];
-        $stock_quantity = $_POST['stock_quantity'];
-        $register_date = $_POST['register_date'];
-        $id_users = $users['id'];
-        $flow = $_FILES['flow'];
-        $status_product = $_POST['status_product'];
+    $name = $_POST['name'];
+    $quantity = $_POST['quantity'];
+    $barcode = $_POST['barcode'];
+    $value_product = $_POST['value_product'];
+    $value_product = str_replace(',', '.', preg_replace("/[^0-9,.]/", "", $value_product));
+    number_format($value_product);
+    floatval($value_product);
+    $cost_value = $_POST['cost_value'];
+    $cost_value = str_replace(',', '.', preg_replace("/[^0-9,.]/", "", $cost_value));
+    number_format($cost_value);
+    floatval($cost_value);
+    $model = $_POST['model'];
+    $brand = $_POST['brand'];
+    $reference = $_POST['reference'];
+    $stock_quantity = $_POST['stock_quantity'];
+    $register_date = $_POST['register_date'];
+    $id_users = $user_id;
+    $flow = $_FILES['flow'];
+    $status_product = $_POST['status_product'];
 
-        $name_img = Panel::UploadsImg($flow);
+    $name_img = Panel::UploadsImg($flow);
 
-        if ($name == '' || $value_product == '' || $cost_value == '') {
-            Panel::Alert('attention', 'Os campos não podem ficar vázios!');
+    if ($name == '' || $value_product == '' || $cost_value == '') {
+        Panel::Alert('attention', 'Os campos não podem ficar vázios!');
+    } else {
+        $verification = Db::Connection()->prepare("SELECT * FROM `products` WHERE name = ? AND id_users = ?");
+        $verification->execute([$_POST['name'], $user_id]);
+
+        if ($verification->rowCount() > 0) {
+            $updateQuery = Db::Connection()->prepare("UPDATE `products` SET stock_quantity = stock_quantity + ?, status_product = 'Em estoque' WHERE name = ? AND id_users = ?");
+            $updateQuery->execute([$_POST['stock_quantity'], $_POST['status_product'], $_POST['name'], $user_id]);
+            Panel::Alert('sucess', 'O cadastro do produto ' . $name . ' foi realizado com sucesso!');
         } else {
-            $verification = Db::Connection()->prepare("SELECT * FROM `products` WHERE name = ? AND id_users = ?");
-            $verification->execute([$_POST['name'], $users['id']]);
-
-            if ($verification->rowCount() > 0) {
-                $updateQuery = Db::Connection()->prepare("UPDATE `products` SET stock_quantity = stock_quantity + ?, status_product = 'Em estoque' WHERE name = ? AND id_users = ?");
-                $updateQuery->execute([$_POST['stock_quantity'], $_POST['status_product'], $_POST['name'], $users['id']]);
-                Panel::Alert('sucess', 'O cadastro do produto ' . $name . ' foi realizado com sucesso!');
-            } else {
-                $arr = [
-                    'name' => $name,
-                    'quantity' => $quantity,
-                    'barcode' => $barcode,
-                    'value_product' => $value_product,
-                    'cost_value' => $cost_value,
-                    'model' => $model,
-                    'brand' => $brand,
-                    'reference' => $reference,
-                    'stock_quantity' => $stock_quantity,
-                    'register_date' => $register_date,
-                    'id_users' => $id_users,
-                    'flow' => $name_img,
-                    'status_product' => 'Em estoque',
-                    'name_table' => 'products'
-                ];
-                Controllers::Insert($arr);
-                Panel::Alert('sucess', 'O cadastro do produto ' . $name . ' foi realizado com sucesso!');
-            }
+            $arr = [
+                'name' => $name,
+                'quantity' => $quantity,
+                'barcode' => $barcode,
+                'value_product' => $value_product,
+                'cost_value' => $cost_value,
+                'model' => $model,
+                'brand' => $brand,
+                'reference' => $reference,
+                'stock_quantity' => $stock_quantity,
+                'register_date' => $register_date,
+                'id_users' => $id_users,
+                'flow' => $name_img,
+                'status_product' => 'Em estoque',
+                'name_table' => 'products'
+            ];
+            Controllers::Insert($arr);
+            Panel::Alert('sucess', 'O cadastro do produto ' . $name . ' foi realizado com sucesso!');
         }
     }
 }
+
 ?>
 
 
@@ -114,9 +115,9 @@ if (isset($users['id'])) {
             <input type="date" name="register_date">
         </div>
         <div class="content-form">
-            <input type="hidden" name="id_users"/>
-            <input type="hidden" name="status_product"/>
-            <input type="hidden" name="name_table" value="products"/>
+            <input type="hidden" name="id_users" />
+            <input type="hidden" name="status_product" />
+            <input type="hidden" name="name_table" value="products" />
             <input type="submit" name="action" value="Cadastrar">
         </div>
     </form>
@@ -130,7 +131,7 @@ if (isset($users['id'])) {
 
         form.addEventListener('keydown', function (event) {
             if (event.key === 'Enter') {
-                event.preventDefault(); 
+                event.preventDefault();
 
                 var currentInput = event.target;
                 var formElements = form.elements;
