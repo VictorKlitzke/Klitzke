@@ -20,41 +20,45 @@ $sales = Controllers::SelectSales('sales', ($currentPage - 1) * $porPage, $porPa
 ?>
 
 <div class="box-content">
-<h2>Filtros personalizados</h2>
-    <div class="filter-form">
-        <form method="post">
-            <select name="userFilter" id="userFilter">
+<div class="filter-container">
+    <div class="filter-content">
+    <h2 style="color: #000">Filtros</h2>
+        <div class="filter-form">
+            <form method="post">
+                <select name="userFilter" id="userFilter">
 
-                <?php
+                    <?php
 
-                $users = Controllers::SelectAll('users');
+                    $users = Controllers::SelectAll('users');
 
-                foreach ($users as $user) {
-                    echo '<option value="' . $user['id'] . '">' . $user['name'] . '</option>';
-                }
+                    foreach ($users as $user) {
+                        echo '<option value="' . $user['id'] . '">' . $user['name'] . '</option>';
+                    }
 
-                ?>
+                    ?>
 
-            </select>
-            <button class="filter" type="submit">Filtrar</button>
-        </form>
-        <form method="post">
-            <select name="form_filter" id="form_filter">
+                </select>
+                <button class="filter" type="submit">Filtrar</button>
+            </form>
+            <form method="post">
+                <select name="form_filter" id="form_filter">
 
-                <?php
+                    <?php
 
-                $form_payment = Controllers::SelectAll('form_payment');
+                    $form_payment = Controllers::SelectAll('form_payment');
 
-                foreach ($form_payment as $form_payments) {
-                    echo '<option value="' . $form_payments['id'] . '">' . $form_payments['name'] . '</option>';
-                }
+                    foreach ($form_payment as $form_payments) {
+                        echo '<option value="' . $form_payments['id'] . '">' . $form_payments['name'] . '</option>';
+                    }
 
-                ?>
+                    ?>
 
-            </select>
-            <button class="filter" type="submit">Filtrar</button>
-        </form>
+                </select>
+                <button class="filter" type="submit">Filtrar</button>
+            </form>
+        </div>
     </div>
+</div>
     <h2>Lista de Vendas</h2>
     <div class="list">
         <table>

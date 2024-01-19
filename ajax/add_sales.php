@@ -110,7 +110,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             $sql->commit();
 
-            echo json_encode(['success' => true, 'message' => 'Venda registrada com sucesso']);
+            echo json_encode(['success' => true, 'message' => htmlspecialchars('Venda registrada com sucesso')]);
         }
 
     } catch (PDOException $e) {

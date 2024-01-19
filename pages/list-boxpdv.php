@@ -19,7 +19,8 @@ $boxpdv = Controllers::SelectBoxPdv('boxpdv', ($currentPage - 1) * $porPage, $po
 
 <div class="box-content">
   <div class="filter-container">
-    <h2>Filtro</h2>
+    <div class="filter-content">
+    <h2 style="color: #000">Filtros</h2>
     <div class="filter-form">
       <form method="post">
         <select name="user_filter" id="user_filter">
@@ -37,6 +38,7 @@ $boxpdv = Controllers::SelectBoxPdv('boxpdv', ($currentPage - 1) * $porPage, $po
         </select>
         <button class="filter" type="submit">Filtrar</button>
       </form>
+    </div>
     </div>
   </div>
   <div class="list">

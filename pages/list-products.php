@@ -63,34 +63,48 @@ $products = Controllers::SelectAll('products', ($currentPage - 1) * $porPage, $p
             <?php } ?>
 
         </table>
+    </div>
+</div>
 
-        <?php 
-        
-            $sql = Db::Connection();
-            $exec = $sql->prepare("SELECT SUM(value_product) as value_product FROM products");
-            $exec->execute();
-            $result_value_product = $exec->fetch(PDO::FETCH_ASSOC);
-        
-        ?>
-
-        <?php 
-        
-            $sql = Db::Connection();
-            $exec = $sql->prepare("SELECT SUM(quantity) as quantity FROM products");
-            $exec->execute();
-            $result_quantity_product = $exec->fetch(PDO::FETCH_ASSOC);
+<?php 
     
-        ?>
+    $sql = Db::Connection();
+    $exec = $sql->prepare("SELECT SUM(value_product) as value_product FROM products");
+    $exec->execute();
+    $result_value_product = $exec->fetch(PDO::FETCH_ASSOC);
 
+?>
 
-        <div class="totalizator">
-            <h4>Quantidade total de itens</h4>
-            <p><?php echo $result_quantity_product['$quantity']; ?></p>
-        </div>
-        <div class="totalizator right">
-            <h4>Total valores produtos</h4>
-        </div>
-        <h2><?php echo $result_value_product['$value_product']; ?></h2>
+<?php 
+
+    $sql = Db::Connection();
+    $exec = $sql->prepare("SELECT SUM(quantity) as quantity FROM products");
+    $exec->execute();
+    $result_quantity_product = $exec->fetch(PDO::FETCH_ASSOC);
+
+?>
+
+<?php 
+
+    $sql = Db::Connection();
+    $exec = $sql->prepare("SELECT SUM(cost_value) as cost_value FROM products");
+    $exec->execute();
+    $result_cost_value_product = $exec->fetch(PDO::FETCH_ASSOC);
+
+?>
+
+<div class="totalizator">
+    <div class="card-totalizator">
+        <h2>Quantidade total de itens</h2>
+        <h2><?php echo $result_quantity_product['quantity']; ?></h2>
+    </div>
+    <div class="card-totalizator">
+        <h2>Total valores produtos</h2>
+        <h2><?php echo $result_value_product['value_product'];?> Reais</h2>
+    </div>
+    <div class="card-totalizator">
+        <h2>Total valores de custo</h2>
+        <h2><?php echo $result_cost_value_product['cost_value'];?> Reais</h2>
     </div>
 </div>
 

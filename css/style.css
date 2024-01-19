@@ -626,7 +626,15 @@ table tr {
 }
 
 .filter-container {
-    background: #538274;
+    display: block;
+    margin-bottom: 25px;
+}
+
+.filter-content {
+    background: #ccc;
+    padding: 6px;
+    border-radius: 5px;
+    box-shadow: 0 4px 8px rgba(255, 255, 255, 0.6);
 }
 
 .filter-form {
@@ -666,6 +674,23 @@ table tr {
 
 .filter:hover {
     background: #191919;
+}
+
+.totalizator {
+    display: flex;
+    justify-content: start;
+    gap: 6px;
+    margin-bottom: 25px;
+}
+
+.card-totalizator {
+    width: 350px;
+    height: 100px;
+    background-color: #202020;
+    border-radius: 5px;
+    padding: 20px;
+    text-align: center;
+    box-shadow: 0 4px 8px rgba(118, 118, 118, 0.9);
 }
 
 
