@@ -255,35 +255,30 @@
     <div class="portion-sales">
         <h2 class="h2-portion">Adicionar parcelas</h2>
         <div class="form-portion-sales">
-            <form class="form" action="">
+            <form class="form" method="post">
                 <div class="content-form">
                     <input type="text" name="portion-total" id="portion-total" placeholder="Parcelas">
                 </div>
             </form>
             <div class="content-form">
-                <input class="button-portion right" type="button" name="action" value="Salvar">
+                <button class="button-portion right" type="button">Salvar</button>
             </div>
         </div>
         <div class="list-table">
             <div class="box-content">
-                <div class="list">
-                    <table>
-                        <thead>
-                            <td>#</td>
-                            <td>Parcelas</td>
-                            <td>Valor das parcelas</td>
-                        </thead>
-
-                        <tbody>
-                            <td>1</td>
-                            <td>1</td>
-                            <td>12,00</td>
-                        </tbody>
-                    </table>
-                </div>
+                <table id="portion-value">
+                    <thead>
+                        <td>#</td>
+                        <td>Parcelas</td>
+                        <td>Valor das parcelas</td>
+                    </thead>
+                    <tbody id="desc-portion">
+                    </tbody>
+                </table>
             </div>
         </div>
-        <p id="totalPortion" class="p-portion right">R$ 0.00</p>
+        <p id="total-portion-sales" class="p-portion right">R$ 0.00</p>
+        <p id="total-Amount" class="p-portion left">R$ 0.00</p>
     </div>
 </div>
 

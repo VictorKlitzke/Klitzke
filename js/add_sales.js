@@ -180,23 +180,26 @@ async function finalizeSale() {
     }
 }
 
-function PortionSales() {
-    let portionInput = document.createElement('portion-total').value;
+function updateTotalAmount(total) {
 
-    // portionInput \ calculateTotal()
+    let totalAmountElement = document.getElementById('totalAmount');
 
+    if (totalAmountElement) {
+        totalAmountElement.textContent = 'R$ ' + total.toFixed(2);
+    }
 }
 
 function calculateTotal() {
+
     let total = 0;
 
     selectedProducts.forEach(product => {
-        const quantityElement = document.getElementById('product-quantity-' + product.id);
-        const valueElement = document.getElementById('value' + product.id);
+        let quantityElement = document.getElementById('product-quantity-' + product.id);
+        let valueElement = document.getElementById('value' + product.id);
 
         if (quantityElement && valueElement) {
-            const quantityElementTotal = parseInt(quantityElement.textContent) || 0;
-            const value = parseFloat(valueElement.value) || 0;
+            let quantityElementTotal = parseInt(quantityElement.textContent) || 0;
+            let value = parseFloat(valueElement.value) || 0;
 
             total += quantityElementTotal * value;
         } else {
@@ -204,22 +207,55 @@ function calculateTotal() {
         }
     });
 
-    const totalAmountElement = document.getElementById('totalAmount');
+    let totalAmountElement = document.getElementById('totalAmount');
     if (totalAmountElement) {
         totalAmountElement.textContent = 'R$ ' + total.toFixed(2);
-    } else {
-        console.error('Elemento totalAmount não encontrado.');
     }
 
-    const totalPortion = document.getElementById('totalPortion');
-    if (totalPortion) {
-        totalPortion.textContent = 'R$ ' + total.toFixed(2);
-    } else {
-        console.error('Elemento totalPortion não encontrado.');
-    }
+    updateTotalAmount(total);
 
     return total.toFixed(2);
 }
+
+document.addEventListener('DOMContentLoaded', function() {
+    const saveButton = document.querySelector('.button-portion');
+    const descPortionTbody = document.getElementById('desc-portion');
+    const totalPortionElement = document.getElementById('total-portion-sales');
+    const totalAmountElement = document.getElementById('totalAmount');
+
+    if (saveButton) {
+        saveButton.addEventListener('click', function() {
+            const portionTotalInput = document.getElementById('portion-total');
+            const portionTotal = parseInt(portionTotalInput.value) || 1;
+
+            if (portionTotal <= 0) {
+                alert('Por favor, insira um número válido de parcelas.');
+                return;
+            }
+
+            const totalAmount = parseFloat(totalAmountElement.textContent.replace('R$ ', '')) || 0;
+            const portionValue = totalAmount / portionTotal;
+
+            descPortionTbody.innerHTML = '';
+
+            for (let i = 1; i <= portionTotal; i++) {
+                const newRow = descPortionTbody.insertRow();
+                const cellNumber = newRow.insertCell(0);
+                const cellPortion = newRow.insertCell(1);
+                const cellValue = newRow.insertCell(2);
+
+                cellNumber.textContent = i;
+                cellPortion.textContent = i;
+                cellValue.textContent = 'R$ ' + portionValue.toFixed(2);
+            }
+
+            totalPortionElement.textContent = 'R$ ' + portionValue.toFixed(2);
+        });
+        portionTotalInput.innerHTML == '';
+    }
+});
+
+
 
 function removeProduct(id) {
 
@@ -250,6 +286,14 @@ function removeProduct(id) {
         console.error("Array de produtos está vazio");
     }
     calculateTotal();
+}
+
+if (process.env.NODE_ENV !== 'production') {
+    console.log('Valor sensível:', valorSensivel);
+}
+
+if (process.env.NODE_ENV === 'development') {
+    console.log('Somente exibido em ambiente de desenvolvimento');
 }
 
 document
