@@ -138,7 +138,7 @@
 
                 </select>
                 <input type="hidden" name="id_payment_method" value="<?php $value['id']; ?>">
-                <div id="finish-sales" class="finish-button">
+                <div onclick="finalizeSale()" id="finish-sales" class="finish-button">
                     <button id="finish-sales" type="submit" class="finish-sales">Finalizar Venda</button>
                 </div>
             </div>
@@ -277,8 +277,8 @@
                 </table>
             </div>
         </div>
+        <button onclick="savePortionsToDatabase()" class="finish-portion left" type="submit">Finalizar venda</button>
         <p id="total-portion-sales" class="p-portion right">R$ 0.00</p>
-        <p id="total-Amount" class="p-portion left">R$ 0.00</p>
     </div>
 </div>
 

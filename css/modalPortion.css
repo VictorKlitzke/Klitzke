@@ -35,6 +35,25 @@
     left: 50%;
     width: 50%;
     transform: translate(-50%, -50%);
+    overflow-y: auto;
+}
+
+.finish-portion {
+    padding: 8px;
+    border-radius: 4px;
+    margin: 4px;
+    font-size: 12px;
+    background: #1b1b1b;
+    border: 1px solid #323232;
+    color: #ccc;
+    font-weight: bold;
+    cursor: pointer;
+    width: 30%;
+    transition: background 0.3s, color 0.3s;
+}
+
+.finish-portion:hover {
+    background: #323232;
 }
 
 .button-portion {
@@ -48,11 +67,6 @@
     border: 1px solid #1b1b1b;
     padding: 4px;
     cursor: pointer;
-}
-
-#desc-portion,
-#portion-value {
-    overflow-x: auto;
 }
 
 .button-portion:hover {

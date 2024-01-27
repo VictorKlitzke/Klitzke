@@ -222,40 +222,80 @@ document.addEventListener('DOMContentLoaded', function() {
     const descPortionTbody = document.getElementById('desc-portion');
     const totalPortionElement = document.getElementById('total-portion-sales');
     const totalAmountElement = document.getElementById('totalAmount');
+    const paymentMethodInput = document.getElementById('id_payment_method');
+
+    function calculateAndDisplayPortions() {
+        const portionTotalInput = document.getElementById('portion-total');
+        const portionTotal = parseInt(portionTotalInput.value) || 1;
+
+        if (portionTotal <= 0) {
+            alert('Por favor, insira um número válido de parcelas.');
+            return;
+        }
+
+        const totalAmount = parseFloat(totalAmountElement.textContent.replace('R$ ', '')) || 0;
+        const portionValue = totalAmount / portionTotal;
+
+        descPortionTbody.innerHTML = '';
+
+        for (let i = 1; i <= portionTotal; i++) {
+            const newRow = descPortionTbody.insertRow();
+            const cellNumber = newRow.insertCell(0);
+            const cellPortion = newRow.insertCell(1);
+            const cellValue = newRow.insertCell(2);
+
+            cellNumber.textContent = i;
+            cellPortion.textContent = i;
+            cellValue.textContent = 'R$ ' + portionValue.toFixed(2);
+        }
+
+        totalPortionElement.textContent = 'R$ ' + portionValue.toFixed(2);
+    }
 
     if (saveButton) {
         saveButton.addEventListener('click', function() {
-            const portionTotalInput = document.getElementById('portion-total');
+            calculateAndDisplayPortions();
             const portionTotal = parseInt(portionTotalInput.value) || 1;
-
-            if (portionTotal <= 0) {
-                alert('Por favor, insira um número válido de parcelas.');
-                return;
-            }
-
-            const totalAmount = parseFloat(totalAmountElement.textContent.replace('R$ ', '')) || 0;
-            const portionValue = totalAmount / portionTotal;
-
-            descPortionTbody.innerHTML = '';
-
-            for (let i = 1; i <= portionTotal; i++) {
-                const newRow = descPortionTbody.insertRow();
-                const cellNumber = newRow.insertCell(0);
-                const cellPortion = newRow.insertCell(1);
-                const cellValue = newRow.insertCell(2);
-
-                cellNumber.textContent = i;
-                cellPortion.textContent = i;
-                cellValue.textContent = 'R$ ' + portionValue.toFixed(2);
-            }
-
-            totalPortionElement.textContent = 'R$ ' + portionValue.toFixed(2);
+            const paymentMethod = paymentMethodInput ? paymentMethodInput.value : '';
+            savePortionsToDatabase(portionTotal, paymentMethod);
         });
-        portionTotalInput.innerHTML == '';
     }
+
+    calculateAndDisplayPortions();
 });
 
+async function savePortionsToDatabase(portionValue, paymentMethod) {
+    try {
+        let totalAmount = parseFloat(totalAmountElement.textContent.replace('R$ ', '')) || 0;
+        let idSalesClient = selectedClientId;
 
+        let requestDataPortion = {
+            paymentMethod: paymentMethod,
+            salesIdClient: idSalesClient,
+            totalValue: totalAmount,
+            portionValue: portionValue,
+            products: selectedProducts
+        };
+
+        const response = await fetch('http://localhost/Klitzke/ajax/save_portion_sales.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(requestDataPortion),
+        });
+
+        const responseData = await response.json();
+
+        if (responseData && responseData.success) {
+            console.log('Parcelas salvas com sucesso!');
+        } else {
+            console.error('Erro ao salvar parcelas:', responseData ? responseData.error : 'Resposta vazia');
+        }
+    } catch (error) {
+        console.error('Erro ao enviar dados para o PHP:', error);
+    }
+}
 
 function removeProduct(id) {
 
@@ -288,13 +328,13 @@ function removeProduct(id) {
     calculateTotal();
 }
 
-if (process.env.NODE_ENV !== 'production') {
-    console.log('Valor sensível:', valorSensivel);
-}
+// if (process.env.NODE_ENV !== 'production') {
+//     console.log('Valor sensível:', valorSensivel);
+// }
 
-if (process.env.NODE_ENV === 'development') {
-    console.log('Somente exibido em ambiente de desenvolvimento');
-}
+// if (process.env.NODE_ENV === 'development') {
+//     console.log('Somente exibido em ambiente de desenvolvimento');
+// }
 
 document
     .getElementById("sales-search-form")
@@ -324,6 +364,8 @@ document.addEventListener("DOMContentLoaded", function() {
             let salesPageElement = document.getElementById("sales-page");
 
             selectedClientId = row.querySelector("td:first-child").textContent;
+
+            console.log(selectedClientId, clientName);
 
             if (salesPageElement) {
                 salesPageElement.innerHTML =
