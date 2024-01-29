@@ -27,6 +27,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $selectedPaymentMethod = $requestData['id_payment_method'] ?? '';
     $id_sales_client = $requestData['sales_id_client'] ?? '';
     $selectedProducts = $requestData['products'] ?? [];
+    $portionTotal = $requestData['portion-total'] ?? 1;
+    $portionValue = $requestData['portion-value'] ?? 0;
 
     try {
 
@@ -85,6 +87,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                 }
             }
+
+            $execPortion = $sql->prepare("INSERT INTO sales_portion (number_portion, date_portion, value_portion, id_sales) 
+                VALUES (:portionTotal, NOW(), :portionValue, :lastSaleId)");
+            $execPortion->bindParam(':portionTotal', $portionTotal, PDO::PARAM_STR);
+            $execPortion->bindParam(':portionValue', $portionValue, PDO::PARAM_STR);
+            $execPortion->bindParam(':lastSaleId', $lastSaleId, PDO::PARAM_INT);
+            $execPortion->execute();
 
             $checkStock = $sql->prepare("SELECT id FROM products WHERE id = :productId AND stock_quantity - :productQuantity < 0");
             $checkStock->bindParam(':productId', $productId, PDO::PARAM_INT);

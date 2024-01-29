@@ -1,11 +1,17 @@
-const selectedProducts = [];
+let selectedProducts = [];
 let selectedClientId;
+let Portion;
+let OverlayPortion;
+let portionValues;
 
 const trProduct = document.getElementById("product-result");
 const tdButton = document.getElementById("button-product");
 
-let Portion;
-let OverlayPortion;
+const saveButton = document.getElementById('button-portion');
+const descPortionTbody = document.getElementById('desc-portion');
+const totalPortionElement = document.getElementById('total-portion-sales');
+const totalAmountElement = document.getElementById('totalAmount');
+const portionTotalInput = document.getElementById('portion-total');
 
 document.addEventListener('DOMContentLoaded', function() {
     Portion = document.querySelector('.portion-sales');
@@ -98,21 +104,21 @@ function editProductValue(id) {
     calculateTotal();
 }
 
+function openCreditModal() {
+    if (Portion && OverlayPortion) {
+        Portion.style.display = 'block';
+        OverlayPortion.style.display = 'block';
+    }
+}
+
+function closeCreditModal() {
+    if (Portion && OverlayPortion) {
+        Portion.style.display = 'none';
+        OverlayPortion.style.display = 'none';
+    }
+}
+
 document.addEventListener('DOMContentLoaded', function() {
-
-    function openCreditModal() {
-        if (Portion && OverlayPortion) {
-            Portion.style.display = 'block';
-            OverlayPortion.style.display = 'block';
-        }
-    }
-
-    function closeCreditModal() {
-        if (Portion && OverlayPortion) {
-            Portion.style.display = 'none';
-            OverlayPortion.style.display = 'none';
-        }
-    }
 
     function checkPaymentMethod() {
         var selectedPaymentMethod = document.getElementById('id_payment_method').value;
@@ -125,24 +131,114 @@ document.addEventListener('DOMContentLoaded', function() {
 
     document.getElementById('id_payment_method').addEventListener('change', checkPaymentMethod);
 
+    const finishButton = document.getElementById('finish-portion');
+
+    if (saveButton) {
+        saveButton.addEventListener('click', function() {
+            portionValues = calculateAndDisplayPortions();
+        });
+    }
+
+    if (finishButton) {
+        finishButton.addEventListener('click', function() {
+            finalizeSale();
+        });
+    }
+
+    function calculateAndDisplayPortions() {
+        const portionTotal = parseInt(portionTotalInput.value) || 1;
+
+        if (portionTotal <= 0) {
+            alert('Por favor, insira um número válido de parcelas.');
+            return;
+        }
+
+        const totalAmount = parseFloat(totalAmountElement.textContent.replace('R$ ', '')) || 0;
+        const portionValue = totalAmount / portionTotal;
+
+        descPortionTbody.innerHTML = '';
+
+        for (let i = 1; i <= portionTotal; i++) {
+            const newRow = descPortionTbody.insertRow();
+            const cellNumber = newRow.insertCell(0);
+            const cellPortion = newRow.insertCell(1);
+            const cellValue = newRow.insertCell(2);
+
+            cellNumber.textContent = i;
+            cellPortion.textContent = i;
+            cellValue.textContent = 'R$ ' + portionValue.toFixed(2);
+        }
+
+        totalPortionElement.textContent = 'R$ ' + portionValue.toFixed(2);
+
+        return {
+            portionTotal: portionTotal,
+            portionValue: portionValue
+        };
+    }
 });
 
 async function finalizeSale() {
-    try {
 
-        let totalAmountElement = document.getElementById('totalAmount');
-        let totalValue = 0;
-        if (totalAmountElement) {
-            totalValue = parseFloat(totalAmountElement.textContent.replace('R$ ', '')) || 0;
+    let totalAmountElement = document.getElementById('totalAmount');
+    let totalValue = 0;
+    if (totalAmountElement) {
+        totalValue = parseFloat(totalAmountElement.textContent.replace('R$ ', '')) || 0;
+    }
+
+    let selectedPaymentMethod = document.getElementById('id_payment_method').value;
+    let idSalesClient = selectedClientId;
+
+    if (selectedPaymentMethod === '3') {
+        openCreditModal();
+
+        let requestData = {
+            idPaymentMethod: selectedPaymentMethod,
+            salesIdClient: idSalesClient,
+            totalValue: totalValue,
+            portionTotal: portionValues,
+            portionValue: portionValues,
+            products: selectedProducts
+        };
+
+        console.log(requestData);
+
+        if (selectedProducts.length === 0) {
+
+            showErrorMessage('Erro ao registrar venda, nenhum produto selecionado');
+            return;
+        } else {
+            if (portionTotal <= 0) {
+
+                showErrorMessage('Por favor, insira um número válido de parcelas.');
+                return;
+            } else {
+
+                try {
+                    const response = await fetch('http://localhost/Klitzke/ajax/add_sales.php', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(requestData),
+                    });
+
+                    const responseBody = await response.text();
+                    const responseData = JSON.parse(responseBody);
+
+                    if (responseData && responseData.success) {
+                        showSuccessMessage('Venda finalizada com sucesso!');
+                        // const saleId = responseData.id;
+                        // window.location.href = 'pages/proof.php?sale_id=' + saleId;
+                    } else {
+                        console.error('Erro ao registrar venda:', responseData ? responseData.error : 'Resposta vazia');
+                    }
+                } catch (error) {
+                    console.error('Erro ao enviar dados para o PHP:', error);
+                }
+            }
         }
-
-
-        let selectedPaymentMethod = document.getElementById('id_payment_method').value;
-        console.log(selectedPaymentMethod);
-        if (selectedPaymentMethod === '3') {
-            openCreditModal();
-        }
-        let idSalesClient = selectedClientId;
+    } else {
 
         let requestData = {
             idPaymentMethod: selectedPaymentMethod,
@@ -155,28 +251,30 @@ async function finalizeSale() {
             showErrorMessage('Erro ao registrar venda, nenhum produto selecionado');
             return;
         } else {
-            const response = await fetch('http://localhost/Klitzke/ajax/add_sales.php', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(requestData),
-            });
+            try {
+                const response = await fetch('http://localhost/Klitzke/ajax/add_sales.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(requestData),
+                });
 
-            const responseBody = await response.text();
+                const responseBody = await response.text();
+                const responseData = JSON.parse(responseBody);
 
-            const responseData = JSON.parse(responseBody);
+                if (responseData && responseData.success) {
+                    showSuccessMessage('Venda finalizada com sucesso!');
+                    // const saleId = responseData.id;
+                    // window.location.href = 'pages/proof.php?sale_id=' + saleId;
+                } else {
+                    console.error('Erro ao registrar venda:', responseData ? responseData.error : 'Resposta vazia');
+                }
 
-            if (responseData && responseData.success) {
-                showSuccessMessage('Venda finalizada com sucesso!');
-                // const saleId = responseData.id;
-                // window.location.href = 'pages/proof.php?sale_id=' + saleId;
-            } else {
-                console.error('Erro ao registrar venda:', responseData ? responseData.error : 'Resposta vazia');
+            } catch (error) {
+                console.error('Erro ao enviar dados para o PHP:', error);
             }
         }
-    } catch (error) {
-        console.error('Erro ao enviar dados para o PHP:', error);
     }
 }
 
@@ -215,86 +313,6 @@ function calculateTotal() {
     updateTotalAmount(total);
 
     return total.toFixed(2);
-}
-
-document.addEventListener('DOMContentLoaded', function() {
-    const saveButton = document.querySelector('.button-portion');
-    const descPortionTbody = document.getElementById('desc-portion');
-    const totalPortionElement = document.getElementById('total-portion-sales');
-    const totalAmountElement = document.getElementById('totalAmount');
-    const paymentMethodInput = document.getElementById('id_payment_method');
-
-    function calculateAndDisplayPortions() {
-        const portionTotalInput = document.getElementById('portion-total');
-        const portionTotal = parseInt(portionTotalInput.value) || 1;
-
-        if (portionTotal <= 0) {
-            alert('Por favor, insira um número válido de parcelas.');
-            return;
-        }
-
-        const totalAmount = parseFloat(totalAmountElement.textContent.replace('R$ ', '')) || 0;
-        const portionValue = totalAmount / portionTotal;
-
-        descPortionTbody.innerHTML = '';
-
-        for (let i = 1; i <= portionTotal; i++) {
-            const newRow = descPortionTbody.insertRow();
-            const cellNumber = newRow.insertCell(0);
-            const cellPortion = newRow.insertCell(1);
-            const cellValue = newRow.insertCell(2);
-
-            cellNumber.textContent = i;
-            cellPortion.textContent = i;
-            cellValue.textContent = 'R$ ' + portionValue.toFixed(2);
-        }
-
-        totalPortionElement.textContent = 'R$ ' + portionValue.toFixed(2);
-    }
-
-    if (saveButton) {
-        saveButton.addEventListener('click', function() {
-            calculateAndDisplayPortions();
-            const portionTotal = parseInt(portionTotalInput.value) || 1;
-            const paymentMethod = paymentMethodInput ? paymentMethodInput.value : '';
-            savePortionsToDatabase(portionTotal, paymentMethod);
-        });
-    }
-
-    calculateAndDisplayPortions();
-});
-
-async function savePortionsToDatabase(portionValue, paymentMethod) {
-    try {
-        let totalAmount = parseFloat(totalAmountElement.textContent.replace('R$ ', '')) || 0;
-        let idSalesClient = selectedClientId;
-
-        let requestDataPortion = {
-            paymentMethod: paymentMethod,
-            salesIdClient: idSalesClient,
-            totalValue: totalAmount,
-            portionValue: portionValue,
-            products: selectedProducts
-        };
-
-        const response = await fetch('http://localhost/Klitzke/ajax/save_portion_sales.php', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(requestDataPortion),
-        });
-
-        const responseData = await response.json();
-
-        if (responseData && responseData.success) {
-            console.log('Parcelas salvas com sucesso!');
-        } else {
-            console.error('Erro ao salvar parcelas:', responseData ? responseData.error : 'Resposta vazia');
-        }
-    } catch (error) {
-        console.error('Erro ao enviar dados para o PHP:', error);
-    }
 }
 
 function removeProduct(id) {

@@ -261,7 +261,7 @@
                 </div>
             </form>
             <div class="content-form">
-                <button class="button-portion right" type="button">Salvar</button>
+                <button id="button-portion" class="button-portion right" type="button">Salvar</button>
             </div>
         </div>
         <div class="list-table">
@@ -277,7 +277,7 @@
                 </table>
             </div>
         </div>
-        <button onclick="savePortionsToDatabase()" class="finish-portion left" type="submit">Finalizar venda</button>
+        <button onclick="finalizeSale()" id="finish-portion" class="finish-portion left" type="submit">Finalizar venda</button>
         <p id="total-portion-sales" class="p-portion right">R$ 0.00</p>
     </div>
 </div>

@@ -160,6 +160,41 @@ include_once 'config/config.php';
 
         <?php Panel::LoadPage(); ?>
 
+        <?php
+
+            $sql = DB::Connection();
+
+            $openBoxQuery = $sql->prepare("SELECT id FROM boxpdv WHERE status = 1");
+            $openBoxQuery->execute();
+            $openBoxResult = $openBoxQuery->fetch(PDO::FETCH_ASSOC);
+
+            if ($openBoxResult) {
+                $openBoxId = $openBoxResult['id'];
+
+            $exec = $sql->prepare("SELECT SUM(total_value) as total_pix FROM sales WHERE sales.id_payment_method = 1 AND id_boxpdv = :boxId");
+            $exec->bindParam(':boxId', $openBoxId, PDO::PARAM_INT);
+            $exec->execute();
+            $result_pix = $exec->fetch(PDO::FETCH_ASSOC);
+
+            $exec = $sql->prepare("SELECT SUM(total_value) as total_debit FROM sales WHERE sales.id_payment_method = 2 AND id_boxpdv = :boxId");
+            $exec->bindParam(':boxId', $openBoxId, PDO::PARAM_INT);
+            $exec->execute();
+            $result_debit = $exec->fetch(PDO::FETCH_ASSOC);
+
+            $exec = $sql->prepare("SELECT SUM(total_value) as total_credit FROM sales WHERE sales.id_payment_method = 3 AND id_boxpdv = :boxId");
+            $exec->bindParam(':boxId', $openBoxId, PDO::PARAM_INT);
+            $exec->execute();
+            $result_credit = $exec->fetch(PDO::FETCH_ASSOC);
+
+            $exec = $sql->prepare("SELECT SUM(total_value) as total_money FROM sales WHERE sales.id_payment_method = 4 AND id_boxpdv = :boxId");
+            $exec->bindParam(':boxId', $openBoxId, PDO::PARAM_INT);
+            $exec->execute();
+            $result_money = $exec->fetch(PDO::FETCH_ASSOC);
+
+            }
+
+        ?>
+
         <div class="overlay" id="overlay">
             <div class="close-boxpdv" id="close-boxpdv">
                 <div class="navbar-boxpdv">
@@ -176,19 +211,19 @@ include_once 'config/config.php';
                         <form class="form" method="POST" enctype="multipart/form-data">
                             <div class="content-form">
                                 <label for="">Debito</label>
-                                <input id="value_debit" type="text" placeholder="Debito" name="value_debit">
+                                <input id="value_debit" type="text" placeholder="Debito" name="value_debit" value="<?php echo $result_debit["total_debit"]; ?>" />
                             </div>
                             <div class="content-form">
                                 <label for="">Credito</label>
-                                <input id="value_credit" type="text" placeholder="Credito" name="value_credit">
+                                <input id="value_credit" type="text" placeholder="Credito" name="value_credit" value="<?php echo $result_credit["total_credit"]; ?>" />
                             </div>
                             <div class="content-form">
                                 <label for="">PIX</label>
-                                <input id="value_pix" type="text" placeholder="PIX" name="value_pix">
+                                <input id="value_pix" type="text" placeholder="PIX" name="value_pix" value="<?php echo $result_pix["total_pix"]; ?>">
                             </div>
                             <div class="content-form">
                                 <label for="">Dinheiro</label>
-                                <input id="value_money" type="text" placeholder="Dinheiro" name="value_money">
+                                <input id="value_money" type="text" placeholder="Dinheiro" name="value_money" value="<?php echo $result_money["total_money"]; ?>" />
                             </div>
                             <div class="content-form">
                                 <label for="">Data fechamento</label>
