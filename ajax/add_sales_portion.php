@@ -27,6 +27,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $selectedPaymentMethod = $requestData['id_payment_method'] ?? '';
     $id_sales_client = $requestData['sales_id_client'] ?? '';
     $selectedProducts = $requestData['products'] ?? [];
+    $selectedPortion = $requestData['selectedPortion'] ?? [];
 
     try {
 
@@ -65,8 +66,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $lastSaleId = $sql->lastInsertId();
 
             foreach ($selectedProducts as $product) {
-                $productId = isset($product['id']) ? $product['id'] : null;
-                if ($productId === null) {
+                $product_id = isset($product['id']) ? $product['id'] : null;
+                if ($product_id === null) {
                     break;
                 } else {
 
@@ -74,9 +75,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $productValue = floatval($product['value']);
 
                     $exec = $sql->prepare("INSERT INTO sales_items (id_sales, id_product, amount, price_sales, status_item) 
-                                VALUES (:lastSaleId, :productId, :productQuantity, :productValue, :status_item)");
+                                VALUES (:lastSaleId, :product_id, :productQuantity, :productValue, :status_item)");
                     $exec->bindParam(':lastSaleId', $lastSaleId, PDO::PARAM_INT);
-                    $exec->bindParam(':productId', $productId, PDO::PARAM_INT);
+                    $exec->bindParam(':product_id', $product_id, PDO::PARAM_INT);
                     $exec->bindParam(':productQuantity', $productQuantity, PDO::PARAM_INT);
                     $exec->bindParam(':productValue', $productValue, PDO::PARAM_STR);
                     $status_item = 1;
@@ -85,20 +86,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                 }
             }
-            
-            $checkStock = $sql->prepare("SELECT id FROM products WHERE id = :productId AND stock_quantity - :productQuantity < 0");
-            $checkStock->bindParam(':productId', $productId, PDO::PARAM_INT);
+
+            foreach ($selectedPortion as $portion) {          
+                $portionValue = floatval($portionValue);
+                $execPortion = $sql->prepare("INSERT INTO sales_portion (number_portion, date_portion, value_portion, id_sales) 
+                    VALUES (:portionTotal, NOW(), :portionValue, :lastSaleId)");
+                $execPortion->bindParam(':portionValue', $portionValue, PDO::PARAM_STR);
+                $execPortion->bindParam(':lastSaleId', $lastSaleId, PDO::PARAM_INT);
+                $execPortion->execute();           
+            }
+
+            $checkStock = $sql->prepare("SELECT id FROM products WHERE id = :product_id AND stock_quantity - :productQuantity < 0");
+            $checkStock->bindParam(':product_id', $product_id, PDO::PARAM_INT);
             $checkStock->bindParam(':productQuantity', $productQuantity, PDO::PARAM_INT);
             $checkStock->execute();
 
             if ($checkStock->rowCount() > 0) {
-                $updateStatus = $sql->prepare("UPDATE products SET stock_quantity = stock_quantity - :productQuantity, status_product = 'negativado' WHERE id = :productId");
-                $updateStatus->bindParam(':productId', $productId, PDO::PARAM_INT);
+                $updateStatus = $sql->prepare("UPDATE products SET stock_quantity = stock_quantity - :productQuantity, status_product = 'negativado' WHERE id = :product_id");
+                $updateStatus->bindParam(':product_id', $product_id, PDO::PARAM_INT);
                 $updateStatus->bindParam(':productQuantity', $productQuantity, PDO::PARAM_INT);
                 $updateStatus->execute();
             } else {
-                $updateStock = $sql->prepare("UPDATE products SET stock_quantity = stock_quantity - :productQuantity, status_product = 'Em estoque' WHERE id = :productId");
-                $updateStock->bindParam(':productId', $productId, PDO::PARAM_INT);
+                $updateStock = $sql->prepare("UPDATE products SET stock_quantity = stock_quantity - :productQuantity, status_product = 'Em estoque' WHERE id = :product_id");
+                $updateStock->bindParam(':product_id', $product_id, PDO::PARAM_INT);
                 $updateStock->bindParam(':productQuantity', $productQuantity, PDO::PARAM_INT);
                 $updateStock->execute();
             }

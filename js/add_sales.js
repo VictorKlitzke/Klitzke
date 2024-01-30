@@ -1,4 +1,5 @@
 let selectedProducts = [];
+let selectedPortion = [];
 let selectedClientId;
 let Portion;
 let OverlayPortion;
@@ -167,13 +168,17 @@ document.addEventListener('DOMContentLoaded', function() {
             cellNumber.textContent = i;
             cellPortion.textContent = i;
             cellValue.textContent = 'R$ ' + portionValue.toFixed(2);
+
+            selectedPortion.push({
+                portionValue: portionValue,
+                portionTotal: portionTotal
+            })
         }
 
         totalPortionElement.textContent = 'R$ ' + portionValue.toFixed(2);
 
         return {
-            portionTotal: portionTotal,
-            portionValue: portionValue
+            selectedPortion: selectedPortion
         };
     }
 });
@@ -187,17 +192,15 @@ async function finalizeSale() {
     }
 
     let selectedPaymentMethod = document.getElementById('id_payment_method').value;
-    let idSalesClient = selectedClientId;
+    let idSalesClient = selectedClientId || '';
 
     if (selectedPaymentMethod === '3') {
-        openCreditModal();
+        await openCreditModal();
 
         let requestData = {
             idPaymentMethod: selectedPaymentMethod,
             salesIdClient: idSalesClient,
-            totalValue: totalValue,
-            portionTotal: portionValues,
-            portionValue: portionValues,
+            selectedPortion: selectedPortion,
             products: selectedProducts
         };
 
@@ -208,34 +211,28 @@ async function finalizeSale() {
             showErrorMessage('Erro ao registrar venda, nenhum produto selecionado');
             return;
         } else {
-            if (portionTotal <= 0) {
 
-                showErrorMessage('Por favor, insira um número válido de parcelas.');
-                return;
-            } else {
+            try {
+                const response = await fetch('http://localhost/Klitzke/ajax/add_sales_portion.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(requestData),
+                });
 
-                try {
-                    const response = await fetch('http://localhost/Klitzke/ajax/add_sales.php', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify(requestData),
-                    });
+                const responseBody = await response.text();
+                const responseData = JSON.parse(responseBody);
 
-                    const responseBody = await response.text();
-                    const responseData = JSON.parse(responseBody);
-
-                    if (responseData && responseData.success) {
-                        showSuccessMessage('Venda finalizada com sucesso!');
-                        // const saleId = responseData.id;
-                        // window.location.href = 'pages/proof.php?sale_id=' + saleId;
-                    } else {
-                        console.error('Erro ao registrar venda:', responseData ? responseData.error : 'Resposta vazia');
-                    }
-                } catch (error) {
-                    console.error('Erro ao enviar dados para o PHP:', error);
+                if (responseData && responseData.success) {
+                    showSuccessMessage('Venda finalizada com sucesso!');
+                    // const saleId = responseData.id;
+                    // window.location.href = 'pages/proof.php?sale_id=' + saleId;
+                } else {
+                    console.error('Erro ao registrar venda:', responseData ? responseData.error : 'Resposta vazia');
                 }
+            } catch (error) {
+                console.error('Erro ao enviar dados para o PHP:', error);
             }
         }
     } else {
@@ -261,7 +258,7 @@ async function finalizeSale() {
                 });
 
                 const responseBody = await response.text();
-                const responseData = JSON.parse(responseBody);
+                const responseData = JSON.parse(requestData);
 
                 if (responseData && responseData.success) {
                     showSuccessMessage('Venda finalizada com sucesso!');
@@ -382,8 +379,6 @@ document.addEventListener("DOMContentLoaded", function() {
             let salesPageElement = document.getElementById("sales-page");
 
             selectedClientId = row.querySelector("td:first-child").textContent;
-
-            console.log(selectedClientId, clientName);
 
             if (salesPageElement) {
                 salesPageElement.innerHTML =
