@@ -171,7 +171,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
             selectedPortion.push({
                 portionValue: portionValue,
-                portionTotal: portionTotal
+                portionTotal: i
             })
         }
 
@@ -192,6 +192,7 @@ async function finalizeSale() {
     }
 
     let selectedPaymentMethod = document.getElementById('id_payment_method').value;
+    console.log(selectedPaymentMethod);
     let idSalesClient = selectedClientId || '';
 
     if (selectedPaymentMethod === '3') {
@@ -244,6 +245,8 @@ async function finalizeSale() {
             products: selectedProducts
         };
 
+        console.log(requestData);
+
         if (selectedProducts.length === 0) {
             showErrorMessage('Erro ao registrar venda, nenhum produto selecionado');
             return;
@@ -258,6 +261,7 @@ async function finalizeSale() {
                 });
 
                 const responseBody = await response.text();
+                console.log(responseBody);
                 const responseData = JSON.parse(requestData);
 
                 if (responseData && responseData.success) {

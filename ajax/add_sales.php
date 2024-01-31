@@ -24,8 +24,8 @@ function status_boxpdv($status)
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $requestData = json_decode(file_get_contents('php://input'), true);
 
-    $selectedPaymentMethod = $requestData['id_payment_method'] ?? '';
-    $id_sales_client = $requestData['sales_id_client'] ?? '';
+    $selectedPaymentMethod = $requestData['idPaymentMethod'] ?? '';
+    $id_sales_client = $requestData['salesIdClient'] ?? '';
     $selectedProducts = $requestData['products'] ?? [];
 
     try {

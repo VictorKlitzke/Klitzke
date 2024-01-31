@@ -111,6 +111,7 @@ include_once 'config/config.php';
                 Abrir Caixa
             </a>
             <a <?php SelectedMenu('register-sales') ?> href="<?php echo INCLUDE_PATH; ?>register-sales">Vendas</a>
+            <a <?php SelectedMenu('register-sales') ?> href="<?php echo INCLUDE_PATH; ?>register-sales">Pedidos</a>
             <h2>Minha Empresa</h2>
             <a <?php echo VerificationMenu(); ?> <?php SelectedMenu('list-companys'); ?>
                 href="<?php echo INCLUDE_PATH; ?>list-companys">Empresa</a>

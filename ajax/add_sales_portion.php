@@ -24,8 +24,8 @@ function status_boxpdv($status)
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $requestData = json_decode(file_get_contents('php://input'), true);
 
-    $selectedPaymentMethod = $requestData['id_payment_method'] ?? '';
-    $id_sales_client = $requestData['sales_id_client'] ?? '';
+    $selectedPaymentMethod = $requestData['idPaymentMethod'] ?? '';
+    $id_sales_client = $requestData['salesIdClient'] ?? '';
     $selectedProducts = $requestData['products'] ?? [];
     $selectedPortion = $requestData['selectedPortion'] ?? [];
 
@@ -87,15 +87,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 }
             }
 
-            foreach ($selectedPortion as $portion) {          
-                $portionValue = floatval($portionValue);
-                $execPortion = $sql->prepare("INSERT INTO sales_portion (number_portion, date_portion, value_portion, id_sales) 
-                    VALUES (:portionTotal, NOW(), :portionValue, :lastSaleId)");
-                $execPortion->bindParam(':portionValue', $portionValue, PDO::PARAM_STR);
-                $execPortion->bindParam(':lastSaleId', $lastSaleId, PDO::PARAM_INT);
-                $execPortion->execute();           
-            }
-
             $checkStock = $sql->prepare("SELECT id FROM products WHERE id = :product_id AND stock_quantity - :productQuantity < 0");
             $checkStock->bindParam(':product_id', $product_id, PDO::PARAM_INT);
             $checkStock->bindParam(':productQuantity', $productQuantity, PDO::PARAM_INT);
@@ -117,6 +108,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $exec->bindParam(':totalValue', $requestData['totalValue'], PDO::PARAM_STR);
             $exec->bindParam(':lastSaleId', $lastSaleId, PDO::PARAM_INT);
             $exec->execute();
+
+            foreach ($selectedPortion as $portion) {
+                $portion_value = floatval($portion['portionValue']);
+                $portion_total = $portion['portionTotal'];
+            
+                $execPortion = $sql->prepare("INSERT INTO sales_portion (number_portion, date_portion, value_portion, id_sales) 
+                    VALUES (:portionTotal, NOW(), :portionValue, :lastSaleId)");
+                $execPortion->bindParam(':portionTotal', $portion_total, PDO::PARAM_INT);
+                $execPortion->bindParam(':portionValue', $portion_value, PDO::PARAM_STR);
+                $execPortion->bindParam(':lastSaleId', $lastSaleId, PDO::PARAM_INT);
+                $execPortion->execute();
+            }
+            
 
             $sql->commit();
 
