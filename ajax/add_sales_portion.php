@@ -31,6 +31,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     try {
 
+        $lastSaleId = null;
+
         $sql = Db::Connection();
         $sql->beginTransaction();
 
@@ -54,7 +56,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $result = $exec->fetchAll(PDO::FETCH_ASSOC);
 
             $exec = $sql->prepare("INSERT INTO sales (id_payment_method, id_client, id_boxpdv, id_users, date_sales, status) 
-                VALUES (:paymentMethod, :salesClient, :id_boxpdv, :id_users, NOW(), :status)");
+            VALUES (:paymentMethod, :salesClient, :id_boxpdv, :id_users, NOW(), :status)");
             $exec->bindParam(':paymentMethod', $selectedPaymentMethod, PDO::PARAM_INT);
             $exec->bindParam(':salesClient', $id_sales_client, PDO::PARAM_INT);
             $exec->bindParam(':id_users', $user_id, PDO::PARAM_INT);
@@ -66,25 +68,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $lastSaleId = $sql->lastInsertId();
 
             foreach ($selectedProducts as $product) {
+
                 $product_id = isset($product['id']) ? $product['id'] : null;
+
                 if ($product_id === null) {
-                    break;
-                } else {
-
-                    $productQuantity = $product['stock_quantity'];
-                    $productValue = floatval($product['value']);
-
-                    $exec = $sql->prepare("INSERT INTO sales_items (id_sales, id_product, amount, price_sales, status_item) 
-                                VALUES (:lastSaleId, :product_id, :productQuantity, :productValue, :status_item)");
-                    $exec->bindParam(':lastSaleId', $lastSaleId, PDO::PARAM_INT);
-                    $exec->bindParam(':product_id', $product_id, PDO::PARAM_INT);
-                    $exec->bindParam(':productQuantity', $productQuantity, PDO::PARAM_INT);
-                    $exec->bindParam(':productValue', $productValue, PDO::PARAM_STR);
-                    $status_item = 1;
-                    $exec->bindParam(':status_item', $status_item, PDO::PARAM_INT);
-                    $exec->execute();
-
+                    throw new Exception("Erro ao obter ID do produto.");
                 }
+
+                $productQuantity = $product['stock_quantity'];
+                $productValue = floatval($product['value']);
+
+                $exec = $sql->prepare("INSERT INTO sales_items (id_sales, id_product, amount, price_sales, status_item) 
+                            VALUES (:lastSaleId, :product_id, :productQuantity, :productValue, :status_item)");
+                $exec->bindParam(':lastSaleId', $lastSaleId, PDO::PARAM_INT);
+                $exec->bindParam(':product_id', $product_id, PDO::PARAM_INT);
+                $exec->bindParam(':productQuantity', $productQuantity, PDO::PARAM_INT);
+                $exec->bindParam(':productValue', $productValue, PDO::PARAM_STR);
+                $status_item = 1;
+                $exec->bindParam(':status_item', $status_item, PDO::PARAM_INT);
+                $exec->execute();
+
             }
 
             $checkStock = $sql->prepare("SELECT id FROM products WHERE id = :product_id AND stock_quantity - :productQuantity < 0");
@@ -110,17 +113,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $exec->execute();
 
             foreach ($selectedPortion as $portion) {
+
                 $portion_value = floatval($portion['portionValue']);
                 $portion_total = $portion['portionTotal'];
-            
+
                 $execPortion = $sql->prepare("INSERT INTO sales_portion (number_portion, date_portion, value_portion, id_sales) 
-                    VALUES (:portionTotal, NOW(), :portionValue, :lastSaleId)");
+                                    VALUES (:portionTotal, NOW(), :portionValue, :lastSaleId)");
                 $execPortion->bindParam(':portionTotal', $portion_total, PDO::PARAM_INT);
                 $execPortion->bindParam(':portionValue', $portion_value, PDO::PARAM_STR);
                 $execPortion->bindParam(':lastSaleId', $lastSaleId, PDO::PARAM_INT);
-                $execPortion->execute();
+
+                if ($execPortion->execute() === false) {
+                    $errorInfo = $execPortion->errorInfo();
+                    http_response_code(500);
+                    echo json_encode(['error' => 'Erro no banco de dados: ' . $errorInfo[2], 'code' => $errorInfo[0]]);
+                } else {
+                    echo json_encode(['success' => true, 'message' => htmlspecialchars('Venda registrada com sucesso')]);
+                }
             }
-            
 
             $sql->commit();
 
@@ -128,13 +138,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
     } catch (PDOException $e) {
-        $sql->rollBack();
         http_response_code(500);
         echo json_encode(['error' => 'Erro no banco de dados: ' . $e->getMessage(), 'code' => $e->getCode()]);
+    } catch (Exception $e) {
+        http_response_code(400);
+        echo json_encode(['error' => $e->getMessage()]);
     } finally {
         $sql = null;
     }
-
 }
-
 ?>

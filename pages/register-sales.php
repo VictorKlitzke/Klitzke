@@ -277,7 +277,7 @@
                 </table>
             </div>
         </div>
-        <button onclick="finalizeSale()" id="finish-portion" class="finish-portion left" type="submit">Finalizar venda</button>
+        <button onclick="finalizeSalePortion()" id="finish-portion" class="finish-portion left" type="submit">Finalizar venda</button>
         <p id="total-portion-sales" class="p-portion right">R$ 0.00</p>
     </div>
 </div>

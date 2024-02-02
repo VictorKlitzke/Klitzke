@@ -183,8 +183,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 
-async function finalizeSale() {
-
+async function finalizeSalePortion() {
     let totalAmountElement = document.getElementById('totalAmount');
     let totalValue = 0;
     if (totalAmountElement) {
@@ -192,7 +191,6 @@ async function finalizeSale() {
     }
 
     let selectedPaymentMethod = document.getElementById('id_payment_method').value;
-    console.log(selectedPaymentMethod);
     let idSalesClient = selectedClientId || '';
 
     if (selectedPaymentMethod === '3') {
@@ -201,11 +199,10 @@ async function finalizeSale() {
         let requestData = {
             idPaymentMethod: selectedPaymentMethod,
             salesIdClient: idSalesClient,
+            totalValue: totalValue,
             selectedPortion: selectedPortion,
             products: selectedProducts
         };
-
-        console.log(requestData);
 
         if (selectedProducts.length === 0) {
 
@@ -223,6 +220,7 @@ async function finalizeSale() {
                 });
 
                 const responseBody = await response.text();
+                console.log('Response from server:', responseBody);
                 const responseData = JSON.parse(responseBody);
 
                 if (responseData && responseData.success) {
@@ -236,48 +234,57 @@ async function finalizeSale() {
                 console.error('Erro ao enviar dados para o PHP:', error);
             }
         }
+    }
+}
+
+async function finalizeSale() {
+
+    let totalAmountElement = document.getElementById('totalAmount');
+    let totalValue = 0;
+    if (totalAmountElement) {
+        totalValue = parseFloat(totalAmountElement.textContent.replace('R$ ', '')) || 0;
+    }
+
+    let selectedPaymentMethod = document.getElementById('id_payment_method').value;
+    let idSalesClient = selectedClientId || '';
+
+    let requestData = {
+        idPaymentMethod: selectedPaymentMethod,
+        salesIdClient: idSalesClient,
+        totalValue: totalValue,
+        products: selectedProducts
+    };
+
+    if (selectedProducts.length === 0) {
+        showErrorMessage('Erro ao registrar venda, nenhum produto selecionado');
+        return;
     } else {
+        try {
+            const response = await fetch('http://localhost/Klitzke/ajax/add_sales.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(requestData),
+            });
 
-        let requestData = {
-            idPaymentMethod: selectedPaymentMethod,
-            salesIdClient: idSalesClient,
-            totalValue: totalValue,
-            products: selectedProducts
-        };
+            const responseBody = await response.text();
+            const responseData = JSON.parse(responseBody);
 
-        console.log(requestData);
-
-        if (selectedProducts.length === 0) {
-            showErrorMessage('Erro ao registrar venda, nenhum produto selecionado');
-            return;
-        } else {
-            try {
-                const response = await fetch('http://localhost/Klitzke/ajax/add_sales.php', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(requestData),
-                });
-
-                const responseBody = await response.text();
-                console.log(responseBody);
-                const responseData = JSON.parse(requestData);
-
-                if (responseData && responseData.success) {
-                    showSuccessMessage('Venda finalizada com sucesso!');
-                    // const saleId = responseData.id;
-                    // window.location.href = 'pages/proof.php?sale_id=' + saleId;
-                } else {
-                    console.error('Erro ao registrar venda:', responseData ? responseData.error : 'Resposta vazia');
-                }
-
-            } catch (error) {
-                console.error('Erro ao enviar dados para o PHP:', error);
+            if (responseData && responseData.success) {
+                showSuccessMessage('Venda finalizada com sucesso!');
+                // const saleId = responseData.id;
+                // window.location.href = 'pages/proof.php?sale_id=' + saleId;
+            } else {
+                console.error('Erro ao registrar venda:', responseData ? responseData.error : 'Resposta vazia');
             }
+
+        } catch (error) {
+            console.error('Erro ao enviar dados para o PHP:', error);
         }
     }
 }
+
 
 function updateTotalAmount(total) {
 
