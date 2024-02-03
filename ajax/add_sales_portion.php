@@ -22,16 +22,14 @@ function status_boxpdv($status)
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $requestData = json_decode(file_get_contents('php://input'), true);
+    $requestDataPortion = json_decode(file_get_contents('php://input'), true);
 
-    $selectedPaymentMethod = $requestData['idPaymentMethod'] ?? '';
-    $id_sales_client = $requestData['salesIdClient'] ?? '';
-    $selectedProducts = $requestData['products'] ?? [];
-    $selectedPortion = $requestData['selectedPortion'] ?? [];
+    $selectedPaymentMethod = $requestDataPortion['idPaymentMethod'] ?? '';
+    $id_sales_client = $requestDataPortion['salesIdClient'] ?? '';
+    $selectedProducts = $requestDataPortion['products'] ?? [];
+    $selectedPortion = $requestDataPortion['selectedPortion'] ?? [];
 
     try {
-
-        $lastSaleId = null;
 
         $sql = Db::Connection();
         $sql->beginTransaction();
@@ -66,6 +64,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $exec->execute();
 
             $lastSaleId = $sql->lastInsertId();
+
+            foreach ($selectedPortion as $portion) {
+
+                $portion_value = floatval($portion['portionValue']);
+                $portion_total = $portion['portionTotal'];
+
+                $execPortion = $sql->prepare("INSERT INTO sales_portion (number_portion, date_portion, value_portion, id_sales) 
+                                    VALUES (:portionTotal, NOW(), :portionValue, :lastSaleId)");
+                $execPortion->bindParam(':portionTotal', $portion_total, PDO::PARAM_INT);
+                $execPortion->bindParam(':portionValue', $portion_value, PDO::PARAM_STR);
+                $execPortion->bindParam(':lastSaleId', $lastSaleId, PDO::PARAM_INT);
+
+                if ($execPortion->execute() === false) {
+                    $errorInfo = $execPortion->errorInfo();
+                    http_response_code(500);
+                    echo json_encode(['error' => 'Erro no banco de dados: ' . $errorInfo[2], 'code' => $errorInfo[0]]);
+                }
+            }
 
             foreach ($selectedProducts as $product) {
 
@@ -108,29 +124,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
 
             $exec = $sql->prepare("UPDATE sales SET total_value = :totalValue WHERE id = :lastSaleId");
-            $exec->bindParam(':totalValue', $requestData['totalValue'], PDO::PARAM_STR);
+            $exec->bindParam(':totalValue', $requestDataPortion['totalValue'], PDO::PARAM_STR);
             $exec->bindParam(':lastSaleId', $lastSaleId, PDO::PARAM_INT);
             $exec->execute();
-
-            foreach ($selectedPortion as $portion) {
-
-                $portion_value = floatval($portion['portionValue']);
-                $portion_total = $portion['portionTotal'];
-
-                $execPortion = $sql->prepare("INSERT INTO sales_portion (number_portion, date_portion, value_portion, id_sales) 
-                                    VALUES (:portionTotal, NOW(), :portionValue, :lastSaleId)");
-                $execPortion->bindParam(':portionTotal', $portion_total, PDO::PARAM_INT);
-                $execPortion->bindParam(':portionValue', $portion_value, PDO::PARAM_STR);
-                $execPortion->bindParam(':lastSaleId', $lastSaleId, PDO::PARAM_INT);
-
-                if ($execPortion->execute() === false) {
-                    $errorInfo = $execPortion->errorInfo();
-                    http_response_code(500);
-                    echo json_encode(['error' => 'Erro no banco de dados: ' . $errorInfo[2], 'code' => $errorInfo[0]]);
-                } else {
-                    echo json_encode(['success' => true, 'message' => htmlspecialchars('Venda registrada com sucesso')]);
-                }
-            }
 
             $sql->commit();
 

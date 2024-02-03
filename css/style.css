@@ -37,7 +37,7 @@ h4 {
 }
 
 .menu-active {
-    background: #323232;
+    border-bottom: 1px solid #ccc;
 }
 
 .w100 {
@@ -174,7 +174,6 @@ h4 {
     font-size: 16px;
     text-decoration: none;
     color: #ccc;
-    border-bottom: 2px solid #1b1b1b;
 }
 
 .container-menu a:hover {

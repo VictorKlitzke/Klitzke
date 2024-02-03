@@ -83,3 +83,7 @@
 .list-table {
     margin: 10px;
 }
+
+.nav-portion {
+    display: flex;
+}

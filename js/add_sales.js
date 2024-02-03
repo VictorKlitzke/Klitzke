@@ -132,7 +132,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     document.getElementById('id_payment_method').addEventListener('change', checkPaymentMethod);
 
-    const finishButton = document.getElementById('finish-portion');
+    const finishButtonPortion = document.getElementById('finish-portion');
 
     if (saveButton) {
         saveButton.addEventListener('click', function() {
@@ -140,11 +140,11 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    if (finishButton) {
-        finishButton.addEventListener('click', function() {
-            finalizeSale();
-        });
-    }
+    // if (finishButtonPortion) {
+    //     finishButtonPortion.addEventListener('click', function() {
+    //         finalizeSalePortion();
+    //     });
+    // }
 
     function calculateAndDisplayPortions() {
         const portionTotal = parseInt(portionTotalInput.value) || 1;
@@ -183,23 +183,28 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 
+class SalesHandler {}
+
 async function finalizeSalePortion() {
+
+    console.log('Chamando finalizeSalePortion');
+
     let totalAmountElement = document.getElementById('totalAmount');
-    let totalValue = 0;
+    let totalValuezPortion = 0;
     if (totalAmountElement) {
-        totalValue = parseFloat(totalAmountElement.textContent.replace('R$ ', '')) || 0;
+        totalValuezPortion = parseFloat(totalAmountElement.textContent.replace('R$ ', '')) || 0;
     }
 
-    let selectedPaymentMethod = document.getElementById('id_payment_method').value;
-    let idSalesClient = selectedClientId || '';
+    let selectedPaymentMethodPortion = document.getElementById('id_payment_method').value;
+    let idSalesClientPortion = selectedClientId || '';
 
-    if (selectedPaymentMethod === '3') {
-        await openCreditModal();
+    if (selectedPaymentMethodPortion === '3') {
+        openCreditModal();
 
-        let requestData = {
-            idPaymentMethod: selectedPaymentMethod,
-            salesIdClient: idSalesClient,
-            totalValue: totalValue,
+        let requestDataPortion = {
+            idPaymentMethod: selectedPaymentMethodPortion,
+            salesIdClient: idSalesClientPortion,
+            totalValue: totalValuezPortion,
             selectedPortion: selectedPortion,
             products: selectedProducts
         };
@@ -211,33 +216,37 @@ async function finalizeSalePortion() {
         } else {
 
             try {
-                const response = await fetch('http://localhost/Klitzke/ajax/add_sales_portion.php', {
+                const responsePortion = await fetch('http://localhost/Klitzke/ajax/add_sales_portion.php', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify(requestData),
+                    body: JSON.stringify(requestDataPortion),
                 });
 
-                const responseBody = await response.text();
-                console.log('Response from server:', responseBody);
-                const responseData = JSON.parse(responseBody);
+                const responseBodyPortion = await responsePortion.text();
+                console.log('Response from server:', responseBodyPortion);
+                const responseDataPortion = JSON.parse(responseBodyPortion);
 
-                if (responseData && responseData.success) {
+                if (responseDataPortion && responseDataPortion.success) {
                     showSuccessMessage('Venda finalizada com sucesso!');
                     // const saleId = responseData.id;
                     // window.location.href = 'pages/proof.php?sale_id=' + saleId;
                 } else {
-                    console.error('Erro ao registrar venda:', responseData ? responseData.error : 'Resposta vazia');
+                    console.error('Erro ao registrar venda:', responseDataPortion ? responseDataPortion.error : 'Resposta vazia');
                 }
             } catch (error) {
                 console.error('Erro ao enviar dados para o PHP:', error);
             }
         }
+    } else {
+        return false;
     }
 }
 
 async function finalizeSale() {
+
+    console.log('Chamando finalizeSale');
 
     let totalAmountElement = document.getElementById('totalAmount');
     let totalValue = 0;
@@ -260,7 +269,9 @@ async function finalizeSale() {
         return;
     } else {
         try {
-            const response = await fetch('http://localhost/Klitzke/ajax/add_sales.php', {
+            let url = 'http://localhost/Klitzke/ajax/add_sales.php';
+
+            const response = await fetch(url, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -269,12 +280,11 @@ async function finalizeSale() {
             });
 
             const responseBody = await response.text();
+            console.log('Response from server:', responseBody);
             const responseData = JSON.parse(responseBody);
 
             if (responseData && responseData.success) {
                 showSuccessMessage('Venda finalizada com sucesso!');
-                // const saleId = responseData.id;
-                // window.location.href = 'pages/proof.php?sale_id=' + saleId;
             } else {
                 console.error('Erro ao registrar venda:', responseData ? responseData.error : 'Resposta vazia');
             }
@@ -284,7 +294,6 @@ async function finalizeSale() {
         }
     }
 }
-
 
 function updateTotalAmount(total) {
 
