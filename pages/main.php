@@ -272,9 +272,7 @@ $status_product = $products->fetchAll();
                 
                 ?>
 
-                <button id="details-<?php echo $Key; ?>"
-                  onclick="InfoSales(<?php echo $key; ?>,'<?php echo $value['users']; ?>','<?php echo $value['clients']; ?>','<?php echo $value['form_payment']; ?>','<?php echo $value['total_value']; ?>','<?php echo $value['status_sales']; ?>')"
-                  class="btn-details">
+                <button id="details-<?php echo $Key; ?>" onclick="InfoSales(<?php echo $key; ?>,'<?php echo $sales_product['id']; ?>','<?php echo $sales_product['users']; ?>','<?php echo $sales_product['clients']; ?>','<?php echo $sales_product['form_payment']; ?>','<?php echo $sales_product['products']; ?>','<?php echo $sales_product['quantity']; ?>','<?php echo $sales_product['value']; ?>','<?php echo $sales_product['total_value']; ?>')" class="btn-details">
                   <p>Mais detalhes</p>
                 </button>
               </td>
@@ -302,28 +300,18 @@ $status_product = $products->fetchAll();
     <div class="box-content">
       <div class="center">
         <div class="info-sales-product">
+
           <?php $info_sales = Controllers::InfoProductsSales('sales'); ?>
-          <div>
-            <span id="user"></span>
-          </div>
-          <div>
-            <span id="client"></span>
-          </div>
-          <div>
-            <span id="form_payment"></span>
-          </div>
-          <div>
-            <span id="product"></span>
-          </div>
-          <div>
-            <span id="quantity"></span>
-          </div>
-          <div>
-            <span id="value"></span>
-          </div>
-          <div>
-            <span id="value_total"></span>
-          </div>
+
+            <div id="id"></div>
+            <div id="user"></div>
+            <div id="client"></div>
+            <div id="form_payment"></div>
+            <div id="product"></div>
+            <div id="quantity"></div>
+            <div id="value"></div>
+            <div id="value_total"></div>
+
         </div>
       </div>
     </div>

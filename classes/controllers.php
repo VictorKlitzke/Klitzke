@@ -5,9 +5,9 @@ include_once 'services/db.php';
 class Controllers
 {
 
-    public static function InfoProductsSales($name_table, $query = '', $ts = '')
+    public static function InfoProductsSales($name_table, $start = null, $end = null)
     {
-        if ($query != false) {
+        if ($start == null && $end == null) {
             $exec = Db::Connection()->prepare("SELECT 
                                                     sales.*,
                                                     users.name users,
@@ -21,10 +21,10 @@ class Controllers
                                                     INNER JOIN sales_items ON sales_items.id_sales = sales.id
                                                     INNER JOIN products ON products.id = sales_items.id_product
                                                     INNER JOIN form_payment ON form_payment.id = sales.id_payment_method
-                                                    INNER JOIN clients ON clients.id = sales.id_client
+                                                    LEFT JOIN clients ON clients.id = sales.id_client
                                                     LEFT JOIN boxpdv ON boxpdv.id = sales.id_boxpdv
                                                     LEFT JOIN users ON users.id = sales.id_users");
-            $exec->execute($ts);
+            
         } else {
             $exec = Db::Connection()->prepare("SELECT 
                                                     sales.*,
@@ -39,11 +39,14 @@ class Controllers
                                                     INNER JOIN sales_items ON sales_items.id_sales = sales.id
                                                     INNER JOIN products ON products.id = sales_items.id_product
                                                     INNER JOIN form_payment ON form_payment.id = sales.id_payment_method
-                                                    INNER JOIN clients ON clients.id = sales.id_client
+                                                    LEFT JOIN clients ON clients.id = sales.id_client
                                                     LEFT JOIN boxpdv ON boxpdv.id = sales.id_boxpdv
                                                     LEFT JOIN users ON users.id = sales.id_users");
-            $exec->execute();
+
         }
+        
+        $exec->execute();
+
         return $exec->fetchAll();
     }
 
