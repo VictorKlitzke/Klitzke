@@ -20,7 +20,7 @@ var_dump(updateSalesItems($id_sales));
 
 function updateSales($id_sales){
     $sql = Db::Connection();
-    $exec = $sql->prepare("UPDATE sales SET status = 2 WHERE id = ?");
+    $exec = $sql->prepare("UPDATE sales SET status = 1 WHERE id = ?");
     $exec->execute([$id_sales]);
 
     header('Location: ' . INCLUDE_PATH . 'list-sales');
@@ -28,7 +28,7 @@ function updateSales($id_sales){
 
 function updateSalesItems($id_sales){
     $sql = Db::Connection();
-    $exec = $sql->prepare("UPDATE sales_items SET status_item = 2 WHERE id_sales = ?");
+    $exec = $sql->prepare("UPDATE sales_items SET status_item = 1 WHERE id_sales = ?");
     $exec->execute([$id_sales]);
 
     header('Location: ' . INCLUDE_PATH . 'list-sales');

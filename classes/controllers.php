@@ -108,26 +108,72 @@ class Controllers
         return $exec->fetchAll();
     }
 
+    public function SelectProduct($start = null, $end = null)
+    {
+
+        $sql = Db::Connection();
+        if ($start == null && $end == null) {
+            $exec = $sql->prepare("SELECT 
+                                        sales.*,
+                                        users.name users,
+                                        clients.name clients,
+                                        form_payment.name form_payment,
+                                        products.name products,
+                                        sales_items.amount quantity,
+                                        sales_items.price_sales value
+                                    FROM
+                                        sales 
+                                        INNER JOIN sales_items ON sales_items.id_sales = sales.id
+                                        INNER JOIN products ON products.id = sales_items.id_product
+                                        INNER JOIN form_payment ON form_payment.id = sales.id_payment_method
+                                        LEFT JOIN clients ON clients.id = sales.id_client
+                                        LEFT JOIN boxpdv ON boxpdv.id = sales.id_boxpdv
+                                        LEFT JOIN users ON users.id = sales.id_users
+                                        ORDER BY id ASC");
+        } else {
+            $exec = $sql->prepare("SELECT 
+                                        sales.*,
+                                        users.name users,
+                                        clients.name clients,
+                                        form_payment.name form_payment,
+                                        products.name products,
+                                        sales_items.amount quantity,
+                                        sales_items.price_sales value
+                                    FROM
+                                        sales 
+                                        INNER JOIN sales_items ON sales_items.id_sales = sales.id
+                                        INNER JOIN products ON products.id = sales_items.id_product
+                                        INNER JOIN form_payment ON form_payment.id = sales.id_payment_method
+                                        LEFT JOIN clients ON clients.id = sales.id_client
+                                        LEFT JOIN boxpdv ON boxpdv.id = sales.id_boxpdv
+                                        LEFT JOIN users ON users.id = sales.id_users 
+                                        ORDER BY id ASC LIMIT $start,$end");
+        }
+        $exec->execute();
+
+        return $exec->fetchAll();
+    }
+
     public static function SelectSales($name_table, $start = null, $end = null, $userFilter = null, $form_payment = null)
     {
         $sql = Db::Connection();
 
         $query = "SELECT 
-                sales.*,
-                users.name users,
-                clients.name clients,
-                form_payment.name form_payment,
-                products.name products,
-                sales_items.amount quantity,
-                sales_items.price_sales value
-              FROM
-                sales 
-                INNER JOIN sales_items ON sales_items.id_sales = sales.id
-                INNER JOIN products ON products.id = sales_items.id_product
-                INNER JOIN form_payment ON form_payment.id = sales.id_payment_method
-                LEFT JOIN clients ON clients.id = sales.id_client
-                LEFT JOIN boxpdv ON boxpdv.id = sales.id_boxpdv
-                LEFT JOIN users ON users.id = sales.id_users";
+                    sales.*,
+                    users.name users,
+                    clients.name clients,
+                    form_payment.name form_payment,
+                    case 
+                        when sales.status = 1 then 'VENDIDO'
+                        when sales.status = 2 then 'CANCELADA'
+                        else 'ERRO'
+                    end status_sales
+                FROM
+                    sales 
+                    INNER JOIN form_payment ON form_payment.id = sales.id_payment_method
+                    LEFT JOIN clients ON clients.id = sales.id_client
+                    INNER JOIN boxpdv ON boxpdv.id = sales.id_boxpdv
+                    INNER JOIN users ON users.id = sales.id_users";
 
         $conditions = [];
 
@@ -168,7 +214,7 @@ class Controllers
 
         return $exec->fetchAll();
     }
-    
+
     public static function Select($name_table, $query = '', $ts = '')
     {
         $sql = Db::Connection();

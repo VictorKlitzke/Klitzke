@@ -64,12 +64,13 @@ $sales = Controllers::SelectSales('sales', ($currentPage - 1) * $porPage, $porPa
         <table>
             <thead>
                 <tr>
+                    <td>#</td>
                     <td>Usuario</td>
                     <p><td>Cliente</td></p>
-                    <p><td>Forma de Pagamento</td></p>
-                    <td>Produto</td>
-                    <p><td>Quantidade</td></p>
-                    <p><td>Valor</td></p>
+                    <td><p>Forma de Pagamento</p></td>
+                    <p><td>Status Venda</td></p>
+                    <p><td>Valor Total</td></p>
+                    <p><td>Data</td></p>
 
                 </tr>
             </thead>
@@ -82,27 +83,61 @@ $sales = Controllers::SelectSales('sales', ($currentPage - 1) * $porPage, $porPa
 
                 <tbody>
                     <tr>
+                        <p><td><?php echo htmlspecialchars($value['id']); ?></td></p>
                         <p><td><?php echo htmlspecialchars($value['users']); ?></td></p>
-                        <td><?php echo htmlspecialchars($value['clients']); ?></td>
+                        <!-- <td><?php // echo htmlspecialchars($value['clients']); ?></td> -->
+                        <?php if(htmlspecialchars($value['clients']) == null){
+                            echo '<td><p>' . 'Cliente consumidor final' . '</p></td>';
+                        } else {
+                            echo '<td><p>' . htmlspecialchars($value['clients']) . '</p></td>';
+                        }
+                        ?>
                         <td><?php echo htmlspecialchars($value['form_payment']); ?></td>
-                        <td><?php echo htmlspecialchars($value['products']); ?></td>
-                        <td><?php echo htmlspecialchars($value['quantity']); ?></td>
-                        <td><?php echo htmlspecialchars($value['value']); ?></td>
+                        <td><?php echo htmlspecialchars($value['status_sales']); ?></td>
+                        <td><?php echo htmlspecialchars($value['total_value']); ?></td>
+                        <td><p><?php echo htmlspecialchars($value['date_sales']); ?></p></td>
 
                         <td style="display: flex; justify-content: center; gap: 10px; margin: 6px; padding: 6px;">
+                            <?php
+                            
+                                if($value['status'] == 2) {
+
+                                
+                            
+                            ?>
+                            
                             <div>
-                                <a class="btn-edit"
-                                    href="<?php echo INCLUDE_PATH ?>edit-sales?id=<?php echo base64_encode($value['id']); ?>">Reabrir
-                                    venda</a>
+                                <form action="./ajax/reopen_sales.php" method="post">
+                                    <input name="id_sales" type="hidden" type="submit" value="<?php echo base64_encode($value['id']); ?>" />
+                                    
+                                    <button class="btn-reopen">Reabrir venda</button>
+                                </form>
                             </div>
+
+                            <?php } else { ?>
+
                             <div>
-                                <a class="btn-edit"
-                                    href="<?php echo INCLUDE_PATH ?>edit-sales?id=<?php echo base64_encode($value['id']); ?>">Cancelar
-                                    venda</a>
+                                <form action="./ajax/cancel_sales.php" method="post">
+                                    <input name="id_sales" type="hidden" type="submit" value="<?php echo base64_encode($value['id']); ?>" />
+                                    <input name="status_sales" type="hidden" type="submit" value="<?php echo base64_encode($value['status_sales']); ?>" />
+
+                                    <button class="btn-cancel">Cancelar venda</button>
+                                </form>
                             </div>
+
+                            <?php } ?>
+
                             <div>
-                                <a class="btn-delete"
-                                    href="<?php echo INCLUDE_PATH ?>list-sales<?php echo base64_encode($value['id']); ?>">Imprimir</a>
+                                <form action="" method="post">
+                                    <input name="id_sales" type="hidden" type="submit" value="<?php echo base64_encode($value['id']); ?>" />
+                                    <button class="btn-delete">Imprimir</button>
+                                </form>
+                            </div>
+
+                            <div>
+                            <button id="details-<?php echo $Key; ?>" onclick="InfoSales(<?php echo $key; ?>,'<?php echo $value['users']; ?>','<?php echo $value['clients']; ?>','<?php echo $value['form_payment']; ?>','<?php echo $value['quantity']; ?>','<?php echo $value['value']; ?>','<?php echo $value['total_value']; ?>')" class="btn-details">
+                                <p>Mais detalhes</p>
+                            </button>
                             </div>
                         </td>
                     </tr>

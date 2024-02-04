@@ -1,4 +1,3 @@
-
 const ProductInfoSales = document.getElementById('product-info-sales');
 const CloseModalProductSales = document.getElementById('product-info-modal');
 
@@ -6,7 +5,7 @@ const overlayHome = document.getElementById('overlay-home');
 
 console.log(ProductInfoSales);
 
-Details.addEventListener("click", async (e) => {
+Details.addEventListener("click", async(e) => {
 
     if (ProductInfoSales.style.display === "none") {
         ProductInfoSales.style.display = "block";
@@ -16,7 +15,7 @@ Details.addEventListener("click", async (e) => {
     }
 });
 
-CloseModalProductSales.addEventListener("click", async (e) => {
+CloseModalProductSales.addEventListener("click", async(e) => {
     if ((ProductInfoSales.style.display = "block")) {
         ProductInfoSales.style.display = "none";
         overlayHome.style.display = "none";
@@ -24,7 +23,7 @@ CloseModalProductSales.addEventListener("click", async (e) => {
     }
 });
 
-function InfoSales(index, user, client, form_payment, product, quantity, value, value_total) {
+function InfoSales(index, user, client, form_payment, product, quantity, status_sales, value_total) {
 
     var Details = document.getElementById('details-' + index);
     let user = document.getElementById('user');
@@ -44,7 +43,7 @@ function InfoSales(index, user, client, form_payment, product, quantity, value, 
         form_payment.innerHTML = "'<span id='form_payment'> '" + form_payment + "' </span>'";
         product.innerHTML = "'<span id='product'> '" + product + "' </span>'";
         quantity.innerHTML = "'<span id='quantity'> '" + quantity + "' </span>'";
-        value.innerHTML = "'<span id='value'> '" + value + "' </span>'";
+        value.innerHTML = "'<span id='value'> '" + status_sales + "' </span>'";
         value_total.innerHTML = "'<span id='value_total'> '" + value_total + "' </span>'";
     }
 }

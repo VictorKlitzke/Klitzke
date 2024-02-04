@@ -11,21 +11,21 @@ $result = $stock->fetch(PDO::FETCH_ASSOC);
 
 $sql = Db::Connection();
 $sales = $sql->prepare("SELECT 
-                          sales.*,
-                          users.name users,
-                          clients.name clients,
-                          form_payment.name form_payment,
-                          products.name products,
-                          sales_items.amount quantity,
-                          sales_items.price_sales value
+                        sales.*,
+                        users.name users,
+                        clients.name clients,
+                        form_payment.name form_payment,
+                        case 
+                            when sales.status = 1 then 'VENDIDO'
+                            when sales.status = 2 then 'CANCELADA'
+                            else 'ERRO'
+                        end status_sales
                         FROM
-                          sales 
-                          INNER JOIN sales_items ON sales_items.id_sales = sales.id
-                          INNER JOIN products ON products.id = sales_items.id_product
-                          INNER JOIN form_payment ON form_payment.id = sales.id_payment_method
-                          INNER JOIN clients ON clients.id = sales.id_client
-                          LEFT JOIN boxpdv ON boxpdv.id = sales.id_boxpdv
-                          LEFT JOIN users ON users.id = sales.id_users
+                        sales 
+                        INNER JOIN form_payment ON form_payment.id = sales.id_payment_method
+                        LEFT JOIN clients ON clients.id = sales.id_client
+                        INNER JOIN boxpdv ON boxpdv.id = sales.id_boxpdv
+                        INNER JOIN users ON users.id = sales.id_users
                         ORDER BY sales.date_sales LIMIT 10");
 
 $sales->execute();
@@ -174,22 +174,23 @@ $status_product = $products->fetchAll();
       <table>
         <thead>
 
-          <tr>
-            <td>Usuario</td>
-            <p>
-              <td>Cliente</td>
-            </p>
-            <p>
-              <td>Forma de Pagamento</td>
-            </p>
-            <td>Produto</td>
-            <p>
-              <td>Quantidade</td>
-            </p>
-            <p>
-              <td>Valor</td>
-            </p>
-          </tr>
+          <td>#</td>
+          <td>Usuario</td>
+          <p>
+            <td>Cliente</td>
+          </p>
+          <td>
+            <p>Forma de Pagamento</p>
+          </td>
+          <p>
+            <td>Status Venda</td>
+          </p>
+          <p>
+            <td>Valor Total</td>
+          </p>
+          <p>
+            <td>Data</td>
+          </p>
 
         </thead>
 
@@ -204,39 +205,76 @@ $status_product = $products->fetchAll();
             <tr>
               <p>
                 <td>
-                  <?php echo $value['users']; ?>
+                  <?php echo htmlspecialchars($value['id']); ?>
                 </td>
               </p>
+              <p>
+                <td>
+                  <?php echo htmlspecialchars($value['users']); ?>
+                </td>
+              </p>
+
+              <?php if (htmlspecialchars($value['clients']) == null) {
+                echo '<td><p>' . 'Cliente consumidor final' . '</p></td>';
+              } else {
+                echo '<td><p>' . htmlspecialchars($value['clients']) . '</p></td>';
+              }
+              ?>
               <td>
-                <?php echo $value['clients']; ?>
+                <?php echo htmlspecialchars($value['form_payment']); ?>
               </td>
               <td>
-                <?php echo $value['form_payment']; ?>
+                <?php echo htmlspecialchars($value['status_sales']); ?>
               </td>
               <td>
-                <?php echo $value['products']; ?>
+                <?php echo htmlspecialchars($value['total_value']); ?>
               </td>
               <td>
-                <?php echo $value['quantity']; ?>,00
-              </td>
-              <td>
-                <?php echo $value['value']; ?>
+                <p>
+                  <?php echo htmlspecialchars($value['date_sales']); ?>
+                </p>
               </td>
 
               <td style="display: flex; justify-content: center; gap: 10px; margin: 6px; padding: 6px;">
-                <div>
-                  <p class="btn-reopen">
-                    <a href="<?php echo INCLUDE_PATH ?>edit-sales?id=<?php echo base64_encode($value['id']); ?>">Reabrir
-                      venda</a>
-                  </p>
-                </div>
-                <div>
-                  <p class="btn-delete">
-                    <a href="">Cancelar venda
-                    </a>
-                  </p>
-                </div>
-                <button id="details-<?php echo $Key; ?>" onclick="InfoSales(<?php echo $key; ?>,'<?php echo $value['users']; ?>','<?php echo $value['clients']; ?>','<?php echo $value['form_payment']; ?>','<?php echo $value['quantity']; ?>','<?php echo $value['value']; ?>','<?php echo $value['total_value']; ?>')" class="btn-details">
+                <?php
+
+                if ($value['status'] == 2) {
+
+
+
+                  ?>
+
+                  <div>
+                    <form action="./ajax/reopen_sales.php" method="post">
+                      <input name="id_sales" type="hidden" type="submit"
+                        value="<?php echo base64_encode($value['id']); ?>" />
+
+                      <button class="btn-reopen">Reabrir venda</button>
+                    </form>
+                  </div>
+
+                <?php } else { ?>
+
+                  <div>
+                    <form action="./ajax/cancel_sales.php" method="post">
+                      <input name="id_sales" type="hidden" type="submit"
+                        value="<?php echo base64_encode($value['id']); ?>" />
+
+                      <button class="btn-cancel">Cancelar venda</button>
+                    </form>
+                  </div>
+
+                <?php } ?>
+
+                <?php
+
+                  $sales_product = Controllers::InfoProductsSales('sales');
+                
+                ?>
+
+                <button id="details-<?php echo $Key; ?>"
+                  onclick="InfoSales(<?php echo $key; ?>,'<?php echo $value['users']; ?>','<?php echo $value['clients']; ?>','<?php echo $value['form_payment']; ?>','<?php echo $value['total_value']; ?>','<?php echo $value['status_sales']; ?>')"
+                  class="btn-details">
                   <p>Mais detalhes</p>
                 </button>
               </td>
@@ -297,4 +335,4 @@ $status_product = $products->fetchAll();
 
 
 
-<script src="<?php echo INCLUDE_PATH; ?>./js/product_info_sales.js"></script> 
+<script src="<?php echo INCLUDE_PATH; ?>./js/product_info_sales.js"></script>

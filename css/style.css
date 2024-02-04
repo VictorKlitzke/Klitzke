@@ -477,6 +477,11 @@ table tr {
     border: none;
     border-radius: 4px;
     color: #ccc;
+    cursor: pointer;
+}
+
+.btn-reopen:hover {
+    background: #34133a;
 }
 
 .btn-details {
@@ -501,8 +506,31 @@ table tr {
     padding: 4px;
     background: #7b8d16;
     border: none;
+    cursor: pointer;
     border-radius: 4px;
     color: #ccc;
+}
+
+.btn-canceled {
+    padding: 4px;
+    background: #1c1f5a;
+    border: none;
+    cursor: default;
+    border-radius: 4px;
+    color: #ccc;
+}
+
+.btn-cancel {
+    padding: 4px;
+    background: #161c8d;
+    border: none;
+    cursor: pointer;
+    border-radius: 4px;
+    color: #ccc;
+}
+
+.btn-cancel:hover {
+    background: #0a0e4b;
 }
 
 .btn-edit:hover {
