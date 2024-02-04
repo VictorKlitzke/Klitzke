@@ -34,6 +34,7 @@
 
 .product-info-sales {
     display: none;
+    overflow-y: auto;
     height: 50%;
     padding: 14px;
     float: left;

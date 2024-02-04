@@ -196,9 +196,9 @@ $status_product = $products->fetchAll();
 
         <?php
 
-        foreach ($result_sales as $key => $value) {
+          foreach ($result_sales as $key => $value) {
 
-          ?>
+        ?>
 
           <tbody>
 
@@ -238,16 +238,13 @@ $status_product = $products->fetchAll();
               <td style="display: flex; justify-content: center; gap: 10px; margin: 6px; padding: 6px;">
                 <?php
 
-                if ($value['status'] == 2) {
+                  if ($value['status'] == 2) {
 
-
-
-                  ?>
+                ?>
 
                   <div>
                     <form action="./ajax/reopen_sales.php" method="post">
-                      <input name="id_sales" type="hidden" type="submit"
-                        value="<?php echo base64_encode($value['id']); ?>" />
+                      <input name="id_sales" type="hidden" type="submit" value="<?php echo base64_encode($value['id']); ?>" />
 
                       <button class="btn-reopen">Reabrir venda</button>
                     </form>
@@ -257,8 +254,7 @@ $status_product = $products->fetchAll();
 
                   <div>
                     <form action="./ajax/cancel_sales.php" method="post">
-                      <input name="id_sales" type="hidden" type="submit"
-                        value="<?php echo base64_encode($value['id']); ?>" />
+                      <input name="id_sales" type="hidden" type="submit" value="<?php echo base64_encode($value['id']); ?>" />
 
                       <button class="btn-cancel">Cancelar venda</button>
                     </form>
@@ -268,13 +264,14 @@ $status_product = $products->fetchAll();
 
                 <?php
 
-                  $sales_product = Controllers::InfoProductsSales('sales');
-                
+                  $sales_products = Controllers::InfoProductsSales('sales');
+
                 ?>
 
-                <button id="details-<?php echo $Key; ?>" onclick="InfoSales(<?php echo $key; ?>,'<?php echo $sales_product['id']; ?>','<?php echo $sales_product['users']; ?>','<?php echo $sales_product['clients']; ?>','<?php echo $sales_product['form_payment']; ?>','<?php echo $sales_product['products']; ?>','<?php echo $sales_product['quantity']; ?>','<?php echo $sales_product['value']; ?>','<?php echo $sales_product['total_value']; ?>')" class="btn-details">
+                <button id="details-<?php echo $sales_products; ?>" onclick="InfoSales('<?php echo $sales_products; ?>','<?php echo $value['users']; ?>','<?php echo $value['clients']; ?>','<?php echo $value['form_payment']; ?>','<?php echo $value['status_sales']; ?>','<?php echo $sales_products['total_value']; ?>','<?php echo $value['date_sales']; ?>')" class="btn-details">
                   <p>Mais detalhes</p>
                 </button>
+
               </td>
             </tr>
           </tbody>
@@ -303,14 +300,13 @@ $status_product = $products->fetchAll();
 
           <?php $info_sales = Controllers::InfoProductsSales('sales'); ?>
 
-            <div id="id"></div>
-            <div id="user"></div>
-            <div id="client"></div>
-            <div id="form_payment"></div>
-            <div id="product"></div>
-            <div id="quantity"></div>
-            <div id="value"></div>
-            <div id="value_total"></div>
+            <div id="users-sales"></div>
+            <div id="clients-sales"></div>
+            <div id="form-payment-sales"></div>
+            <div id="status-sales"></div>
+            <div id="quantity-sales"></div>
+            <div id="value-sales"></div>
+            <div id="total-value-sales"></div>
 
         </div>
       </div>

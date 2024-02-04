@@ -3,49 +3,49 @@ const CloseModalProductSales = document.getElementById('product-info-modal');
 
 const overlayHome = document.getElementById('overlay-home');
 
-Details.addEventListener("click", async(e) => {
+// Details.addEventListener("click", async(e) => {
 
-    if (ProductInfoSales.style.display === "none") {
-        ProductInfoSales.style.display = "block";
-        overlayHome.style.display = "block";
-        ProductInfoSales.style.transition = "transform 0.9s";
+//     if (ProductInfoSales.style.display === "none") {
+//         ProductInfoSales.style.display = "block";
+//         overlayHome.style.display = "block";
+//         ProductInfoSales.style.transition = "transform 0.9s";
 
-    }
-});
+//     }
+// });
 
-CloseModalProductSales.addEventListener("click", async(e) => {
-    if ((ProductInfoSales.style.display = "block")) {
-        ProductInfoSales.style.display = "none";
-        overlayHome.style.display = "none";
-        ProductInfoSales.style.transition = "transform 0.9s";
-    }
-});
+// CloseModalProductSales.addEventListener("click", async(e) => {
+//     if ((ProductInfoSales.style.display = "block")) {
+//         ProductInfoSales.style.display = "none";
+//         overlayHome.style.display = "none";
+//         ProductInfoSales.style.transition = "transform 0.9s";
+//     }
+// });
 
-function InfoSales(index, id, users, clients, form_payment, products, quantity, value, value_total) {
+function InfoSales(index, users, clients, form_payment, status_sales, total_value, date_sales) {
 
-    var Details = document.getElementById('details-' + index);
-    let id_sales = document.getElementById('id');
-    let user_sales = document.getElementById('user');
-    let client_sales = document.getElementById('client');
-    let form_payment_sales = document.getElementById('form_payment');
-    let product_sales = document.getElementById('product');
-    let quantity_sales = document.getElementById('quantity');
-    let value_sales = document.getElementById('value');
-    let value_total_sales = document.getElementById('value_total');
+    var user_sales = document.getElementById("users-sales");
+    var client_sales = document.getElementById("clients-sales");
+    var form_payment_sales = document.getElementById("form-payment-sales");
+    var product_sales = document.getElementById("status-sales");
+    var quantity_sales = document.getElementById("quantity-sales");
+    var value_sales = document.getElementById("value-sales");
+    var value_total_sales = document.getElementById("total-value-sales");
 
-    if ((ProductInfoSales.style.display = "none")) {
-        ProductInfoSales.style.display = "block";
-        overlayHome.style.display = "block";
-        ProductInfoSales.style.transition = "transform 0.9s";
-        id_sales.innerHTML = "<input type='hidden' name='id_process' value='" + id + "'>";
-        user_sales.innerHTML = "'<span id='user'> '" + users + "' </span>'";
-        client_sales.innerHTML = "'<span id='client'> '" + clients + "' </span>'";
-        form_payment_sales.innerHTML = "'<span id='form_payment'> '" + form_payment + "' </span>'";
-        product_sales.innerHTML = "'<span id='product'> '" + products + "' </span>'";
-        quantity_sales.innerHTML = "'<span id='quantity'> '" + quantity + "' </span>'";
-        value_sales.innerHTML = "'<span id='value'> '" + value + "' </span>'";
-        value_total_sales.innerHTML = "'<span id='value_total'> '" + value_total + "' </span>'";
+    if (ProductInfoSales && overlayHome && user_sales && client_sales && form_payment_sales && product_sales && quantity_sales && value_sales && value_total_sales) {
+        if ((ProductInfoSales.style.display = "none")) {
+            ProductInfoSales.style.display = "block";
+            overlayHome.style.display = "block";
+            ProductInfoSales.style.transition = "transform 0.9s";
 
-        console.log(id, users);
+            user_sales.innerHTML = "<span>" + users + "</span>";
+            client_sales.innerHTML = "<span>" + clients + "</span>";
+            form_payment_sales.innerHTML = "<span>" + form_payment + "</span>";
+            product_sales.innerHTML = "<span>" + status_sales + "</span>";
+            quantity_sales.innerHTML = "<span>" + date_sales + "</span>";
+            value_sales.innerHTML = "<span>" + total_value + "</span>";
+            value_total_sales.innerHTML = "<span id='total_value'>" + date_sales + "</span>";
+
+            console.log(users, clients);
+        }
     }
 }
