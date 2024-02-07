@@ -59,6 +59,12 @@ function ToggleInvoicing() {
     subMenu.style.padding = '5px';
 }
 
+function ToggleReport() {
+    let subMenuReport = document.getElementById('report');
+    subMenuReport.style.display = subMenuReport.style.display === 'none' ? 'block' : 'none';
+    subMenuReport.style.padding = '5px';
+}
+
 function loadPage(url) {
     var content = document.getElementById('content');
     var xhr = new XMLHttpRequest();

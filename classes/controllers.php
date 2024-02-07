@@ -24,7 +24,7 @@ class Controllers
                                                     LEFT JOIN clients ON clients.id = sales.id_client
                                                     LEFT JOIN boxpdv ON boxpdv.id = sales.id_boxpdv
                                                     LEFT JOIN users ON users.id = sales.id_users");
-            
+
         } else {
             $exec = Db::Connection()->prepare("SELECT 
                                                     sales.*,
@@ -44,7 +44,7 @@ class Controllers
                                                     LEFT JOIN users ON users.id = sales.id_users");
 
         }
-        
+
         $exec->execute();
 
         return $exec->fetchAll();
@@ -111,28 +111,35 @@ class Controllers
         return $exec->fetchAll();
     }
 
-    public function SelectProduct($start = null, $end = null)
+    public static function SelectProduct($name_table, $query = '', $ts = '')
     {
 
         $sql = Db::Connection();
-        if ($start == null && $end == null) {
+        if ($query != false) {
             $exec = $sql->prepare("SELECT 
                                         sales.*,
                                         users.name users,
                                         clients.name clients,
                                         form_payment.name form_payment,
                                         products.name products,
+                                        case 
+                                            when sales.status = 1 then 'VENDIDO'
+                                            when sales.status = 2 then 'CANCELADA'
+                                            else 'ERRO'
+                                        end status_sales,
                                         sales_items.amount quantity,
                                         sales_items.price_sales value
                                     FROM
-                                        sales 
+                                        $name_table 
                                         INNER JOIN sales_items ON sales_items.id_sales = sales.id
                                         INNER JOIN products ON products.id = sales_items.id_product
                                         INNER JOIN form_payment ON form_payment.id = sales.id_payment_method
                                         LEFT JOIN clients ON clients.id = sales.id_client
                                         LEFT JOIN boxpdv ON boxpdv.id = sales.id_boxpdv
                                         LEFT JOIN users ON users.id = sales.id_users
+                                        WHERE $query
                                         ORDER BY id ASC");
+            $exec->execute($ts);
         } else {
             $exec = $sql->prepare("SELECT 
                                         sales.*,
@@ -141,20 +148,26 @@ class Controllers
                                         form_payment.name form_payment,
                                         products.name products,
                                         sales_items.amount quantity,
+                                        case 
+                                            when sales.status = 1 then 'VENDIDO'
+                                            when sales.status = 2 then 'CANCELADA'
+                                            else 'ERRO'
+                                        end status_sales,
                                         sales_items.price_sales value
                                     FROM
-                                        sales 
+                                        $name_table 
                                         INNER JOIN sales_items ON sales_items.id_sales = sales.id
                                         INNER JOIN products ON products.id = sales_items.id_product
                                         INNER JOIN form_payment ON form_payment.id = sales.id_payment_method
                                         LEFT JOIN clients ON clients.id = sales.id_client
                                         LEFT JOIN boxpdv ON boxpdv.id = sales.id_boxpdv
                                         LEFT JOIN users ON users.id = sales.id_users 
-                                        ORDER BY id ASC LIMIT $start,$end");
-        }
-        $exec->execute();
+                                        ORDER BY id ASC ");
 
-        return $exec->fetchAll();
+            $exec->execute();
+        }
+
+        return $exec->fetch();
     }
 
     public static function SelectSales($name_table, $start = null, $end = null, $userFilter = null, $form_payment = null)

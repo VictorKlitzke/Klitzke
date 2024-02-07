@@ -262,13 +262,13 @@ $status_product = $products->fetchAll();
 
                 <?php } ?>
 
-                <?php
-
-                  $sales_products = Controllers::InfoProductsSales('sales');
-
+                <?php 
+          
+                  $info_sales = Controllers::SelectProduct('sales'); 
+          
                 ?>
 
-                <button id="details-<?php echo $sales_products; ?>" onclick="InfoSales('<?php echo $sales_products; ?>','<?php echo $value['users']; ?>','<?php echo $value['clients']; ?>','<?php echo $value['form_payment']; ?>','<?php echo $value['status_sales']; ?>','<?php echo $sales_products['total_value']; ?>','<?php echo $value['date_sales']; ?>')" class="btn-details">
+                <button id="details-<?php echo $info_sales; ?>" onclick="InfoSales('<?php echo $info_sales; ?>','<?php echo $info_sales['users']; ?>','<?php echo $info_sales['clients']; ?>','<?php echo $info_sales['form_payment']; ?>','<?php echo $info_sales['status_sales']; ?>','<?php echo $info_sales['quantity']; ?>','<?php echo $info_sales['products']; ?>','<?php echo $info_sales['total_value']; ?>','<?php echo $info_sales['date_sales']; ?>')" class="btn-details">
                   <p>Mais detalhes</p>
                 </button>
 
@@ -298,15 +298,14 @@ $status_product = $products->fetchAll();
       <div class="center">
         <div class="info-sales-product">
 
-          <?php $info_sales = Controllers::InfoProductsSales('sales'); ?>
-
             <div id="users-sales"></div>
             <div id="clients-sales"></div>
             <div id="form-payment-sales"></div>
             <div id="status-sales"></div>
+            <div id="products-sales"></div>
             <div id="quantity-sales"></div>
-            <div id="value-sales"></div>
-            <div id="total-value-sales"></div>
+            <div id="total-sales"></div>
+            <div id="date-sales"></div>
 
         </div>
       </div>

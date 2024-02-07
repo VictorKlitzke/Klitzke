@@ -48,6 +48,11 @@
     transform: translate(-50%, -50%);
 }
 
+.info-sales-product {
+    color: #ccc;
+    padding: 4px;
+}
+
 @media only screen and (max-width: 1490px) {
     .dashboard {
         display: flex;
