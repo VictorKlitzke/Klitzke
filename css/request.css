@@ -1,14 +1,35 @@
-.card-request {
+.card-request,
+.card-request-finallize,
+.box-prepare {
+    margin-bottom: 20px;
+}
+
+.card-request,
+.card-request-finallize {
     background: #202020;
-    border: 1px solid #1b1b1b;
-    height: 700px;
+    border: 1px solid #ccc;
+    height: 600px;
     border-radius: 7px;
 }
 
-.h2-request {
-    font-size: 18px;
-    background: #140d4e;
+.card-container {
     padding: 10px;
+}
+
+.h2-request {
+    font-size: 24px;
+    background: #1d1d1d;
+    padding: 15px;
+    color: #ccc;
+    border-top-left-radius: 7px;
+    border-top-right-radius: 7px;
+}
+
+.search-product-request h4,
+.caracteres h4 {
+    color: #ccc;
+    font-size: 16px;
+    margin-bottom: 10px;
 }
 
 .search-product-request input {
@@ -21,21 +42,83 @@
     width: 100%;
     background: #323232 !important;
     border: 1px solid #1b1b1b;
+    padding: 5px;
+    box-sizing: border-box;
 }
 
-.card-request-finallize {
-    background: #202020;
+h4 {
+    font-size: 168x;
+}
+
+.caracteres input {
+    font-size: 14px;
+    margin-top: 7px;
+    font-weight: normal;
+    color: #ccc;
+    outline: none !important;
+    height: 30px;
+    width: 50%;
+    background: #323232 !important;
     border: 1px solid #1b1b1b;
-    padding: 4px;
-    height: 700px;
-    border-radius: 7px;
+    padding: 5px;
+    box-sizing: border-box;
 }
 
 .box-prepare {
-    margin-top: 12px;
-    background: #202020;
+    background: #2a2a2a;
     border: 1px solid #1b1b1b;
-    padding: 4px;
+    padding: 20px;
     height: 90px;
     border-radius: 7px;
+    color: #fff;
+}
+
+.caracteres {
+    display: flex;
+    flex-direction: column;
+    background-color: #2a2a2a;
+    border: 1px solid #1b1b1b;
+    border-radius: 7px;
+    padding: 20px;
+    margin-top: 20px;
+    color: #fff;
+}
+
+.caracteres h4 {
+    font-size: 18px;
+    margin-bottom: 15px;
+}
+
+.form-request label {
+    margin-right: 10px;
+    color: #fff;
+    font-weight: bold;
+}
+
+.form-request input {
+    font-size: 16px;
+    color: #333;
+    outline: none !important;
+    height: 40px;
+    width: 100%;
+    background: #fff;
+    border: 1px solid #ccc;
+    padding: 10px;
+    box-sizing: border-box;
+    border-radius: 5px;
+}
+
+.totalizador {
+    background-color: #2a2a2a;
+    border: 1px solid #1b1b1b;
+    border-radius: 7px;
+    padding: 20px;
+    margin-top: 20px;
+    text-align: center;
+    color: #fff;
+}
+
+.totalizador h2 {
+    font-size: 24px;
+    margin-bottom: 10px;
 }
