@@ -76,7 +76,7 @@ h4 {
 .caracteres {
     display: flex;
     flex-direction: column;
-    background-color: #2a2a2a;
+    background: #2a2a2a;
     border: 1px solid #1b1b1b;
     border-radius: 7px;
     padding: 20px;
@@ -95,7 +95,8 @@ h4 {
     font-weight: bold;
 }
 
-.form-request input {
+.form-request input,
+input[type="number"] {
     font-size: 16px;
     color: #333;
     outline: none !important;
@@ -109,11 +110,11 @@ h4 {
 }
 
 .totalizador {
-    background-color: #2a2a2a;
+    background: #2a2a2a;
     border: 1px solid #1b1b1b;
     border-radius: 7px;
-    padding: 20px;
-    margin-top: 20px;
+    padding: 10px;
+    margin-top: 10px;
     text-align: center;
     color: #fff;
 }
@@ -121,4 +122,61 @@ h4 {
 .totalizador h2 {
     font-size: 24px;
     margin-bottom: 10px;
+}
+
+.button-request {
+    text-align: center;
+    outline: none;
+    margin-top: 10px;
+    cursor: pointer;
+    border: none;
+    color: #ccc;
+    padding: 17px;
+    border-radius: 7px;
+    font-size: 19px;
+    background: #2a2a2a;
+}
+
+.button-request:hover {
+    background: #1d1d1d;
+}
+
+#product-result {
+    list-style: none;
+    overflow: auto;
+    background: #fff;
+    border-radius: 7px;
+    width: 20%;
+    box-shadow: 2px 4px rgb(80, 80, 80);
+    max-height: 200px;
+    border-radius: 7px;
+    position: absolute;
+    z-index: 9999;
+}
+
+#product-result li {
+    padding: 10px;
+    border-bottom: 1px solid #1d1d1d;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+#product-result li:hover {
+    background-color: #f5f5f5;
+}
+
+#product-result li:last-child {
+    border-bottom: none;
+}
+
+
+/* LIST PEDIDOS */
+
+.request-list {
+    font-size: 24px;
+    background: #1d1d1d;
+    padding: 15px;
+    color: #ccc;
+    border-top-left-radius: 7px;
+    border-top-right-radius: 7px;
 }

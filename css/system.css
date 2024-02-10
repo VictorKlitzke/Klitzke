@@ -1,0 +1,65 @@
+.dasbord-global {
+    display: flex;
+    justify-content: start;
+    gap: 6px;
+    margin-bottom: 20px;
+}
+
+.card-global {
+    background: #202020;
+    border-radius: 5px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.h2-global {
+    font-size: 24px;
+    background: #1d1d1d;
+    padding: 15px;
+    color: #ccc;
+    width: 100%;
+    border-top-left-radius: 7px;
+    border-top-right-radius: 7px;
+}
+
+.global {
+    padding: 20px;
+}
+
+.form-global label {
+    margin-right: 10px;
+    color: #fff;
+    font-weight: bold;
+    margin-top: 20px;
+}
+
+.form-global input {
+    font-size: 16px;
+    color: #333;
+    outline: none !important;
+    height: 40px;
+    width: 100%;
+    background: #fff;
+    border: 1px solid #ccc;
+    padding: 10px;
+    box-sizing: border-box;
+    border-radius: 5px;
+}
+
+.button-global {
+    font-size: 14px;
+    color: #333;
+    outline: none !important;
+    height: 40px;
+    width: 100%;
+    background: #fff;
+    border: 1px solid #ccc;
+    padding: 10px;
+    box-sizing: border-box;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.button-global:hover {
+    background: #1d1d1d;
+    color: #fff;
+}
