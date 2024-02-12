@@ -33,9 +33,9 @@ $products = Controllers::SelectAll('products', ($currentPage - 1) * $porPage, $p
 
             <?php
 
-            foreach ($products as $key => $value) {
+                foreach ($products as $key => $value) {
 
-                ?>
+            ?>
 
                 <tbody>
                 <tr>

@@ -23,7 +23,7 @@
         $status = $_POST['status'];
         
         if ($multiply == '') {
-            Panel::Alert('attention', 'Os campos não podem ficar vázios!');
+            Panel::Alert('attention', 'O campo não pode ficar vázio!');
         } else {
             $verification = Db::Connection()->prepare("SELECT * FROM config_multiply_product WHERE multiply = ? AND status - ?");
             $verification->execute(
@@ -46,6 +46,5 @@
             }
         }
     }
-
 
 ?>

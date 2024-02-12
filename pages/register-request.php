@@ -25,16 +25,16 @@
                 </div>
             </div>
             <div class="totalizador">
-                <h2>Total</h2>
-                <p>1200</p>
+                <h2>Valor</h2>
+                <p id="product-value">R$ 0,00</p>
             </div>
-            <button class="button-request">Adicionar pedido</button>
+            <button type="button" class="button-request">Adicionar pedido</button>
         </div>
     </div>
 
     <div class="card-request-finallize right w40">
         <div class="request-list">
-            <h2>Lista de pedidos</h2>
+            <h2>Items do pedido</h2>
         </div>
         <div class="box-content">
             <div class="list">
@@ -46,14 +46,24 @@
                             <td>Quantidade</td>
                         </tr>
                     </thead>
-                    <tbody></tbody>
+                    <tbody>
+                        <tr>
+                            <td style="display: flex; justify-content: center; gap: 10px; margin: 6px; padding: 6px;">
+                                <div>
+                                    <a actionBtn="delete" class="btn-delete"
+                                        href="<?php echo INCLUDE_PATH ?>list-products?delete=<?php echo $value['id']; ?>">Deletar</a>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
                 </table>
             </div>
         </div>
     </div>
 
     <div class="box-prepare left w100">
+        <h2>Lista de pedidos</h2>
     </div>
 </form>
 
-<script  src="<?php echo INCLUDE_PATH_PANEL; ?>../js/add_request.js"></script>
+<script src="<?php echo INCLUDE_PATH_PANEL; ?>../js/add_request.js"></script>
