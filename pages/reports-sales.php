@@ -32,7 +32,6 @@ $report_sales = $result->fetch(PDO::FETCH_ASSOC);
     <title>Relatorio de vendas</title>
 </head>
 
-
 <body>
     <div class="box-content">
         <div class="list">

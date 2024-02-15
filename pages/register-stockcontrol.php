@@ -9,17 +9,18 @@ $user_id = isset($_SESSION['id']) ? $_SESSION['id'] : null;
 
 if (isset($_POST['action'])) {
 
+    $multiply = Controllers::Select('config_multiply_product');
+
     $name = $_POST['name'];
     $quantity = $_POST['quantity'];
     $barcode = $_POST['barcode'];
-    $value_product = $_POST['value_product'];
-    $value_product = str_replace(',', '.', preg_replace("/[^0-9,.]/", "", $value_product));
-    number_format($value_product);
-    floatval($value_product);
+
     $cost_value = $_POST['cost_value'];
     $cost_value = str_replace(',', '.', preg_replace("/[^0-9,.]/", "", $cost_value));
-    number_format($cost_value);
-    floatval($cost_value);
+    $cost_value = floatval($cost_value);
+
+    $default = $cost_value * $multiply['multiply'];
+
     $model = $_POST['model'];
     $brand = $_POST['brand'];
     $reference = $_POST['reference'];
@@ -31,7 +32,7 @@ if (isset($_POST['action'])) {
 
     $name_img = Panel::UploadsImg($flow);
 
-    if ($name == '' || $value_product == '' || $cost_value == '') {
+    if ($name == '' || $cost_value == '') {
         Panel::Alert('attention', 'Os campos não podem ficar vázios!');
     } else {
         $verification = Db::Connection()->prepare("SELECT * FROM `products` WHERE name = ? AND id_users = ?");
@@ -46,7 +47,7 @@ if (isset($_POST['action'])) {
                 'name' => $name,
                 'quantity' => $quantity,
                 'barcode' => $barcode,
-                'value_product' => $value_product,
+                'value_product' => $default,
                 'cost_value' => $cost_value,
                 'model' => $model,
                 'brand' => $brand,
@@ -126,21 +127,40 @@ if (isset($_POST['action'])) {
 <script src="<?php echo INCLUDE_PATH_PANEL; ?>../js/values.js"></script>
 
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        var form = document.querySelector('.form');
+<!-- Adicione este trecho de código dentro do bloco <script> -->
+document.addEventListener('DOMContentLoaded', function () {
+    var form = document.querySelector('.form');
 
-        form.addEventListener('keydown', function (event) {
-            if (event.key === 'Enter') {
-                event.preventDefault();
-
-                var currentInput = event.target;
-                var formElements = form.elements;
-                var currentIndex = Array.from(formElements).indexOf(currentInput);
-
-                if (currentIndex < formElements.length - 1) {
-                    formElements[currentIndex + 1].focus();
-                }
-            }
-        });
+    // Atualize o valor do campo "Preço" quando houver uma alteração no campo "Custo"
+    form.addEventListener('change', function (event) {
+        if (event.target.name === 'cost_value') {
+            updateCalculatedPrice();
+        }
     });
+
+    // Função para formatar números como moeda (R$)
+    function formatCurrency(value) {
+        return 'R$ ' + value.toFixed(2).replace('.', ',');
+    }
+
+    // Função para calcular e atualizar o valor no campo "Preço"
+    function updateCalculatedPrice() {
+        var costInput = form.elements['cost_value'];
+        var priceInput = form.elements['value_product'];
+
+        // Remova qualquer caractere que não seja número ou ponto
+        var costValue = parseFloat(costInput.value.replace(/[^0-9,.]/g, '').replace(',', '.')) || 0;
+
+        var multiply = <?php echo json_encode($multiply); ?>; // Certifique-se de que $multiply esteja disponível no script PHP
+
+        var calculatedPrice = costValue * multiply;
+
+        // Atualize o campo "Preço" com o valor formatado como moeda
+        priceInput.value = formatCurrency(calculatedPrice);
+    }
+
+    // Chame a função para garantir que o valor seja calculado quando a página é carregada
+    updateCalculatedPrice();
+});
+
 </script>
