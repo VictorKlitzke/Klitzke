@@ -47,6 +47,12 @@ function ToggleRegister() {
     subMenuRegister.style.padding = '5px';
 }
 
+function ToggleDelivery() {
+    let subMenuDelivery = document.getElementById('delivery');
+    subMenuDelivery.style.display = subMenuDelivery.style.display === 'none' ? 'block' : 'none';
+    subMenuDelivery.style.padding = '5px';
+}
+
 function ToggleLists() {
     let subMenuList = document.getElementById('list-registers');
     subMenuList.style.display = subMenuList.style.display === 'none' ? 'block' : 'none';

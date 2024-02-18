@@ -6,8 +6,8 @@
         <div class="card-container">
             <div class="search-product-request">
                 <h4>Buscar Produtos</h4>
-                <input type="text" id="product-search" name="product_search" placeholder="Ex: Coca-cola">
-                <ul id="product-result"></ul>
+                <input type="text" id="product-request-search" name="product-request-search" placeholder="Ex: Coca-cola">
+                <ul id="product-result-request"></ul>
             </div>
             <div class="caracteres">
                 <h4>Características do Produto</h4>
@@ -39,30 +39,44 @@
         <div class="box-content">
             <div class="list">
                 <table>
+
                     <thead>
                         <tr>
-                            <td>Cod.</td>
+                            <td>#</td>
                             <td>Nome.</td>
-                            <td>Quantidade</td>
+                            <td><p>Qntd.</p></td>
+                            <td><p>Valor</p></td>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody class="tbody-request">
                         <tr>
-                            <td style="display: flex; justify-content: center; gap: 10px; margin: 6px; padding: 6px;">
-                                <div>
-                                    <a actionBtn="delete" class="btn-delete"
-                                        href="<?php echo INCLUDE_PATH ?>list-products?delete=<?php echo $value['id']; ?>">Deletar</a>
-                                </div>
-                            </td>
+                         
                         </tr>
                     </tbody>
+
                 </table>
             </div>
+            <h2 id="totalizador-request" class="right"></h2>
         </div>
     </div>
 
-    <div class="box-prepare left w100">
+    <div class="box-content left w100">
         <h2>Lista de pedidos</h2>
+        <div class="list">
+            <table>
+                <thead>
+                    <tr>
+                        <td></td>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    <tr>
+                        <td></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
     </div>
 </form>
 

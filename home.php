@@ -137,8 +137,8 @@ include_once 'config/config.php';
                 <a <?php SelectedMenu('') ?> href="<?php echo INCLUDE_PATH; ?>reports">Relatório compras de mercadoria</a>
             </div>
 
-            <h2>delivery</h2>
-            <div id="delivery">
+            <h2 style="cursor: pointer;" onclick="ToggleDelivery()">delivery</h2>
+            <div id="delivery" style="display: none;">
                 <a href="<?php echo INCLUDE_PATH; ?>"> Pedidos delivery</a>
             </div>
         
@@ -169,8 +169,8 @@ include_once 'config/config.php';
                         </svg>
                     </span></a>
                 <span>
-                    <div class="left" style="padding-right: 18px;">
-                        <a <?php SelectedMenu('config-system') ?> href="<?php echo INCLUDE_PATH?>config-system">
+                    <div class="left">
+                        <a <?php if (@$_GET['url'] == 'config-system') { ?> style="background: #323232;" <?php } ?> href="<?php echo INCLUDE_PATH?>config-system">
                             <svg xmlns="http://www.w3.org/2000/svg" height="18" viewBox="0 -960 960 960"
                                 width="20" fill="#fff">
                                 <path

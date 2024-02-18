@@ -21,12 +21,12 @@ $products = Controllers::SelectAll('products', ($currentPage - 1) * $porPage, $p
             <tr>
                 <td>Produtos</td>
                 <p><td>Quantidade</td></p>
-                <p><td>Codigo de barras</td></p>
+                <td><p>Codigo de barras</p></td>
                 <td>Valor</td>
                 <td>Valor Custo</td>
-                <p><td>Quantidade em estoque</td></p>
+                <td><p>Quantidade em estoque</p></td>
                 <td>Referencia</td>
-                <p><td>Usuário cadastro</td></p>
+                <td><p>Usuário cadastro</p></td>
                 <td>Modelo</td>
             </tr>
             </thead>

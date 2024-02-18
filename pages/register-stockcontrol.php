@@ -131,35 +131,26 @@ if (isset($_POST['action'])) {
 document.addEventListener('DOMContentLoaded', function () {
     var form = document.querySelector('.form');
 
-    // Atualize o valor do campo "Preço" quando houver uma alteração no campo "Custo"
     form.addEventListener('change', function (event) {
         if (event.target.name === 'cost_value') {
             updateCalculatedPrice();
         }
     });
 
-    // Função para formatar números como moeda (R$)
     function formatCurrency(value) {
         return 'R$ ' + value.toFixed(2).replace('.', ',');
     }
 
-    // Função para calcular e atualizar o valor no campo "Preço"
     function updateCalculatedPrice() {
         var costInput = form.elements['cost_value'];
         var priceInput = form.elements['value_product'];
-
-        // Remova qualquer caractere que não seja número ou ponto
         var costValue = parseFloat(costInput.value.replace(/[^0-9,.]/g, '').replace(',', '.')) || 0;
-
-        var multiply = <?php echo json_encode($multiply); ?>; // Certifique-se de que $multiply esteja disponível no script PHP
-
+        var multiply = <?php echo json_encode($multiply); ?>; 
         var calculatedPrice = costValue * multiply;
 
-        // Atualize o campo "Preço" com o valor formatado como moeda
         priceInput.value = formatCurrency(calculatedPrice);
     }
 
-    // Chame a função para garantir que o valor seja calculado quando a página é carregada
     updateCalculatedPrice();
 });
 
