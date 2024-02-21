@@ -139,7 +139,7 @@ include_once 'config/config.php';
 
             <h2 style="cursor: pointer;" onclick="ToggleDelivery()">delivery</h2>
             <div id="delivery" style="display: none;">
-                <a href="<?php echo INCLUDE_PATH; ?>"> Pedidos delivery</a>
+                <a href="<?php echo INCLUDE_PATH; ?>list-product-request"> Pedidos delivery</a>
             </div>
         
         </div>

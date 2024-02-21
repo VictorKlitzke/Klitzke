@@ -168,3 +168,19 @@ input[type="number"] {
     border-top-left-radius: 7px;
     border-top-right-radius: 7px;
 }
+
+.invoice-request {
+    background: rgb(76, 125, 76);
+    padding: 4px;
+    margin-top: 21rem;
+    margin-right: 20px;
+    color: #ccc;
+    font-size: 22px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.invoice-request:hover {
+    background: green;
+}

@@ -6,7 +6,8 @@
         <div class="card-container">
             <div class="search-product-request">
                 <h4>Buscar Produtos</h4>
-                <input type="text" id="product-request-search" name="product-request-search" placeholder="Ex: Coca-cola">
+                <input type="text" id="product-request-search" name="product-request-search"
+                    placeholder="Ex: Coca-cola">
                 <ul id="product-result-request"></ul>
             </div>
             <div class="caracteres">
@@ -44,13 +45,17 @@
                         <tr>
                             <td>#</td>
                             <td>Nome.</td>
-                            <td><p>Qntd.</p></td>
-                            <td><p>Valor</p></td>
+                            <td>
+                                <p>Qntd.</p>
+                            </td>
+                            <td>
+                                <p>Valor</p>
+                            </td>
                         </tr>
                     </thead>
                     <tbody class="tbody-request">
                         <tr>
-                         
+
                         </tr>
                     </tbody>
 
@@ -58,6 +63,7 @@
             </div>
             <h2 id="totalizador-request" class="right"></h2>
         </div>
+        <button type="button" class="invoice-request right">Faturar</button>
     </div>
 
     <div class="box-content left w100">
