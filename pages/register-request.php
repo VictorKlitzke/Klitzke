@@ -36,6 +36,7 @@
     <div class="card-request-finallize right w40">
         <div class="request-list">
             <h2>Items do pedido</h2>
+            <button type="button" id="invoice-request" class="invoice-request right">Gerar pedido</button>
         </div>
         <div class="box-content">
             <div class="list">
@@ -44,9 +45,9 @@
                     <thead>
                         <tr>
                             <td>#</td>
-                            <td>Nome.</td>
+                            <td>Nome</td>
                             <td>
-                                <p>Qntd.</p>
+                                <p>Qtd.</p>
                             </td>
                             <td>
                                 <p>Valor</p>
@@ -63,7 +64,6 @@
             </div>
             <h2 id="totalizador-request" class="right"></h2>
         </div>
-        <button type="button" class="invoice-request right">Faturar</button>
     </div>
 
     <div class="box-content left w100">

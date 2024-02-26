@@ -161,6 +161,8 @@ input[type="number"] {
 }
 
 .request-list {
+    display: flex;
+    justify-content: space-between;
     font-size: 24px;
     background: #1d1d1d;
     padding: 15px;
@@ -172,8 +174,6 @@ input[type="number"] {
 .invoice-request {
     background: rgb(76, 125, 76);
     padding: 4px;
-    margin-top: 21rem;
-    margin-right: 20px;
     color: #ccc;
     font-size: 22px;
     border: none;

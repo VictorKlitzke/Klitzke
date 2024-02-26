@@ -246,8 +246,6 @@ async function finalizeSalePortion() {
 
 async function finalizeSale() {
 
-    console.log('Chamando finalizeSale');
-
     let totalAmountElement = document.getElementById('totalAmount');
     let totalValue = 0;
     if (totalAmountElement) {

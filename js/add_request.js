@@ -26,11 +26,11 @@ document.addEventListener('DOMContentLoaded', function() {
 
     productResult.addEventListener('click', function(event) {
         if (event.target.tagName === 'LI') {
-            let selectedProduct = event.target;
-            let productId = selectedProduct.getAttribute('data-id');
-            let productNames = selectedProduct.getAttribute('data-name');
-            let productSRequesttock_quantity = selectedProduct.getAttribute('data-stock_quantity');
-            let productValue_product = selectedProduct.getAttribute('data-value_product');
+            let selectedRequest = event.target;
+            let productId = selectedRequest.getAttribute('data-id');
+            let productNames = selectedRequest.getAttribute('data-name');
+            let productSRequesttock_quantity = selectedRequest.getAttribute('data-stock_quantity');
+            let productValue_product = selectedRequest.getAttribute('data-value_product');
 
             if (productID) {
                 productID.value = productId;
@@ -46,8 +46,6 @@ document.addEventListener('DOMContentLoaded', function() {
             if (value_product) {
                 value_product.value = productValue_product;
             }
-
-            console.log(productValue_product)
 
             productResult.innerHTML = '';
         }
@@ -85,6 +83,7 @@ function updatePedido() {
             Value.textContent = requestValue;
 
             Quantity.classList.add('quantity-cell');
+            Value.classList.add('value-cell');
 
             newRow.addEventListener('click', function() {
                 selectRow(newRow);
@@ -106,7 +105,8 @@ function updatePedido() {
 
             selectedRequest.push({
                 id: requestID,
-                stock_quantity: parseInt(requestQuantity)
+                stock_quantity: parseInt(requestQuantity),
+                value: requestValue
             });
         }
 
@@ -114,6 +114,8 @@ function updatePedido() {
         document.getElementById('product-name').value = "";
         document.getElementById('product-stock_quantity').value = "";
         document.getElementById('product-value').value = "";
+        document.getElementById('product-request-search').value = "";
+
     } else {
         alert("Preencha todos os campos corretamente antes de adicionar o pedido.");
     }
@@ -166,7 +168,7 @@ async function deleteSelectedRow(row, quantityCell) {
         } else {
             row.remove();
 
-            var productIndex = selectedRequest.findIndex(product => product.id == productId);
+            var productIndex = selectedRequest.findIndex(requestProducts => requestProducts.id == productId);
             if (productIndex !== -1) {
                 selectedRequest.splice(productIndex, 1);
             }
@@ -177,28 +179,84 @@ async function deleteSelectedRow(row, quantityCell) {
     calculateTotal();
 }
 
+function updateTotalAmountRequest(totalRequest) {
+
+    let totalAmountElementRequest = document.getElementById('totalizador-request');
+
+    if (totalAmountElementRequest) {
+        totalAmountElementRequest.textContent = 'R$ ' + totalRequest.toFixed(2);
+    }
+}
+
 function calculateTotal() {
-    let total = 0;
-    let productsRequest = document.querySelectorAll('.quantity-cell');
 
-    productsRequest.forEach(product => {
-        let quantity = parseInt(product.textContent) || 0;
-        let valueElement = product.parentElement.nextElementSibling.querySelector('.value');
+    let totalRequest = 0;
 
-        if (valueElement) {
-            let value = parseFloat(valueElement.textContent) || 0;
-            total += quantity * value;
+    selectedRequest.forEach(requestProducts => {
+
+        let quantityElementRequest = document.querySelector('.quantity-cell');
+        let valueElementRequest = document.querySelector('.value-cell');
+
+        if (quantityElementRequest && valueElementRequest) {
+            let quantityElementTotalRequest = parseInt(quantityElementRequest.textContent) || 0;
+            let valueRequest = parseFloat(valueElementRequest.textContent) || 0;
+
+            totalRequest += quantityElementTotalRequest * valueRequest;
         } else {
-            console.error('Elemento de valor não encontrado.');
+            console.error('Elementos não encontrados para o produto ID:', requestProducts.id);
         }
     });
 
     let totalAmountElementRequest = document.getElementById('totalizador-request');
     if (totalAmountElementRequest) {
-        totalAmountElementRequest.textContent = 'R$ ' + total.toFixed(2);
+        totalAmountElementRequest.textContent = 'R$ ' + totalRequest.toFixed(2);
     }
 
-    return total.toFixed(2);
+    updateTotalAmountRequest(totalRequest);
+
+    return totalRequest.toFixed(2);
+
 }
 
-document.querySelector('.button-request').addEventListener('click', updatePedido);
+async function generetorRequest() {
+
+    let totalAmountElementRequest = document.getElementById('totalizador-request');
+    let TotalValueRequest = 0;
+    if (totalAmountElementRequest) {
+        TotalValueRequest = parseFloat(totalAmountElementRequest.textContent.replace('R$ ', '')) || 0;
+    }
+
+    let RequestData = {
+        TotalValueRequest: TotalValueRequest,
+        requestProducts: selectedRequest
+    };
+
+    try {
+        let urlRequest = 'http://localhost/Klitzke/ajax/add_request.php';
+
+        const responseRequest = await fetch(urlRequest, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(RequestData),
+        });
+
+        const responseBodyRequest = await responseRequest.text();
+        console.log('Response from server:', responseBodyRequest);
+        const responseDataRequest = JSON.parse(responseBodyRequest);
+
+        if (responseDataRequest && responseDataRequest.success) {
+            showSuccessMessage('Venda finalizada com sucesso!');
+        } else {
+            console.error('Erro ao registrar venda:', responseDataRequest ? responseDataRequest.error : 'Resposta vazia');
+        }
+
+    } catch (error) {
+        console.error('Erro ao enviar dados para o PHP:', error);
+    }
+
+}
+
+document.querySelector('.button-request').addEventListener('click', updatePedido, calculateTotal);
+document.querySelector('.invoice-request').addEventListener('click', generetorRequest);
