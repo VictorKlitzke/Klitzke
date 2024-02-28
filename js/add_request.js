@@ -231,6 +231,8 @@ async function generetorRequest() {
         requestProducts: selectedRequest
     };
 
+    console.log(RequestData);
+
     try {
         let urlRequest = 'http://localhost/Klitzke/ajax/add_request.php';
 

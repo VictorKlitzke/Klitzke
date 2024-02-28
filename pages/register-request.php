@@ -36,7 +36,7 @@
     <div class="card-request-finallize right w40">
         <div class="request-list">
             <h2>Items do pedido</h2>
-            <button type="button" id="invoice-request" class="invoice-request right">Gerar pedido</button>
+            <button type="submit" id="invoice-request" class="invoice-request right">Gerar pedido</button>
         </div>
         <div class="box-content">
             <div class="list">
@@ -72,15 +72,32 @@
             <table>
                 <thead>
                     <tr>
-                        <td></td>
+                        <td>Mesa</td>
+                        <td>Status</td>
+                        <td>Total</td>
+                        <td>Data</td>
                     </tr>
                 </thead>
 
+                <?php
+                
+                    $request_dados = Controllers::SelectRequest('request');
+
+                    foreach ($request_dados as $key => $value){               
+                
+                ?>
+
                 <tbody>
                     <tr>
-                        <td></td>
+                        <td><?php echo htmlspecialchars($value['id_table']); ?></td>
+                        <td><?php echo htmlspecialchars($value['STATUS_REQUEST']); ?></td>
+                        <td><?php echo htmlspecialchars($value['total_request']); ?></td>
+                        <td><?php echo htmlspecialchars($value['date_request']); ?></td>
                     </tr>
                 </tbody>
+
+                <?php } ?>
+
             </table>
         </div>
     </div>

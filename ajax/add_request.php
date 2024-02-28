@@ -23,10 +23,10 @@ function status_boxpdv_request($status)
 
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $requestData = json_decode(file_get_contents('php://input'), true);
+    $RequestData = json_decode(file_get_contents('php://input'), true);
 
-    $selectedProducts = $requestData['requestProducts'] ?? [];
-    $TotalValueRequest = $requestData['TotalValueRequest'] ?? '';
+    $selectedRequest = $RequestData['requestProducts'] ?? [];
+    $TotalValueRequest = $RequestData['TotalValueRequest'] ?? '';
 
     try {
 
@@ -66,11 +66,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             $last_request_id = $sql->lastInsertId();
 
-            // var_dump($requestProducts);die();
+            // var_dump($selectedRequest);die();
 
-            foreach ($selectedProducts as $requestProducts) {
+            foreach ($selectedRequest as $requestProduct) {
 
-                $productId = isset($product['id']) ? $product['id'] : null;
+                $productId = isset($requestProduct['id']) ? $requestProduct['id'] : null;
 
                 if ($productId === null) {
 
@@ -78,8 +78,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                 } else {
 
-                    $productQuantity = $requestProducts['stock_quantity'];
-                    $productValue = floatval($requestProducts['value']);
+                    $productQuantity = $requestProduct['stock_quantity'];
+                    $productValue = floatval($requestProduct['value']);
 
                     $exec = $sql->prepare("INSERT INTO request_items (id_request, id_products, quantity, price_request) 
                                 VALUES (:last_request_id, :product_id, :product_stock_quantity, :product_value)");

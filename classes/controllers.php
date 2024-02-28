@@ -50,6 +50,41 @@ class Controllers
         return $exec->fetchAll();
     }
 
+    public static function SelectRequest($name_table, $start = null, $end = null)
+    {
+        if ($start == null && $end == null) {
+            $exec = Db::Connection()->prepare("SELECT 
+                                                    R.*,
+                                                    U.name NAME_USER,
+                                                    CASE 
+                                                        WHEN R.status = 1 THEN 'EM ATENDIMENTO'
+                                                        WHEN R.status = 2 THEN 'FINALIZADA'
+                                                        WHEN R.status = 3 THEN 'CONCLUIDO'
+                                                    END 
+                                                    STATUS_REQUEST
+                                                FROM 
+                                                    request R
+                                                    INNER JOIN users U ON U.id = R.id_users_request");
+        } else {
+            $exec = Db::Connection()->prepare("SELECT 
+                                                    R.*,
+                                                    U.name NAME_USER,
+                                                    CASE 
+                                                        WHEN R.status = 1 THEN 'EM ATENDIMENTO'
+                                                        WHEN R.status = 2 THEN 'FINALIZADA'
+                                                        WHEN R.status = 3 THEN 'CONCLUIDO'
+                                                    END 
+                                                    STATUS_REQUEST
+                                                FROM 
+                                                    request R
+                                                    INNER JOIN users U ON U.id = R.id_users_request");
+        }
+
+        $exec->execute();
+
+        return $exec->fetchAll();
+    }
+
     public static function SelectBoxPdv($name_table, $start = null, $end = null, $user_filter = null)
     {
         $sql = Db::Connection();
