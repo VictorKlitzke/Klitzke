@@ -9,6 +9,8 @@ document.addEventListener('DOMContentLoaded', function() {
     let productsRequesttock_quantity = document.getElementById('product-stock_quantity');
     let value_product = document.getElementById('product-value');
 
+    let selectedRequestList = [];
+
     productSRequestearch.addEventListener('input', function() {
 
         let searchQuery = productSRequestearch.value;
@@ -23,6 +25,38 @@ document.addEventListener('DOMContentLoaded', function() {
         xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
         xhr.send('searchQuery=' + encodeURIComponent(searchQuery));
     });
+
+    function updateTotal(totalAddRequest) {
+        let calculateRequest = document.getElementById('product-value-total');
+
+        if (calculateRequest) {
+            calculateRequest.textContent = 'R$ ' + totalAddRequest.toFixed(2);
+        }
+    }
+
+    function calculateRequestAdd() {
+        let totalAddRequest = 0;
+
+        selectedRequestList.forEach(requestProduct => {
+            let stockQuantity = requestProduct.productSRequesttock_quantity;
+            let valueProduct = parseFloat(value_product.value) || 0;
+
+            totalAddRequest += stockQuantity * valueProduct;
+
+            console.log(valueProduct, stockQuantity);
+        });
+
+        let calculateRequest = document.getElementById('product-value-total');
+        if (calculateRequest) {
+            calculateRequest.textContent = 'R$ ' + totalAddRequest.toFixed(2);
+        }
+
+        updateTotal(totalAddRequest);
+
+        console.log(totalAddRequest);
+
+        return totalAddRequest.toFixed(2);
+    }
 
     productResult.addEventListener('click', function(event) {
         if (event.target.tagName === 'LI') {
@@ -47,8 +81,17 @@ document.addEventListener('DOMContentLoaded', function() {
                 value_product.value = productValue_product;
             }
 
+            let selectProductArray = {
+                id: productID,
+                stock_quantity: parseInt(productSRequesttock_quantity) || 0,
+                value: productValue_product
+            };
+
+            selectedRequestList.push(selectProductArray);
+
             productResult.innerHTML = '';
         }
+        calculateRequestAdd();
     });
 });
 

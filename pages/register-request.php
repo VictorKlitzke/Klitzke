@@ -24,9 +24,13 @@
                     <label for="product-quantity">Qntd.</label>
                     <input type="text" id="product-stock_quantity" name="product-stock_quantity">
                 </div>
+                <div class="form-request">
+                    <label for="product-quantity">Valor</label>
+                    <input type="text" id="product-value" name="product-value">
+                </div>
             </div>
             <div class="totalizador">
-                <h2>Valor</h2>
+                <h2>Total</h2>
                 <p id="product-value">R$ 0,00</p>
             </div>
             <button type="button" class="button-request">Adicionar pedido</button>
