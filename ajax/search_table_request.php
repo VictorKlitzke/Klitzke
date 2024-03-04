@@ -12,7 +12,7 @@ $sql = Db::Connection();
 $search_query = isset($_POST['searchQueryTable']) ? $_POST['searchQueryTable'] : '';
 
 try {
-    $exec = $sql->prepare("SELECT id,name FROM table_requests WHERE id LIKE :search_query OR name LIKE :search_query");
+    $exec = $sql->prepare("SELECT id,name FROM table_requests WHERE name LIKE :search_query");
     $exec->bindValue(':search_query', '%' . $search_query . '%', PDO::PARAM_STR);
     $exec->execute();
 
@@ -20,7 +20,7 @@ try {
         while ($row = $exec->fetch(PDO::FETCH_ASSOC)) {
             $name = htmlspecialchars($row['name']);
 
-            echo '<li " data-number="' . $name;
+            echo '<li " data-number="' . $name . '">' . $name .  '</li>';
         }
     } else {
         echo '<li>Nenhum resultado encontrado</li>';

@@ -12,7 +12,7 @@
     <div class="card-request left w40">
         <div class="request-list">
             <h2>Pedidos</h2>
-            <h4 id="number-table" class="table-number right"></h4>
+            <input id="number-table" class="table-number right" />
         </div>
         <div class="card-container">
             <div class="search-product-request">
@@ -67,6 +67,7 @@
                             <td>
                                 <p>Valor</p>
                             </td>
+                            <td>Mesa</td>
                         </tr>
                     </thead>
                     <tbody class="tbody-request">

@@ -16,6 +16,12 @@
     justify-content: center;
     align-items: center;
     display: flex;
+    border: none !important;
+    outline: none !important;
+    background: transparent;
+    font-size: 18px;
+    color: #fff;
+    text-align: center;
 }
 
 .card-container {
@@ -144,6 +150,7 @@ input[type="text"] {
     background: #fff;
     border-radius: 7px;
     width: 20%;
+    color: #1b1b1b;
     box-shadow: 2px 4px rgb(80, 80, 80);
     max-height: 200px;
     border-radius: 7px;

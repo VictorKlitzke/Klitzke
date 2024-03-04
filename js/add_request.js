@@ -1,4 +1,5 @@
 let selectedRequest = [];
+let numbersTableRequest = [];
 
 document.addEventListener('DOMContentLoaded', function() {
 
@@ -6,19 +7,20 @@ document.addEventListener('DOMContentLoaded', function() {
     let SearchTable = document.getElementById('search-table');
     let productResult = document.getElementById('product-result-request');
     let searchResultTable = document.getElementById('result-table');
+
     let productID = document.getElementById('product-id');
     let productName = document.getElementById('product-name');
     let productsRequesttock_quantity = document.getElementById('product-stock_quantity');
     let value_product = document.getElementById('product-value');
+
     let numberTable = document.getElementById('number-table');
 
     let selectedRequestList = [];
 
     SearchTable.addEventListener('input', function() {
-        let searchQueryTable = SearchTable.value
-        let http = new XMLHttpRequest();
 
-        console.log(searchQueryTable);
+        let searchQueryTable = SearchTable.value;
+        let http = new XMLHttpRequest();
 
         http.onreadystatechange = function() {
             if (http.readyState === 4 && http.status === 200) {
@@ -85,6 +87,10 @@ document.addEventListener('DOMContentLoaded', function() {
             if (TableNumber) {
                 numberTable.value = TableNumber;
             }
+
+            console.log(TableNumber);
+            searchResultTable.innerHTML = '';
+            SearchTable.innerHTML = '';
         }
     })
 
@@ -130,6 +136,7 @@ function updatePedido() {
     var requestName = document.getElementById('product-name').value;
     var requestQuantity = document.getElementById('product-stock_quantity').value;
     var requestValue = document.getElementById('product-value').value;
+    var numberTableRequest = document.getElementById('number-table').value;
 
     if (!isNaN(requestValue) && requestID && requestQuantity && requestName) {
         var table = document.querySelector('.tbody-request');
@@ -146,7 +153,8 @@ function updatePedido() {
             var Name = newRow.insertCell(1);
             var Quantity = newRow.insertCell(2);
             var Value = newRow.insertCell(3);
-            var Actions = newRow.insertCell(4);
+            var Command = newRow.insertCell(4);
+            var Actions = newRow.insertCell(5);
 
             Name.style.minWidth = "100%";
 
@@ -154,6 +162,7 @@ function updatePedido() {
             Name.textContent = requestName;
             Quantity.textContent = requestQuantity;
             Value.textContent = requestValue;
+            Command.textContent = numberTableRequest;
 
             Quantity.classList.add('quantity-cell');
             Value.classList.add('value-cell');
