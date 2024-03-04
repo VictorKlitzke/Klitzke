@@ -1,7 +1,18 @@
 <form action="">
+    <div class="table-request w100">
+        <div class="box-content">
+            <h2>Escolha da mesa</h2>
+            <div class="search-table">
+                <br />
+                <input type="text" id="search-table" name="search-table" placeholder="Adicionar comanda" />
+                <ul id="result-table"></ul>
+            </div>
+        </div>
+    </div>
     <div class="card-request left w40">
-        <div class="h2-request">
+        <div class="request-list">
             <h2>Pedidos</h2>
+            <h4 id="number-table" class="table-number right"></h4>
         </div>
         <div class="card-container">
             <div class="search-product-request">
@@ -31,7 +42,7 @@
             </div>
             <div class="totalizador">
                 <h2>Total</h2>
-                <p id="product-value">R$ 0,00</p>
+                <p id="product-value-total">R$ 0,00</p>
             </div>
             <button type="button" class="button-request">Adicionar pedido</button>
         </div>
@@ -44,7 +55,7 @@
         </div>
         <div class="box-content">
             <div class="list">
-                <table>
+                <table class="table table-striped-columns">
 
                     <thead>
                         <tr>
@@ -112,7 +123,8 @@
                             <td style="display: flex; justify-content: center; gap: 10px; margin: 6px; padding: 6px;">
                                 <div>
                                     <a class="btn-edit"
-                                        href="<?php echo INCLUDE_PATH ?>edit-clients?id=<?php echo base64_encode($value['id']); ?>">Adicionar mais items</a>
+                                        href="<?php echo INCLUDE_PATH ?>edit-clients?id=<?php echo base64_encode($value['id']); ?>">Adicionar
+                                        mais items</a>
                                 </div>
                                 <div>
                                     <a class="btn-disable" href="<?php echo INCLUDE_PATH ?>">Faturar</a>

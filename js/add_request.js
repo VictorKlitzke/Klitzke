@@ -3,13 +3,32 @@ let selectedRequest = [];
 document.addEventListener('DOMContentLoaded', function() {
 
     let productSRequestearch = document.getElementById('product-request-search');
+    let SearchTable = document.getElementById('search-table');
     let productResult = document.getElementById('product-result-request');
+    let searchResultTable = document.getElementById('result-table');
     let productID = document.getElementById('product-id');
     let productName = document.getElementById('product-name');
     let productsRequesttock_quantity = document.getElementById('product-stock_quantity');
     let value_product = document.getElementById('product-value');
+    let numberTable = document.getElementById('number-table');
 
     let selectedRequestList = [];
+
+    SearchTable.addEventListener('input', function() {
+        let searchQueryTable = SearchTable.value
+        let http = new XMLHttpRequest();
+
+        console.log(searchQueryTable);
+
+        http.onreadystatechange = function() {
+            if (http.readyState === 4 && http.status === 200) {
+                searchResultTable.innerHTML = http.responseText;
+            }
+        }
+        http.open('POST', 'http://localhost/Klitzke/ajax/search_table_request.php', true);
+        http.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+        http.send('searchQueryTable=' + encodeURIComponent(searchQueryTable));
+    });
 
     productSRequestearch.addEventListener('input', function() {
 
@@ -57,6 +76,17 @@ document.addEventListener('DOMContentLoaded', function() {
 
         return totalAddRequest.toFixed(2);
     }
+
+    searchResultTable.addEventListener('click', function(event) {
+        if (event.target.tagName === 'LI') {
+            let numbersTableRequest = event.target;
+            let TableNumber = numbersTableRequest.getAttribute('data-number');
+
+            if (TableNumber) {
+                numberTable.value = TableNumber;
+            }
+        }
+    })
 
     productResult.addEventListener('click', function(event) {
         if (event.target.tagName === 'LI') {
