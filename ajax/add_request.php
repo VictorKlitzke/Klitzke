@@ -23,10 +23,11 @@ function status_boxpdv_request($status)
 
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $RequestData = json_decode(file_get_contents('php://input'), true);
+    $request_data = json_decode(file_get_contents('php://input'), true);
 
-    $selectedRequest = $RequestData['requestProducts'] ?? [];
-    $TotalValueRequest = $RequestData['TotalValueRequest'] ?? '';
+    $selectedRequest = $request_data['requestProducts'] ?? [];
+    $total_value_request = $request_data['TotalValueRequest'] ?? '';
+    $number_table_request = $request_data['numberTableRequest'] ?? '';
 
     try {
 
@@ -54,11 +55,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $exec->execute();
             $result = $exec->fetchAll(PDO::FETCH_ASSOC);
 
-            $exec = $sql->prepare("INSERT INTO request (total_request, id_boxpdv_request, id_users_request, date_request, status) 
-                VALUES (:total_request, :id_boxpdv_request, :id_users_request, NOW(), :status)");
+            $exec = $sql->prepare("INSERT INTO request (id_table, total_request, id_boxpdv_request, id_users_request, date_request, status) 
+                VALUES (:id_table, :total_request, :id_boxpdv_request, :id_users_request, NOW(), :status)");
             
+            $exec->bindParam(':id_table', $number_table_request, PDO::PARAM_INT);
             $exec->bindParam(':id_users_request', $id_users_request, PDO::PARAM_INT);
-            $exec->bindParam(':total_request', $TotalValueRequest, PDO::PARAM_INT);
+            $exec->bindParam(':total_request', $total_value_request, PDO::PARAM_INT);
             $exec->bindParam(':id_boxpdv_request', $id_boxpdv_request, PDO::PARAM_INT);
             $status = 1;
             $exec->bindParam(':status', $status, PDO::PARAM_INT);

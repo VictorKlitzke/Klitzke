@@ -63,8 +63,6 @@ document.addEventListener('DOMContentLoaded', function() {
             let valueProduct = parseFloat(value_product.value) || 0;
 
             totalAddRequest += stockQuantity * valueProduct;
-
-            console.log(valueProduct, stockQuantity);
         });
 
         let calculateRequest = document.getElementById('product-value-total');
@@ -73,8 +71,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         updateTotal(totalAddRequest);
-
-        console.log(totalAddRequest);
 
         return totalAddRequest.toFixed(2);
     }
@@ -88,7 +84,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 numberTable.value = TableNumber;
             }
 
-            console.log(TableNumber);
             searchResultTable.innerHTML = '';
             SearchTable.innerHTML = '';
         }
@@ -307,40 +302,69 @@ async function generetorRequest() {
     if (totalAmountElementRequest) {
         TotalValueRequest = parseFloat(totalAmountElementRequest.textContent.replace('R$ ', '')) || 0;
     }
+    let numberTableRequest = document.getElementById('number-table').value;
 
     let RequestData = {
         TotalValueRequest: TotalValueRequest,
-        requestProducts: selectedRequest
+        requestProducts: selectedRequest,
+        numberTableRequest: numberTableRequest
     };
 
-    console.log(RequestData);
+    if (requestProducts.length === 0) {
+        showErrorMessageRequest('Nenhum produto selecionado!!');
+        return;
+    } else {
 
-    try {
-        let urlRequest = 'http://localhost/Klitzke/ajax/add_request.php';
+        try {
+            let urlRequest = 'http://localhost/Klitzke/ajax/add_request.php';
 
-        const responseRequest = await fetch(urlRequest, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(RequestData),
-        });
+            const responseRequest = await fetch(urlRequest, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(RequestData),
+            });
 
-        const responseBodyRequest = await responseRequest.text();
-        console.log('Response from server:', responseBodyRequest);
-        const responseDataRequest = JSON.parse(responseBodyRequest);
+            const responseBodyRequest = await responseRequest.text();
+            const responseDataRequest = JSON.parse(responseBodyRequest);
 
-        if (responseDataRequest && responseDataRequest.success) {
-            showSuccessMessage('Venda finalizada com sucesso!');
-        } else {
-            console.error('Erro ao registrar venda:', responseDataRequest ? responseDataRequest.error : 'Resposta vazia');
+            if (responseDataRequest && responseDataRequest.success) {
+                showSuccessMessageRequest('Venda finalizada com sucesso!');
+            } else {
+                console.error('Erro ao registrar venda:', responseDataRequest ? responseDataRequest.error : 'Resposta vazia');
+            }
+
+        } catch (error) {
+            console.error('Erro ao enviar dados para o PHP:', error);
         }
 
-    } catch (error) {
-        console.error('Erro ao enviar dados para o PHP:', error);
     }
 
 }
+
+function showErrorMessageRequest(message) {
+    const errorContainer = document.getElementById('error-container-request');
+    const errorMessageElement = document.getElementById('error-message-request');
+    errorMessageElement.textContent = message;
+    errorContainer.style.display = 'flex';
+    setTimeout(() => {
+        errorMessageElement.textContent = '';
+        errorContainer.style.display = 'none';
+    }, 3000);
+}
+
+function showSuccessMessageRequest(message) {
+    const successContainer = document.getElementById('success-container-request');
+    const successMessageElement = document.getElementById('success-message-request');
+    successMessageElement.textContent = message;
+    successContainer.style.display = 'flex';
+    setTimeout(() => {
+        successMessageElement.textContent = '';
+        successContainer.style.display = 'none';
+    }, 3000);
+}
+
 
 document.querySelector('.button-request').addEventListener('click', updatePedido, calculateTotal);
 document.querySelector('.invoice-request').addEventListener('click', generetorRequest);

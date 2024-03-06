@@ -278,7 +278,6 @@ async function finalizeSale() {
             });
 
             const responseBody = await response.text();
-            console.log('Response from server:', responseBody);
             const responseData = JSON.parse(responseBody);
 
             if (responseData && responseData.success) {

@@ -1,3 +1,18 @@
+<?php
+
+if (isset($_GET['delete'])) {
+    $del = intval($_GET['delete']);
+    Controllers::Delete('request', $del);
+    header('Location: ' . INCLUDE_PATH . 'register-request');
+}
+
+$currentPage = isset($_GET['page']) ? (int) ($_GET['page']) : 1;
+$porPage = 20;
+
+$request = Controllers::SelectAll('request', ($currentPage - 1) * $porPage, $porPage);
+
+?>
+
 <form action="">
     <div class="table-request w100">
         <div class="box-content">
@@ -124,7 +139,7 @@
                             <td style="display: flex; justify-content: center; gap: 10px; margin: 6px; padding: 6px;">
                                 <div>
                                     <a class="btn-edit"
-                                        href="<?php echo INCLUDE_PATH ?>edit-clients?id=<?php echo base64_encode($value['id']); ?>">Adicionar
+                                        href="<?php echo INCLUDE_PATH ?>register-request?id=<?php echo base64_encode($value['id']); ?>">Adicionar
                                         mais items</a>
                                 </div>
                                 <div>
@@ -132,7 +147,7 @@
                                 </div>
                                 <div>
                                     <a actionBtn="delete" class="btn-delete"
-                                        href="<?php echo INCLUDE_PATH ?>list-clients?delete=<?php echo $value['id']; ?>">Detalhes</a>
+                                        href="<?php echo INCLUDE_PATH ?>register-request?delete=<?php echo $value['id']; ?>">Deletar</a>
                                 </div>
                             </td>
                         </tr>
@@ -143,7 +158,31 @@
 
             </table>
         </div>
+        <div class="page">
+            <?php
+            $totalPage = ceil(count(Controllers::selectAll('request')) / $porPage);
+
+            for ($i = 1; $i <= $totalPage; $i++) {
+                if ($i == $currentPage)
+                    echo '<a class="page-selected" href="' . INCLUDE_PATH . 'register-request?page=' . $i . '">' . $i . '</a>';
+                else
+                    echo '<a href="' . INCLUDE_PATH . 'register-request?page=' . $i . '">' . $i . '</a>';
+            }
+
+            ?>
+        </div>
     </div>
+
+    <div id="error-container-request"
+        style="color: black; display: none; background: #f75353; display: none; align-items: center; justify-content: center; padding: 20px; top: 50%; left: 50%; width: 100%;">
+        <span id="error-message-request"></span>
+    </div>
+
+    <div id="success-container-request"
+        style="color: black; display: none; background: green; display: none; align-items: center; justify-content: center; padding: 20px; top: 50%; left: 50%; width: 100%;">
+        <span id="success-message-request"></span>
+    </div>
+
 </form>
 
 <script src="<?php echo INCLUDE_PATH_PANEL; ?>../js/add_request.js"></script>
