@@ -139,8 +139,12 @@ $request = Controllers::SelectAll('request', ($currentPage - 1) * $porPage, $por
                             <td style="display: flex; justify-content: center; gap: 10px; margin: 6px; padding: 6px;">
                                 <div>
                                     <a class="btn-edit"
-                                        href="<?php echo INCLUDE_PATH ?>register-request?id=<?php echo base64_encode($value['id']); ?>">Adicionar
+                                        href="<?php echo INCLUDE_PATH ?>add-item-order?id=<?php echo base64_encode($value['id']); ?>">Adicionar
                                         mais items</a>
+                                </div>
+                                <div>
+                                    <a actionBtn="delete" class="btn-delete"
+                                        href="<?php echo INCLUDE_PATH ?>register-request?delete=<?php echo $value['id']; ?>">Ajuntar mesas</a>
                                 </div>
                                 <div>
                                     <a class="btn-disable" href="<?php echo INCLUDE_PATH ?>">Faturar</a>

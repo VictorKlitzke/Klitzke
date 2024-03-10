@@ -22,6 +22,7 @@
     font-size: 18px;
     color: #fff;
     text-align: center;
+    cursor: default;
 }
 
 .card-container {
@@ -199,4 +200,41 @@ input[type="text"] {
 
 .invoice-request:hover {
     background: green;
+}
+
+
+/* ADICIONAR MAIS ITENS AO PEDIDO */
+
+.add-itens-order {
+    background: #202020;
+    padding: 4px;
+}
+
+.card-itens-order {
+    background: #202020;
+    border-radius: 4px;
+    padding: 6px;
+    height: 70px;
+    display: flex;
+    gap: 5px;
+    border: 1px solid #1b1b1b;
+    justify-content: start;
+    overflow-x: auto;
+}
+
+.info-itens-order {
+    cursor: pointer;
+    border: 1px solid #1b1b1b;
+    border-radius: 6px;
+    background: #323232;
+    width: 256px;
+    height: 55px;
+    justify-content: center;
+    align-items: center;
+}
+
+.name-product-order,
+.value-product-order {
+    text-align: center;
+    color: #ccc;
 }

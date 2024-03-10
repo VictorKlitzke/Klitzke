@@ -310,6 +310,8 @@ async function generetorRequest() {
         numberTableRequest: numberTableRequest
     };
 
+    console.log(RequestData);
+
     if (requestProducts.length === 0) {
         showErrorMessageRequest('Nenhum produto selecionado!!');
         return;

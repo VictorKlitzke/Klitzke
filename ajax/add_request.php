@@ -43,8 +43,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             $id_users_request = isset($_SESSION['id']) ? $_SESSION['id'] : null;
 
-            // var_dump($id_users_request);die();
-
             $check_box_request = $sql->prepare("SELECT id FROM boxpdv WHERE id_users = :id_users AND status = 1");
             $check_box_request->bindParam(':id_users', $id_users_request, PDO::PARAM_INT);
             $check_box_request->execute();

@@ -21,7 +21,7 @@ const overlayHome = document.getElementById('overlay-home');
 //     }
 // });
 
-function InfoSales(index, users, clients, form_payment, status_sales, quantity, products, total_value, date_sales) {
+function InfoSales(id, users, clients, form_payment, status_sales, quantity, products, total_value, date_sales) {
 
     var user_sales = document.getElementById("users-sales");
     var client_sales = document.getElementById("clients-sales");
@@ -38,16 +38,16 @@ function InfoSales(index, users, clients, form_payment, status_sales, quantity, 
             overlayHome.style.display = "block";
             ProductInfoSales.style.transition = "transform 0.9s";
 
-            user_sales.innerHTML = "<p>" + users + "</p>";
-            client_sales.innerHTML = "<p>" + clients + "</p>";
-            form_payment_sales.innerHTML = "<p>" + form_payment + "</p>";
-            status_sales.innerHTML = "<p>" + status_sales + "</p>";
-            quantity_sales.innerHTML = "<p>" + quantity + "</p>";
-            products_sales.innerHTML = "<p>" + products + "</p>";
-            total_sales.innerHTML = "<p>" + total_value + "</p>";
-            date_sales.innerHTML = "<p>" + date_sales + "</p>";
+            document.getElementById('users-sales').innerText = 'Usuários: ' + users;
+            document.getElementById('clients-sales').innerText = 'Clientes: ' + clients;
+            document.getElementById('form-payment-sales').innerText = 'Forma de pagamento: ' + form_payment;
+            document.getElementById('status-sales').innerText = 'Status de venda: ' + status_sales;
+            document.getElementById('quantity-sales').innerText = 'Quantidade: ' + quantity;
+            document.getElementById('products-sales').innerText = 'Produtos: ' + products;
+            document.getElementById('total-sales').innerText = 'Valor total: ' + total_value;
+            document.getElementById('date-sales').innerText = 'Data da venda: ' + date_sales;
 
-            console.log(users, clients);
+            console.log(users, clients, id);
         }
     }
 }
