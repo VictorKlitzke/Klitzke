@@ -205,12 +205,8 @@ input[type="text"] {
 
 /* ADICIONAR MAIS ITENS AO PEDIDO */
 
-.add-itens-order {
-    background: #202020;
-    padding: 4px;
-}
-
 .card-itens-order {
+    margin-top: 12px;
     background: #202020;
     border-radius: 4px;
     padding: 6px;
@@ -222,19 +218,89 @@ input[type="text"] {
     overflow-x: auto;
 }
 
+.h2-order {
+    font-size: 20px;
+}
+
 .info-itens-order {
     cursor: pointer;
     border: 1px solid #1b1b1b;
     border-radius: 6px;
     background: #323232;
+    cursor: pointer;
     width: 256px;
     height: 55px;
     justify-content: center;
     align-items: center;
 }
 
+.info-itens-order:hover {
+    background: #1b1b1b;
+}
+
 .name-product-order,
 .value-product-order {
     text-align: center;
     color: #ccc;
+}
+
+.order-list {
+    display: flex;
+    justify-content: start;
+}
+
+.order {
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    width: 500px;
+}
+
+.order-header {
+    /* background: #3498db; */
+    background: #202020;
+    color: #fff;
+    padding: 8px;
+    text-align: center;
+}
+
+.tr-order,
+.thead-order {
+    color: #1b1b1b;
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+}
+
+.items-list-order {
+    list-style: none;
+}
+
+.item-order {
+    border-bottom: 1px solid #1b1b1b;
+    padding: 8px;
+    text-align: left;
+    overflow-y: scroll;
+}
+
+.item:last-child {
+    border-bottom: none;
+}
+
+.button-order {
+    font-size: 14px;
+    color: #333;
+    outline: none !important;
+    width: 100%;
+    background: transparent;
+    border: 1px solid #ccc;
+    padding: 10px;
+    box-sizing: border-box;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.button-order:hover {
+    background: #3498db;
+    color: white;
 }

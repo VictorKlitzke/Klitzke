@@ -302,35 +302,15 @@ $status_product = $products->fetchAll();
     <div class="box-content">
       <div class="center">
         <div class="info-sales-product">
-        <?php
-          $info_sales = Controllers::InfoProductsSales('sales');
-          $info_sales_query = "SELECT 
-                                  sales.*,
-                                  users.name users,
-                                  clients.name clients,
-                                  form_payment.name form_payment,
-                                  products.name products,
-                                  sales_items.amount quantity,
-                                  sales_items.price_sales value
-                              FROM
-                                  sales 
-                                  INNER JOIN sales_items ON sales_items.id_sales = sales.id
-                                  INNER JOIN products ON products.id = sales_items.id_product
-                                  INNER JOIN form_payment ON form_payment.id = sales.id_payment_method
-                                  LEFT JOIN clients ON clients.id = sales.id_client
-                                  LEFT JOIN boxpdv ON boxpdv.id = sales.id_boxpdv
-                                  LEFT JOIN users ON users.id = sales.id_users
-                              WHERE sales.id = $info_sales"; 
-                              
-          $info_result = Db::Connection()->query($info_sales_query)->fetch(PDO::FETCH_ASSOC);
-          ?>
-            <div id="users-sales"><?php echo $info_result['users']; ?></div>
-            <div id="clients-sales"><?php echo $info_result['clients']; ?></div>
-            <div id="form-payment-sales"><?php echo $info_result['form_payment']; ?></div>
-            <div id="status-sales"><?php echo $info_result['status_sales']; ?></div>
-            <div id="quantity-sales"><?php echo $info_result['quantity']; ?></div>
-            <div id="value-sales"><?php echo $info_result['value']; ?></div>
-            <div id="date-sales"><?php echo $info_result['date_sales']; ?></div>
+
+          <div id="users-sales"></div>
+          <div id="clients-sales"></div>
+          <div id="form-payment-sales"></div>
+          <div id="status-sales"></div>
+          <div id="products-sales"></div>
+          <div id="quantity-sales"></div>
+          <div id="total-sales"></div>
+          <div id="date-sales"></div>
 
         </div>
       </div>

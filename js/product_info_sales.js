@@ -3,23 +3,13 @@ const CloseModalProductSales = document.getElementById('product-info-modal');
 
 const overlayHome = document.getElementById('overlay-home');
 
-// Details.addEventListener("click", async(e) => {
-
-//     if (ProductInfoSales.style.display === "none") {
-//         ProductInfoSales.style.display = "block";
-//         overlayHome.style.display = "block";
-//         ProductInfoSales.style.transition = "transform 0.9s";
-
-//     }
-// });
-
-// CloseModalProductSales.addEventListener("click", async(e) => {
-//     if ((ProductInfoSales.style.display = "block")) {
-//         ProductInfoSales.style.display = "none";
-//         overlayHome.style.display = "none";
-//         ProductInfoSales.style.transition = "transform 0.9s";
-//     }
-// });
+CloseModalProductSales.addEventListener("click", function() {
+    if ((ProductInfoSales.style.display = "block")) {
+        ProductInfoSales.style.display = "none";
+        overlayHome.style.display = "none";
+        ProductInfoSales.style.transition = "transform 0.9s";
+    }
+});
 
 function InfoSales(id, users, clients, form_payment, status_sales, quantity, products, total_value, date_sales) {
 

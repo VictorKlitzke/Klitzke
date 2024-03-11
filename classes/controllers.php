@@ -278,6 +278,48 @@ class Controllers
         }
         return $exec->fetch();
     }
+    public static function SelectRequestItensOrder($name_table, $query = '', $ts = '')
+    {
+        $sql = Db::Connection();
+        if ($query != false) {
+            $exec = $sql->prepare("SELECT 
+                                    r.*,
+                                    ri.*,
+                                    pr.name product_request,
+                                    tb.name table_request,
+                                    ur.name user_request
+                                FROM
+                                    $name_table r
+                                    inner join request_items ri on ri.id_request = r.id
+                                    inner join table_requests tb on tb.id = r.id_table
+                                    inner join products pr on pr.id = ri.id_products
+                                    inner join users ur on ur.id = r.id_users_request
+                                    
+                                WHERE 
+                                    r.status = 1
+                                    AND $query");
+            $exec->execute($ts);
+        } else {
+            $exec = $sql->prepare("SELECT 
+                                    r.*,
+                                    ri.*,
+                                    pr.name product_request,
+                                    tb.name table_request,
+                                    ur.name user_request
+                                FROM
+                                    $name_table r
+                                    inner join request_items ri on ri.id_request = r.id
+                                    inner join table_requests tb on tb.id = r.id_table
+                                    inner join products pr on pr.id = ri.id_products
+                                    inner join users ur on ur.id = r.id_users_request
+                                    
+                                WHERE 
+                                    r.status = 1
+                                ");
+            $exec->execute();
+        }
+        return $exec->fetchAll(PDO::FETCH_ASSOC);
+    }
 
     public static function Insert($arr)
     {

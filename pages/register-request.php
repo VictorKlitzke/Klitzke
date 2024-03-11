@@ -163,17 +163,19 @@ $request = Controllers::SelectAll('request', ($currentPage - 1) * $porPage, $por
             </table>
         </div>
         <div class="page">
-            <?php
-            $totalPage = ceil(count(Controllers::selectAll('request')) / $porPage);
 
-            for ($i = 1; $i <= $totalPage; $i++) {
-                if ($i == $currentPage)
-                    echo '<a class="page-selected" href="' . INCLUDE_PATH . 'register-request?page=' . $i . '">' . $i . '</a>';
-                else
-                    echo '<a href="' . INCLUDE_PATH . 'register-request?page=' . $i . '">' . $i . '</a>';
-            }
+            <?php
+                $totalPage = ceil(count(Controllers::selectAll('request')) / $porPage);
+
+                for ($i = 1; $i <= $totalPage; $i++) {
+                    if ($i == $currentPage)
+                        echo '<a class="page-selected" href="' . INCLUDE_PATH . 'register-request?page=' . $i . '">' . $i . '</a>';
+                    else
+                        echo '<a href="' . INCLUDE_PATH . 'register-request?page=' . $i . '">' . $i . '</a>';
+                }
 
             ?>
+            
         </div>
     </div>
 

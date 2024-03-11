@@ -367,6 +367,9 @@ function showSuccessMessageRequest(message) {
     }, 3000);
 }
 
+function AddProductOrder() {
+
+}
 
 document.querySelector('.button-request').addEventListener('click', updatePedido, calculateTotal);
 document.querySelector('.invoice-request').addEventListener('click', generetorRequest);
