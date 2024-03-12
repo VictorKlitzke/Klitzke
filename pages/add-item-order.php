@@ -62,14 +62,14 @@ if (isset($_GET['id'])) {
                         if (!$hasProducts) {
                             echo '<table>';
                             echo '<thead><tr class="thead-order"><td>Produto</td><th>Quantidade</td><td>Valor</td></tr></thead>';
-                            echo '<tbody>';
+                            echo '<tbody id="items-list-order">';
                             $hasProducts = true;
                         }
 
-                        echo '<tr class="tr-order">';
+                        echo '<tr class="tr-order" id="tr-order">';
                         echo '<td>' . $product['product_request'] . '</td>';
                         echo '<td>' . $product['quantity'] . '</td>';
-                        echo '<td>R$' . $product['total_request'] . '</td>';
+                        echo '<td>R$' . $product['price_request'] . '</td>';
                         echo '</tr>';
                     }
 

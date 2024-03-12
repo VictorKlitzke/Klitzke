@@ -367,8 +367,18 @@ function showSuccessMessageRequest(message) {
     }, 3000);
 }
 
-function AddProductOrder() {
+function AddProductOrder(index, id, name, stock_quantity, value_product) {
 
+    var newRow = document.createElement('tr');
+
+    newRow.className = 'tr-order';
+
+    newRow.innerHTML = "<td id='product-name'>" + name + "</td>" +
+        "<td id='product-quantity-" + id + "'>" + 1 + "</td>" +
+        "<td id='value" + id + "'>" + "R$" + value_product + " </td>";
+
+    var tbody = document.querySelector('#items-list-order');
+    tbody.appendChild(newRow);
 }
 
 document.querySelector('.button-request').addEventListener('click', updatePedido, calculateTotal);
