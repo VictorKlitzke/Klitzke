@@ -145,6 +145,18 @@ class Controllers
 
         return $exec->fetchAll();
     }
+    public static function SelectAllTableRequests($name_table, $start = null, $end = null)
+    {
+        $sql = Db::Connection();
+        if ($start == null && $end == null) {
+            $exec = $sql->prepare("SELECT * FROM $name_table WHERE status_table = 1 ORDER BY id ASC");
+        } else {
+            $exec = $sql->prepare("SELECT * FROM $name_table WHERE status_table = 1 ORDER BY id ASC LIMIT $start,$end");
+        }
+        $exec->execute();
+
+        return $exec->fetchAll();
+    }
 
     public static function SelectProduct($name_table, $query = '', $ts = '')
     {

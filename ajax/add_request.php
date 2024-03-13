@@ -66,8 +66,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             $last_request_id = $sql->lastInsertId();
 
-            // var_dump($selectedRequest);die();
-
             foreach ($selectedRequest as $requestProduct) {
 
                 $productId = isset($requestProduct['id']) ? $requestProduct['id'] : null;
@@ -91,6 +89,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                 }
             }
+
+            $exec = $sql->prepare("UPDATE table_requests SET status_table = 1 WHERE id = :id_table");
+            $exec->bindParam(':id_table', $number_table_request, PDO::PARAM_INT);
+            $exec->execute();
 
             $sql->commit();
 

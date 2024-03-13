@@ -144,7 +144,7 @@ $request = Controllers::SelectAll('request', ($currentPage - 1) * $porPage, $por
                                 </div>
                                 <div>
                                     <a actionBtn="delete" class="btn-delete"
-                                        href="<?php echo INCLUDE_PATH ?>register-request?delete=<?php echo $value['id']; ?>">Ajuntar mesas</a>
+                                        href="<?php echo INCLUDE_PATH ?>gather-tables?id=<?php echo base64_encode($value['id']); ?>">Ajuntar mesas</a>
                                 </div>
                                 <div>
                                     <a class="btn-disable" href="<?php echo INCLUDE_PATH ?>">Faturar</a>
@@ -175,7 +175,7 @@ $request = Controllers::SelectAll('request', ($currentPage - 1) * $porPage, $por
                 }
 
             ?>
-            
+
         </div>
     </div>
 

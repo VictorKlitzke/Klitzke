@@ -60,7 +60,7 @@ if (isset($_GET['id'])) {
                     foreach ($update as $product) {
 
                         if (!$hasProducts) {
-                            echo '<table>';
+                            echo '<table class="table-order">';
                             echo '<thead><tr class="thead-order"><td>Produto</td><th>Quantidade</td><td>Valor</td></tr></thead>';
                             echo '<tbody id="items-list-order">';
                             $hasProducts = true;

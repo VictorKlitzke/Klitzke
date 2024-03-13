@@ -244,16 +244,10 @@ input[type="text"] {
     color: #ccc;
 }
 
-
-/* Container da lista de pedidos */
-
 .order-list {
     display: flex;
     justify-content: start;
 }
-
-
-/* Estilo do pedido individual */
 
 .order {
     border: 1px solid #ccc;
@@ -262,9 +256,6 @@ input[type="text"] {
     width: 100%;
 }
 
-
-/* Cabeçalho do pedido */
-
 .order-header {
     background: #202020;
     color: #fff;
@@ -272,8 +263,10 @@ input[type="text"] {
     text-align: center;
 }
 
-
-/* Linha da tabela do pedido */
+.table-order {
+    overflow-y: scroll;
+    /* height: 300px; */
+}
 
 .tr-order,
 .thead-order {
@@ -283,32 +276,19 @@ input[type="text"] {
     text-align: left;
 }
 
-
-/* Lista de itens do pedido */
-
 .items-list-order {
     list-style: none;
 }
-
-
-/* Item individual do pedido */
 
 .item-order {
     border-bottom: 1px solid #1b1b1b;
     padding: 8px;
     text-align: left;
-    overflow-y: scroll;
 }
-
-
-/* Último item sem borda inferior */
 
 .item-order:last-child {
     border-bottom: none;
 }
-
-
-/* Botão de ação do pedido */
 
 .button-order {
     font-size: 14px;
@@ -322,9 +302,6 @@ input[type="text"] {
     border-radius: 5px;
     cursor: pointer;
 }
-
-
-/* Efeito de hover no botão */
 
 .button-order:hover {
     background: #3498db;
@@ -378,4 +355,35 @@ input[type="text"] {
 .button-order:hover {
     background: #3498db;
     color: white;
+}
+
+
+/* AJUNTAR COMANDAS */
+
+.gather-tables {
+    margin-top: 12px;
+    background: #202020;
+    border-radius: 4px;
+    padding: 6px;
+    height: 70px;
+    display: flex;
+    gap: 5px;
+    border: 1px solid #1b1b1b;
+    justify-content: start;
+    overflow-x: auto;
+}
+
+.h2-gather {
+    padding-top: 14px;
+    text-align: center;
+}
+
+.info-tabes {
+    cursor: pointer;
+    border: 1px solid #1b1b1b;
+    border-radius: 6px;
+    background: #323232;
+    cursor: pointer;
+    width: 256px;
+    height: 55px;
 }
