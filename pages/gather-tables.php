@@ -24,6 +24,9 @@ if (isset($_GET['id'])) {
         <div class="info-tabes">
             <h2 class="h2-gather">
                 <?php echo $value['name']; ?>
+                <form action="">
+                    <input type="hidden" name="name_table" id="<?php echo base64_encode($value['name']); ?>">
+                </form>
             </h2>
         </div>
 
@@ -35,4 +38,13 @@ if (isset($_GET['id'])) {
 
 <h2 class="h2-global">Comandas ajuntadas</h2>
 <div class="command-gathers">
+    <div class="info-gathers">
+        <p>Comanda:</p>
+    </div>
 </div>
+
+
+<form id="form-juntar-mesas" action="processar_juncao.php" method="post">
+    <input type="hidden" name="mesas_selecionadas" id="mesas_selecionadas">
+    <button type="submit">Ajuntar Mesas</button>
+</form>
