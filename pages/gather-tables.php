@@ -20,20 +20,28 @@ if (isset($_GET['id'])) {
 
         foreach ($tables_command as $key => $value) {
 
-        ?>
+            ?>
             <div class="table-gathers" data-index="<?php echo $key; ?>" data-valor="<?php echo $value['total_request']; ?>">
-                <p>Comanda: <?php echo $value['table_request']; ?></p>
-                <p> Valor Total: <?php echo $value['total_request']; ?></p>
+                <p>Comanda:
+                    <?php echo $value['table_request']; ?>
+                </p>
+                <p> Valor Total:
+                    <?php echo $value['total_request']; ?>
+                </p>
             </div>
 
         <?php } ?>
     </section>
-    <section class="table-gathers-selected">
+
+    <section>
+
         <h2>Mesas Selecionadas</h2>
+        <div class="table-gathers-selected">
 
-        <h2 class="span-gathers right">Total: <span id="totalizador">R$ 0,00</span></h2>
+            <h2 class="span-gathers right">Total: <span id="totalizador">R$ 0,00</span></h2>
 
-        <button>Ajuntar comandas</button>
+            <button>Ajuntar comandas</button>
+        </div>
     </section>
 </main>
 
