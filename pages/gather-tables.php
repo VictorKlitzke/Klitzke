@@ -10,41 +10,31 @@ if (isset($_GET['id'])) {
 
 ?>
 
-<h2 class="h2-global">Ajuntar commandas</h2>
-<div class="gather-tables">
+<h1 class="h2-global">Ajuntar Comandas</h1>
+<main>
+    <section class="mesas-disponiveis">
+        <h2>Mesas Disponíveis</h2>
+        <?php
 
-    <?php
+        $tables_command = Controllers::SelectAllTableRequests('request');
 
-    $tables_command = Controllers::SelectAllTableRequests('table_requests');
+        foreach ($tables_command as $key => $value) {
 
-    foreach ($tables_command as $key => $value) {
+        ?>
+            <div class="table-gathers" data-index="<?php echo $key; ?>" data-valor="<?php echo $value['total_request']; ?>">
+                <p>Comanda: <?php echo $value['table_request']; ?></p>
+                <p> Valor Total: <?php echo $value['total_request']; ?></p>
+            </div>
 
-    ?>
+        <?php } ?>
+    </section>
+    <section class="table-gathers-selected">
+        <h2>Mesas Selecionadas</h2>
 
-        <div class="info-tabes">
-            <h2 class="h2-gather">
-                <?php echo $value['name']; ?>
-                <form action="">
-                    <input type="hidden" name="name_table" id="<?php echo base64_encode($value['name']); ?>">
-                </form>
-            </h2>
-        </div>
+        <h2 class="span-gathers right">Total: <span id="totalizador">R$ 0,00</span></h2>
 
-    <?php } ?>
+        <button>Ajuntar comandas</button>
+    </section>
+</main>
 
-</div>
-
-<br>
-
-<h2 class="h2-global">Comandas ajuntadas</h2>
-<div class="command-gathers">
-    <div class="info-gathers">
-        <p>Comanda:</p>
-    </div>
-</div>
-
-
-<form id="form-juntar-mesas" action="processar_juncao.php" method="post">
-    <input type="hidden" name="mesas_selecionadas" id="mesas_selecionadas">
-    <button type="submit">Ajuntar Mesas</button>
-</form>
+<script src="<?php echo INCLUDE_PATH_PANEL; ?>../js/add_request.js"></script>

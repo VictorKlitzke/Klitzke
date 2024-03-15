@@ -149,9 +149,32 @@ class Controllers
     {
         $sql = Db::Connection();
         if ($start == null && $end == null) {
-            $exec = $sql->prepare("SELECT * FROM $name_table WHERE status_table = 1 ORDER BY id ASC");
+            $exec = $sql->prepare("SELECT 
+                                    r.*,
+                                    tb.name table_request,
+                                    ur.name user_request
+                                FROM
+                                    request r
+                                    inner join table_requests tb on tb.id = r.id_table
+                                    inner join users ur on ur.id = r.id_users_request
+                                    
+                                WHERE 
+                                    r.status = 1 AND
+                                    tb.status_table = 1 
+                                    ORDER BY r.id ASC");
         } else {
-            $exec = $sql->prepare("SELECT * FROM $name_table WHERE status_table = 1 ORDER BY id ASC LIMIT $start,$end");
+            $exec = $sql->prepare("SELECT 
+                                    r.*,
+                                    tb.name table_request,
+                                    ur.name user_request
+                                FROM
+                                    request r
+                                    inner join table_requests tb on tb.id = r.id_table
+                                    inner join users ur on ur.id = r.id_users_request
+                                    
+                                WHERE 
+                                    r.status = 1 AND
+                                    tb.status_table = 1 ORDER BY r.id ASC LIMIT $start,$end");
         }
         $exec->execute();
 

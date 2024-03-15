@@ -360,7 +360,8 @@ input[type="text"] {
 
 /* AJUNTAR COMANDAS */
 
-.gather-tables {
+
+/* .gather-tables {
     margin-top: 12px;
     background: #202020;
     border-radius: 4px;
@@ -386,4 +387,78 @@ input[type="text"] {
     cursor: pointer;
     width: 256px;
     height: 55px;
+} */
+
+.header-gathers {
+    background-color: #333;
+    color: #fff;
+    text-align: center;
+}
+
+main {
+    display: flex;
+    justify-content: space-between;
+    padding: 20px;
+}
+
+section {
+    width: 45%;
+}
+
+section h2 {
+    margin-bottom: 10px;
+}
+
+.table-gathers {
+    background-color: #f0f0f0;
+    border: 2px solid #ccc;
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 20px;
+    cursor: pointer;
+    transition: background-color 0.3s, border-color 0.3s;
+}
+
+.table-gathers:hover {
+    background-color: #e0e0e0;
+    border-color: #999;
+}
+
+.table-gathers::before {
+    content: "🍽 ";
+    margin-right: 5px;
+}
+
+.table-gathers::after {
+    content: attr(data-id);
+    font-weight: bold;
+}
+
+.table-gathers-selected {
+    position: relative;
+    background-color: #f0f0f0;
+    color: #1d1d1d;
+    border: 2px dashed #ccc;
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 50px;
+}
+
+.table-gathers-selected button {
+    position: absolute;
+    bottom: 10px;
+    background: #202020;
+    padding: 7px;
+    margin: 7px;
+    outline: none;
+    border: none;
+    border-radius: 5px;
+    color: #ccc;
+    right: 10px;
+}
+
+.table-gathers-selected h2,
+.table-gathers-selected span {
+    display: inline;
+    color: #1b1b1b;
 }

@@ -381,5 +381,51 @@ function AddProductOrder(index, id, name, stock_quantity, value_product) {
     tbody.appendChild(newRow);
 }
 
+document.addEventListener('DOMContentLoaded', function() {
+    const tableSelected = [];
+    let totalValorSelecionado = 0;
+
+    const totalizador = document.getElementById('totalizador');
+
+    document.querySelectorAll('.table-gathers').forEach(table => {
+        table.addEventListener('click', function() {
+            const tableIndex = table.dataset.index;
+            const ValueTable = parseFloat(table.dataset.valor);
+
+            if (!tableSelected.includes(tableIndex)) {
+                tableSelected.push(tableIndex);
+                exibirtableSelecteds(table);
+                totalValorSelecionado += ValueTable;
+            } else {
+                tableSelected.splice(tableSelected.indexOf(tableIndex), 1);
+                removertableSelected(tableIndex);
+                totalValorSelecionado -= ValueTable;
+            }
+
+            updateTotalizador();
+            console.log(updateTotalizador());
+        });
+    });
+
+    function exibirtableSelecteds(table) {
+        table.classList.add('selecionada');
+        const tableSelecionada = document.createElement('div');
+        tableSelecionada.textContent = table.textContent;
+        tableSelecionada.dataset.index = table.dataset.index;
+        document.querySelector('.table-gathers-selected').appendChild(tableSelecionada);
+    }
+
+    function removertableSelected(tableIndex) {
+        const tableSelecionada = document.querySelector('.table-gathers-selected [data-index="' + tableIndex + '"]');
+        tableSelecionada.remove();
+    }
+
+    function updateTotalizador() {
+        if (totalizador) {
+            totalizador.textContent = totalValorSelecionado.toFixed(2);
+        }
+    }
+});
+
 document.querySelector('.button-request').addEventListener('click', updatePedido, calculateTotal);
 document.querySelector('.invoice-request').addEventListener('click', generetorRequest);
