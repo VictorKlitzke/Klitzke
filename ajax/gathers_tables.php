@@ -14,14 +14,15 @@ $sql = Db::Connection();
 
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    $request_data = json_decode(file_get_contents('php://input'), true);
 
-    $id_table_order = isset($_POST['name_table']) ? explode(" ", $_POST['name_table']) : [];
+    $selected_tables = $request_data['tableSelected'] ?? [];
 
-    if (count($id_table_order) >= 2) {
+    if (count($selected_tables) >= 2) {
         try {
             $sql->beginTransaction();
 
-            $new_table_order = $sql->lastInsertId();
+            $id_users_request = isset($_SESSION['id']) ? $_SESSION['id'] : null;
 
             $exec = $sql->prepare("UPDATE request SET id_table = :new_table_order WHERE id_table IN (" . implode(',', $id_table_order) . ")");
             $exec->bindParam(':new_table_order', $new_table_order);

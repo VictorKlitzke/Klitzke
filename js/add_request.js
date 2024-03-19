@@ -410,8 +410,8 @@ document.addEventListener('DOMContentLoaded', function() {
     function exibirtableSelecteds(table) {
         table.classList.add('selecionada');
         const tableSelecionada = document.createElement('div');
-        tableSelecionada.textContent = table.textContent;
-        tableSelecionada.dataset.index = table.dataset.index;
+        tableSelected.textContent = table.textContent;
+        tableSelecionada.dataset.id = table.dataset.id;
         document.querySelector('.table-gathers-selected').appendChild(tableSelecionada);
     }
 
@@ -422,40 +422,43 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function updateTotalizador() {
         if (totalizador) {
-            totalValorSeletected = Math.max(totalValorSeletected, 0); // Garante que o valor total nunca seja negativo
+            totalValorSeletected = Math.max(totalValorSeletected, 0);
             totalizador.textContent = totalValorSeletected.toFixed(2);
         }
     }
-});
 
-function GathersTables() {
-    const RequestDataGathers = {
-        tables: tableSelected
-    }
-
-    try {
-
-        const RequestTables = fetch('http://localhost/Klitzke/ajax/gathers_tables.php', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(RequestDataGathers),
-        });
-        const responseTablesBody = RequestTables.text();
-        console.log('Response from server:', responseTablesBody);
-        const responseTables = JSON.parse(responseTablesBody);
-
-        if (responseTables && responseTables.success) {
-            showSuccessMessage('Venda finalizada com sucesso!');
-        } else {
-            console.error('Erro ao registrar venda:', responseTables ? responseTables.error : 'Resposta vazia');
+    async function GathersTables() {
+        const RequestDataGathers = {
+            tables: tableSelected
         }
-    } catch (error) {
-        console.error('Erro ao enviar dados para o PHP:', error);
+
+        console.log(RequestDataGathers);
+
+        try {
+
+            const RequestTables = await fetch('http://localhost/Klitzke/ajax/gathers_tables.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(RequestDataGathers),
+            });
+            const responseTablesBody = await RequestTables.text();
+            console.log('Response from server:', responseTablesBody);
+            const responseTables = JSON.parse(responseTablesBody);
+
+            if (responseTables && responseTables.success) {
+                showSuccessMessage('Venda finalizada com sucesso!');
+            } else {
+                console.error('Erro ao registrar venda:', responseTables ? responseTables.error : 'Resposta vazia');
+            }
+        } catch (error) {
+            console.error('Erro ao enviar dados para o PHP:', error);
+        }
     }
-}
+
+    document.querySelector('.button-gathers').addEventListener('click', GathersTables);
+});
 
 document.querySelector('.button-request').addEventListener('click', updatePedido, calculateTotal);
 document.querySelector('.invoice-request').addEventListener('click', generetorRequest);
-document.querySelector('.button-gathers').addEventListener('click', GathersTables);
