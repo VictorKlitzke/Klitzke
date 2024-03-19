@@ -463,3 +463,12 @@ section h2 {
     display: inline;
     color: #1b1b1b;
 }
+
+.button-gathers {
+    background-color: #3498db;
+    cursor: pointer;
+}
+
+.button-gathers:hover {
+    background-color: #3498db;
+}

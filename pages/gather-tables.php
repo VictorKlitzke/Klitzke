@@ -16,11 +16,11 @@ if (isset($_GET['id'])) {
         <h2>Mesas Disponíveis</h2>
         <?php
 
-        $tables_command = Controllers::SelectAllTableRequests('request');
+            $tables_command = Controllers::SelectAllTableRequests('request');
 
-        foreach ($tables_command as $key => $value) {
+            foreach ($tables_command as $key => $value) {
 
-            ?>
+        ?>
             <div class="table-gathers" data-index="<?php echo $key; ?>" data-valor="<?php echo $value['total_request']; ?>">
                 <p>Comanda:
                     <?php echo $value['table_request']; ?>
@@ -34,13 +34,12 @@ if (isset($_GET['id'])) {
     </section>
 
     <section>
-
         <h2>Mesas Selecionadas</h2>
         <div class="table-gathers-selected">
 
             <h2 class="span-gathers right">Total: <span id="totalizador">R$ 0,00</span></h2>
 
-            <button>Ajuntar comandas</button>
+            <button class="button-gathers" id="button-gathers">Ajuntar comandas</button>
         </div>
     </section>
 </main>

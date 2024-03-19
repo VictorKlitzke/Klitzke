@@ -21,9 +21,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         try {
             $sql->beginTransaction();
 
-            $exec = $sql->prepare("INSERT INTO table_requests (name) VALUES(999)");
-            $exec->execute();
-
             $new_table_order = $sql->lastInsertId();
 
             $exec = $sql->prepare("UPDATE request SET id_table = :new_table_order WHERE id_table IN (" . implode(',', $id_table_order) . ")");

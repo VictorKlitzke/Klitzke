@@ -383,7 +383,7 @@ function AddProductOrder(index, id, name, stock_quantity, value_product) {
 
 document.addEventListener('DOMContentLoaded', function() {
     const tableSelected = [];
-    let totalValorSelecionado = 0;
+    let totalValorSeletected = 0;
 
     const totalizador = document.getElementById('totalizador');
 
@@ -395,11 +395,11 @@ document.addEventListener('DOMContentLoaded', function() {
             if (!tableSelected.includes(tableIndex)) {
                 tableSelected.push(tableIndex);
                 exibirtableSelecteds(table);
-                totalValorSelecionado += ValueTable;
+                totalValorSeletected += ValueTable;
             } else {
                 tableSelected.splice(tableSelected.indexOf(tableIndex), 1);
                 removertableSelected(tableIndex);
-                totalValorSelecionado -= ValueTable;
+                totalValorSeletected -= ValueTable;
             }
 
             updateTotalizador();
@@ -422,10 +422,40 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function updateTotalizador() {
         if (totalizador) {
-            totalizador.textContent = totalValorSelecionado.toFixed(2);
+            totalValorSeletected = Math.max(totalValorSeletected, 0); // Garante que o valor total nunca seja negativo
+            totalizador.textContent = totalValorSeletected.toFixed(2);
         }
     }
 });
 
+function GathersTables() {
+    const RequestDataGathers = {
+        tables: tableSelected
+    }
+
+    try {
+
+        const RequestTables = fetch('http://localhost/Klitzke/ajax/gathers_tables.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(RequestDataGathers),
+        });
+        const responseTablesBody = RequestTables.text();
+        console.log('Response from server:', responseTablesBody);
+        const responseTables = JSON.parse(responseTablesBody);
+
+        if (responseTables && responseTables.success) {
+            showSuccessMessage('Venda finalizada com sucesso!');
+        } else {
+            console.error('Erro ao registrar venda:', responseTables ? responseTables.error : 'Resposta vazia');
+        }
+    } catch (error) {
+        console.error('Erro ao enviar dados para o PHP:', error);
+    }
+}
+
 document.querySelector('.button-request').addEventListener('click', updatePedido, calculateTotal);
 document.querySelector('.invoice-request').addEventListener('click', generetorRequest);
+document.querySelector('.button-gathers').addEventListener('click', GathersTables);
