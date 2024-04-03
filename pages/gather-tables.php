@@ -1,7 +1,7 @@
 <?php
 
-if (isset($_GET['id'])) {
-    $id = (int) base64_decode($_GET['id']);
+if (isset($_POST['id'])) {
+    $id = (int) base64_decode($_POST['id']);
     $update = Controllers::SelectRequestItensOrder('request', 'r.id=?', array($id));
 } else {
     Panel::alert('error', 'Você precisa passar o parametro ID.');

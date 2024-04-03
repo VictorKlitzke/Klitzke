@@ -452,4 +452,12 @@ class Controllers
         }
         $exec->execute();
     }
+    public static function DeleteRequest($id)
+    {
+        $sql = Db::Connection();
+        $sql = Db::Connection();
+        $exec = $sql->prepare("DELETE r, ri FROM `request` r INNER JOIN request_items ri ON ri.id_products = r.id WHERE ri.id_request = ?");
+        $exec->bindValue(1, $id, PDO::PARAM_INT);
+        $exec->execute();
+    }
 }
