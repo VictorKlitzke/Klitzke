@@ -88,10 +88,10 @@ include_once 'config/config.php';
                     Cadastrar Produtos
                 </a>
                 <a <?php SelectedMenu('register-table') ?>
-                    href="<?php echo INCLUDE_PATH; ?>register-table">Cadastrar mesa
+                    href="<?php echo INCLUDE_PATH; ?>register-table">Cadastrar Mesa
                 </a>
                 <a <?php SelectedMenu('register-back-account') ?>
-                    href="<?php echo INCLUDE_PATH; ?>register-back-account">Cadastrar conta bancaria
+                    href="<?php echo INCLUDE_PATH; ?>register-back-account">Cadastrar Conta Bancaria
                 </a>
             </div>
 
@@ -115,6 +115,9 @@ include_once 'config/config.php';
                 <a <?php SelectedMenu('list-sales') ?> href="<?php echo INCLUDE_PATH; ?>list-sales">
                     Lista de Vendas
                 </a>
+                <a <?php SelectedMenu('list-request') ?> href="<?php echo INCLUDE_PATH; ?>list-request">
+                    Lista de Pedidos
+                </a>
             </div>
 
             <h2 style="cursor: pointer;" onclick="ToggleInvoicing()">Faturamento</h2>
@@ -131,11 +134,11 @@ include_once 'config/config.php';
 
             <h2 style="cursor: pointer;" onclick="ToggleReport()">Relatórios</h2>
             <div id="report" style="display: none;">
-                <a <?php SelectedMenu('') ?> href="<?php echo INCLUDE_PATH; ?>reports">Relatório fechamento caixa</a>
-                <a <?php SelectedMenu('') ?> href="<?php echo INCLUDE_PATH; ?>reports">Relatório vendas</a>
-                <a <?php SelectedMenu('') ?> href="<?php echo INCLUDE_PATH; ?>reports">Relatório vendas por usuários</a>
-                <a <?php SelectedMenu('') ?> href="<?php echo INCLUDE_PATH; ?>reports">Relatório pedidos faturados</a>
-                <a <?php SelectedMenu('') ?> href="<?php echo INCLUDE_PATH; ?>reports">Relatório compras de mercadoria</a>
+                <a <?php SelectedMenu('') ?> href="<?php echo INCLUDE_PATH; ?>reports">Relatório Fechamento Caixa</a>
+                <a <?php SelectedMenu('') ?> href="<?php echo INCLUDE_PATH; ?>reports">Relatório Vendas</a>
+                <a <?php SelectedMenu('') ?> href="<?php echo INCLUDE_PATH; ?>reports">Relatório Vendas por Usuários</a>
+                <a <?php SelectedMenu('') ?> href="<?php echo INCLUDE_PATH; ?>reports">Relatório Pedidos Faturados</a>
+                <a <?php SelectedMenu('') ?> href="<?php echo INCLUDE_PATH; ?>reports">Relatório Compras de Mercadoria</a>
             </div>
 
             <h2 style="cursor: pointer;" onclick="ToggleDelivery()">delivery</h2>
