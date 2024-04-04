@@ -465,8 +465,13 @@ section h2 {
 }
 
 .button-gathers {
-    background-color: #3498db;
+    background-color: rgb(35, 37, 94);
     cursor: pointer;
+    border: none;
+    color: #ccc;
+    border-radius: 4px;
+    outline: none !important;
+    padding: 12px;
 }
 
 .button-gathers:hover {
