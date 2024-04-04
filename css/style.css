@@ -529,6 +529,32 @@ table tr {
     color: #ccc;
 }
 
+.btn-ajust {
+    padding: 4px;
+    background: #1d343f;
+    border: none;
+    cursor: pointer;
+    border-radius: 4px;
+    color: #ccc;
+}
+
+.btn-add-items {
+    padding: 4px;
+    background: #140455;
+    border: none;
+    cursor: pointer;
+    border-radius: 4px;
+    color: #ccc;
+}
+
+.btn-add-items:hover {
+    background: #231752;
+}
+
+.btn-ajust:hover {
+    background: #283f49;
+}
+
 .btn-cancel:hover {
     background: #0a0e4b;
 }

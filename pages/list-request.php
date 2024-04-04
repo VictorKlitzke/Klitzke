@@ -1,19 +1,26 @@
 <?php
 
-if (isset($_GET['delete'])) {
-    $del = intval($_GET['delete']);
+if (isset($_POST['delete'])) {
+    $del = intval($_POST['delete']);
     Controllers::DeleteRequest($del);
     header('Location: ' . INCLUDE_PATH . 'list-request');
 }
 
-$currentPage = isset($_GET['page']) ? (int) ($_GET['page']) : 1;
+$currentPage = isset($_POST['page']) ? (int) ($_POST['page']) : 1;
 $porPage = 20;
 
 $request = Controllers::SelectAll('request', ($currentPage - 1) * $porPage, $porPage);
 ?>
 
 <div class="box-content left w100">
-    <h2>Lista de pedidos</h2>
+    <div class="" style="display: flex; background: #ccc; padding: 9px; margin: 4px; border-radius: 4px; justify-content: space-between;">
+        <h2 style="color: #000">Lista de pedidos</h2>
+        <div class="btn-ajust" style="flex-grow: 1; text-align: right; max-width: 120px;">
+            <a class="btn-ajust" href="<?php echo htmlspecialchars(INCLUDE_PATH . 'gather-tables'); ?>">
+                Ajuntar Comandas
+            </a>
+        </div>
+    </div>
     <div class="list">
         <table>
             <thead>
@@ -56,15 +63,8 @@ $request = Controllers::SelectAll('request', ($currentPage - 1) * $porPage, $por
 
                         <td style="display: flex; justify-content: center; gap: 10px; margin: 6px; padding: 6px;">
                             <div>
-                                <a class="btn-edit" href="<?php echo INCLUDE_PATH; ?>add-item-order?id=<?php echo base64_encode(
-                                       $value["id"]
-                                   ); ?>">Adicionar mais items
-                                </a>
-                            </div>
-                            <div>
-                                <a class="btn-edit"
-                                    href="<?php echo htmlspecialchars(INCLUDE_PATH . 'gather-tables?id=' . urlencode(base64_encode($value["id"]))); ?>">
-                                    Ajuntar mesas
+                                <a class="btn-add-items" href="<?php echo INCLUDE_PATH; ?>add-item-order?id=<?php echo base64_encode($value["id"]); ?>">
+                                    Adicionar mais items
                                 </a>
                             </div>
                             <div>

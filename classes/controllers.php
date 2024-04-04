@@ -456,8 +456,8 @@ class Controllers
     {
         $sql = Db::Connection();
         $sql = Db::Connection();
-        $exec = $sql->prepare("DELETE r, ri FROM `request` r INNER JOIN request_items ri ON ri.id_products = r.id WHERE ri.id_request = ?");
-        $exec->bindValue(1, $id, PDO::PARAM_INT);
+        $exec = $sql->prepare("DELETE r, ri FROM `request` r INNER JOIN request_items ri ON ri.id_request = r.id WHERE r.id = ?");
+        $exec->bindValue($id, PDO::PARAM_INT);
         $exec->execute();
     }
 }

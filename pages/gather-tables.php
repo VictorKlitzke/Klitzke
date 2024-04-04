@@ -1,26 +1,14 @@
-<?php
-
-if (isset($_POST['id'])) {
-    $id = (int) base64_decode($_POST['id']);
-    $update = Controllers::SelectRequestItensOrder('request', 'r.id=?', array($id));
-} else {
-    Panel::alert('error', 'Você precisa passar o parametro ID.');
-    die();
-}
-
-?>
-
 <h1 class="h2-global">Ajuntar Comandas</h1>
 <main>
     <section class="mesas-disponiveis">
         <h2>Mesas Disponíveis</h2>
         <?php
 
-            $tables_command = Controllers::SelectAllTableRequests('request');
+        $tables_command = Controllers::SelectAllTableRequests('request');
 
-            foreach ($tables_command as $key => $value) {
+        foreach ($tables_command as $key => $value) {
 
-        ?>
+            ?>
             <div class="table-gathers" data-index="<?php echo $key; ?>" data-valor="<?php echo $value['total_request']; ?>">
                 <p>Comanda:
                     <?php echo $value['table_request']; ?>
@@ -36,12 +24,12 @@ if (isset($_POST['id'])) {
     <section>
         <h2>Mesas Selecionadas</h2>
         <div class="table-gathers-selected">
-
-            <h2 class="span-gathers right">Total: <span id="totalizador">R$ 0,00</span></h2>
-
-            <button class="button-gathers" id="button-gathers">Ajuntar comandas</button>
         </div>
     </section>
 </main>
+<div class="w100 info-total-gathers">
+    <button class="button-gathers" id="button-gathers">Ajuntar comandas</button>
+    <h2 class="span-gathers">Total: <span id="totalizador">R$ 0,00</span></h2>
+</div>
 
 <script src="<?php echo INCLUDE_PATH_PANEL; ?>../js/add_request.js"></script>

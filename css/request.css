@@ -472,3 +472,9 @@ section h2 {
 .button-gathers:hover {
     background-color: #3498db;
 }
+
+.info-total-gathers {
+    display: flex;
+    padding: 20px;
+    justify-content: space-between;
+}
