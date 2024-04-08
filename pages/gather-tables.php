@@ -1,7 +1,7 @@
 <h1 class="h2-global">Ajuntar Comandas</h1>
 <main>
-    <section class="mesas-disponiveis">
-        <h2>Mesas Disponíveis</h2>
+    <section class="tables-dis">
+        <h2 class="h2-gathers" >Mesas Disponíveis</h2>
         <?php
 
         $tables_command = Controllers::SelectAllTableRequests('request');
@@ -22,7 +22,7 @@
     </section>
 
     <section>
-        <h2>Mesas Selecionadas</h2>
+        <h2 class="h2-gathers" >Mesas Selecionadas</h2>
         <div class="table-gathers-selected">
         </div>
     </section>

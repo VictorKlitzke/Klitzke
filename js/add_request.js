@@ -369,16 +369,25 @@ function showSuccessMessageRequest(message) {
 
 function AddProductOrder(index, id, name, stock_quantity, value_product) {
 
-    var newRow = document.createElement('tr');
-
-    newRow.className = 'tr-order';
-
-    newRow.innerHTML = "<td id='product-name'>" + name + "</td>" +
-        "<td id='product-quantity-" + id + "'>" + 1 + "</td>" +
-        "<td id='value" + id + "'>" + "R$" + value_product + " </td>";
-
     var tbody = document.querySelector('#items-list-order');
-    tbody.appendChild(newRow);
+    var existingRow = document.querySelector('#product[name]');
+
+    if (existingRow) {
+        let quantityOrderCell = document.querySelector('product-quantity-order');
+        let currentQuantity = perseInt(quantityOrderCell.textContent);
+        quantityOrderCell.textContent = currentQuantity + 1;
+    } else {
+
+        var newRow = document.createElement('tr');
+        newRow.id = `product-${id}`;
+        newRow.className = 'tr-order';
+
+        newRow.innerHTML = "<td id='product-name'>" + name + "</td>" +
+            "<td id='product-quantity-" + id + "'>" + 1 + "</td>" +
+            "<td id='value" + id + "'>" + "R$" + value_product + " </td>";
+
+        tbody.appendChild(newRow);
+    }
 }
 
 document.addEventListener('DOMContentLoaded', function() {

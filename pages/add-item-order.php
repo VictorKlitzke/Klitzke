@@ -66,7 +66,7 @@ if (isset($_GET['id'])) {
                             $hasProducts = true;
                         }
 
-                        echo '<tr class="tr-order" id="tr-order">';
+                        echo '<tr class="tr-order">';
                         echo '<td>' . $product['product_request'] . '</td>';
                         echo '<td>' . $product['quantity'] . '</td>';
                         echo '<td>R$' . $product['price_request'] . '</td>';
@@ -88,7 +88,7 @@ if (isset($_GET['id'])) {
                     }
                 ?>
             </ul>
-            <button class="button-order">Adiconar itens</button>
+            <button class="button-order" onclick="AddProductOrder(<?php echo $product['product_id']; ?>, '<?php echo $product['product_request']; ?>', <?php echo $product['price_request']; ?>)">Adicionar itens</button>
         </div>
     </div>
 </form>
