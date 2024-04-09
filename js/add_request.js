@@ -370,11 +370,14 @@ function showSuccessMessageRequest(message) {
 function AddProductOrder(index, id, name, stock_quantity, value_product) {
 
     var tbody = document.querySelector('#items-list-order');
-    var existingRow = document.querySelector('#product[name]');
+    var existingRow = document.getElementById('product-id-order');
+
+    console.log(existingRow);
 
     if (existingRow) {
-        let quantityOrderCell = document.querySelector('product-quantity-order');
-        let currentQuantity = perseInt(quantityOrderCell.textContent);
+        let quantityOrderCell = document.querySelector('#product-quantity-order');
+        let currentQuantity = parseFloat(quantityOrderCell.textContent);
+        console.log(quantityOrderCell, currentQuantity);
         quantityOrderCell.textContent = currentQuantity + 1;
     } else {
 

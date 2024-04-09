@@ -61,14 +61,15 @@ if (isset($_GET['id'])) {
 
                         if (!$hasProducts) {
                             echo '<table class="table-order">';
-                            echo '<thead><tr class="thead-order"><td>Produto</td><th>Quantidade</td><td>Valor</td></tr></thead>';
+                            echo '<thead><tr class="thead-order"><td>#</td><td>Produto</td><th>Quantidade</td><td>Valor</td></tr></thead>';
                             echo '<tbody id="items-list-order">';
                             $hasProducts = true;
                         }
 
                         echo '<tr class="tr-order">';
+                        echo '<td class="product-id-order" id="product-id-order">' .$product['id']  .'</td>';
                         echo '<td>' . $product['product_request'] . '</td>';
-                        echo '<td>' . $product['quantity'] . '</td>';
+                        echo '<td id="product-quantity-order">' . $product['quantity'] . '</td>';
                         echo '<td>R$' . $product['price_request'] . '</td>';
                         echo '</tr>';
                     }
@@ -88,7 +89,7 @@ if (isset($_GET['id'])) {
                     }
                 ?>
             </ul>
-            <button class="button-order" onclick="AddProductOrder(<?php echo $product['product_id']; ?>, '<?php echo $product['product_request']; ?>', <?php echo $product['price_request']; ?>)">Adicionar itens</button>
+            <button class="button-order">Adicionar itens</button>
         </div>
     </div>
 </form>
