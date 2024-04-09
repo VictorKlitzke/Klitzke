@@ -207,15 +207,17 @@ input[type="text"] {
 
 .card-itens-order {
     margin-top: 12px;
-    background: #202020;
-    border-radius: 4px;
-    padding: 6px;
-    height: 70px;
-    display: flex;
-    gap: 5px;
-    border: 1px solid #1b1b1b;
-    justify-content: start;
-    overflow-x: auto;
+        background: #202020;
+        border-radius: 4px;
+        padding: 6px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        height: 124px;
+        justify-content: flex-start;
+        align-items: center;
+        border: 1px solid #1b1b1b;
+        overflow-x: auto;
 }
 
 .h2-order {
@@ -223,15 +225,12 @@ input[type="text"] {
 }
 
 .info-itens-order {
-    cursor: pointer;
     border: 1px solid #1b1b1b;
     border-radius: 6px;
     background: #323232;
     cursor: pointer;
-    width: 256px;
+    width: 200px;
     height: 55px;
-    justify-content: center;
-    align-items: center;
 }
 
 .info-itens-order:hover {
@@ -242,11 +241,6 @@ input[type="text"] {
 .value-product-order {
     text-align: center;
     color: #ccc;
-}
-
-.order-list {
-    display: flex;
-    justify-content: start;
 }
 
 .order {

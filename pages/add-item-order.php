@@ -10,8 +10,9 @@ if (isset($_GET['id'])) {
 
 ?>
 
-<h2 class="h2-global">Adicionar mais itens no pedido</h2>
-<div class="box-content">
+<h2 class="h2-global">Comanda: <?php $update['table_request']; ?></h2><br>
+
+<div class="box-content w50 left">
     <div class="card-itens-order">
 
         <?php
@@ -22,10 +23,10 @@ if (isset($_GET['id'])) {
 
         ?>
 
-            <div class="info-itens-order" id="info-itens-order" onclick="AddProductOrder(<?php echo $key; ?>, '<?php echo $value['id'] ?>', '<?php echo $value['name'] ?>', '<?php echo $value['stock_quantity'] ?>', '<?php echo $value['value_product'] ?>')">
+            <div class="info-itens-order" id="info-itens-order" onclick="AddProductOrder(<?php echo $key; ?>, '<?php echo htmlspecialchars($value['id']); ?>', '<?php echo htmlspecialchars($value['name']); ?>', '<?php echo htmlspecialchars($value['stock_quantity']); ?>', '<?php echo htmlspecialchars($value['value_product']); ?>')">
                 <div class="name-product-order">
                     <h2 class="h2-order">
-                        <p>
+                        <p id="product-name-order">
                             <?php echo $value['name']; ?>
                         </p>
                     </h2>
@@ -42,12 +43,11 @@ if (isset($_GET['id'])) {
     </div>
 </div>
 
-<h2 class="h2-global">Lista de itens</h2>
-<form action="">
+<form action="" class="right w50">
     <div class="order-list">
         <div class="order">
             <div class="order-header">
-                <h2>Comanda:
+                <h2>Items
                     <?php echo $update['table_request'] ?>
                 </h2>
             </div>
@@ -68,7 +68,7 @@ if (isset($_GET['id'])) {
 
                         echo '<tr class="tr-order">';
                         echo '<td class="product-id-order" id="product-id-order">' .$product['id']  .'</td>';
-                        echo '<td>' . $product['product_request'] . '</td>';
+                        echo '<td id="product-order-name">' . $product['product_request'] . '</td>';
                         echo '<td id="product-quantity-order">' . $product['quantity'] . '</td>';
                         echo '<td>R$' . $product['price_request'] . '</td>';
                         echo '</tr>';
