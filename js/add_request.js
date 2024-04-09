@@ -1,7 +1,7 @@
 let selectedRequest = [];
 let numbersTableRequest = [];
 
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
 
     let productSRequestearch = document.getElementById('product-request-search');
     let SearchTable = document.getElementById('search-table');
@@ -17,12 +17,12 @@ document.addEventListener('DOMContentLoaded', function() {
 
     let selectedRequestList = [];
 
-    SearchTable.addEventListener('input', function() {
+    SearchTable.addEventListener('input', function () {
 
         let searchQueryTable = SearchTable.value;
         let http = new XMLHttpRequest();
 
-        http.onreadystatechange = function() {
+        http.onreadystatechange = function () {
             if (http.readyState === 4 && http.status === 200) {
                 searchResultTable.innerHTML = http.responseText;
             }
@@ -32,12 +32,12 @@ document.addEventListener('DOMContentLoaded', function() {
         http.send('searchQueryTable=' + encodeURIComponent(searchQueryTable));
     });
 
-    productSRequestearch.addEventListener('input', function() {
+    productSRequestearch.addEventListener('input', function () {
 
         let searchQuery = productSRequestearch.value;
         let xhr = new XMLHttpRequest();
 
-        xhr.onreadystatechange = function() {
+        xhr.onreadystatechange = function () {
             if (xhr.readyState === 4 && xhr.status === 200) {
                 productResult.innerHTML = xhr.responseText;
             }
@@ -75,7 +75,7 @@ document.addEventListener('DOMContentLoaded', function() {
         return totalAddRequest.toFixed(2);
     }
 
-    searchResultTable.addEventListener('click', function(event) {
+    searchResultTable.addEventListener('click', function (event) {
         if (event.target.tagName === 'LI') {
             let numbersTableRequest = event.target;
             let TableNumber = numbersTableRequest.getAttribute('data-number');
@@ -89,7 +89,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     })
 
-    productResult.addEventListener('click', function(event) {
+    productResult.addEventListener('click', function (event) {
         if (event.target.tagName === 'LI') {
             let selectedRequest = event.target;
             let productId = selectedRequest.getAttribute('data-id');
@@ -162,7 +162,7 @@ function updatePedido() {
             Quantity.classList.add('quantity-cell');
             Value.classList.add('value-cell');
 
-            newRow.addEventListener('click', function() {
+            newRow.addEventListener('click', function () {
                 selectRow(newRow);
             });
 
@@ -175,7 +175,7 @@ function updatePedido() {
             deleteButton.style.padding = '4px';
             deleteButton.style.display = 'none';
             deleteButton.classList.add('delete-button');
-            deleteButton.addEventListener('click', function() {
+            deleteButton.addEventListener('click', function () {
                 deleteSelectedRow(newRow, Quantity);
             });
             Actions.appendChild(deleteButton);
@@ -218,7 +218,7 @@ function selectRow(row) {
 
     if (deleteButton) {
         var selectedRows = document.querySelectorAll('.selected-row');
-        selectedRows.forEach(function(selectedRow) {
+        selectedRows.forEach(function (selectedRow) {
             selectedRow.classList.remove('selected-row');
             var deleteBtn = selectedRow.querySelector('.delete-button');
             if (deleteBtn) {
@@ -367,41 +367,76 @@ function showSuccessMessageRequest(message) {
     }, 3000);
 }
 
-function AddProductOrder(index, id, name, stock_quantity, value_product) {
-
-    var tbody = document.querySelector('#items-list-order');
-    var existingRow = document.getElementById('product-id-order');
-
-    console.log(existingRow);
-
-    if (existingRow) {
-        let quantityOrderCell = document.querySelector('#product-quantity-order');
-        let currentQuantity = parseFloat(quantityOrderCell.textContent);
-        console.log(quantityOrderCell, currentQuantity);
-        quantityOrderCell.textContent = currentQuantity + 1;
-    } else {
-
-        var newRow = document.createElement('tr');
-        newRow.id = `product-${id}`;
-        console.log();
-        newRow.className = 'tr-order';
-
-        newRow.innerHTML = "<td id='product-name'>" + name + "</td>" +
-            "<td id='product-quantity-" + id + "'>" + 1 + "</td>" +
-            "<td id='value" + id + "'>" + "R$" + value_product + " </td>";
-
-        tbody.appendChild(newRow);
+function requestValidateStock(stock_quantity, qnt) {
+    if (qnt < stock_quantity){
+        window.alert('Estoque insuficiente para fazer a venda')
+        return false;
     }
+    return true
 }
 
-document.addEventListener('DOMContentLoaded', function() {
+function AddProductOrder(index, id, name, stock_quantity, value_product) {
+
+    let newlistproducts = [];
+
+    let tbody = document.querySelector('#items-list-order');
+    let existingRow = document.querySelector(`#product-${id}`);
+
+    if (existingRow) {
+        let quantityCell = existingRow.querySelector('.product-quantity-order');
+        let valueCell = existingRow.querySelector('.product-value-order');
+
+        if (requestValidateStock(stock_quantity, qnt)) {
+            if (quantityCell) {
+                let currentQuantity = parseInt(quantityCell.textContent);
+                quantityCell.textContent = currentQuantity + 1;
+
+                if (quantityCell => stock_quantity) {}
+
+                    if (valueCell) {
+                        let currentValue = parseFloat(valueCell.textContent.replace('R$', ''));
+                        let newValue = currentValue + parseFloat(value_product);
+                        valueCell.textContent = `R$${newValue.toFixed(2)}`;
+                    } else {
+                        console.error('Elemento de valor não encontrado na linha existente.');
+                    }
+            } else {
+                    console.error('Elemento de quantidade não encontrado na linha existente.');
+            }
+        }
+        } else {
+            let newRow = document.createElement('tr');
+            newRow.id = `product-${id}`;
+            newRow.className = 'tr-order';
+
+            console.log(newRow)
+
+            newRow.innerHTML = `
+            <td class="product-id-order">${id}</td>
+            <td class="product-name-order">${name}</td>
+            <td class="product-quantity-order">1</td>
+            <td class="product-value-order">R$${value_product}</td>
+        `;
+
+            tbody.appendChild(newRow);
+            newlistproducts.push(newRow);
+
+            console.log(newlistproducts);
+        }
+}
+
+async function AddProductOrder() {
+
+}
+
+document.addEventListener('DOMContentLoaded', function () {
     const tableSelected = [];
     let totalValorSeletected = 0;
 
     const totalizador = document.getElementById('totalizador');
 
     document.querySelectorAll('.table-gathers').forEach(table => {
-        table.addEventListener('click', function() {
+        table.addEventListener('click', function () {
             const tableIndex = table.dataset.index;
             const ValueTable = parseFloat(table.dataset.valor);
 
@@ -470,8 +505,8 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    document.querySelector('.button-gathers').addEventListener('click', GathersTables);
+//    document.querySelector('.button-gathers').addEventListener('click', GathersTables);
 });
 
-document.querySelector('.button-request').addEventListener('click', updatePedido, calculateTotal);
+document.querySelector('.button-request').addEventListener('click', updatePedido, calculateTotal());
 document.querySelector('.invoice-request').addEventListener('click', generetorRequest);
