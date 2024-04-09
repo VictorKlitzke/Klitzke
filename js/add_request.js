@@ -383,6 +383,7 @@ function AddProductOrder(index, id, name, stock_quantity, value_product) {
 
         var newRow = document.createElement('tr');
         newRow.id = `product-${id}`;
+        console.log();
         newRow.className = 'tr-order';
 
         newRow.innerHTML = "<td id='product-name'>" + name + "</td>" +
