@@ -61,7 +61,7 @@ if (isset($_GET['id'])) {
 
                         if (!$hasProducts) {
                             echo '<table class="table-order">';
-                            echo '<thead><tr class="thead-order"><td>#</td><td>Produto</td><th>Quantidade</td><td>Valor</td></tr></thead>';
+                            echo '<thead><tr class="thead-order"><td>#</td><td>Produto</td><th>Quantidade</td><td>Valor</td><td>Acoes</td></tr></thead>';
                             echo '<tbody id="items-list-order">';
                             $hasProducts = true;
                         }

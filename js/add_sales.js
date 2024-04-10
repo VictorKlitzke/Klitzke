@@ -14,7 +14,7 @@ const totalPortionElement = document.getElementById('total-portion-sales');
 const totalAmountElement = document.getElementById('totalAmount');
 const portionTotalInput = document.getElementById('portion-total');
 
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     Portion = document.querySelector('.portion-sales');
     OverlayPortion = document.querySelector('.overlay-portion');
 });
@@ -119,7 +119,7 @@ function closeCreditModal() {
     }
 }
 
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
 
     function checkPaymentMethod() {
         var selectedPaymentMethod = document.getElementById('id_payment_method').value;
@@ -135,7 +135,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const finishButtonPortion = document.getElementById('finish-portion');
 
     if (saveButton) {
-        saveButton.addEventListener('click', function() {
+        saveButton.addEventListener('click', function () {
             portionValues = calculateAndDisplayPortions();
         });
     }
@@ -183,7 +183,8 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 
-class SalesHandler {}
+class SalesHandler {
+}
 
 async function finalizeSalePortion() {
 
@@ -212,7 +213,7 @@ async function finalizeSalePortion() {
         if (selectedProducts.length === 0) {
 
             showErrorMessage('Erro ao registrar venda, nenhum produto selecionado');
-            return;
+
         } else {
 
             try {
@@ -264,7 +265,7 @@ async function finalizeSale() {
 
     if (selectedProducts.length === 0) {
         showErrorMessage('Erro ao registrar venda, nenhum produto selecionado');
-        return;
+
     } else {
         try {
             let url = 'http://localhost/Klitzke/ajax/add_sales.php';
@@ -370,13 +371,13 @@ function removeProduct(id) {
 
 document
     .getElementById("sales-search-form")
-    .addEventListener("submit", function(event) {
+    .addEventListener("submit", function (event) {
         event.preventDefault();
 
         let searchInput = document.getElementById("clientSelectedSales").value;
         let tableRows = document.querySelectorAll(".tbody-selected tr");
 
-        tableRows.forEach(function(row) {
+        tableRows.forEach(function (row) {
             let clientName = row
                 .querySelector("td:nth-child(2)")
                 .textContent.toLowerCase();
@@ -388,10 +389,10 @@ document
         });
     });
 
-document.addEventListener("DOMContentLoaded", function() {
+document.addEventListener("DOMContentLoaded", function () {
     let tableRows = document.querySelectorAll(".tbody-selected");
-    tableRows.forEach(function(row) {
-        row.addEventListener("dblclick", function() {
+    tableRows.forEach(function (row) {
+        row.addEventListener("dblclick", function () {
             let clientName = row.querySelector("td:nth-child(2)").textContent;
             let salesPageElement = document.getElementById("sales-page");
 
@@ -444,7 +445,7 @@ function updateProductQuantity(id, stock_quantity) {
 }
 
 function addProductToArray(id, name, stock_quantity, value) {
-    selectedProducts.push({ id, name, stock_quantity, value });
+    selectedProducts.push({id, name, stock_quantity, value});
 }
 
 function validateStock(stock_quantity, qnt) {
