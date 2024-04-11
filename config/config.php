@@ -6,7 +6,7 @@ date_default_timezone_set('America/Sao_Paulo');
 
 define('HOST', 'localhost');
 define('USER', 'root');
-define('PASSWORD', '');
+define('PASSWORD', 'root');
 define('DATABASE', 'Klitzke');
 
 define('INCLUDE_PATH', 'http://localhost/Klitzke/');
