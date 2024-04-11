@@ -43,6 +43,8 @@ if (isset($_POST['action'])) {
 
 <body>
     <div class="wrapper">
+         <span class="bg-animate"></span><!--LINHA ADD -->
+         <span class="bg-animate2"></span><!--LINHA ADD -->
         <div class="form-box login">
             <h2>Login</h2>
             <form action="#" method="POST">
@@ -68,7 +70,38 @@ if (isset($_POST['action'])) {
             <h2>Bem vindo de volta !</h2>
             <p>Onde seu negocio toma novos rumos</p>
         </div>
+        <div class="form-box register">
+            <h2>Registrar-me</h2>
+            <form action="#" method="POST">
+                <div class="input-box">
+                    <input type="text" name="name" required  />
+                    <label>Usuario</label>
+                    <i class='bx bxs-user'></i>
+                </div>
+                <div class="input-box">
+                    <input type="text" name="name" required  />
+                    <label>Email</label>
+                    <i class='bx bxs-envelope'></i>
+                </div>
+                <div class="input-box">
+                    <input type="password"  name="password" required />
+                    <label>Senha</label>
+                    <i class='bx bxs-lock-alt'></i>
+                </div>
+                    <div>
+                        <button type="submit" name="action" class="btn">Registrar</button>
+                         <div class="logreg-link">
+                            <p>Já tem uma Conta ?<a href="#" class="login-link">Entrar</a></p>
+                        </div>
+                    </div>
+            </form>
+        </div>
+        <div class="info-text register">
+            <h2>Bem vindo de volta !</h2>
+            <p>Onde seu negocio toma novos rumos</p>
+        </div>
     </div>
+    <script src="script.js"></script> <!--criar arquivo js para animação> -->
 </body>
 
 </html>
