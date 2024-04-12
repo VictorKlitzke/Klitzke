@@ -1,7 +1,7 @@
 <?php
 
 if (isset($_GET['id'])) {
-    $id = (int) base64_decode($_GET['id']);
+    $id = (int)base64_decode($_GET['id']);
     $update = Controllers::SelectRequestItensOrder('request', 'r.id=?', array($id));
 } else {
     Panel::alert('error', 'Você precisa passar o parametro ID.');
@@ -17,18 +17,17 @@ if (isset($_GET['id'])) {
 
         <?php
 
-            $product_order_add = Controllers::SelectAll('products');
+        $product_order_add = Controllers::SelectAll('products');
 
-            foreach ($product_order_add as $key => $value) {
+        foreach ($product_order_add as $key => $value) {
 
-        ?>
+            ?>
 
-            <div class="info-itens-order" id="info-itens-order" onclick="AddProductOrder(<?php echo $key; ?>, '<?php echo htmlspecialchars($value['id']); ?>', '<?php echo htmlspecialchars($value['name']); ?>', '<?php echo htmlspecialchars($value['stock_quantity']); ?>', '<?php echo htmlspecialchars($value['value_product']); ?>')">
+            <div class="info-itens-order" id="info-itens-order"
+                 onclick="AddProductOrder(<?php echo $key; ?>, '<?php echo htmlspecialchars($value['id']); ?>', '<?php echo htmlspecialchars($value['name']); ?>', '<?php echo htmlspecialchars($value['stock_quantity']); ?>', '<?php echo htmlspecialchars($value['value_product']); ?>')">
                 <div class="name-product-order">
                     <h2 class="h2-order">
-                        <p id="product-name-order">
-                            <?php echo $value['name']; ?>
-                        </p>
+                        <i class="fas fa-shopping-cart"></i> <?php echo $value['name']; ?>
                     </h2>
                 </div>
                 <div class="value-product-order">
@@ -53,43 +52,45 @@ if (isset($_GET['id'])) {
             </div>
             <ul class="items-list-order">
                 <?php
-                    $userDisplayed = false;
-                    $dateDisplayed = false;
-                    $hasProducts = false;
+                $userDisplayed = false;
+                $dateDisplayed = false;
+                $hasProducts = false;
 
-                    foreach ($update as $product) {
+                foreach ($update as $product) {
 
-                        if (!$hasProducts) {
-                            echo '<table class="table-order">';
-                            echo '<thead><tr class="thead-order"><td>#</td><td>Produto</td><th>Quantidade</td><td>Valor</td><td>Acoes</td></tr></thead>';
-                            echo '<tbody id="items-list-order">';
-                            $hasProducts = true;
-                        }
-
-                        echo '<tr class="tr-order">';
-                        echo '<td class="product-id-order" id="product-id-order">' .$product['id']  .'</td>';
-                        echo '<td id="product-order-name">' . $product['product_request'] . '</td>';
-                        echo '<td id="product-quantity-order">' . $product['quantity'] . '</td>';
-                        echo '<td>R$' . $product['price_request'] . '</td>';
-                        echo '</tr>';
+                    if (!$hasProducts) {
+                        echo '<table class="table-order">';
+                        echo '<thead><tr class="thead-order"><td>#</td><td>Produto</td><th>Quantidade</td><td>Valor</td><td>Acoes</td></tr></thead>';
+                        echo '<tbody id="items-list-order">';
+                        $hasProducts = true;
                     }
 
-                    if ($hasProducts) {
-                        echo '</tbody></table>';
-                    }
+                    echo '<tr class="tr-order">';
+                    echo '<td class="product-id-order" id="product-id-order">' . $product['id'] . '</td>';
+                    echo '<td id="product-order-name">' . $product['product_request'] . '</td>';
+                    echo '<td id="product-quantity-order">' . $product['quantity'] . '</td>';
+                    echo '<td>R$' . $product['price_request'] . '</td>';
+                    echo '</tr>';
+                }
 
-                    if (!$userDisplayed) {
-                        echo '<li class="item-order">Usuario: ' . $product['user_request'] . '</li>';
-                        $userDisplayed = true;
-                    }
+                if ($hasProducts) {
+                    echo '</tbody></table>';
+                }
 
-                    if (!$dateDisplayed) {
-                        echo '<li class="item-order">Data do pedido: ' . $product['date_request'] . '</li>';
-                        $dateDisplayed = true;
-                    }
+                if (!$userDisplayed) {
+                    echo '<li class="item-order">Usuario: ' . $product['user_request'] . '</li>';
+                    $userDisplayed = true;
+                }
+
+                if (!$dateDisplayed) {
+                    echo '<li class="item-order">Data do pedido: ' . $product['date_request'] . '</li>';
+                    $dateDisplayed = true;
+                }
                 ?>
             </ul>
-            <button class="button-order">Adicionar itens</button>
+            <button class="button-order" onclick="AddProductItems()">
+                <i class="fas fa-plus-circle"></i> Adicionar Itens
+            </button>
         </div>
     </div>
 </form>

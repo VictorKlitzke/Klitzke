@@ -369,9 +369,11 @@ function requestValidateStock(stock_quantity, currentQuantity) {
 }
 
 function AddProductOrder(id, name, stock_quantity, value_product) {
-
     let tbody = document.querySelector('#items-list-order');
     let existingRow = document.querySelector(`#product-${id}`);
+    // let existingId = documento.querySelector("")
+
+    // console.log(existingRow)
 
     if (existingRow) {
         let quantityCell = existingRow.querySelector('.product-quantity-order');
@@ -382,9 +384,8 @@ function AddProductOrder(id, name, stock_quantity, value_product) {
             quantityCell.textContent = currentQuantity + 1;
             if (requestValidateStock(stock_quantity, currentQuantity)) {
                 if (quantityCell > stock_quantity) {
-                    window.alert("Produto negativado")
-                    return false;
-                    close();
+                    window.alert("Estoque insuficiente para adicionar mais deste produto.");
+                    return true;
                 } else {
                     if (valueCell) {
                         let currentValue = parseFloat(valueCell.textContent.replace('R$', ''));
@@ -400,55 +401,35 @@ function AddProductOrder(id, name, stock_quantity, value_product) {
         }
     } else {
         let newRow = document.createElement('tr');
-        newRow.id = `product-${id}`;
         newRow.className = 'tr-order';
 
-        console.log(newRow)
-
         newRow.innerHTML =
-            "<td class='product-id-order' id='product-id-order'>" + id + " </td> " +
-            "<td class='product-name-order'>" + name + " </td> " +
-            "<td class='product-quantity-order'>" + 1 + " </td> " +
-            "<td class='product-value-order'>" + value_product + " </td> " +
+            "<td class='product-id-order'>" + id + "</td>" +
+            "<td class='product-name-order'>" + name + "</td>" +
+            "<td class='product-quantity-order'>" + 1 + "</td>" +
+            "<td class='product-value-order'>" + value_product + "</td>" +
             "<td style='margin: 6px; padding: 6px; cursor: pointer;'>" +
-                "<button onclick='deleteItensNewOrder(id)' id='button-delete-" + id + "' class='btn-delete' type='button'>Deletar</button>" +
+                "<button onclick='deleteItemFromOrder(" + id + ")' class='btn-delete' type='button'>Deletar</button>" +
             "</td>";
 
         tbody.appendChild(newRow);
-        newListProducts.push(newRow.innerHTML);
-
-        console.log(newListProducts);
     }
 }
 
-function deleteItensNewOrder(id) {
-    let rowDelete = document.getElementById('product-id-order');
+function deleteItemFromOrder(id) {
+    let rowToDelete = document.getElementById(`product-${id}`);
 
-    console.log(rowDelete)
+    if (rowToDelete) {
+        let quantityCell = rowToDelete.querySelector('.product-quantity-order');
+        let currentQuantity = parseInt(quantityCell.textContent);
 
-    if (newListProducts.length > 0) {
-        let newproduct = newListProducts.findIndex(newListProducts => newListProducts.id = id);
-
-        if (newproduct !== 1) {
-            let prod = newListProducts[newproduct];
-            let productQuantityOrderCell = document.getElementById("product-quantity-order" + id);
-
-            if (productQuantityOrderCell) {
-                let numberOrder = newListProducts.stock_quantity - 1;
-
-                if (numberOrder >= 1) {
-                    newListProducts.stock_quantity = numberOrder;
-                    productQuantityOrderCell.textContent = numberOrder;
-                } else {
-                    newListProducts.splice(newproduct, 1);
-                    rowDelete.remove();
-                }
-            }
+        if (currentQuantity > 1) {
+            quantityCell.textContent = currentQuantity - 1;
         } else {
-            window.alert("Produto não encontrado  na array, informe o suporte");
+            rowToDelete.remove();
         }
     } else {
-        window.alert("Array com o produto vazio, informe o suporte")
+        window.alert("Produto não encontrado na comanda.");
     }
 }
 
