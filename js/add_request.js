@@ -1,5 +1,6 @@
 let selectedRequest = [];
 let numbersTableRequest = [];
+let newListProducts = [];
 
 document.addEventListener('DOMContentLoaded', function () {
 
@@ -113,9 +114,7 @@ document.addEventListener('DOMContentLoaded', function () {
             }
 
             let selectProductArray = {
-                id: productID,
-                stock_quantity: parseInt(productSRequesttock_quantity) || 0,
-                value: productValue_product
+                id: productID, stock_quantity: parseInt(productSRequesttock_quantity) || 0, value: productValue_product
             };
 
             selectedRequestList.push(selectProductArray);
@@ -181,9 +180,7 @@ function updatePedido() {
             Actions.appendChild(deleteButton);
 
             selectedRequest.push({
-                id: requestID,
-                stock_quantity: parseInt(requestQuantity),
-                value: requestValue
+                id: requestID, stock_quantity: parseInt(requestQuantity), value: requestValue
             });
         }
 
@@ -305,9 +302,7 @@ async function generetorRequest() {
     let numberTableRequest = document.getElementById('number-table').value;
 
     let RequestData = {
-        TotalValueRequest: TotalValueRequest,
-        requestProducts: selectedRequest,
-        numberTableRequest: numberTableRequest
+        TotalValueRequest: TotalValueRequest, requestProducts: selectedRequest, numberTableRequest: numberTableRequest
     };
 
     console.log(RequestData);
@@ -321,11 +316,9 @@ async function generetorRequest() {
             let urlRequest = 'http://localhost/Klitzke/ajax/add_request.php';
 
             const responseRequest = await fetch(urlRequest, {
-                method: 'POST',
-                headers: {
+                method: 'POST', headers: {
                     'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(RequestData),
+                }, body: JSON.stringify(RequestData),
             });
 
             const responseBodyRequest = await responseRequest.text();
@@ -367,32 +360,33 @@ function showSuccessMessageRequest(message) {
     }, 3000);
 }
 
-function requestValidateStock(stock_quantity, qnt) {
-    if (qnt < stock_quantity){
-        window.alert('Estoque insuficiente para fazer a venda')
+function requestValidateStock(stock_quantity, currentQuantity) {
+    if (stock_quantity > currentQuantity) {
+        window.alert('Estoque insuficiente para fazer a venda');
         return false;
     }
-    return true
+    return true;
 }
 
-function AddProductOrder(index, id, name, stock_quantity, value_product) {
-
-    let newlistproducts = [];
-
+function AddProductOrder(id, name, stock_quantity, value_product) {
     let tbody = document.querySelector('#items-list-order');
     let existingRow = document.querySelector(`#product-${id}`);
+    // let existingId = documento.querySelector("")
+
+    // console.log(existingRow)
 
     if (existingRow) {
         let quantityCell = existingRow.querySelector('.product-quantity-order');
         let valueCell = existingRow.querySelector('.product-value-order');
 
-        if (requestValidateStock(stock_quantity, qnt)) {
-            if (quantityCell) {
-                let currentQuantity = parseInt(quantityCell.textContent);
-                quantityCell.textContent = currentQuantity + 1;
-
-                if (quantityCell => stock_quantity) {}
-
+        if (quantityCell) {
+            let currentQuantity = parseInt(quantityCell.textContent);
+            quantityCell.textContent = currentQuantity + 1;
+            if (requestValidateStock(stock_quantity, currentQuantity)) {
+                if (quantityCell > stock_quantity) {
+                    window.alert("Estoque insuficiente para adicionar mais deste produto.");
+                    return true;
+                } else {
                     if (valueCell) {
                         let currentValue = parseFloat(valueCell.textContent.replace('R$', ''));
                         let newValue = currentValue + parseFloat(value_product);
@@ -400,34 +394,48 @@ function AddProductOrder(index, id, name, stock_quantity, value_product) {
                     } else {
                         console.error('Elemento de valor não encontrado na linha existente.');
                     }
+                }
             } else {
-                    console.error('Elemento de quantidade não encontrado na linha existente.');
+                console.error('Elemento de quantidade não encontrado na linha existente.');
             }
         }
+    } else {
+        let newRow = document.createElement('tr');
+        newRow.className = 'tr-order';
+
+        newRow.innerHTML =
+            "<td class='product-id-order'>" + id + "</td>" +
+            "<td class='product-name-order'>" + name + "</td>" +
+            "<td class='product-quantity-order'>" + 1 + "</td>" +
+            "<td class='product-value-order'>" + value_product + "</td>" +
+            "<td style='margin: 6px; padding: 6px; cursor: pointer;'>" +
+                "<button onclick='deleteItemFromOrder(" + id + ")' class='btn-delete' type='button'>Deletar</button>" +
+            "</td>";
+
+        tbody.appendChild(newRow);
+    }
+}
+
+function deleteItemFromOrder(id) {
+    let rowToDelete = document.getElementById(`product-${id}`);
+
+    if (rowToDelete) {
+        let quantityCell = rowToDelete.querySelector('.product-quantity-order');
+        let currentQuantity = parseInt(quantityCell.textContent);
+
+        if (currentQuantity > 1) {
+            quantityCell.textContent = currentQuantity - 1;
         } else {
-            let newRow = document.createElement('tr');
-            newRow.id = `product-${id}`;
-            newRow.className = 'tr-order';
-
-            console.log(newRow)
-
-            newRow.innerHTML = `
-            <td class="product-id-order">${id}</td>
-            <td class="product-name-order">${name}</td>
-            <td class="product-quantity-order">1</td>
-            <td class="product-value-order">R$${value_product}</td>
-        `;
-
-            tbody.appendChild(newRow);
-            newlistproducts.push(newRow);
-
-            console.log(newlistproducts);
+            rowToDelete.remove();
         }
+    } else {
+        window.alert("Produto não encontrado na comanda.");
+    }
 }
 
-async function AddProductOrder() {
-
-}
+// async function AddProductOrder() {
+//
+// }
 
 document.addEventListener('DOMContentLoaded', function () {
     const tableSelected = [];
@@ -485,11 +493,9 @@ document.addEventListener('DOMContentLoaded', function () {
         try {
 
             const RequestTables = await fetch('http://localhost/Klitzke/ajax/gathers_tables.php', {
-                method: 'POST',
-                headers: {
+                method: 'POST', headers: {
                     'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(RequestDataGathers),
+                }, body: JSON.stringify(RequestDataGathers),
             });
             const responseTablesBody = await RequestTables.text();
             console.log('Response from server:', responseTablesBody);
@@ -504,9 +510,8 @@ document.addEventListener('DOMContentLoaded', function () {
             console.error('Erro ao enviar dados para o PHP:', error);
         }
     }
-
-//    document.querySelector('.button-gathers').addEventListener('click', GathersTables);
 });
 
 document.querySelector('.button-request').addEventListener('click', updatePedido, calculateTotal());
 document.querySelector('.invoice-request').addEventListener('click', generetorRequest);
+document.querySelector('.button-order').addEventListener('click', AddProductOrder());

@@ -221,16 +221,17 @@ input[type="text"] {
 }
 
 .h2-order {
-    font-size: 20px;
+    font-size: 15px;
 }
 
 .info-itens-order {
-    border: 1px solid #1b1b1b;
-    border-radius: 6px;
-    background: #323232;
+    margin-bottom: 10px;
+    padding: 12px;
+    border-radius: 8px;
+    background-color: #323232;
     cursor: pointer;
-    width: 200px;
-    height: 55px;
+    display: flex;
+    align-items: center;
 }
 
 .info-itens-order:hover {
@@ -347,6 +348,19 @@ input[type="text"] {
     color: white;
 }
 
+.card-itens-order {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
+.info-itens-order {
+    width: 200px; /* Tamanho fixo para desktop */
+}
+@media (max-width: 768px) {
+    .info-itens-order {
+        width: 100%; /* Layout responsivo para dispositivos móveis */
+    }
+}
 
 /* AJUNTAR COMANDAS */
 
