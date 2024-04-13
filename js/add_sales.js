@@ -444,10 +444,6 @@ function updateProductQuantity(id, stock_quantity) {
     }
 }
 
-function addProductToArray(id, name, stock_quantity, value) {
-    selectedProducts.push({id, name, stock_quantity, value});
-}
-
 function validateStock(stock_quantity, qnt) {
 
     if (stock_quantity < qnt) {
