@@ -1,7 +1,7 @@
 <?php
 
 if (isset($_GET['id'])) {
-    $id = (int)base64_decode($_GET['id']);
+    $id = (int) base64_decode($_GET['id']);
     $update = Controllers::SelectRequestItensOrder('request', 'r.id=?', array($id));
 } else {
     Panel::alert('error', 'Você precisa passar o parametro ID.');
@@ -24,7 +24,7 @@ if (isset($_GET['id'])) {
             ?>
 
             <div class="info-itens-order" id="info-itens-order"
-                 onclick="AddProductOrder(<?php echo $key; ?>, '<?php echo htmlspecialchars($value['id']); ?>', '<?php echo htmlspecialchars($value['name']); ?>', '<?php echo htmlspecialchars($value['stock_quantity']); ?>', '<?php echo htmlspecialchars($value['value_product']); ?>')">
+                onclick="AddProductOrder('<?php echo htmlspecialchars($value['id']); ?>', '<?php echo htmlspecialchars($value['name']); ?>', '<?php echo htmlspecialchars($value['stock_quantity']); ?>', '<?php echo htmlspecialchars($value['value_product']); ?>')">
                 <div class="name-product-order">
                     <h2 class="h2-order">
                         <i class="fas fa-shopping-cart"></i> <?php echo $value['name']; ?>
@@ -88,12 +88,12 @@ if (isset($_GET['id'])) {
                 }
                 ?>
             </ul>
-            <button class="button-order" onclick="AddProductItems()">
-                <i class="fas fa-plus-circle"></i> Adicionar Itens
-            </button>
         </div>
     </div>
 </form>
+<button class="button-order" onclick="AddProductItems()">
+    <i class="fas fa-plus-circle"></i> Adicionar Itens
+</button>
 
 
 <script src="<?php echo INCLUDE_PATH_PANEL; ?>../js/add_request.js"></script>

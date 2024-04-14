@@ -371,50 +371,66 @@ function requestValidateStock(stock_quantity, currentQuantity) {
 function AddProductOrder(id, name, stock_quantity, value_product) {
     let tbody = document.querySelector('#items-list-order');
     let existingRow = document.querySelector(`#product-${id}`);
-    // let existingId = documento.querySelector("")
-
-    // console.log(existingRow)
 
     if (existingRow) {
         let quantityCell = existingRow.querySelector('.product-quantity-order');
         let valueCell = existingRow.querySelector('.product-value-order');
 
-        if (quantityCell) {
+        if (quantityCell && valueCell) {
             let currentQuantity = parseInt(quantityCell.textContent);
-            quantityCell.textContent = currentQuantity + 1;
+            let currentValue = parseFloat(valueCell.textContent.replace('R$', '').trim());
+
             if (requestValidateStock(stock_quantity, currentQuantity)) {
-                if (quantityCell > stock_quantity) {
+                if (currentQuantity < stock_quantity) {
                     window.alert("Estoque insuficiente para adicionar mais deste produto.");
-                    return true;
-                } else {
-                    if (valueCell) {
-                        let currentValue = parseFloat(valueCell.textContent.replace('R$', ''));
-                        let newValue = currentValue + parseFloat(value_product);
-                        valueCell.textContent = `R$${newValue.toFixed(2)}`;
-                    } else {
-                        console.error('Elemento de valor não encontrado na linha existente.');
-                    }
+                    return false;
+                }
+                quantityCell.textContent = currentQuantity + 1;
+
+                let newValue = currentValue + parseFloat(value_product);
+                valueCell.textContent = `R$ ${newValue.toFixed(2)}`;
+
+                let productIndex = newListProducts.findIndex(product => product.name === name);
+                if (productIndex !== -1) {
+
+                    newListProducts[productIndex].stock_quantity++;
+                    let currentValue = parseFloat(newListProducts[productIndex].value_product);
+                    let newValue = currentValue + parseFloat(value_product);
+                    newListProducts[productIndex].value_product = `R$ ${newValue.toFixed(2)}`;
                 }
             } else {
-                console.error('Elemento de quantidade não encontrado na linha existente.');
+                console.error('Erro ao validar estoque.');
             }
+        } else {
+            console.error('Elementos de quantidade ou valor não encontrados na linha existente.');
         }
     } else {
         let newRow = document.createElement('tr');
         newRow.className = 'tr-order';
+        newRow.id = `product-${id}`;
 
-        newRow.innerHTML =
-            "<td class='product-id-order'>" + id + "</td>" +
-            "<td class='product-name-order'>" + name + "</td>" +
-            "<td class='product-quantity-order'>" + 1 + "</td>" +
-            "<td class='product-value-order'>" + value_product + "</td>" +
-            "<td style='margin: 6px; padding: 6px; cursor: pointer;'>" +
-                "<button onclick='deleteItemFromOrder(" + id + ")' class='btn-delete' type='button'>Deletar</button>" +
-            "</td>";
+        newRow.innerHTML = `
+            <td class='product-id-order'>${id}</td>
+            <td class='product-name-order'>${name}</td>
+            <td class='product-quantity-order'>1</td>
+            <td class='product-value-order'>R$ ${value_product}</td>
+            <td style='margin: 6px; padding: 6px; cursor: pointer;'>
+                <button onclick='deleteItemFromOrder(${id})' class='btn-delete' type='button'>Deletar</button>
+            </td>
+        `;
 
         tbody.appendChild(newRow);
+
+        let newProduct = {
+            name: name,
+            stock_quantity: 1,
+            value_product: parseFloat(value_product)
+        };
+        newListProducts.push(newProduct);
     }
+    console.log(newListProducts);
 }
+
 
 function deleteItemFromOrder(id) {
     let rowToDelete = document.getElementById(`product-${id}`);
@@ -433,9 +449,37 @@ function deleteItemFromOrder(id) {
     }
 }
 
-// async function AddProductOrder() {
-//
-// }
+async function AddProductItems() {
+
+    const responseDataNewList = {
+        newProduct: newListProducts,
+    }
+
+    console.log(responseDataNewList);
+
+    try {
+        let urlOrder = '';
+
+        const response = await fetch(urlOrder, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(requestData),
+        });
+
+        const OrderResponse = await response.text();
+        const responseDataOrder = JSON.parse(OrderResponse);
+
+        if (responseDataOrder && responseDataOrder.success) {
+            showSuccessMessage('Venda finalizada com sucesso!');
+        } else {
+            console.error('Erro ao registrar venda:', responseDataOrder ? responseDataOrder.error : 'Resposta vazia');
+        }
+    } catch (error) {
+        window.alert("Erro ao enviar pedido")
+    }
+}
 
 document.addEventListener('DOMContentLoaded', function () {
     const tableSelected = [];
