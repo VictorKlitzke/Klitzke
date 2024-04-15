@@ -339,30 +339,30 @@ async function generetorRequest() {
 }
 
 function showErrorMessageRequest(message) {
-    const errorContainer = document.getElementById('error-container-request');
-    const errorMessageElement = document.getElementById('error-message-request');
-    errorMessageElement.textContent = message;
-    errorContainer.style.display = 'flex';
+    const errorContainerRequest = document.getElementById('erro-global-h2');
+    const errorMessageElementRequest = document.getElementById('erro-global-h2');
+    errorMessageElementRequest.textContent = message;
+    errorContainerRequest.style.display = 'flex';
     setTimeout(() => {
-        errorMessageElement.textContent = '';
-        errorContainer.style.display = 'none';
+        errorMessageElementRequest.textContent = '';
+        errorContainerRequest.style.display = 'none';
     }, 3000);
 }
 
 function showSuccessMessageRequest(message) {
-    const successContainer = document.getElementById('success-container-request');
-    const successMessageElement = document.getElementById('success-message-request');
-    successMessageElement.textContent = message;
-    successContainer.style.display = 'flex';
+    const successContainerRequest = document.querySelector('sucess-global');
+    const successMessageElementRequest = document.getElementById('sucess-global-h2');
+    successMessageElementRequest.textContent = message;
+    successContainerRequest.style.display = 'flex';
     setTimeout(() => {
-        successMessageElement.textContent = '';
-        successContainer.style.display = 'none';
+        successMessageElementRequest.textContent = '';
+        successContainerRequest.style.display = 'none';
     }, 3000);
 }
 
 function requestValidateStock(stock_quantity, currentQuantity) {
     if (stock_quantity > currentQuantity) {
-        window.alert('Estoque insuficiente para fazer a venda');
+        window.alert('Estoque insuficiente para adicionar mais deste produto.');
         return false;
     }
     return true;
@@ -370,7 +370,7 @@ function requestValidateStock(stock_quantity, currentQuantity) {
 
 function AddProductOrder(id, name, stock_quantity, value_product) {
     let tbody = document.querySelector('#items-list-order');
-    let existingRow = document.querySelector(`#product-${id}`);
+    let existingRow = document.querySelector(`product-${id}`);
 
     if (existingRow) {
         let quantityCell = existingRow.querySelector('.product-quantity-order');
@@ -380,26 +380,20 @@ function AddProductOrder(id, name, stock_quantity, value_product) {
             let currentQuantity = parseInt(quantityCell.textContent);
             let currentValue = parseFloat(valueCell.textContent.replace('R$', '').trim());
 
-            if (requestValidateStock(stock_quantity, currentQuantity)) {
-                if (currentQuantity < stock_quantity) {
-                    window.alert("Estoque insuficiente para adicionar mais deste produto.");
-                    return false;
-                }
-                quantityCell.textContent = currentQuantity + 1;
+            if (currentQuantity < stock_quantity) {
+                window.alert("Estoque insuficiente para adicionar mais deste produto.");
+                return false;
+            }
 
-                let newValue = currentValue + parseFloat(value_product);
-                valueCell.textContent = `R$ ${newValue.toFixed(2)}`;
+            quantityCell.textContent = currentQuantity + 1;
 
-                let productIndex = newListProducts.findIndex(product => product.name === name);
-                if (productIndex !== -1) {
+            let newValue = currentValue + parseFloat(value_product);
+            valueCell.textContent = `R$ ${newValue.toFixed(2)}`;
 
-                    newListProducts[productIndex].stock_quantity++;
-                    let currentValue = parseFloat(newListProducts[productIndex].value_product);
-                    let newValue = currentValue + parseFloat(value_product);
-                    newListProducts[productIndex].value_product = `R$ ${newValue.toFixed(2)}`;
-                }
-            } else {
-                console.error('Erro ao validar estoque.');
+            let productIndex = newListProducts.findIndex(product => product.id === id);
+            if (productIndex !== -1) {
+                newListProducts[productIndex].stock_quantity++;
+                newListProducts[productIndex].value_product += parseFloat(value_product);
             }
         } else {
             console.error('Elementos de quantidade ou valor não encontrados na linha existente.');
@@ -421,6 +415,8 @@ function AddProductOrder(id, name, stock_quantity, value_product) {
 
         tbody.appendChild(newRow);
 
+        calculateTotalRequestOrder();
+
         let newProduct = {
             name: name,
             stock_quantity: 1,
@@ -428,9 +424,9 @@ function AddProductOrder(id, name, stock_quantity, value_product) {
         };
         newListProducts.push(newProduct);
     }
-    console.log(newListProducts);
-}
 
+    // console.log(newListProducts);
+}
 
 function deleteItemFromOrder(id) {
     let rowToDelete = document.getElementById(`product-${id}`);
@@ -441,44 +437,105 @@ function deleteItemFromOrder(id) {
 
         if (currentQuantity > 1) {
             quantityCell.textContent = currentQuantity - 1;
+
+            let productIndex = newListProducts.findIndex(product => product.name === name);
+            if (productIndex !== -1) {
+                newListProducts[productIndex].stock_quantity--;
+                newListProducts[productIndex].value_product -= parseFloat(newListProducts[productIndex].value_product);
+            }
         } else {
             rowToDelete.remove();
+            newListProducts = newListProducts.filter(product => product.id !== id);
         }
     } else {
         window.alert("Produto não encontrado na comanda.");
     }
+
+    calculateTotalRequestOrder();
+
+    // console.log(newListProducts);
 }
 
 async function AddProductItems() {
 
+    let totalizadorOrder = document.getElementById('total-order-value').textContent
+    let valueTotalizadorOrder = 0;
+    if (totalizadorOrder) {
+        valueTotalizadorOrder = parseFloat(totalizadorOrder.textContent.replace('R$ ', '')) || 0;
+    }
+
     const responseDataNewList = {
         newProduct: newListProducts,
+        valueTotalizadorOrder: valueTotalizadorOrder,
     }
 
     console.log(responseDataNewList);
 
-    try {
-        let urlOrder = '';
+    if (newListProducts.length <= 0) {
+        showErrorMessageRequest("Nenhum produto selecionado")
+    } else {
+        try {
+            let urlOrder = '';
 
-        const response = await fetch(urlOrder, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(requestData),
-        });
+            const response = await fetch(urlOrder, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(requestData),
+            });
 
-        const OrderResponse = await response.text();
-        const responseDataOrder = JSON.parse(OrderResponse);
+            const OrderResponse = await response.text();
+            const responseDataOrder = JSON.parse(OrderResponse);
 
-        if (responseDataOrder && responseDataOrder.success) {
-            showSuccessMessage('Venda finalizada com sucesso!');
-        } else {
-            console.error('Erro ao registrar venda:', responseDataOrder ? responseDataOrder.error : 'Resposta vazia');
+            if (responseDataOrder && responseDataOrder.success) {
+                showSuccessMessage('Venda finalizada com sucesso!');
+            } else {
+                console.error('Erro ao registrar venda:', responseDataOrder ? responseDataOrder.error : 'Resposta vazia');
+            }
+        } catch (error) {
+            showErrorMessageRequest("Erro ao enviar pedido")
         }
-    } catch (error) {
-        window.alert("Erro ao enviar pedido")
     }
+}
+
+function updateTotalAmountRequestOrder(valueRequestOrder) {
+
+    let totalAmountElementRequestOrder = document.getElementById('total-order-value');
+
+    if (totalAmountElementRequestOrder) {
+        totalAmountElementRequestOrder.textContent = 'R$ ' + valueRequestOrder.toFixed(2);
+    }
+}
+
+function calculateTotalRequestOrder() {
+
+    let totalRequestOrder = 0;
+
+    newListProducts.forEach(newProduct => {
+
+        let quantityElementRequest = document.getElementById('product-order-quantity');
+        let valueElementRequest = document.getElementById('product-value-order');
+
+        if (quantityElementRequest && valueElementRequest) {
+            let quantityElementTotalRequestOrder = parseInt(quantityElementRequest.textContent) || 0;
+            let valueRequestOrder = parseFloat(valueElementRequest.textContent) || 0;
+
+            totalRequestOrder += quantityElementTotalRequestOrder * valueRequestOrder;
+        } else {
+            console.error('Elementos não encontrados para o produto ID:', newProduct.id);
+        }
+    });
+
+    let totalAmountElementRequestOrder = document.getElementById('total-order-value');
+    if (totalAmountElementRequestOrder) {
+        totalAmountElementRequestOrder.textContent = 'R$ ' + totalRequestOrder.toFixed(2);
+    }
+
+    updateTotalAmountRequest(totalRequestOrder);
+
+    return totalRequestOrder.toFixed(2);
+
 }
 
 document.addEventListener('DOMContentLoaded', function () {

@@ -43,6 +43,7 @@ if (isset($_GET['id'])) {
 </div>
 
 <form action="" class="right w50">
+    <input type="hidden" name="id_order" value="<?php $update["id"] ?>">
     <div class="order-list">
         <div class="order">
             <div class="order-header">
@@ -69,7 +70,7 @@ if (isset($_GET['id'])) {
                     echo '<td class="product-id-order" id="product-id-order">' . $product['id'] . '</td>';
                     echo '<td id="product-order-name">' . $product['product_request'] . '</td>';
                     echo '<td id="product-quantity-order">' . $product['quantity'] . '</td>';
-                    echo '<td>R$' . $product['price_request'] . '</td>';
+                    echo '<td id="product-value-order">R$' . $product['price_request'] . '</td>';
                     echo '</tr>';
                 }
 
@@ -83,9 +84,13 @@ if (isset($_GET['id'])) {
                 }
 
                 if (!$dateDisplayed) {
-                    echo '<li class="item-order">Data do pedido: ' . $product['date_request'] . '</li>';
+                    echo '<div class="item-order">';
+                        echo '<li>Data do pedido: ' . $product['date_request'] . '</li>';
+                        echo '<span id="totalizador-order" class="right">Valor Total: <span id="total-order-value"></span></span>';
+                    echo '</div>';
                     $dateDisplayed = true;
                 }
+                
                 ?>
             </ul>
         </div>
@@ -94,6 +99,14 @@ if (isset($_GET['id'])) {
 <button class="button-order" onclick="AddProductItems()">
     <i class="fas fa-plus-circle"></i> Adicionar Itens
 </button>
+
+<div class="erro-global">
+    <h2 id="erro-global-h2"></h2>
+</div>
+
+<div class="sucess-global">
+    <h2 id="sucess-global-h2"></h2>
+</div>
 
 
 <script src="<?php echo INCLUDE_PATH_PANEL; ?>../js/add_request.js"></script>

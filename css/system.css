@@ -63,3 +63,69 @@
     background: #1d1d1d;
     color: #fff;
 }
+
+
+/* MODAL MeNSAGEM PADRAO */
+
+.erro-global {
+    display: none;
+    background-color: #ff6262;
+    color: #fff;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    padding: 20px;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    width: 50%;
+    transform: translate(-40%, -50%);
+    background: #0a162e;
+    border: 1px solid #fff;
+    border-radius: 10px;
+}
+
+.sucess-global {
+    display: none;
+    background-color: #62ffa1;
+    color: #fff;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    padding: 20px;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    width: 50%;
+    transform: translate(-40%, -50%);
+    background: #0a162e;
+    border: 1px solid #fff;
+    border-radius: 10px;
+}
+
+/* BOTÃO PERSONALIZADO PARA PERGUNTA */
+
+
+.confirm-box {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: white;
+    border: 1px solid #ccc;
+    padding: 20px;
+    text-align: center;
+}
+
+.confirm-yes,
+.confirm-no {
+    background-color: #4caf50;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+    margin: 10px;
+}
+
+.message {
+    margin: 20px;
+}
