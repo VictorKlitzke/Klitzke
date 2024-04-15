@@ -95,5 +95,13 @@ if (isset($_GET['id'])) {
     <i class="fas fa-plus-circle"></i> Adicionar Itens
 </button>
 
+<div class="erro-global">
+    <h2 id="erro-global-h2"></h2>
+</div>
+
+<div class="sucess-global">
+    <h2 id="sucess-global-h2"></h2>
+</div>
+
 
 <script src="<?php echo INCLUDE_PATH_PANEL; ?>../js/add_request.js"></script>

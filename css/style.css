@@ -745,33 +745,3 @@ table tr {
     text-align: center;
     box-shadow: 0 4px 8px rgba(118, 118, 118, 0.9);
 }
-
-
-/* BOTÃO PERSONALIZADO PARA PERGUNTA */
-
-
-/* .confirm-box {
-  display: none;
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background-color: white;
-  border: 1px solid #ccc;
-  padding: 20px;
-  text-align: center;
-}
-
-.confirm-yes,
-.confirm-no {
-  background-color: #4caf50;
-  color: white;
-  border: none;
-  padding: 5px 10px;
-  cursor: pointer;
-  margin: 10px;
-}
-
-.message {
-  margin: 20px;
-} */
