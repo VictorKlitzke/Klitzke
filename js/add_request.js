@@ -370,7 +370,7 @@ function requestValidateStock(stock_quantity, currentQuantity) {
 
 function AddProductOrder(id, name, stock_quantity, value_product) {
     let tbody = document.querySelector('#items-list-order');
-    let existingRow = document.querySelector('product-id-order');
+    let existingRow = document.querySelector(`product-${id}`);
 
     if (existingRow) {
         let quantityCell = existingRow.querySelector('.product-quantity-order');
@@ -381,7 +381,7 @@ function AddProductOrder(id, name, stock_quantity, value_product) {
             let currentValue = parseFloat(valueCell.textContent.replace('R$', '').trim());
 
             if (currentQuantity < stock_quantity) {
-                showErrorMessageRequest("Estoque insuficiente para adicionar mais deste produto.");
+                window.alert("Estoque insuficiente para adicionar mais deste produto.");
                 return false;
             }
 
@@ -399,7 +399,6 @@ function AddProductOrder(id, name, stock_quantity, value_product) {
             console.error('Elementos de quantidade ou valor não encontrados na linha existente.');
         }
     } else {
-        // Cria uma nova linha na tabela para o novo produto
         let newRow = document.createElement('tr');
         newRow.className = 'tr-order';
         newRow.id = `product-${id}`;
@@ -416,9 +415,9 @@ function AddProductOrder(id, name, stock_quantity, value_product) {
 
         tbody.appendChild(newRow);
 
-        // Adiciona o novo produto à newListProducts
+        calculateTotalRequestOrder();
+
         let newProduct = {
-            id: id,
             name: name,
             stock_quantity: 1,
             value_product: parseFloat(value_product)
@@ -426,7 +425,7 @@ function AddProductOrder(id, name, stock_quantity, value_product) {
         newListProducts.push(newProduct);
     }
 
-    console.log(newListProducts);
+    // console.log(newListProducts);
 }
 
 function deleteItemFromOrder(id) {
@@ -452,13 +451,22 @@ function deleteItemFromOrder(id) {
         window.alert("Produto não encontrado na comanda.");
     }
 
-    console.log(newListProducts);
+    calculateTotalRequestOrder();
+
+    // console.log(newListProducts);
 }
 
 async function AddProductItems() {
 
+    let totalizadorOrder = document.getElementById('total-order-value').textContent
+    let valueTotalizadorOrder = 0;
+    if (totalizadorOrder) {
+        valueTotalizadorOrder = parseFloat(totalizadorOrder.textContent.replace('R$ ', '')) || 0;
+    }
+
     const responseDataNewList = {
         newProduct: newListProducts,
+        valueTotalizadorOrder: valueTotalizadorOrder,
     }
 
     console.log(responseDataNewList);
@@ -489,6 +497,45 @@ async function AddProductItems() {
             showErrorMessageRequest("Erro ao enviar pedido")
         }
     }
+}
+
+function updateTotalAmountRequestOrder(valueRequestOrder) {
+
+    let totalAmountElementRequestOrder = document.getElementById('total-order-value');
+
+    if (totalAmountElementRequestOrder) {
+        totalAmountElementRequestOrder.textContent = 'R$ ' + valueRequestOrder.toFixed(2);
+    }
+}
+
+function calculateTotalRequestOrder() {
+
+    let totalRequestOrder = 0;
+
+    newListProducts.forEach(newProduct => {
+
+        let quantityElementRequest = document.getElementById('product-order-quantity');
+        let valueElementRequest = document.getElementById('product-value-order');
+
+        if (quantityElementRequest && valueElementRequest) {
+            let quantityElementTotalRequestOrder = parseInt(quantityElementRequest.textContent) || 0;
+            let valueRequestOrder = parseFloat(valueElementRequest.textContent) || 0;
+
+            totalRequestOrder += quantityElementTotalRequestOrder * valueRequestOrder;
+        } else {
+            console.error('Elementos não encontrados para o produto ID:', newProduct.id);
+        }
+    });
+
+    let totalAmountElementRequestOrder = document.getElementById('total-order-value');
+    if (totalAmountElementRequestOrder) {
+        totalAmountElementRequestOrder.textContent = 'R$ ' + totalRequestOrder.toFixed(2);
+    }
+
+    updateTotalAmountRequest(totalRequestOrder);
+
+    return totalRequestOrder.toFixed(2);
+
 }
 
 document.addEventListener('DOMContentLoaded', function () {
