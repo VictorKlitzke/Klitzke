@@ -10,7 +10,7 @@ error_reporting(E_ALL);
 header("Access-Control-Allow-Origin: *");
 header("Content-Type: application/json");
 
-$id_order_request = $_POST['table_requests'];
+$id_order_request = $_POST['id_order'];
 
 function status_boxpdv($status)
 {
@@ -30,12 +30,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     try {
 
+        $status_order = 2;
         $status = 1;
         $boxpdv_open = status_boxpdv($status);
 
         $sql = Db::Connection();
         $sql->beginTransaction();
-
 
         $user_id = isset($_SESSION['id']) ? $_SESSION['id'] : null;
 
@@ -44,15 +44,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $checkBoxOpen->execute();
         $id_boxpdv = $checkBoxOpen->fetchColumn();
 
-        $exec = $sql->prepare("UPDATE request SET date_request = ? status = ? AND total_request ? AND id_users_request = ? AND id_boxpdv_request = ?");
-        // $exec->bindValue('id_users_request', $user_id, PDO::PARAM_INT);
-        $exec->bindValue(1, $date_request); // Substitua $date_request pelo valor correto
-        $exec->bindValue(2, $status); // Substitua $status pelo valor correto
-        $exec->bindValue(3, $total_request); // Substitua $total_request pelo valor correto
-        $exec->bindValue(4, $user_id); // Substitua $user_id pelo valor correto
-        $exec->bindValue(5, $id_boxpdv); // Substitua $id_boxpdv pelo valor correto
-        $exec->bindValue(6, $request_id);
-
+        $exec = $sql->prepare("UPDATE request SET date_request = ? status = ? AND total_request ? AND id_users_request = ? AND id_boxpdv_request = ? where id = ?");
+        $exec->bindValue('id', $id_order_request, PDO::PARAM_INT);
+        $exec->bindValue('id_users_request', $user_id, PDO::PARAM_INT);
+       
         $exec->execute();
 
 
