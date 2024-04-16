@@ -11,14 +11,17 @@ body {
     justify-content: center;
     align-items: center;
     min-height: 100vh;
-    background: #081b29;
+    background: #1b1b1b;
 }
 .wrapper {
+    color: #fff;
     position: relative;
     width: 750px;
     height: 450px;
     background: transparent;
     border: 2px solid #0ef;
+    box-shadow: 0 0 25px #0ef;
+    overflow: hidden;
 }
 .wrapper .form-box {
     position: absolute;
@@ -31,8 +34,41 @@ body {
 }
 .wrapper .form-box.login {
     left: 0;
-    padding: 0 40px;
+    padding: 0 60px 0 40px;
 }
+.wrapper .form-box.login .animation {
+    transform: translateX(0);
+    opacity: 1;
+    filter: blur(0);
+    transition: .7s ease;
+}
+.wrapper.active .form-box.login .animation {
+    transform: translateX(-120%);
+    opacity: 0;
+    filter: blur(10px);
+    transition-delay: calc(.1s * var(--i));
+}
+
+.wrapper .form-box.register {
+    right: 0;
+    padding: 0 40px 0 60px;
+}
+
+.wrapper .form-box.register .animation{
+    transform: translate(120%);
+    opacity: 0;
+    filter: blur(10px);
+    transition: .7s ease;
+}
+
+.wrapper.active .form-box.register .animation{
+    transform: translate(0);
+    opacity: 1;
+    filter: blur(0);
+    transition-delay: calc(.1s * var(--i));
+    
+}
+
 .form-box h2 {
     font-size: 32px;
     color: #fff;
@@ -47,7 +83,8 @@ body {
 .input-box input {
     width: 100%;
     height: 100%;
-    background: transparent;
+    background-color:transparent;
+    /* background: transparent; */
     border: none;
     outline: none;
     border-bottom: 2px solid #fff;
@@ -144,7 +181,7 @@ body {
     top: 0 ;
     width: 50%;
     height: 100%;
-    background:#202020;;
+    /* background:#202020; */
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -156,6 +193,41 @@ body {
     padding: 0 40px 60px 150px;
 }
 
+.wrapper .info-text.login .animation {
+    transform: translateX(0);
+    opacity: 1;
+    filter: blur(0);
+    transition: .7s ease;
+}
+.wrapper.active .info-text.login .animation {
+    transform: translateX(120%);
+    opacity: 0;
+    filter: blur(10px);
+    transition-delay: calc(.1s * var(--i));
+}
+
+.wrapper .info-text.register {
+    left: 0;
+    text-align: left;
+    padding: 0 150px 60px 40px;
+    pointer-events: none;
+    
+}
+
+.wrapper .info-text.register .animation{
+    transform: translateX(-120%);
+    opacity: 0;
+    filter: blur(10px);
+    transition: .7s ease;
+
+}
+
+.wrapper.active .info-text.register .animation{
+    transform: translateX(0);
+    opacity: 1;
+    filter: blur(0);
+    
+}
 .info-text h2 {
     font-size: 36px;
     color: #fff;
@@ -165,4 +237,41 @@ body {
 .info-text p {
     font-size: 16px;
     color: #fff;
+}
+
+.wrapper .bg-animate {
+    position: absolute;
+    top: -4px;
+    right: 0;
+    width: 850px;
+    height: 600px;
+    background: linear-gradient(45deg, #202020, #202020);
+    border-bottom: 3px solid #0ef;
+    transform: rotate(10deg) skewY(40deg);
+    transform-origin: bottom right;
+    transition: 1.5s ease;
+}
+
+.wrapper.active .bg-animate{
+    transform: rotate(0) skewY(0); 
+    transition-delay: .5s;
+}
+
+.wrapper .bg-animate2 {
+    position: absolute;
+    top: 100%;
+    left: 250Px;
+    width: 850px;
+    height: 700px;
+    background:#1b1b1b ;
+    border-top: 3px solid #0ef;
+    transform: rotate(0) skewY(0);
+    transform-origin: bottom left;
+    transition: 1.5s ease;
+}
+
+.wrapper.active .bg-animate2 {
+    transform: rotate(-11deg) skewY(-41deg); 
+    transition: 1.2s;
+
 }
