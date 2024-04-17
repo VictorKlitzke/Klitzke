@@ -1,6 +1,7 @@
 let selectedRequest = [];
 let numbersTableRequest = [];
 let newListProducts = [];
+let tableSelected = [];
 
 document.addEventListener('DOMContentLoaded', function () {
 
@@ -18,34 +19,55 @@ document.addEventListener('DOMContentLoaded', function () {
 
     let selectedRequestList = [];
 
-    SearchTable.addEventListener('input', function () {
+    SearchTable.addEventListener('input', async function () {
 
         let searchQueryTable = SearchTable.value;
-        let http = new XMLHttpRequest();
 
-        http.onreadystatechange = function () {
-            if (http.readyState === 4 && http.status === 200) {
-                searchResultTable.innerHTML = http.responseText;
+        try {
+
+            const response = await fetch("http://localhost/Klitzke/ajax/search_table_request.php", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: 'searchQueryTable=' + encodeURIComponent(searchQueryTable)
+            })
+
+            if (response.status === 200) {
+                const responseData = await response.text();
+                searchResultTable.innerHTML = responseData;
+            } else {
+                window.alert("Erro na busca" + response.status);
             }
-        }
-        http.open('POST', 'http://localhost/Klitzke/ajax/search_table_request.php', true);
-        http.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-        http.send('searchQueryTable=' + encodeURIComponent(searchQueryTable));
+
+        } catch (error) {
+            window.alert("Erro ao buscar comanda. Por favor contante o suporte", response.error.message);
+        };
     });
 
-    productSRequestearch.addEventListener('input', function () {
+    productSRequestearch.addEventListener('input', async function () {
 
         let searchQuery = productSRequestearch.value;
-        let xhr = new XMLHttpRequest();
 
-        xhr.onreadystatechange = function () {
-            if (xhr.readyState === 4 && xhr.status === 200) {
-                productResult.innerHTML = xhr.responseText;
+        try {
+            const response = await fetch('http://localhost/Klitzke/ajax/search_request.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: 'searchQuery=' + encodeURIComponent(searchQuery)
+            });
+
+            if (response.ok) {
+                const responseData = await response.text();
+                productResult.innerHTML = responseData;
+            } else {
+                window.alert('Erro na requisição: ' + response.status);
             }
+
+        } catch (error) {
+            console.error('Erro ao realizar requisição:', error);
         }
-        xhr.open('POST', 'http://localhost/Klitzke/ajax/search_request.php', true);
-        xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-        xhr.send('searchQuery=' + encodeURIComponent(searchQuery));
     });
 
     function updateTotal(totalAddRequest) {
@@ -81,9 +103,7 @@ document.addEventListener('DOMContentLoaded', function () {
             let numbersTableRequest = event.target;
             let TableNumber = numbersTableRequest.getAttribute('data-number');
 
-            if (TableNumber) {
-                numberTable.value = TableNumber;
-            }
+            numberTable.value = TableNumber;
 
             searchResultTable.innerHTML = '';
             SearchTable.innerHTML = '';
@@ -133,9 +153,14 @@ function updatePedido() {
     var numberTableRequest = document.getElementById('number-table').value;
 
     if (!isNaN(requestValue) && requestID && requestQuantity && requestName) {
-        var table = document.querySelector('.tbody-request');
 
+        var table = document.querySelector('.tbody-request');
         var existingRow = findExistingRow(requestID);
+
+        if (numberTableRequest === '') {
+            window.alert("Comanda nao foi selecionada");
+            return true;
+        }
 
         if (existingRow) {
             var quantityCell = existingRow.querySelector('.quantity-cell');
@@ -289,52 +314,6 @@ function calculateTotal() {
     updateTotalAmountRequest(totalRequest);
 
     return totalRequest.toFixed(2);
-
-}
-
-async function generetorRequest() {
-
-    let totalAmountElementRequest = document.getElementById('totalizador-request');
-    let TotalValueRequest = 0;
-    if (totalAmountElementRequest) {
-        TotalValueRequest = parseFloat(totalAmountElementRequest.textContent.replace('R$ ', '')) || 0;
-    }
-    let numberTableRequest = document.getElementById('number-table').value;
-
-    let RequestData = {
-        TotalValueRequest: TotalValueRequest, requestProducts: selectedRequest, numberTableRequest: numberTableRequest
-    };
-
-    console.log(RequestData);
-
-    if (requestProducts.length === 0) {
-        showErrorMessageRequest('Nenhum produto selecionado!!');
-        return;
-    } else {
-
-        try {
-            let urlRequest = 'http://localhost/Klitzke/ajax/add_request.php';
-
-            const responseRequest = await fetch(urlRequest, {
-                method: 'POST', headers: {
-                    'Content-Type': 'application/json'
-                }, body: JSON.stringify(RequestData),
-            });
-
-            const responseBodyRequest = await responseRequest.text();
-            const responseDataRequest = JSON.parse(responseBodyRequest);
-
-            if (responseDataRequest && responseDataRequest.success) {
-                showSuccessMessageRequest('Venda finalizada com sucesso!');
-            } else {
-                console.error('Erro ao registrar venda:', responseDataRequest ? responseDataRequest.error : 'Resposta vazia');
-            }
-
-        } catch (error) {
-            console.error('Erro ao enviar dados para o PHP:', error);
-        }
-
-    }
 
 }
 
@@ -538,57 +517,85 @@ function calculateTotalRequestOrder() {
 
 }
 
-document.addEventListener('DOMContentLoaded', function () {
-    const tableSelected = [];
+document.querySelectorAll('.table-gathers').forEach(table => {
+    table.addEventListener('click', function () {
+
+        const tableIndex = table.dataset.index;
+
+        console.log(tableIndex);
+
+        if (tableSelected.includes(tableIndex)) {
+            removertableSelected(tableIndex);
+            tableSelected.splice(tableSelected.indexOf(tableIndex), 1);
+            table.classList.remove('selecionada');
+        } else {
+            tableSelected.push(tableIndex);
+            exibirtableSelecteds(table);
+            table.classList.add('selecionada');
+        }
+        updateTotalizador();
+    });
+});
+
+function exibirtableSelecteds(table) {
+
+    const tableSelecionada = document.createElement('div');
+    tableSelecionada.textContent = table.textContent;
+    tableSelecionada.dataset.index = table.dataset.index;
+    tableSelecionada.dataset.id = table.dataset.id;
+    tableSelecionada.dataset.valor = table.dataset.valor;
+    document.querySelector('.table-gathers-selected').appendChild(tableSelecionada);
+}
+
+function removertableSelected(tableIndex) {
+
+    const tableSelecionada = document.querySelector(`.table-gathers-selected [data-index="${tableIndex}"]`);
+    if (tableSelecionada) {
+        tableSelecionada.remove();
+    } else {
+        console.warn('Elemento não encontrado para remoção:', tableIndex);
+    }
+}
+
+function updateTotalizador() {
+
     let totalValorSeletected = 0;
 
-    const totalizador = document.getElementById('totalizador');
-
-    document.querySelectorAll('.table-gathers').forEach(table => {
-        table.addEventListener('click', function () {
-            const tableIndex = table.dataset.index;
+    tableSelected.forEach(tableIndex => {
+        const table = document.querySelector(`.table-gathers[data-index="${tableIndex}"]`);
+        if (table) {
             const ValueTable = parseFloat(table.dataset.valor);
-
-            if (!tableSelected.includes(tableIndex)) {
-                tableSelected.push(tableIndex);
-                exibirtableSelecteds(table);
-                totalValorSeletected += ValueTable;
-            } else {
-                tableSelected.splice(tableSelected.indexOf(tableIndex), 1);
-                removertableSelected(tableIndex);
-                totalValorSeletected -= ValueTable;
-            }
-
-            updateTotalizador();
-            console.log(updateTotalizador());
-        });
+            totalValorSeletected += ValueTable;
+        }
     });
 
-    function exibirtableSelecteds(table) {
-        table.classList.add('selecionada');
-        const tableSelecionada = document.createElement('div');
-        tableSelected.textContent = table.textContent;
-        tableSelecionada.dataset.id = table.dataset.id;
-        document.querySelector('.table-gathers-selected').appendChild(tableSelecionada);
+    const totalizador = document.getElementById('totalizador');
+    if (totalizador) {
+        totalValorSeletected = Math.max(totalValorSeletected, 0);
+        totalizador.textContent = totalValorSeletected.toFixed(2);
+    }
+}
+
+async function GathersTables() {
+
+    let valueGathersTotal = document.getElementById('totalizador').textContent;
+    let valueTotalizadorOrderGathres = 0;
+
+    if (valueGathersTotal === 0) {
+        window.alert("Valor total zerado, por favror contante o suporte")
+        return false;
+    } else {
+        valueTotalizadorOrderGathres = parseFloat(valueGathersTotal.trim('R$ ', ''));
     }
 
-    function removertableSelected(tableIndex) {
-        const tableSelecionada = document.querySelector('.table-gathers-selected [data-index="' + tableIndex + '"]');
-        tableSelecionada.remove();
+    const RequestDataGathers = {
+        tables: tableSelected,
+        valueTotalizadorOrderGathres: valueTotalizadorOrderGathres
     }
 
-    function updateTotalizador() {
-        if (totalizador) {
-            totalValorSeletected = Math.max(totalValorSeletected, 0);
-            totalizador.textContent = totalValorSeletected.toFixed(2);
-        }
-    }
-
-    async function GathersTables() {
-        const RequestDataGathers = {
-            tables: tableSelected
-        }
-
+    if (tableSelected.length === 0) {
+        window.alert("Nenhuma comanda selecionada")
+    } else {
         console.log(RequestDataGathers);
 
         try {
@@ -598,12 +605,13 @@ document.addEventListener('DOMContentLoaded', function () {
                     'Content-Type': 'application/json',
                 }, body: JSON.stringify(RequestDataGathers),
             });
+
             const responseTablesBody = await RequestTables.text();
             console.log('Response from server:', responseTablesBody);
             const responseTables = JSON.parse(responseTablesBody);
 
             if (responseTables && responseTables.success) {
-                showSuccessMessage('Venda finalizada com sucesso!');
+                showSuccessMessage('Comandas ajuntada com sucesso');
             } else {
                 console.error('Erro ao registrar venda:', responseTables ? responseTables.error : 'Resposta vazia');
             }
@@ -611,7 +619,50 @@ document.addEventListener('DOMContentLoaded', function () {
             console.error('Erro ao enviar dados para o PHP:', error);
         }
     }
-});
+}
+async function generetorRequest() {
+
+    let totalAmountElementRequest = document.getElementById('totalizador-request');
+    let TotalValueRequest = 0;
+    if (totalAmountElementRequest) {
+        TotalValueRequest = parseFloat(totalAmountElementRequest.textContent.replace('R$ ', '')) || 0;
+    }
+    let numberTableRequest = document.getElementById('number-table').value;
+
+    let RequestData = {
+        TotalValueRequest: TotalValueRequest, requestProducts: selectedRequest, numberTableRequest: numberTableRequest
+    };
+
+    console.log(RequestData);
+
+    if (requestProducts.length === 0) {
+        showErrorMessageRequest('Nenhum produto selecionado!!');
+        return true;
+    } else {
+        try {
+            let urlRequest = 'http://localhost/Klitzke/ajax/add_request.php';
+
+            const responseRequest = await fetch(urlRequest, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }, body: JSON.stringify(RequestData),
+            });
+
+            const responseBodyRequest = await responseRequest.text();
+            const responseDataRequest = JSON.parse(responseBodyRequest);
+
+            if (responseDataRequest && responseDataRequest.success) {
+                showSuccessMessageRequest('Pedido gerado com sucesso!');
+            } else {
+                console.error('Erro ao registrar venda:', responseDataRequest ? responseDataRequest.error : 'Resposta vazia');
+            }
+
+        } catch (error) {
+            console.error('Erro ao enviar dados para o PHP:', error);
+        }
+    }
+}
 
 document.querySelector('.button-request').addEventListener('click', updatePedido, calculateTotal());
 document.querySelector('.invoice-request').addEventListener('click', generetorRequest);

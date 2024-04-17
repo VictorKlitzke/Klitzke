@@ -58,10 +58,6 @@ $request = Controllers::SelectAll(
                     <input type="text" id="product-value" name="product-value">
                 </div>
             </div>
-            <div class="totalizador">
-                <h2>Total</h2>
-                <p id="product-value-total">R$ 0,00</p>
-            </div>
             <button type="button" class="button-request">Adicionar pedido</button>
         </div>
     </div>
