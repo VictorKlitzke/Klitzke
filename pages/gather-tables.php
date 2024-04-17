@@ -28,7 +28,7 @@
     </section>
 </main>
 <div class="w100 info-total-gathers">
-    <button class="button-gathers" id="button-gathers">Ajuntar comandas</button>
+    <button class="button-gathers" id="button-gathers" onclick="GathersTables()">Ajuntar comandas</button>
     <h2 class="span-gathers">Total: <span id="totalizador">R$ 0,00</span></h2>
 </div>
 
