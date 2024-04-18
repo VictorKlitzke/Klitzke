@@ -9,7 +9,7 @@
         foreach ($tables_command as $key => $value) {
 
             ?>
-            <div class="table-gathers" data-index="<?php echo $key; ?>" data-valor="<?php echo $value['total_request']; ?>">
+            <div class="table-gathers" onclick="addGathersArray(<?php echo $key ?>, '<?php echo $tables_command['id'] ?>', '<?php echo $tables_command['table_request'] ?>', '<?php echo $tables_command['total_request'] ?>')">
                 <p>Comanda:
                     <?php echo $value['table_request']; ?>
                 </p>
@@ -24,6 +24,7 @@
     <section>
         <h2 class="h2-gathers" >Mesas Selecionadas</h2>
         <div class="table-gathers-selected">
+
         </div>
     </section>
 </main>

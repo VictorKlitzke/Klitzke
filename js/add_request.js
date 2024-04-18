@@ -3,6 +3,8 @@ let numbersTableRequest = [];
 let newListProducts = [];
 let tableSelected = [];
 
+const ResulttableGathers = document.getElementById('table-gathers-selected');
+
 document.addEventListener('DOMContentLoaded', function () {
 
     let productSRequestearch = document.getElementById('product-request-search');
@@ -537,15 +539,37 @@ document.querySelectorAll('.table-gathers').forEach(table => {
     });
 });
 
-function exibirtableSelecteds(table) {
+function addGathersArray(index, table_request, total_request){
+   let existingTable = false;
 
-    const tableSelecionada = document.createElement('div');
-    tableSelecionada.textContent = table.textContent;
-    tableSelecionada.dataset.index = table.dataset.index;
-    tableSelecionada.dataset.id = table.dataset.id;
-    tableSelecionada.dataset.valor = table.dataset.valor;
-    document.querySelector('.table-gathers-selected').appendChild(tableSelecionada);
+   if (!existingTable) {
+        new newTableGathers = {
+            id: id,
+            table_request: table_request,
+            total_request: parseFloat(total_request.replace('', ''))
+        }
+
+        existingTable = true;
+
+        tableSelected.push(newTableGathers);
+
+        let newTableInsert = ResulttableGathers.insertRow();
+        newTableInsert = "row" + id;
+        newTableInsert.innerHTML = "<td>" + id + "</td>" +
+        "<td>" + table_request + "</td>" +
+        "<td>" + total_request + "</td>";
+   }
 }
+
+// function exibirtableSelecteds(table) {
+
+//     const tableSelecionada = document.createElement('div');
+//     tableSelecionada.textContent = table.textContent;
+//     tableSelecionada.dataset.index = table.dataset.index;
+//     tableSelecionada.dataset.id = table.dataset.id;
+//     tableSelecionada.dataset.valor = table.dataset.valor;
+//     document.querySelector('.table-gathers-selected').appendChild(tableSelecionada);
+// }
 
 function removertableSelected(tableIndex) {
 
