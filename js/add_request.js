@@ -535,26 +535,29 @@ async function addGathersArray(index, id, table_request, total_request) {
 
     tableSelected.push(newTableGathers);
 
+    let numericValueTotal = parseFloat(total_request);
+    let FormmatedTotalValue = numericValueTotal.toFixed(2);
+
     let newTableInsert = ResulttableGathers.insertRow();
     newTableInsert.id = "row-" + id;
     newTableInsert.innerHTML = "<td id='order-id'>" + id + "</td>" +
         "<td id='order-table-request'>" + table_request + "</td>" +
-        "<td id='order-total-request" + id + "'>" + total_request + "</td>" +
+        "<td id='order-total-request" + id + "'>" + FormmatedTotalValue + "</td>" +
         "<td style='margin: 6px; padding: 6px;'>" +
         "<div>" +
         "<button onclick='removertableSelected(" + id + ")' id='button-delete-" + id + "' class='btn-delete' type='button'>Deletar</button>" +
         "</div>" +
         "</td>";
-        updateTotalizador();
+    updateTotalizador();
 }
 
 function removertableSelected(id) {
 
     let rowToRemoveOrder = document.getElementById("row-" + id);
-    
+
     if (tableSelected.length > 0) {
 
-        let productIndexOrder =  tableSelected.id = id;
+        let productIndexOrder = tableSelected.id = id;
 
         if (productIndexOrder !== -1) {
 
@@ -595,11 +598,11 @@ function updateTotalizador() {
     tableSelected.forEach(tableSelected => {
 
         let quantityElementOrder = 1;
-        let valueElementOrder = document.getElementById('order-total-request' + tableSelected.id).textContent;
+        let valueElementOrder = document.getElementById('order-total-request' + tableSelected.id);
 
         if (quantityElementOrder && valueElementOrder) {
             let quantityElementOrderTotal = 1 || 0;
-            let valueOrders = parseFloat(document.getElementById('order-total-request' + tableSelected.id).textContent) || 0;
+            let valueOrders = parseFloat(valueElementOrder.textContent) || 0;
 
             totalOrderRequest += quantityElementOrderTotal * valueOrders;
         } else {
@@ -620,14 +623,13 @@ function updateTotalizador() {
 async function GathersTables() {
 
     let valueGathersTotal = document.getElementById('totalizador').textContent;
-    console.log(valueGathersTotal);
     let valueTotalizadorOrderGathres = 0;
 
     if (valueGathersTotal === 0) {
         window.alert("Valor total zerado, por favror contante o suporte")
         return false;
     } else {
-        valueTotalizadorOrderGathres = parseFloat(valueGathersTotal.trim('R$ ', ''));
+        valueTotalizadorOrderGathres = parseFloat(valueGathersTotal.replace(/R\$\s/g, ''));
     }
 
     const RequestDataGathers = {
@@ -638,24 +640,29 @@ async function GathersTables() {
     if (tableSelected.length === 0) {
         window.alert("Nenhuma comanda selecionada")
     } else {
-        console.log(RequestDataGathers);
-
         try {
 
-            const RequestTables = await fetch('http://localhost/Klitzke/ajax/gathers_tables.php', {
+            let urlOrderGathres = 'http://localhost/Klitzke/ajax/gathers_tables.php';
+
+            const RequestTables = await fetch(urlOrderGathres, {
                 method: 'POST', headers: {
                     'Content-Type': 'application/json',
-                }, body: JSON.stringify(RequestDataGathers),
+                }, body: JSON.stringify(RequestDataGathers)
             });
 
             const responseTablesBody = await RequestTables.text();
-            console.log('Response from server:', responseTablesBody);
+
+            if (responseTablesBody.startsWith('<')) {
+                console.error('Erro ao enviar dados para o PHP:', responseTablesBody);
+                return;
+            }
+
             const responseTables = JSON.parse(responseTablesBody);
 
             if (responseTables && responseTables.success) {
-                showSuccessMessage('Comandas ajuntada com sucesso');
+                window.alert('Comandas ajuntada com sucesso');
             } else {
-                console.error('Erro ao registrar venda:', responseTables ? responseTables.error : 'Resposta vazia');
+                console.error('Erro ao tentar agrupar comandas:', responseTables ? responseTables.error : 'Resposta vazia');
             }
         } catch (error) {
             console.error('Erro ao enviar dados para o PHP:', error);
@@ -672,8 +679,8 @@ async function generetorRequest() {
     let numberTableRequest = document.getElementById('number-table').value;
 
     let RequestData = {
-        TotalValueRequest: TotalValueRequest, 
-        requestProducts: selectedRequest, 
+        TotalValueRequest: TotalValueRequest,
+        requestProducts: selectedRequest,
         numberTableRequest: numberTableRequest
     };
 
