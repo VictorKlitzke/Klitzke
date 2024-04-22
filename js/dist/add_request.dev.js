@@ -700,38 +700,39 @@ function GathersTables() {
       switch (_context6.prev = _context6.next) {
         case 0:
           valueGathersTotal = document.getElementById('totalizador').textContent;
+          console.log(valueGathersTotal);
           valueTotalizadorOrderGathres = 0;
 
           if (!(valueGathersTotal === 0)) {
-            _context6.next = 7;
+            _context6.next = 8;
             break;
           }
 
           window.alert("Valor total zerado, por favror contante o suporte");
           return _context6.abrupt("return", false);
 
-        case 7:
+        case 8:
           valueTotalizadorOrderGathres = parseFloat(valueGathersTotal.trim('R$ ', ''));
 
-        case 8:
+        case 9:
           RequestDataGathers = {
             tables: tableSelected,
             valueTotalizadorOrderGathres: valueTotalizadorOrderGathres
           };
 
           if (!(tableSelected.length === 0)) {
-            _context6.next = 13;
+            _context6.next = 14;
             break;
           }
 
           window.alert("Nenhuma comanda selecionada");
-          _context6.next = 29;
+          _context6.next = 30;
           break;
 
-        case 13:
+        case 14:
           console.log(RequestDataGathers);
-          _context6.prev = 14;
-          _context6.next = 17;
+          _context6.prev = 15;
+          _context6.next = 18;
           return regeneratorRuntime.awrap(fetch('http://localhost/Klitzke/ajax/gathers_tables.php', {
             method: 'POST',
             headers: {
@@ -740,12 +741,12 @@ function GathersTables() {
             body: JSON.stringify(RequestDataGathers)
           }));
 
-        case 17:
+        case 18:
           RequestTables = _context6.sent;
-          _context6.next = 20;
+          _context6.next = 21;
           return regeneratorRuntime.awrap(RequestTables.text());
 
-        case 20:
+        case 21:
           responseTablesBody = _context6.sent;
           console.log('Response from server:', responseTablesBody);
           responseTables = JSON.parse(responseTablesBody);
@@ -756,20 +757,20 @@ function GathersTables() {
             console.error('Erro ao registrar venda:', responseTables ? responseTables.error : 'Resposta vazia');
           }
 
-          _context6.next = 29;
+          _context6.next = 30;
           break;
 
-        case 26:
-          _context6.prev = 26;
-          _context6.t0 = _context6["catch"](14);
+        case 27:
+          _context6.prev = 27;
+          _context6.t0 = _context6["catch"](15);
           console.error('Erro ao enviar dados para o PHP:', _context6.t0);
 
-        case 29:
+        case 30:
         case "end":
           return _context6.stop();
       }
     }
-  }, null, null, [[14, 26]]);
+  }, null, null, [[15, 27]]);
 }
 
 function generetorRequest() {
