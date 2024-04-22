@@ -17,6 +17,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $request_data = json_decode(file_get_contents('php://input'), true);
 
     $selected_tables = $request_data['tableSelected'] ?? [];
+    $total_gathers_selected = $request_data['valueTotalizadorOrderGathres'] ?? '';
 
     if (count($selected_tables) >= 2) {
         try {

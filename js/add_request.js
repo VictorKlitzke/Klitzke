@@ -278,45 +278,6 @@ async function deleteSelectedRow(row, quantityCell) {
     calculateTotal();
 }
 
-function updateTotalAmountRequest(totalRequest) {
-
-    let totalAmountElementRequest = document.getElementById('totalizador-request');
-
-    if (totalAmountElementRequest) {
-        totalAmountElementRequest.textContent = 'R$ ' + totalRequest.toFixed(2);
-    }
-}
-
-function calculateTotal() {
-
-    let totalRequest = 0;
-
-    selectedRequest.forEach(requestProducts => {
-
-        let quantityElementRequest = document.querySelector('.quantity-cell');
-        let valueElementRequest = document.querySelector('.value-cell');
-
-        if (quantityElementRequest && valueElementRequest) {
-            let quantityElementTotalRequest = parseInt(quantityElementRequest.textContent) || 0;
-            let valueRequest = parseFloat(valueElementRequest.textContent) || 0;
-
-            totalRequest += quantityElementTotalRequest * valueRequest;
-        } else {
-            console.error('Elementos não encontrados para o produto ID:', requestProducts.id);
-        }
-    });
-
-    let totalAmountElementRequest = document.getElementById('totalizador-request');
-    if (totalAmountElementRequest) {
-        totalAmountElementRequest.textContent = 'R$ ' + totalRequest.toFixed(2);
-    }
-
-    updateTotalAmountRequest(totalRequest);
-
-    return totalRequest.toFixed(2);
-
-}
-
 function showErrorMessageRequest(message) {
     const errorContainerRequest = document.getElementById('erro-global-h2');
     const errorMessageElementRequest = document.getElementById('erro-global-h2');
@@ -345,6 +306,45 @@ function requestValidateStock(stock_quantity, currentQuantity) {
         return false;
     }
     return true;
+}
+
+function updateTotalAmountRequest(totalRequest) {
+
+    let totalElementOrderRequestRequest = document.getElementById('totalizador-request');
+
+    if (totalElementOrderRequestRequest) {
+        totalElementOrderRequestRequest.textContent = 'R$ ' + totalRequest.toFixed(2);
+    }
+}
+
+function calculateTotal() {
+
+    let totalRequest = 0;
+
+    selectedRequest.forEach(requestProducts => {
+
+        let quantityElementOrderRequest = document.querySelector('.quantity-cell');
+        let valueElementOrderRequest = document.querySelector('.value-cell');
+
+        if (quantityElementOrderRequest && valueElementOrderRequest) {
+            let quantityElementOrderTotalRequest = parseInt(quantityElementOrderRequest.textContent) || 0;
+            let valueRequest = parseFloat(valueElementOrderRequest.textContent) || 0;
+
+            totalRequest += quantityElementOrderTotalRequest * valueRequest;
+        } else {
+            console.error('Elementos não encontrados para o produto ID:', requestProducts.id);
+        }
+    });
+
+    let totalElementOrderRequestRequest = document.getElementById('totalizador-request');
+    if (totalElementOrderRequestRequest) {
+        totalElementOrderRequestRequest.textContent = 'R$ ' + totalRequest.toFixed(2);
+    }
+
+    updateTotalAmountRequest(totalRequest);
+
+    return totalRequest.toFixed(2);
+
 }
 
 function AddProductOrder(id, name, stock_quantity, value_product) {
@@ -480,10 +480,10 @@ async function AddProductItems() {
 
 function updateTotalAmountRequestOrder(valueRequestOrder) {
 
-    let totalAmountElementRequestOrder = document.getElementById('total-order-value');
+    let totalElementOrderRequestRequestOrder = document.getElementById('total-order-value');
 
-    if (totalAmountElementRequestOrder) {
-        totalAmountElementRequestOrder.textContent = 'R$ ' + valueRequestOrder.toFixed(2);
+    if (totalElementOrderRequestRequestOrder) {
+        totalElementOrderRequestRequestOrder.textContent = 'R$ ' + valueRequestOrder.toFixed(2);
     }
 }
 
@@ -493,87 +493,128 @@ function calculateTotalRequestOrder() {
 
     newListProducts.forEach(newProduct => {
 
-        let quantityElementRequest = document.getElementById('product-order-quantity');
-        let valueElementRequest = document.getElementById('product-value-order');
+        let quantityElementOrderRequest = 1;
+        let valueElementOrderRequest = document.getElementById('order-total-request');
 
-        if (quantityElementRequest && valueElementRequest) {
-            let quantityElementTotalRequestOrder = parseInt(quantityElementRequest.textContent) || 0;
-            let valueRequestOrder = parseFloat(valueElementRequest.textContent) || 0;
+        if (quantityElementOrderRequest && valueElementOrderRequest) {
+            let quantityElementOrderTotalRequestOrder = parseInt(quantityElementOrderRequest.textContent) || 0;
+            let valueRequestOrder = parseFloat(valueElementOrderRequest.textContent) || 0;
 
-            totalRequestOrder += quantityElementTotalRequestOrder * valueRequestOrder;
+            totalRequestOrder += quantityElementOrderTotalRequestOrder * valueRequestOrder;
         } else {
             console.error('Elementos não encontrados para o produto ID:', newProduct.id);
         }
     });
 
-    let totalAmountElementRequestOrder = document.getElementById('total-order-value');
-    if (totalAmountElementRequestOrder) {
-        totalAmountElementRequestOrder.textContent = 'R$ ' + totalRequestOrder.toFixed(2);
+    let totalElementOrderRequestRequestOrder = document.getElementById('total-order-value');
+    if (totalElementOrderRequestRequestOrder) {
+        totalElementOrderRequestRequestOrder.textContent = 'R$ ' + totalRequestOrder.toFixed(2);
     }
 
-    updateTotalAmountRequest(totalRequestOrder);
+    updateTotalAmountRequestOrder(totalRequestOrder);
 
     return totalRequestOrder.toFixed(2);
 
 }
 
-document.querySelectorAll('.table-gathers').forEach(table => {
-    table.addEventListener('click', function () {
+async function addGathersArray(index, id, table_request, total_request) {
 
-        const tableIndex = table.dataset.index;
+    const ResulttableGathers = document.getElementById('table-gathers-selected');
+    let ExistingRowOrder = document.getElementById("row-" + id);
 
-        console.log(tableIndex);
+    if (ExistingRowOrder) {
+        window.alert("Comanda ja selecionada");
+        return;
+    }
 
-        if (tableSelected.includes(tableIndex)) {
-            removertableSelected(tableIndex);
-            tableSelected.splice(tableSelected.indexOf(tableIndex), 1);
-            table.classList.remove('selecionada');
-        } else {
-            tableSelected.push(tableIndex);
-            exibirtableSelecteds(table);
-            table.classList.add('selecionada');
-        }
+    let newTableGathers = {
+        id: id,
+        table_request: table_request,
+        total_request: parseFloat(total_request.replace('', ''))
+    }
+
+    tableSelected.push(newTableGathers);
+
+    let newTableInsert = ResulttableGathers.insertRow();
+    newTableInsert.id = "row-" + id;
+    newTableInsert.innerHTML = "<td id='order-id'>" + id + "</td>" +
+        "<td id='order-table-request'>" + table_request + "</td>" +
+        "<td id='order-total-request" + id + "'>" + total_request + "</td>" +
+        "<td style='margin: 6px; padding: 6px;'>" +
+        "<div>" +
+        "<button onclick='removertableSelected(" + id + ")' id='button-delete-" + id + "' class='btn-delete' type='button'>Deletar</button>" +
+        "</div>" +
+        "</td>";
         updateTotalizador();
-    });
-});
-
-function exibirtableSelecteds(table) {
-
-    const tableSelecionada = document.createElement('div');
-    tableSelecionada.textContent = table.textContent;
-    tableSelecionada.dataset.index = table.dataset.index;
-    tableSelecionada.dataset.id = table.dataset.id;
-    tableSelecionada.dataset.valor = table.dataset.valor;
-    document.querySelector('.table-gathers-selected').appendChild(tableSelecionada);
 }
 
-function removertableSelected(tableIndex) {
+function removertableSelected(id) {
 
-    const tableSelecionada = document.querySelector(`.table-gathers-selected [data-index="${tableIndex}"]`);
-    if (tableSelecionada) {
-        tableSelecionada.remove();
+    let rowToRemoveOrder = document.getElementById("row-" + id);
+    
+    if (tableSelected.length > 0) {
+
+        let productIndexOrder =  tableSelected.id = id;
+
+        if (productIndexOrder !== -1) {
+
+            let tableOrderRow = tableSelected.id = id;
+            let productQuantityCellOrder = 1;
+
+            if (productQuantityCellOrder) {
+                let number = tableSelected.table_request - 1;
+
+                if (number >= 1) {
+                    tableOrderRow.table_request = number;
+                    productQuantityCellOrder = number;
+                } else {
+                    tableSelected.splice(productIndexOrder, 1);
+                    rowToRemoveOrder.remove();
+                }
+            }
+        } else {
+            console.error("Produto não encontrado no array.");
+        }
     } else {
-        console.warn('Elemento não encontrado para remoção:', tableIndex);
+        console.error("Array de produtos está vazio");
+    }
+    updateTotalizador();
+}
+
+function updateAmountOrder(totalOrderRequest) {
+    let totalElementOrderRequest = document.getElementById('totalizador');
+    if (totalElementOrderRequest) {
+        totalElementOrderRequest.textContent = 'R$ ' + totalOrderRequest.toFixed(2);
     }
 }
 
 function updateTotalizador() {
 
-    let totalValorSeletected = 0;
+    let totalOrderRequest = 0;
 
-    tableSelected.forEach(tableIndex => {
-        const table = document.querySelector(`.table-gathers[data-index="${tableIndex}"]`);
-        if (table) {
-            const ValueTable = parseFloat(table.dataset.valor);
-            totalValorSeletected += ValueTable;
+    tableSelected.forEach(tableSelected => {
+
+        let quantityElementOrder = 1;
+        let valueElementOrder = document.getElementById('order-total-request' + tableSelected.id).textContent;
+
+        if (quantityElementOrder && valueElementOrder) {
+            let quantityElementOrderTotal = 1 || 0;
+            let valueOrders = parseFloat(document.getElementById('order-total-request' + tableSelected.id).textContent) || 0;
+
+            totalOrderRequest += quantityElementOrderTotal * valueOrders;
+        } else {
+            console.error('Elementos não encontrados para comanda de ID:', tableSelected.id);
         }
     });
 
-    const totalizador = document.getElementById('totalizador');
-    if (totalizador) {
-        totalValorSeletected = Math.max(totalValorSeletected, 0);
-        totalizador.textContent = totalValorSeletected.toFixed(2);
+    let totalElementOrderRequest = document.getElementById('totalizador');
+    if (totalElementOrderRequest) {
+        totalElementOrderRequest.textContent = 'R$ ' + totalOrderRequest.toFixed(2);
     }
+
+    updateAmountOrder(totalOrderRequest);
+
+    return totalOrderRequest.toFixed(2);
 }
 
 async function GathersTables() {
@@ -622,10 +663,10 @@ async function GathersTables() {
 }
 async function generetorRequest() {
 
-    let totalAmountElementRequest = document.getElementById('totalizador-request');
+    let totalElementOrderRequestRequest = document.getElementById('totalizador-request');
     let TotalValueRequest = 0;
-    if (totalAmountElementRequest) {
-        TotalValueRequest = parseFloat(totalAmountElementRequest.textContent.replace('R$ ', '')) || 0;
+    if (totalElementOrderRequestRequest) {
+        TotalValueRequest = parseFloat(totalElementOrderRequestRequest.textContent.replace('R$ ', '')) || 0;
     }
     let numberTableRequest = document.getElementById('number-table').value;
 
