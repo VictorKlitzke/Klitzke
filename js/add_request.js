@@ -620,6 +620,7 @@ function updateTotalizador() {
 async function GathersTables() {
 
     let valueGathersTotal = document.getElementById('totalizador').textContent;
+    console.log(valueGathersTotal);
     let valueTotalizadorOrderGathres = 0;
 
     if (valueGathersTotal === 0) {
@@ -671,7 +672,9 @@ async function generetorRequest() {
     let numberTableRequest = document.getElementById('number-table').value;
 
     let RequestData = {
-        TotalValueRequest: TotalValueRequest, requestProducts: selectedRequest, numberTableRequest: numberTableRequest
+        TotalValueRequest: TotalValueRequest, 
+        requestProducts: selectedRequest, 
+        numberTableRequest: numberTableRequest
     };
 
     console.log(RequestData);
