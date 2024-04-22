@@ -6,6 +6,7 @@
         </svg>
         <h7>Vendas</h7>
     </div>
+    
     <div class="search-product right">
         <form method="post">
             <input type="text" id="product_search" name="product_search" placeholder="Buscar produtos">
@@ -65,7 +66,6 @@
         <?php } ?>
 
     </div>
-
 
     <div class="table-sales w70 left">
         <div class="names">
