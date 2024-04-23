@@ -17,7 +17,7 @@ $request = Controllers::SelectAll('request', ($currentPage - 1) * $porPage, $por
         <h2 style="color: #000">Lista de pedidos</h2>
         <div class="btn-ajust" style="flex-grow: 1; text-align: center; max-width: 180px;">
             <a class="btn-ajust" href="<?php echo htmlspecialchars(INCLUDE_PATH . 'gather-tables'); ?>">
-                Ajuntar Comandas
+                Agrupar Comandas
             </a>
         </div>
     </div>
@@ -74,6 +74,109 @@ $request = Controllers::SelectAll('request', ($currentPage - 1) * $porPage, $por
                             <div>
                                 <a actionBtn="delete" class="btn-delete"
                                     href="<?php echo INCLUDE_PATH ?>list-request?delete=<?php echo $value['id']; ?>">Deletar
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+
+                </tbody>
+
+            <?php }
+            ?>
+
+        </table>
+    </div>
+</div>
+
+<div class="page">
+
+    <?php
+    $totalPage = ceil(count(Controllers::selectAll("request")) / $porPage);
+
+    for ($i = 1; $i <= $totalPage; $i++) {
+        if ($i == $currentPage) {
+            echo '<a class="page-selected" href="' .
+                INCLUDE_PATH .
+                "list-request?page=" .
+                $i .
+                '">' .
+                $i .
+                "</a>";
+        } else {
+            echo '<a href="' .
+                INCLUDE_PATH .
+                "list-request?page=" .
+                $i .
+                '">' .
+                $i .
+                "</a>";
+        }
+    }
+    ?>
+
+</div>
+
+
+<div class="box-content left w100">
+    <div class="" style="display: flex; background: #ccc; padding: 9px; margin: 4px; border-radius: 4px; justify-content: space-between;">
+        <h2 style="color: #000">Lista de pedidos agrupados</h2>
+    </div>
+    <div class="list">
+        <table>
+            <thead>
+
+                <tr>
+                    <td>Comandas principal</td>
+                    <td>Comandas agrupadas</td>
+                    <td>Status</td>
+                    <td>Valor Total</td>
+                    <td>Data</td>
+                </tr>
+
+            </thead>
+
+            <?php
+            $request_dados = Controllers::SelectrequestGathers("request_gathers");
+
+            foreach ($request_dados as $key => $value) { ?>
+
+                <tbody>
+
+                    <tr>
+                        <td>
+                            <?php echo htmlspecialchars(
+                                $value["principal_command_id"]
+                            ); ?>
+                        </td>
+                        <td>
+                            <?php echo htmlspecialchars(
+                                $value["grouped_command_id"]
+                            ); ?>
+                        </td>
+                        <td>
+                            <?php echo htmlspecialchars(
+                                $value["status"]
+                            ); ?>
+                        </td>
+                        <td>
+                            <?php echo htmlspecialchars(
+                                $value["value_total"]
+                            ); ?>
+                        </td>
+                        <td>
+                            <?php echo htmlspecialchars(
+                                $value["created_at"]
+                            ); ?>
+                        </td>
+
+                        <td style="display: flex; justify-content: center; gap: 10px; margin: 6px; padding: 6px;">
+                            <div>
+                                <a class="btn-add-items" href="<?php echo INCLUDE_PATH; ?>add-item-order?id=<?php echo base64_encode($value["id"]); ?>">
+                                    Desagrupar
+                                </a>
+                            </div>
+                            <div>
+                                <a class="btn-disable" href="<?php echo INCLUDE_PATH; ?>">Faturar
                                 </a>
                             </div>
                         </td>

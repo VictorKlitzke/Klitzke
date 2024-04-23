@@ -594,7 +594,7 @@ function calculateTotalRequestOrder() {
 }
 
 function addGathersArray(index, id, table_request, total_request) {
-  var ResulttableGathers, ExistingRowOrder, newTableGathers, newTableInsert;
+  var ResulttableGathers, ExistingRowOrder, newTableGathers, numericValueTotal, FormmatedTotalValue, newTableInsert;
   return regeneratorRuntime.async(function addGathersArray$(_context5) {
     while (1) {
       switch (_context5.prev = _context5.next) {
@@ -617,12 +617,14 @@ function addGathersArray(index, id, table_request, total_request) {
             total_request: parseFloat(total_request.replace('', ''))
           };
           tableSelected.push(newTableGathers);
+          numericValueTotal = parseFloat(total_request);
+          FormmatedTotalValue = numericValueTotal.toFixed(2);
           newTableInsert = ResulttableGathers.insertRow();
           newTableInsert.id = "row-" + id;
-          newTableInsert.innerHTML = "<td id='order-id'>" + id + "</td>" + "<td id='order-table-request'>" + table_request + "</td>" + "<td id='order-total-request" + id + "'>" + total_request + "</td>" + "<td style='margin: 6px; padding: 6px;'>" + "<div>" + "<button onclick='removertableSelected(" + id + ")' id='button-delete-" + id + "' class='btn-delete' type='button'>Deletar</button>" + "</div>" + "</td>";
+          newTableInsert.innerHTML = "<td id='order-id'>" + id + "</td>" + "<td id='order-table-request'>" + table_request + "</td>" + "<td id='order-total-request" + id + "'>" + FormmatedTotalValue + "</td>" + "<td style='margin: 6px; padding: 6px;'>" + "<div>" + "<button onclick='removertableSelected(" + id + ")' id='button-delete-" + id + "' class='btn-delete' type='button'>Deletar</button>" + "</div>" + "</td>";
           updateTotalizador();
 
-        case 11:
+        case 13:
         case "end":
           return _context5.stop();
       }
@@ -673,11 +675,11 @@ function updateTotalizador() {
   var totalOrderRequest = 0;
   tableSelected.forEach(function (tableSelected) {
     var quantityElementOrder = 1;
-    var valueElementOrder = document.getElementById('order-total-request' + tableSelected.id).textContent;
+    var valueElementOrder = document.getElementById('order-total-request' + tableSelected.id);
 
     if (quantityElementOrder && valueElementOrder) {
       var quantityElementOrderTotal = 1 || 0;
-      var valueOrders = parseFloat(document.getElementById('order-total-request' + tableSelected.id).textContent) || 0;
+      var valueOrders = parseFloat(valueElementOrder.textContent) || 0;
       totalOrderRequest += quantityElementOrderTotal * valueOrders;
     } else {
       console.error('Elementos não encontrados para comanda de ID:', tableSelected.id);
@@ -694,46 +696,45 @@ function updateTotalizador() {
 }
 
 function GathersTables() {
-  var valueGathersTotal, valueTotalizadorOrderGathres, RequestDataGathers, RequestTables, responseTablesBody, responseTables;
+  var valueGathersTotal, valueTotalizadorOrderGathres, RequestDataGathers, urlOrderGathres, RequestTables, responseTablesBody, responseTables;
   return regeneratorRuntime.async(function GathersTables$(_context6) {
     while (1) {
       switch (_context6.prev = _context6.next) {
         case 0:
           valueGathersTotal = document.getElementById('totalizador').textContent;
-          console.log(valueGathersTotal);
           valueTotalizadorOrderGathres = 0;
 
           if (!(valueGathersTotal === 0)) {
-            _context6.next = 8;
+            _context6.next = 7;
             break;
           }
 
           window.alert("Valor total zerado, por favror contante o suporte");
           return _context6.abrupt("return", false);
 
-        case 8:
-          valueTotalizadorOrderGathres = parseFloat(valueGathersTotal.trim('R$ ', ''));
+        case 7:
+          valueTotalizadorOrderGathres = parseFloat(valueGathersTotal.replace(/R\$\s/g, ''));
 
-        case 9:
+        case 8:
           RequestDataGathers = {
             tables: tableSelected,
             valueTotalizadorOrderGathres: valueTotalizadorOrderGathres
           };
 
           if (!(tableSelected.length === 0)) {
-            _context6.next = 14;
+            _context6.next = 13;
             break;
           }
 
           window.alert("Nenhuma comanda selecionada");
-          _context6.next = 30;
+          _context6.next = 31;
           break;
 
-        case 14:
-          console.log(RequestDataGathers);
-          _context6.prev = 15;
-          _context6.next = 18;
-          return regeneratorRuntime.awrap(fetch('http://localhost/Klitzke/ajax/gathers_tables.php', {
+        case 13:
+          _context6.prev = 13;
+          urlOrderGathres = 'http://localhost/Klitzke/ajax/gathers_tables.php';
+          _context6.next = 17;
+          return regeneratorRuntime.awrap(fetch(urlOrderGathres, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json'
@@ -741,36 +742,45 @@ function GathersTables() {
             body: JSON.stringify(RequestDataGathers)
           }));
 
-        case 18:
+        case 17:
           RequestTables = _context6.sent;
-          _context6.next = 21;
+          _context6.next = 20;
           return regeneratorRuntime.awrap(RequestTables.text());
 
-        case 21:
+        case 20:
           responseTablesBody = _context6.sent;
-          console.log('Response from server:', responseTablesBody);
+
+          if (!responseTablesBody.startsWith('<')) {
+            _context6.next = 24;
+            break;
+          }
+
+          console.error('Erro ao enviar dados para o PHP:', responseTablesBody);
+          return _context6.abrupt("return");
+
+        case 24:
           responseTables = JSON.parse(responseTablesBody);
 
           if (responseTables && responseTables.success) {
-            showSuccessMessage('Comandas ajuntada com sucesso');
+            window.alert('Comandas ajuntada com sucesso');
           } else {
-            console.error('Erro ao registrar venda:', responseTables ? responseTables.error : 'Resposta vazia');
+            console.error('Erro ao tentar agrupar comandas:', responseTables ? responseTables.error : 'Resposta vazia');
           }
 
-          _context6.next = 30;
+          _context6.next = 31;
           break;
 
-        case 27:
-          _context6.prev = 27;
-          _context6.t0 = _context6["catch"](15);
+        case 28:
+          _context6.prev = 28;
+          _context6.t0 = _context6["catch"](13);
           console.error('Erro ao enviar dados para o PHP:', _context6.t0);
 
-        case 30:
+        case 31:
         case "end":
           return _context6.stop();
       }
     }
-  }, null, null, [[15, 27]]);
+  }, null, null, [[13, 28]]);
 }
 
 function generetorRequest() {
