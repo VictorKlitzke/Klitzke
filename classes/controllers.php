@@ -60,6 +60,7 @@ class Controllers
                                                         WHEN R.status = 1 THEN 'EM ATENDIMENTO'
                                                         WHEN R.status = 2 THEN 'FINALIZADA'
                                                         WHEN R.status = 3 THEN 'CONCLUIDO'
+                                                        WHEN R.status = 4 THEN 'AGRUPADOS'
                                                     END 
                                                     STATUS_REQUEST
                                                 FROM 
@@ -73,6 +74,7 @@ class Controllers
                                                         WHEN R.status = 1 THEN 'EM ATENDIMENTO'
                                                         WHEN R.status = 2 THEN 'FINALIZADA'
                                                         WHEN R.status = 3 THEN 'CONCLUIDO'
+                                                        WHEN R.status = 4 THEN 'AGRUPADOS'
                                                     END 
                                                     STATUS_REQUEST
                                                 FROM 
@@ -84,6 +86,38 @@ class Controllers
 
         return $exec->fetchAll();
     }
+
+    public static function SelectrequestGathers($name_table, $start = null, $end = null)
+    {
+        if ($start == null && $end == null) {
+            $exec = Db::Connection()->prepare("SELECT
+                                                rp.id_table principal_command_id,
+                                                rs.id_table grouped_command_id,
+                                                rg.status,
+                                                rg.value_total,
+                                                rg.created_at
+                                            FROM
+                                                request_gathers rg
+                                                inner join request rp on rp.id = rg.principal_command_id
+                                                inner join request rs on rs.id = rg.grouped_command_id ");
+        } else {
+                $exec = Db::Connection()->prepare("SELECT
+                                                    rp.id_table principal_command_id,
+                                                    rs.id_table grouped_command_id,
+                                                    rg.status,
+                                                    rg.value_total,
+                                                    rg.created_at
+                                                FROM
+                                                    request_gathers rg
+                                                    inner join request rp on rp.id = rg.principal_command_id
+                                                    inner join request rs on rs.id = rg.grouped_command_id ");
+        }
+
+        $exec->execute();
+
+        return $exec->fetchAll();
+    }
+
 
     public static function SelectBoxPdv($name_table, $start = null, $end = null, $user_filter = null)
     {

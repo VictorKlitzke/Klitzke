@@ -3,6 +3,10 @@
 include_once '../config/config.php';
 include_once '../services/db.php';
 
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
 header("Access-Control-Allow-Origin: *");
 header("Content-Type: application/json");
 
@@ -22,23 +26,31 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     try {
         $sql->beginTransaction();
 
-        $status_gathers = 2;
+        $status_request = 4;
 
-        // Obter o ID da primeira mesa selecionada para ser a comanda principal
-        $principal_command_id = $selected_tables[0]['id'];
+        $principal_command_id = $selected_tables[0]['id']; 
+        $grouped_command_id = $selected_tables[1]['id']; 
 
-        // Iterar sobre as mesas selecionadas para agrupamento
+        $stmtCheck = $sql->prepare("SELECT COUNT(*) FROM request_gathers WHERE principal_command_id = :principal_id AND grouped_command_id = :grouped_id");
+
         foreach ($selected_tables as $table) {
-            $grouped_command_id = $table['id'];
 
-            // Atualizar a mesa para a nova comanda principal e status de 'agrupada'
-            $stmtUpdate = $sql->prepare("UPDATE request SET id_table = :new_table_id AND status = 3 WHERE id_table = :table_id");
+            $stmtCheck->execute(['principal_id' => $principal_command_id, 'grouped_id' => $grouped_command_id]);
+            $count = $stmtCheck->fetchColumn();
+
+            if ($count == 0) {
+                $stmtInsertAgrupamento = $sql->prepare("INSERT INTO request_gathers (principal_command_id, grouped_command_id, value_total) VALUES (:principal_id, :grouped_id, :value_total)");
+                $stmtInsertAgrupamento->execute(['principal_id' => $principal_command_id, 'grouped_id' => $grouped_command_id, 'value_total' => $total_gathers_selected]);
+            }
+
+            $stmtUpdate = $sql->prepare("UPDATE request SET id_table = :new_table_id WHERE id_table = :table_id");
             $stmtUpdate->execute(['new_table_id' => $principal_command_id, 'table_id' => $grouped_command_id]);
-
-            // Registrar o agrupamento na tabela request_gathers
-            $stmtInsertAgrupamento = $sql->prepare("INSERT INTO request_gathers (principal_command_id, grouped_command_id) VALUES (:principal_id, :gathers_id)");
-            $stmtInsertAgrupamento->execute(['principal_id' => $principal_command_id, 'gathers_id' => $grouped_command_id]);
         }
+
+        $stmtUpdateStatus = $sql->prepare("UPDATE request SET status = :status WHERE id_table = :table_id");
+        $stmtUpdateStatus->bindValue(':status', $status_request, PDO::PARAM_INT);
+        $stmtUpdateStatus->bindValue(':table_id', $principal_command_id, PDO::PARAM_INT);
+        $stmtUpdateStatus->execute();
 
         $sql->commit();
         echo json_encode(['success' => true, 'message' => 'Comandas agrupadas com sucesso!']);
