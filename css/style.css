@@ -538,6 +538,15 @@ table tr {
     color: #ccc;
 }
 
+.btn-ungroup {
+    padding: 4px;
+    background: #044955;
+    border: none;
+    cursor: pointer;
+    border-radius: 4px;
+    color: #ccc;
+}
+
 .btn-add-items {
     padding: 4px;
     background: #140455;
@@ -545,6 +554,10 @@ table tr {
     cursor: pointer;
     border-radius: 4px;
     color: #ccc;
+}
+
+.btn-ungroup:hover {
+    background: #172325;
 }
 
 .btn-add-items:hover {
@@ -568,6 +581,7 @@ table tr {
     padding: 4px;
     background: #16838d;
     border: none;
+    cursor: pointer;
     border-radius: 4px;
     color: #ccc;
 }
@@ -582,6 +596,10 @@ table tr {
 
 .btn-delete:hover {
     background: #ad3224;
+}
+
+.btn-disable:hover {
+    background: #2e4c4e;
 }
 
 

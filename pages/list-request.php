@@ -13,7 +13,8 @@ $request = Controllers::SelectAll('request', ($currentPage - 1) * $porPage, $por
 ?>
 
 <div class="box-content left w100">
-    <div class="" style="display: flex; background: #ccc; padding: 9px; margin: 4px; border-radius: 4px; justify-content: space-between;">
+    <div class=""
+        style="display: flex; background: #ccc; padding: 9px; margin: 4px; border-radius: 4px; justify-content: space-between;">
         <h2 style="color: #000">Lista de pedidos</h2>
         <div class="btn-ajust" style="flex-grow: 1; text-align: center; max-width: 180px;">
             <a class="btn-ajust" href="<?php echo htmlspecialchars(INCLUDE_PATH . 'gather-tables'); ?>">
@@ -63,7 +64,8 @@ $request = Controllers::SelectAll('request', ($currentPage - 1) * $porPage, $por
 
                         <td style="display: flex; justify-content: center; gap: 10px; margin: 6px; padding: 6px;">
                             <div>
-                                <a class="btn-add-items" href="<?php echo INCLUDE_PATH; ?>add-item-order?id=<?php echo base64_encode($value["id"]); ?>">
+                                <a class="btn-add-items"
+                                    href="<?php echo INCLUDE_PATH; ?>add-item-order?id=<?php echo base64_encode($value["id"]); ?>">
                                     Adicionar mais items
                                 </a>
                             </div>
@@ -118,7 +120,8 @@ $request = Controllers::SelectAll('request', ($currentPage - 1) * $porPage, $por
 
 
 <div class="box-content left w100">
-    <div class="" style="display: flex; background: #ccc; padding: 9px; margin: 4px; border-radius: 4px; justify-content: space-between;">
+    <div class=""
+        style="display: flex; background: #ccc; padding: 9px; margin: 4px; border-radius: 4px; justify-content: space-between;">
         <h2 style="color: #000">Lista de pedidos agrupados</h2>
     </div>
     <div class="list">
@@ -171,13 +174,16 @@ $request = Controllers::SelectAll('request', ($currentPage - 1) * $porPage, $por
 
                         <td style="display: flex; justify-content: center; gap: 10px; margin: 6px; padding: 6px;">
                             <div>
-                                <a class="btn-add-items" href="<?php echo INCLUDE_PATH; ?>add-item-order?id=<?php echo base64_encode($value["id"]); ?>">
-                                    Desagrupar
-                                </a>
+                                <form method="post" action="./ajax/ungroup_order.php">
+                                    <input type="hidden" name="id_table_gathers" value="<?php echo base64_encode($value["principal_command_id"]); ?>">
+                                    <button type="submit" class="btn-ungroup">Desagrupar</button>
+                                </form>
                             </div>
                             <div>
-                                <a class="btn-disable" href="<?php echo INCLUDE_PATH; ?>">Faturar
-                                </a>
+                                <form action="" method="post">
+                                    <input type="hidden" name="">
+                                    <button class="btn-disable">Faturar</button>
+                                </form>
                             </div>
                         </td>
                     </tr>
