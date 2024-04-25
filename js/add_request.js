@@ -3,6 +3,11 @@ let numbersTableRequest = [];
 let newListProducts = [];
 let tableSelected = [];
 
+let addButtonCard = document.getElementById('add-card-item');
+let sourceTable = document.querySelector('.card-request-finallize .tbody-request');
+let destinationTable = document.querySelector('destination-table');
+let cardOrder = document.getElementById('card-order');
+
 document.addEventListener('DOMContentLoaded', function () {
 
     let productSRequestearch = document.getElementById('product-request-search');
@@ -145,6 +150,8 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 });
 
+/* CODIGO PARA ADICIONAR ITEM EM ITENS DO PEDIDO */
+
 function updatePedido() {
     var requestID = document.getElementById('product-id').value;
     var requestName = document.getElementById('product-name').value;
@@ -205,7 +212,12 @@ function updatePedido() {
             Actions.appendChild(deleteButton);
 
             selectedRequest.push({
-                id: requestID, stock_quantity: parseInt(requestQuantity), value: requestValue
+                id:
+                    requestID,
+                Name: requestName,
+                stock_quantity: parseInt(requestQuantity),
+                value: requestValue,
+                Command: numberTableRequest
             });
         }
 
@@ -278,27 +290,34 @@ async function deleteSelectedRow(row, quantityCell) {
     calculateTotal();
 }
 
-function showErrorMessageRequest(message) {
-    const errorContainerRequest = document.getElementById('erro-global-h2');
-    const errorMessageElementRequest = document.getElementById('erro-global-h2');
-    errorMessageElementRequest.textContent = message;
-    errorContainerRequest.style.display = 'flex';
-    setTimeout(() => {
-        errorMessageElementRequest.textContent = '';
-        errorContainerRequest.style.display = 'none';
-    }, 3000);
+/***/
+
+/* CODIGO PARA ADICONAR ITENS NO CARD */
+
+async function addItemCard() {
+
+    console.log(sourceTable.children.length === 0);
+
+    if (sourceTable.children.length === 0) {
+        window.alert('Não tem nenhum item na comanda');
+        return;
+    } else {
+
+        console.log(cardOrder.style.display = "flex");
+        if (cardOrder.style.display === "none") {
+            cardOrder.style.display = "flex";
+
+            sourceTable.querySelectorAll('tr').forEach(function (row) {
+                var clonedRow = row.cloneNode(true);
+                destinationTable.appendChild(clonedRow);
+            });
+
+            console.log(destinationTable);
+        }
+    }
 }
 
-function showSuccessMessageRequest(message) {
-    const successContainerRequest = document.querySelector('sucess-global');
-    const successMessageElementRequest = document.getElementById('sucess-global-h2');
-    successMessageElementRequest.textContent = message;
-    successContainerRequest.style.display = 'flex';
-    setTimeout(() => {
-        successMessageElementRequest.textContent = '';
-        successContainerRequest.style.display = 'none';
-    }, 3000);
-}
+/***/
 
 function requestValidateStock(stock_quantity, currentQuantity) {
     if (stock_quantity > currentQuantity) {
@@ -347,175 +366,175 @@ function calculateTotal() {
 
 }
 
-function AddProductOrder(id, name, stock_quantity, value_product) {
-    let tbody = document.querySelector('#items-list-order');
-    let existingRow = document.querySelector(`product-${id}`);
+// function AddProductOrder(id, name, stock_quantity, value_product) {
+//     let tbody = document.querySelector('#items-list-order');
+//     let existingRow = document.querySelector(`product-${id}`);
 
-    if (existingRow) {
-        let quantityCell = existingRow.querySelector('.product-quantity-order');
-        let valueCell = existingRow.querySelector('.product-value-order');
+//     if (existingRow) {
+//         let quantityCell = existingRow.querySelector('.product-quantity-order');
+//         let valueCell = existingRow.querySelector('.product-value-order');
 
-        if (quantityCell && valueCell) {
-            let currentQuantity = parseInt(quantityCell.textContent);
-            let currentValue = parseFloat(valueCell.textContent.replace('R$', '').trim());
+//         if (quantityCell && valueCell) {
+//             let currentQuantity = parseInt(quantityCell.textContent);
+//             let currentValue = parseFloat(valueCell.textContent.replace('R$', '').trim());
 
-            if (currentQuantity < stock_quantity) {
-                window.alert("Estoque insuficiente para adicionar mais deste produto.");
-                return false;
-            }
+//             if (currentQuantity < stock_quantity) {
+//                 window.alert("Estoque insuficiente para adicionar mais deste produto.");
+//                 return false;
+//             }
 
-            quantityCell.textContent = currentQuantity + 1;
+//             quantityCell.textContent = currentQuantity + 1;
 
-            let newValue = currentValue + parseFloat(value_product);
-            valueCell.textContent = `R$ ${newValue.toFixed(2)}`;
+//             let newValue = currentValue + parseFloat(value_product);
+//             valueCell.textContent = `R$ ${newValue.toFixed(2)}`;
 
-            let productIndex = newListProducts.findIndex(product => product.id === id);
-            if (productIndex !== -1) {
-                newListProducts[productIndex].stock_quantity++;
-                newListProducts[productIndex].value_product += parseFloat(value_product);
-            }
-        } else {
-            console.error('Elementos de quantidade ou valor não encontrados na linha existente.');
-        }
-    } else {
-        let newRow = document.createElement('tr');
-        newRow.className = 'tr-order';
-        newRow.id = `product-${id}`;
+//             let productIndex = newListProducts.findIndex(product => product.id === id);
+//             if (productIndex !== -1) {
+//                 newListProducts[productIndex].stock_quantity++;
+//                 newListProducts[productIndex].value_product += parseFloat(value_product);
+//             }
+//         } else {
+//             console.error('Elementos de quantidade ou valor não encontrados na linha existente.');
+//         }
+//     } else {
+//         let newRow = document.createElement('tr');
+//         newRow.className = 'tr-order';
+//         newRow.id = `product-${id}`;
 
-        newRow.innerHTML = `
-            <td class='product-id-order'>${id}</td>
-            <td class='product-name-order'>${name}</td>
-            <td class='product-quantity-order'>1</td>
-            <td class='product-value-order'>R$ ${value_product}</td>
-            <td style='margin: 6px; padding: 6px; cursor: pointer;'>
-                <button onclick='deleteItemFromOrder(${id})' class='btn-delete' type='button'>Deletar</button>
-            </td>
-        `;
+//         newRow.innerHTML = `
+//             <td class='product-id-order'>${id}</td>
+//             <td class='product-name-order'>${name}</td>
+//             <td class='product-quantity-order'>1</td>
+//             <td class='product-value-order'>R$ ${value_product}</td>
+//             <td style='margin: 6px; padding: 6px; cursor: pointer;'>
+//                 <button onclick='deleteItemFromOrder(${id})' class='btn-delete' type='button'>Deletar</button>
+//             </td>
+//         `;
 
-        tbody.appendChild(newRow);
+//         tbody.appendChild(newRow);
 
-        calculateTotalRequestOrder();
+//         calculateTotalRequestOrder();
 
-        let newProduct = {
-            name: name,
-            stock_quantity: 1,
-            value_product: parseFloat(value_product)
-        };
-        newListProducts.push(newProduct);
-    }
+//         let newProduct = {
+//             name: name,
+//             stock_quantity: 1,
+//             value_product: parseFloat(value_product)
+//         };
+//         newListProducts.push(newProduct);
+//     }
 
-    // console.log(newListProducts);
-}
+//     // console.log(newListProducts);
+// }
 
-function deleteItemFromOrder(id) {
-    let rowToDelete = document.getElementById(`product-${id}`);
+// function deleteItemFromOrder(id) {
+//     let rowToDelete = document.getElementById(`product-${id}`);
 
-    if (rowToDelete) {
-        let quantityCell = rowToDelete.querySelector('.product-quantity-order');
-        let currentQuantity = parseInt(quantityCell.textContent);
+//     if (rowToDelete) {
+//         let quantityCell = rowToDelete.querySelector('.product-quantity-order');
+//         let currentQuantity = parseInt(quantityCell.textContent);
 
-        if (currentQuantity > 1) {
-            quantityCell.textContent = currentQuantity - 1;
+//         if (currentQuantity > 1) {
+//             quantityCell.textContent = currentQuantity - 1;
 
-            let productIndex = newListProducts.findIndex(product => product.name === name);
-            if (productIndex !== -1) {
-                newListProducts[productIndex].stock_quantity--;
-                newListProducts[productIndex].value_product -= parseFloat(newListProducts[productIndex].value_product);
-            }
-        } else {
-            rowToDelete.remove();
-            newListProducts = newListProducts.filter(product => product.id !== id);
-        }
-    } else {
-        window.alert("Produto não encontrado na comanda.");
-    }
+//             let productIndex = newListProducts.findIndex(product => product.name === name);
+//             if (productIndex !== -1) {
+//                 newListProducts[productIndex].stock_quantity--;
+//                 newListProducts[productIndex].value_product -= parseFloat(newListProducts[productIndex].value_product);
+//             }
+//         } else {
+//             rowToDelete.remove();
+//             newListProducts = newListProducts.filter(product => product.id !== id);
+//         }
+//     } else {
+//         window.alert("Produto não encontrado na comanda.");
+//     }
 
-    calculateTotalRequestOrder();
+//     calculateTotalRequestOrder();
+// }
 
-    // console.log(newListProducts);
-}
+// async function AddProductItems() {
 
-async function AddProductItems() {
+//     let totalizadorOrder = document.getElementById('total-order-value').textContent
+//     let valueTotalizadorOrder = 0;
+//     if (totalizadorOrder) {
+//         valueTotalizadorOrder = parseFloat(totalizadorOrder.textContent.replace('R$ ', '')) || 0;
+//     }
 
-    let totalizadorOrder = document.getElementById('total-order-value').textContent
-    let valueTotalizadorOrder = 0;
-    if (totalizadorOrder) {
-        valueTotalizadorOrder = parseFloat(totalizadorOrder.textContent.replace('R$ ', '')) || 0;
-    }
+//     const responseDataNewList = {
+//         newProduct: newListProducts,
+//         valueTotalizadorOrder: valueTotalizadorOrder,
+//     }
 
-    const responseDataNewList = {
-        newProduct: newListProducts,
-        valueTotalizadorOrder: valueTotalizadorOrder,
-    }
+//     console.log(responseDataNewList);
 
-    console.log(responseDataNewList);
+//     if (newListProducts.length <= 0) {
+//         showErrorMessageRequest("Nenhum produto selecionado")
+//     } else {
+//         try {
+//             let urlOrder = '';
 
-    if (newListProducts.length <= 0) {
-        showErrorMessageRequest("Nenhum produto selecionado")
-    } else {
-        try {
-            let urlOrder = '';
+//             const response = await fetch(urlOrder, {
+//                 method: 'POST',
+//                 headers: {
+//                     'Content-Type': 'application/json',
+//                 },
+//                 body: JSON.stringify(requestData),
+//             });
 
-            const response = await fetch(urlOrder, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(requestData),
-            });
+//             const OrderResponse = await response.text();
+//             const responseDataOrder = JSON.parse(OrderResponse);
 
-            const OrderResponse = await response.text();
-            const responseDataOrder = JSON.parse(OrderResponse);
+//             if (responseDataOrder && responseDataOrder.success) {
+//                 showSuccessMessage('Venda finalizada com sucesso!');
+//             } else {
+//                 console.error('Erro ao registrar venda:', responseDataOrder ? responseDataOrder.error : 'Resposta vazia');
+//             }
+//         } catch (error) {
+//             showErrorMessageRequest("Erro ao enviar pedido")
+//         }
+//     }
+// }
 
-            if (responseDataOrder && responseDataOrder.success) {
-                showSuccessMessage('Venda finalizada com sucesso!');
-            } else {
-                console.error('Erro ao registrar venda:', responseDataOrder ? responseDataOrder.error : 'Resposta vazia');
-            }
-        } catch (error) {
-            showErrorMessageRequest("Erro ao enviar pedido")
-        }
-    }
-}
+// function updateTotalAmountRequestOrder(valueRequestOrder) {
 
-function updateTotalAmountRequestOrder(valueRequestOrder) {
+//     let totalElementOrderRequestRequestOrder = document.getElementById('total-order-value');
 
-    let totalElementOrderRequestRequestOrder = document.getElementById('total-order-value');
+//     if (totalElementOrderRequestRequestOrder) {
+//         totalElementOrderRequestRequestOrder.textContent = 'R$ ' + valueRequestOrder.toFixed(2);
+//     }
+// }
 
-    if (totalElementOrderRequestRequestOrder) {
-        totalElementOrderRequestRequestOrder.textContent = 'R$ ' + valueRequestOrder.toFixed(2);
-    }
-}
+// function calculateTotalRequestOrder() {
 
-function calculateTotalRequestOrder() {
+//     let totalRequestOrder = 0;
 
-    let totalRequestOrder = 0;
+//     newListProducts.forEach(newProduct => {
 
-    newListProducts.forEach(newProduct => {
+//         let quantityElementOrderRequest = 1;
+//         let valueElementOrderRequest = document.getElementById('order-total-request');
 
-        let quantityElementOrderRequest = 1;
-        let valueElementOrderRequest = document.getElementById('order-total-request');
+//         if (quantityElementOrderRequest && valueElementOrderRequest) {
+//             let quantityElementOrderTotalRequestOrder = parseInt(quantityElementOrderRequest.textContent) || 0;
+//             let valueRequestOrder = parseFloat(valueElementOrderRequest.textContent) || 0;
 
-        if (quantityElementOrderRequest && valueElementOrderRequest) {
-            let quantityElementOrderTotalRequestOrder = parseInt(quantityElementOrderRequest.textContent) || 0;
-            let valueRequestOrder = parseFloat(valueElementOrderRequest.textContent) || 0;
+//             totalRequestOrder += quantityElementOrderTotalRequestOrder * valueRequestOrder;
+//         } else {
+//             console.error('Elementos não encontrados para o produto ID:', newProduct.id);
+//         }
+//     });
 
-            totalRequestOrder += quantityElementOrderTotalRequestOrder * valueRequestOrder;
-        } else {
-            console.error('Elementos não encontrados para o produto ID:', newProduct.id);
-        }
-    });
+//     let totalElementOrderRequestRequestOrder = document.getElementById('total-order-value');
+//     if (totalElementOrderRequestRequestOrder) {
+//         totalElementOrderRequestRequestOrder.textContent = 'R$ ' + totalRequestOrder.toFixed(2);
+//     }
 
-    let totalElementOrderRequestRequestOrder = document.getElementById('total-order-value');
-    if (totalElementOrderRequestRequestOrder) {
-        totalElementOrderRequestRequestOrder.textContent = 'R$ ' + totalRequestOrder.toFixed(2);
-    }
+//     updateTotalAmountRequestOrder(totalRequestOrder);
 
-    updateTotalAmountRequestOrder(totalRequestOrder);
+//     return totalRequestOrder.toFixed(2);
 
-    return totalRequestOrder.toFixed(2);
+// }
 
-}
+/* CODIGO DE AGRUPAMENTO DE COMANDAS */
 
 async function addGathersArray(index, id, table_request, total_request) {
 
@@ -669,52 +688,83 @@ async function GathersTables() {
         }
     }
 }
-async function generetorRequest() {
 
-    let totalElementOrderRequestRequest = document.getElementById('totalizador-request');
-    let TotalValueRequest = 0;
-    if (totalElementOrderRequestRequest) {
-        TotalValueRequest = parseFloat(totalElementOrderRequestRequest.textContent.replace('R$ ', '')) || 0;
-    }
-    let numberTableRequest = document.getElementById('number-table').value;
+/***/
 
-    let RequestData = {
-        TotalValueRequest: TotalValueRequest,
-        requestProducts: selectedRequest,
-        numberTableRequest: numberTableRequest
-    };
+// async function generetorRequest() {
 
-    console.log(RequestData);
+//     let totalElementOrderRequestRequest = document.getElementById('totalizador-request');
+//     let TotalValueRequest = 0;
+//     if (totalElementOrderRequestRequest) {
+//         TotalValueRequest = parseFloat(totalElementOrderRequestRequest.textContent.replace('R$ ', '')) || 0;
+//     }
+//     let numberTableRequest = document.getElementById('number-table').value;
 
-    if (requestProducts.length === 0) {
-        showErrorMessageRequest('Nenhum produto selecionado!!');
-        return true;
-    } else {
-        try {
-            let urlRequest = 'http://localhost/Klitzke/ajax/add_request.php';
+//     let RequestData = {
+//         TotalValueRequest: TotalValueRequest,
+//         requestProducts: selectedRequest,
+//         numberTableRequest: numberTableRequest
+//     };
 
-            const responseRequest = await fetch(urlRequest, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                }, body: JSON.stringify(RequestData),
-            });
+//     console.log(RequestData);
 
-            const responseBodyRequest = await responseRequest.text();
-            const responseDataRequest = JSON.parse(responseBodyRequest);
+//     if (requestProducts.length === 0) {
+//         showErrorMessageRequest('Nenhum produto selecionado!!');
+//         return true;
+//     } else {
+//         try {
+//             let urlRequest = 'http://localhost/Klitzke/ajax/add_request.php';
 
-            if (responseDataRequest && responseDataRequest.success) {
-                showSuccessMessageRequest('Pedido gerado com sucesso!');
-            } else {
-                console.error('Erro ao registrar venda:', responseDataRequest ? responseDataRequest.error : 'Resposta vazia');
-            }
+//             const responseRequest = await fetch(urlRequest, {
+//                 method: 'POST',
+//                 headers: {
+//                     'Content-Type': 'application/json'
+//                 }, body: JSON.stringify(RequestData),
+//             });
 
-        } catch (error) {
-            console.error('Erro ao enviar dados para o PHP:', error);
-        }
-    }
+//             const responseBodyRequest = await responseRequest.text();
+//             const responseDataRequest = JSON.parse(responseBodyRequest);
+
+//             if (responseDataRequest && responseDataRequest.success) {
+//                 showSuccessMessageRequest('Pedido gerado com sucesso!');
+//             } else {
+//                 console.error('Erro ao registrar venda:', responseDataRequest ? responseDataRequest.error : 'Resposta vazia');
+//             }
+
+//         } catch (error) {
+//             console.error('Erro ao enviar dados para o PHP:', error);
+//         }
+//     }
+// }
+
+
+/* CARDS DE MENSAGENS */
+function showErrorMessageRequest(message) {
+    const errorContainerRequest = document.getElementById('erro-global-h2');
+    const errorMessageElementRequest = document.getElementById('erro-global-h2');
+    errorMessageElementRequest.textContent = message;
+    errorContainerRequest.style.display = 'flex';
+    setTimeout(() => {
+        errorMessageElementRequest.textContent = '';
+        errorContainerRequest.style.display = 'none';
+    }, 3000);
 }
 
+function showSuccessMessageRequest(message) {
+    const successContainerRequest = document.querySelector('sucess-global');
+    const successMessageElementRequest = document.getElementById('sucess-global-h2');
+    successMessageElementRequest.textContent = message;
+    successContainerRequest.style.display = 'flex';
+    setTimeout(() => {
+        successMessageElementRequest.textContent = '';
+        successContainerRequest.style.display = 'none';
+    }, 3000);
+}
+
+/***/
+
+
 document.querySelector('.button-request').addEventListener('click', updatePedido, calculateTotal());
-document.querySelector('.invoice-request').addEventListener('click', generetorRequest);
-document.querySelector('.button-order').addEventListener('click', AddProductOrder());
+// document.querySelector('.invoice-request').addEventListener('click', generetorRequest);
+// document.querySelector('.button-order').addEventListener('click', AddProductOrder());
+document.getElementById('add-card-item').addEventListener('click', addItemCard);

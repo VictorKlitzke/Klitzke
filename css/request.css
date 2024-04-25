@@ -8,7 +8,7 @@
 .card-request-finallize {
     background: #202020;
     border: 1px solid #ccc;
-    height: 660px;
+    height: 580px;
     border-radius: 7px;
 }
 
@@ -202,198 +202,7 @@ input[type="text"] {
     background: green;
 }
 
-
-/* ADICIONAR MAIS ITENS AO PEDIDO */
-
-.card-itens-order {
-    margin-top: 12px;
-        background: #202020;
-        border-radius: 4px;
-        padding: 6px;
-        display: flex;
-        flex-wrap: wrap;
-        gap: 10px;
-        height: 124px;
-        justify-content: flex-start;
-        align-items: center;
-        border: 1px solid #1b1b1b;
-        overflow-x: auto;
-}
-
-.h2-order {
-    font-size: 15px;
-}
-
-.info-itens-order {
-    margin-bottom: 10px;
-    padding: 12px;
-    border-radius: 8px;
-    background-color: #323232;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-}
-
-.info-itens-order:hover {
-    background: #1b1b1b;
-}
-
-.name-product-order,
-.value-product-order {
-    text-align: center;
-    color: #ccc;
-}
-
-.order {
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    width: 100%;
-    height: 200px;
-    overflow-y: auto;
-}
-
-.order-header {
-    background: #202020;
-    color: #fff;
-    padding: 8px;
-    text-align: center;
-}
-
-.tr-order,
-.thead-order {
-    color: #1b1b1b;
-    padding: 4px;
-    text-align: left;
-}
-
-.items-list-order {
-    list-style: none;
-}
-
-.item-order {
-    display: flex;
-    justify-content: space-between;
-    border-bottom: 1px solid #1b1b1b;
-    padding: 8px;
-    text-align: left;
-}
-
-.order-info {
-    flex: 1;
-}
-
-.button-order {
-    font-size: 14px;
-    color: #333;
-    outline: none !important;
-    width: 100%;
-    background: transparent;
-    border: 1px solid #ccc;
-    padding: 10px;
-    box-sizing: border-box;
-    border-radius: 5px;
-    cursor: pointer;
-}
-
-.button-order:hover {
-    background: #3498db;
-    color: white;
-}
-
-.order-header {
-    /* background: #3498db; */
-    background: #202020;
-    color: #fff;
-    padding: 8px;
-    text-align: center;
-}
-
-.tr-order,
-.thead-order {
-    color: #1b1b1b;
-    border: 1px solid #ddd;
-    padding: 8px;
-    text-align: left;
-}
-
-.items-list-order {
-    list-style: none;
-}
-
-.item-order {
-    border-bottom: 1px solid #1b1b1b;
-    padding: 8px;
-    text-align: left;
-    overflow-y: scroll;
-}
-
-.item:last-child {
-    border-bottom: none;
-}
-
-.button-order {
-    font-size: 14px;
-    color: #333;
-    outline: none !important;
-    width: 100%;
-    background: transparent;
-    border: 1px solid #ccc;
-    padding: 10px;
-    box-sizing: border-box;
-    border-radius: 5px;
-    cursor: pointer;
-}
-
-.button-order:hover {
-    background: #3498db;
-    color: white;
-}
-
-.card-itens-order {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
-}
-.info-itens-order {
-    width: 200px; /* Tamanho fixo para desktop */
-}
-@media (max-width: 768px) {
-    .info-itens-order {
-        width: 100%; /* Layout responsivo para dispositivos móveis */
-    }
-}
-
 /* AJUNTAR COMANDAS */
-
-
-/* .gather-tables {
-    margin-top: 12px;
-    background: #202020;
-    border-radius: 4px;
-    padding: 6px;
-    height: 70px;
-    display: flex;
-    gap: 5px;
-    border: 1px solid #1b1b1b;
-    justify-content: start;
-    overflow-x: auto;
-}
-
-.h2-gather {
-    padding-top: 14px;
-    text-align: center;
-}
-
-.info-tabes {
-    cursor: pointer;
-    border: 1px solid #1b1b1b;
-    border-radius: 6px;
-    background: #323232;
-    cursor: pointer;
-    width: 256px;
-    height: 55px;
-} */
 
 .header-gathers {
     background-color: #333;
@@ -495,4 +304,32 @@ section h2 {
     display: flex;
     padding: 20px;
     justify-content: space-between;
+}
+
+
+/* CARDS DE ADD MAIS ITENS */
+
+.card-order {
+    display: none;
+    justify-content: start;
+    align-items: center;
+}
+
+.card-order-content {
+    height: 200px;
+    width: 580px;
+    padding: 10px;
+    background: #202020;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+}
+
+.card-list {
+    display: flex;
+    justify-content: space-between;
+    background: #1d1d1d;
+    padding: 15px;
+    color: #ccc;
+    border-top-left-radius: 7px;
+    border-top-right-radius: 7px;
 }
