@@ -64,28 +64,14 @@ $request = Controllers::SelectAll('request', ($currentPage - 1) * $porPage, $por
 
                         <td style="display: flex; justify-content: center; gap: 10px; margin: 6px; padding: 6px;">
                             <div>
-                                <a class="btn-add-items"
-                                    href="<?php echo INCLUDE_PATH; ?>add-item-order?id=<?php echo base64_encode($value["id"]); ?>">
-                                    Adicionar mais items
-                                </a>
-                            </div>
-                            <div>
                                 <a class="btn-disable" href="<?php echo INCLUDE_PATH; ?>">Faturar
-                                </a>
-                            </div>
-                            <div>
-                                <a actionBtn="delete" class="btn-delete"
-                                    href="<?php echo INCLUDE_PATH ?>list-request?delete=<?php echo $value['id']; ?>">Deletar
                                 </a>
                             </div>
                         </td>
                     </tr>
-
                 </tbody>
-
             <?php }
             ?>
-
         </table>
     </div>
 </div>
