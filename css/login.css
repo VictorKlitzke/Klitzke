@@ -226,6 +226,7 @@ body {
     transform: translateX(0);
     opacity: 1;
     filter: blur(0);
+    transition-delay: calc(.1s * var(--i));
     
 }
 .info-text h2 {
