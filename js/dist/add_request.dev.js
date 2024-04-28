@@ -383,6 +383,7 @@ function addItemCard() {
               var clonedRow = row.cloneNode(true);
               destinationTable.appendChild(clonedRow);
             });
+            sourceTable.innerHTML = "";
             console.log(destinationTable);
           }
 
