@@ -98,8 +98,8 @@ if (isset($_POST['action'])) {
             </form>
         </div>
         <div class="info-text register">
-            <h2 class="animation">Bem vindo de volta !</h2>
-            <p class="animation">Onde seu negocio toma novos rumos</p>
+            <h2 class="animation" style="--i:17;">Bem vindo de volta !</h2>
+            <p class="animation" style="--i:18;">Onde seu negocio toma novos rumos</p>
         </div>
     </div>
    
