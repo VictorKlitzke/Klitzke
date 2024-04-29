@@ -111,7 +111,12 @@ document.addEventListener('DOMContentLoaded', function () {
 			numberTable.value = TableNumber;
 
 			searchResultTable.innerHTML = '';
-			SearchTable.innerHTML = '';
+			if (SearchTable){
+				SearchTable.innerHTML = '';
+			} else {
+				console.error('Elemento SearchTable não encontrado.');
+			}
+
 		}
 	})
 
@@ -296,11 +301,10 @@ async function deleteSelectedRow(row, quantityCell) {
 /* CODIGO PARA ADICONAR ITENS NO CARD */
 
 async function addItemCard() {
-
-	let sourceTable = document.querySelector('.tbody-request');
-	let commandIdCell = document.getElementById('command-cell').textContent;
-	let destinationTable = document.getElementById('destination-table');
-	let numberIdtable = document.getElementById('number-table').textContent;
+	const sourceTable = document.querySelector('.tbody-request');
+	const commandIdCell = document.getElementById('command-cell').textContent.trim();
+	const destinationTable = document.getElementById('destination-table');
+	const numberIdTable = document.getElementById('number-table').textContent.trim();
 
 	if (!sourceTable) {
 		console.error('Elemento sourceTable não encontrado');
@@ -318,11 +322,57 @@ async function addItemCard() {
 		return;
 	}
 
-            sourceTable.innerHTML = "";
+	let existingCardOrder = document.getElementById('card-order');
 
-            console.log(destinationTable);
-        }
-    }
+	if (existingCardOrder.style.display = 'none') {
+		existingCardOrder.style.display = 'flex';
+		existingCardOrder = document.createElement('div');
+		existingCardOrder.id = 'card-order';
+		existingCardOrder.classList.add('left', 'card-order');
+		existingCardOrder.innerHTML = `
+					<div class="card-order-content">
+							<div class="card-list">
+									<h2>Itens na comanda</h2>
+									<button type="button" id="add-more-items" class="btn-add-more-items right">Adicionar mais itens</button>
+							</div>
+							<table>
+									<thead>
+											<tr>
+													<td>#</td>
+													<td>Nome</td>
+													<td>Qtd.</td>
+													<td>Valor</td>
+													<td>Comanda</td>
+											</tr>
+									</thead>
+									<tbody id="destination-table">
+											<tr>
+											</tr>
+									</tbody>
+							</table>
+					</div>
+					<div class="card-list">
+							<button type="button" id="invoice-request" class="invoice-request left">Gerar Pedido</button>
+					</div>
+			`;
+		document.body.appendChild(existingCardOrder);
+
+		const invoiceRequestButton = existingCardOrder.querySelector('#invoice-request');
+		invoiceRequestButton.addEventListener('click', () => {
+			console.log('Pedido gerado para a comanda:', commandIdCell);
+		});
+	}
+
+	existingCardOrder.dataset.commandId = commandIdCell;
+	destinationTable.innerHTML = '';
+
+	rows.forEach((row) => {
+		const clonedRow = row.cloneNode(true);
+		destinationTable.appendChild(clonedRow);
+	});
+
+	sourceTable.innerHTML = '';
+	numberIdTable.innerHTML = '';
 }
 
 /***/
