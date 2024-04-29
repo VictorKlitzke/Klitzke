@@ -1,293 +1,294 @@
-let selectedRequest = [];
-let numbersTableRequest = [];
-let newListProducts = [];
-let tableSelected = [];
+var selectedRequest = [];
+var numbersTableRequest = [];
+var newListProducts = [];
+var tableSelected = [];
 
-let addButtonCard = document.getElementById('add-card-item');
-let sourceTable = document.querySelector('.card-request-finallize .tbody-request');
-let destinationTable = document.querySelector('destination-table');
-let cardOrder = document.getElementById('card-order');
+var addButtonCard = document.getElementById('add-card-item');
+var sourceTable = document.querySelector('.card-request-finallize .tbody-request');
+var destinationTable = document.querySelector('destination-table');
+var cardOrder = document.getElementById('card-order');
 
 document.addEventListener('DOMContentLoaded', function () {
 
-    let productSRequestearch = document.getElementById('product-request-search');
-    let SearchTable = document.getElementById('search-table');
-    let productResult = document.getElementById('product-result-request');
-    let searchResultTable = document.getElementById('result-table');
+	let productSRequestearch = document.getElementById('product-request-search');
+	let SearchTable = document.getElementById('search-table');
+	let productResult = document.getElementById('product-result-request');
+	let searchResultTable = document.getElementById('result-table');
 
-    let productID = document.getElementById('product-id');
-    let productName = document.getElementById('product-name');
-    let productsRequesttock_quantity = document.getElementById('product-stock_quantity');
-    let value_product = document.getElementById('product-value');
+	let productID = document.getElementById('product-id');
+	let productName = document.getElementById('product-name');
+	let productsRequesttock_quantity = document.getElementById('product-stock_quantity');
+	let value_product = document.getElementById('product-value');
 
-    let numberTable = document.getElementById('number-table');
+	let numberTable = document.getElementById('number-table');
 
-    let selectedRequestList = [];
+	let selectedRequestList = [];
 
-    SearchTable.addEventListener('input', async function () {
+	SearchTable.addEventListener('input', async function () {
 
-        let searchQueryTable = SearchTable.value;
+		let searchQueryTable = SearchTable.value;
 
-        try {
+		try {
 
-            const response = await fetch("http://localhost/Klitzke/ajax/search_table_request.php", {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded'
-                },
-                body: 'searchQueryTable=' + encodeURIComponent(searchQueryTable)
-            })
+			const response = await fetch("http://localhost/Klitzke/ajax/search_table_request.php", {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/x-www-form-urlencoded'
+				},
+				body: 'searchQueryTable=' + encodeURIComponent(searchQueryTable)
+			})
 
-            if (response.status === 200) {
-                const responseData = await response.text();
-                searchResultTable.innerHTML = responseData;
-            } else {
-                window.alert("Erro na busca" + response.status);
-            }
+			if (response.status === 200) {
+				const responseData = await response.text();
+				searchResultTable.innerHTML = responseData;
+			} else {
+				window.alert("Erro na busca" + response.status);
+			}
 
-        } catch (error) {
-            window.alert("Erro ao buscar comanda. Por favor contante o suporte", response.error.message);
-        };
-    });
+		} catch (error) {
+			window.alert("Erro ao buscar comanda. Por favor contante o suporte", response.error.message);
+		};
+	});
 
-    productSRequestearch.addEventListener('input', async function () {
+	productSRequestearch.addEventListener('input', async function () {
 
-        let searchQuery = productSRequestearch.value;
+		let searchQuery = productSRequestearch.value;
 
-        try {
-            const response = await fetch('http://localhost/Klitzke/ajax/search_request.php', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded'
-                },
-                body: 'searchQuery=' + encodeURIComponent(searchQuery)
-            });
+		try {
+			const response = await fetch('http://localhost/Klitzke/ajax/search_request.php', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/x-www-form-urlencoded'
+				},
+				body: 'searchQuery=' + encodeURIComponent(searchQuery)
+			});
 
-            if (response.ok) {
-                const responseData = await response.text();
-                productResult.innerHTML = responseData;
-            } else {
-                window.alert('Erro na requisição: ' + response.status);
-            }
+			if (response.ok) {
+				const responseData = await response.text();
+				productResult.innerHTML = responseData;
+			} else {
+				window.alert('Erro na requisição: ' + response.status);
+			}
 
-        } catch (error) {
-            console.error('Erro ao realizar requisição:', error);
-        }
-    });
+		} catch (error) {
+			console.error('Erro ao realizar requisição:', error);
+		}
+	});
 
-    function updateTotal(totalAddRequest) {
-        let calculateRequest = document.getElementById('product-value-total');
+	function updateTotal(totalAddRequest) {
+		let calculateRequest = document.getElementById('product-value-total');
 
-        if (calculateRequest) {
-            calculateRequest.textContent = 'R$ ' + totalAddRequest.toFixed(2);
-        }
-    }
+		if (calculateRequest) {
+			calculateRequest.textContent = 'R$ ' + totalAddRequest.toFixed(2);
+		}
+	}
 
-    function calculateRequestAdd() {
-        let totalAddRequest = 0;
+	function calculateRequestAdd() {
+		let totalAddRequest = 0;
 
-        selectedRequestList.forEach(requestProduct => {
-            let stockQuantity = requestProduct.productSRequesttock_quantity;
-            let valueProduct = parseFloat(value_product.value) || 0;
+		selectedRequestList.forEach(requestProduct => {
+			let stockQuantity = requestProduct.productSRequesttock_quantity;
+			let valueProduct = parseFloat(value_product.value) || 0;
 
-            totalAddRequest += stockQuantity * valueProduct;
-        });
+			totalAddRequest += stockQuantity * valueProduct;
+		});
 
-        let calculateRequest = document.getElementById('product-value-total');
-        if (calculateRequest) {
-            calculateRequest.textContent = 'R$ ' + totalAddRequest.toFixed(2);
-        }
+		let calculateRequest = document.getElementById('product-value-total');
+		if (calculateRequest) {
+			calculateRequest.textContent = 'R$ ' + totalAddRequest.toFixed(2);
+		}
 
-        updateTotal(totalAddRequest);
+		updateTotal(totalAddRequest);
 
-        return totalAddRequest.toFixed(2);
-    }
+		return totalAddRequest.toFixed(2);
+	}
 
-    searchResultTable.addEventListener('click', function (event) {
-        if (event.target.tagName === 'LI') {
-            let numbersTableRequest = event.target;
-            let TableNumber = numbersTableRequest.getAttribute('data-number');
+	searchResultTable.addEventListener('click', function (event) {
+		if (event.target.tagName === 'LI') {
+			let numbersTableRequest = event.target;
+			let TableNumber = numbersTableRequest.getAttribute('data-number');
 
-            numberTable.value = TableNumber;
+			numberTable.value = TableNumber;
 
-            searchResultTable.innerHTML = '';
-            SearchTable.innerHTML = '';
-        }
-    })
+			searchResultTable.innerHTML = '';
+			SearchTable.innerHTML = '';
+		}
+	})
 
-    productResult.addEventListener('click', function (event) {
-        if (event.target.tagName === 'LI') {
-            let selectedRequest = event.target;
-            let productId = selectedRequest.getAttribute('data-id');
-            let productNames = selectedRequest.getAttribute('data-name');
-            let productSRequesttock_quantity = selectedRequest.getAttribute('data-stock_quantity');
-            let productValue_product = selectedRequest.getAttribute('data-value_product');
+	productResult.addEventListener('click', function (event) {
+		if (event.target.tagName === 'LI') {
+			let selectedRequest = event.target;
+			let productId = selectedRequest.getAttribute('data-id');
+			let productNames = selectedRequest.getAttribute('data-name');
+			let productSRequesttock_quantity = selectedRequest.getAttribute('data-stock_quantity');
+			let productValue_product = selectedRequest.getAttribute('data-value_product');
 
-            if (productID) {
-                productID.value = productId;
-            }
+			if (productID) {
+				productID.value = productId;
+			}
 
-            if (productName) {
-                productName.value = productNames;
-            }
+			if (productName) {
+				productName.value = productNames;
+			}
 
-            if (productSRequesttock_quantity) {
-                productsRequesttock_quantity.value = 1;
-            }
-            if (value_product) {
-                value_product.value = productValue_product;
-            }
+			if (productSRequesttock_quantity) {
+				productsRequesttock_quantity.value = 1;
+			}
+			if (value_product) {
+				value_product.value = productValue_product;
+			}
 
-            let selectProductArray = {
-                id: productID, stock_quantity: parseInt(productSRequesttock_quantity) || 0, value: productValue_product
-            };
+			let selectProductArray = {
+				id: productID, stock_quantity: parseInt(productSRequesttock_quantity) || 0, value: productValue_product
+			};
 
-            selectedRequestList.push(selectProductArray);
+			selectedRequestList.push(selectProductArray);
 
-            productResult.innerHTML = '';
-        }
-        calculateRequestAdd();
-    });
+			productResult.innerHTML = '';
+		}
+		calculateRequestAdd();
+	});
 });
 
 /* CODIGO PARA ADICIONAR ITEM EM ITENS DO PEDIDO */
 
 function updatePedido() {
-    var requestID = document.getElementById('product-id').value;
-    var requestName = document.getElementById('product-name').value;
-    var requestQuantity = document.getElementById('product-stock_quantity').value;
-    var requestValue = document.getElementById('product-value').value;
-    var numberTableRequest = document.getElementById('number-table').value;
+	var requestID = document.getElementById('product-id').value;
+	var requestName = document.getElementById('product-name').value;
+	var requestQuantity = document.getElementById('product-stock_quantity').value;
+	var requestValue = document.getElementById('product-value').value;
+	var numberTableRequest = document.getElementById('number-table').value;
 
-    if (!isNaN(requestValue) && requestID && requestQuantity && requestName) {
+	if (!isNaN(requestValue) && requestID && requestQuantity && requestName) {
 
-        var table = document.querySelector('.tbody-request');
-        var existingRow = findExistingRow(requestID);
+		var table = document.querySelector('.tbody-request');
+		var existingRow = findExistingRow(requestID);
 
-        if (numberTableRequest === '') {
-            window.alert("Comanda nao foi selecionada");
-            return true;
-        }
+		if (numberTableRequest === '') {
+			window.alert("Comanda nao foi selecionada");
+			return true;
+		}
 
-        if (existingRow) {
-            var quantityCell = existingRow.querySelector('.quantity-cell');
-            var currentQuantity = parseInt(quantityCell.textContent);
-            quantityCell.textContent = currentQuantity + parseInt(requestQuantity);
-        } else {
-            var newRow = table.insertRow();
-            var ID_ = newRow.insertCell(0);
-            var Name = newRow.insertCell(1);
-            var Quantity = newRow.insertCell(2);
-            var Value = newRow.insertCell(3);
-            var Command = newRow.insertCell(4);
-            var Actions = newRow.insertCell(5);
+		if (existingRow) {
+			var quantityCell = existingRow.querySelector('.quantity-cell');
+			var currentQuantity = parseInt(quantityCell.textContent);
+			quantityCell.textContent = currentQuantity + parseInt(requestQuantity);
+		} else {
+			var newRow = table.insertRow();
+			var ID_ = newRow.insertCell(0);
+			var Name = newRow.insertCell(1);
+			var Quantity = newRow.insertCell(2);
+			var Value = newRow.insertCell(3);
+			var Command = newRow.insertCell(4);
+			var Actions = newRow.insertCell(5);
 
-            Name.style.minWidth = "100%";
+			Name.style.minWidth = "100%";
 
-            ID_.textContent = requestID;
-            Name.textContent = requestName;
-            Quantity.textContent = requestQuantity;
-            Value.textContent = requestValue;
-            Command.textContent = numberTableRequest;
+			ID_.textContent = requestID;
+			Name.textContent = requestName;
+			Quantity.textContent = requestQuantity;
+			Value.textContent = requestValue;
+			Command.textContent = numberTableRequest;
 
-            Quantity.classList.add('quantity-cell');
-            Value.classList.add('value-cell');
+			Quantity.classList.add('quantity-cell');
+			Value.classList.add('value-cell');
+			Command.id = 'command-cell';
 
-            newRow.addEventListener('click', function () {
-                selectRow(newRow);
-            });
+			newRow.addEventListener('click', function () {
+				selectRow(newRow);
+			});
 
-            var deleteButton = document.createElement('button');
-            deleteButton.textContent = 'Deletar';
-            deleteButton.style.backgroundColor = 'red';
-            deleteButton.style.borderRadius = '5px';
-            deleteButton.style.border = 'none';
-            deleteButton.style.color = 'white';
-            deleteButton.style.padding = '4px';
-            deleteButton.style.display = 'none';
-            deleteButton.classList.add('delete-button');
-            deleteButton.addEventListener('click', function () {
-                deleteSelectedRow(newRow, Quantity);
-            });
-            Actions.appendChild(deleteButton);
+			var deleteButton = document.createElement('button');
+			deleteButton.textContent = 'Deletar';
+			deleteButton.style.backgroundColor = 'red';
+			deleteButton.style.borderRadius = '5px';
+			deleteButton.style.border = 'none';
+			deleteButton.style.color = 'white';
+			deleteButton.style.padding = '4px';
+			deleteButton.style.display = 'none';
+			deleteButton.classList.add('delete-button');
+			deleteButton.addEventListener('click', function () {
+				deleteSelectedRow(newRow, Quantity);
+			});
+			Actions.appendChild(deleteButton);
 
-            selectedRequest.push({
-                id:
-                    requestID,
-                Name: requestName,
-                stock_quantity: parseInt(requestQuantity),
-                value: requestValue,
-                Command: numberTableRequest
-            });
-        }
+			selectedRequest.push({
+				id:
+					requestID,
+				Name: requestName,
+				stock_quantity: parseInt(requestQuantity),
+				value: requestValue,
+				Command: numberTableRequest
+			});
+		}
 
-        document.getElementById('product-id').value = "";
-        document.getElementById('product-name').value = "";
-        document.getElementById('product-stock_quantity').value = "";
-        document.getElementById('product-value').value = "";
-        document.getElementById('product-request-search').value = "";
+		document.getElementById('product-id').value = "";
+		document.getElementById('product-name').value = "";
+		document.getElementById('product-stock_quantity').value = "";
+		document.getElementById('product-value').value = "";
+		document.getElementById('product-request-search').value = "";
 
-    } else {
-        alert("Preencha todos os campos corretamente antes de adicionar o pedido.");
-    }
-    calculateTotal();
+	} else {
+		alert("Preencha todos os campos corretamente antes de adicionar o pedido.");
+	}
+	calculateTotal();
 }
 
 function findExistingRow(requestID) {
-    var table = document.querySelector('.tbody-request');
-    var rows = table.getElementsByTagName('tr');
+	var table = document.querySelector('.tbody-request');
+	var rows = table.getElementsByTagName('tr');
 
-    for (var i = 0; i < rows.length; i++) {
-        var cells = rows[i].getElementsByTagName('td');
-        if (cells.length > 1 && cells[0].textContent === requestID) {
-            return rows[i];
-        }
-    }
+	for (var i = 0; i < rows.length; i++) {
+		var cells = rows[i].getElementsByTagName('td');
+		if (cells.length > 1 && cells[0].textContent === requestID) {
+			return rows[i];
+		}
+	}
 
-    return null;
+	return null;
 }
 
 function selectRow(row) {
-    var deleteButton = row.querySelector('.delete-button');
+	var deleteButton = row.querySelector('.delete-button');
 
-    if (deleteButton) {
-        var selectedRows = document.querySelectorAll('.selected-row');
-        selectedRows.forEach(function (selectedRow) {
-            selectedRow.classList.remove('selected-row');
-            var deleteBtn = selectedRow.querySelector('.delete-button');
-            if (deleteBtn) {
-                deleteBtn.style.display = 'none';
-            }
-        });
+	if (deleteButton) {
+		var selectedRows = document.querySelectorAll('.selected-row');
+		selectedRows.forEach(function (selectedRow) {
+			selectedRow.classList.remove('selected-row');
+			var deleteBtn = selectedRow.querySelector('.delete-button');
+			if (deleteBtn) {
+				deleteBtn.style.display = 'none';
+			}
+		});
 
-        row.classList.add('selected-row');
-        deleteButton.style.display = 'inline';
-        row.style.backgroundColor = '#202020';
-    } else {
-        console.error("Botão de exclusão não encontrado.");
-    }
+		row.classList.add('selected-row');
+		deleteButton.style.display = 'inline';
+		row.style.backgroundColor = '#202020';
+	} else {
+		console.error("Botão de exclusão não encontrado.");
+	}
 }
 
 async function deleteSelectedRow(row, quantityCell) {
-    var productId = row.querySelector('.quantity-cell').textContent;
+	var productId = row.querySelector('.quantity-cell').textContent;
 
-    if (quantityCell) {
-        var number = parseInt(quantityCell.textContent) - 1;
+	if (quantityCell) {
+		var number = parseInt(quantityCell.textContent) - 1;
 
-        if (number >= 1) {
-            quantityCell.textContent = number;
-        } else {
-            row.remove();
+		if (number >= 1) {
+			quantityCell.textContent = number;
+		} else {
+			row.remove();
 
-            var productIndex = selectedRequest.findIndex(requestProducts => requestProducts.id == productId);
-            if (productIndex !== -1) {
-                selectedRequest.splice(productIndex, 1);
-            }
-        }
-    } else {
-        console.error("Célula de quantidade não encontrada.");
-    }
-    calculateTotal();
+			var productIndex = selectedRequest.findIndex(requestProducts => requestProducts.id == productId);
+			if (productIndex !== -1) {
+				selectedRequest.splice(productIndex, 1);
+			}
+		}
+	} else {
+		console.error("Célula de quantidade não encontrada.");
+	}
+	calculateTotal();
 }
 
 /***/
@@ -296,21 +297,26 @@ async function deleteSelectedRow(row, quantityCell) {
 
 async function addItemCard() {
 
-    console.log(sourceTable.children.length === 0);
+	let sourceTable = document.querySelector('.tbody-request');
+	let commandIdCell = document.getElementById('command-cell').textContent;
+	let destinationTable = document.getElementById('destination-table');
+	let numberIdtable = document.getElementById('number-table').textContent;
 
-    if (sourceTable.children.length === 0) {
-        window.alert('Não tem nenhum item na comanda');
-        return;
-    } else {
+	if (!sourceTable) {
+		console.error('Elemento sourceTable não encontrado');
+		return;
+	}
 
-        console.log(cardOrder.style.display = "flex");
-        if (cardOrder.style.display === "none") {
-            cardOrder.style.display = "flex";
+	const rows = sourceTable.querySelectorAll('tr');
+	if (rows.length === 0) {
+		window.alert('Não há nenhum item na comanda');
+		return;
+	}
 
-            sourceTable.querySelectorAll('tr').forEach(function (row) {
-                var clonedRow = row.cloneNode(true);
-                destinationTable.appendChild(clonedRow);
-            });
+	if (!destinationTable) {
+		console.error('Elemento destinationTable não encontrado');
+		return;
+	}
 
             sourceTable.innerHTML = "";
 
@@ -322,49 +328,49 @@ async function addItemCard() {
 /***/
 
 function requestValidateStock(stock_quantity, currentQuantity) {
-    if (stock_quantity > currentQuantity) {
-        window.alert('Estoque insuficiente para adicionar mais deste produto.');
-        return false;
-    }
-    return true;
+	if (stock_quantity > currentQuantity) {
+		window.alert('Estoque insuficiente para adicionar mais deste produto.');
+		return false;
+	}
+	return true;
 }
 
 function updateTotalAmountRequest(totalRequest) {
 
-    let totalElementOrderRequestRequest = document.getElementById('totalizador-request');
+	let totalElementOrderRequestRequest = document.getElementById('totalizador-request');
 
-    if (totalElementOrderRequestRequest) {
-        totalElementOrderRequestRequest.textContent = 'R$ ' + totalRequest.toFixed(2);
-    }
+	if (totalElementOrderRequestRequest) {
+		totalElementOrderRequestRequest.textContent = 'R$ ' + totalRequest.toFixed(2);
+	}
 }
 
 function calculateTotal() {
 
-    let totalRequest = 0;
+	let totalRequest = 0;
 
-    selectedRequest.forEach(requestProducts => {
+	selectedRequest.forEach(requestProducts => {
 
-        let quantityElementOrderRequest = document.querySelector('.quantity-cell');
-        let valueElementOrderRequest = document.querySelector('.value-cell');
+		let quantityElementOrderRequest = document.querySelector('.quantity-cell');
+		let valueElementOrderRequest = document.querySelector('.value-cell');
 
-        if (quantityElementOrderRequest && valueElementOrderRequest) {
-            let quantityElementOrderTotalRequest = parseInt(quantityElementOrderRequest.textContent) || 0;
-            let valueRequest = parseFloat(valueElementOrderRequest.textContent) || 0;
+		if (quantityElementOrderRequest && valueElementOrderRequest) {
+			let quantityElementOrderTotalRequest = parseInt(quantityElementOrderRequest.textContent) || 0;
+			let valueRequest = parseFloat(valueElementOrderRequest.textContent) || 0;
 
-            totalRequest += quantityElementOrderTotalRequest * valueRequest;
-        } else {
-            console.error('Elementos não encontrados para o produto ID:', requestProducts.id);
-        }
-    });
+			totalRequest += quantityElementOrderTotalRequest * valueRequest;
+		} else {
+			console.error('Elementos não encontrados para o produto ID:', requestProducts.id);
+		}
+	});
 
-    let totalElementOrderRequestRequest = document.getElementById('totalizador-request');
-    if (totalElementOrderRequestRequest) {
-        totalElementOrderRequestRequest.textContent = 'R$ ' + totalRequest.toFixed(2);
-    }
+	let totalElementOrderRequestRequest = document.getElementById('totalizador-request');
+	if (totalElementOrderRequestRequest) {
+		totalElementOrderRequestRequest.textContent = 'R$ ' + totalRequest.toFixed(2);
+	}
 
-    updateTotalAmountRequest(totalRequest);
+	updateTotalAmountRequest(totalRequest);
 
-    return totalRequest.toFixed(2);
+	return totalRequest.toFixed(2);
 
 }
 
@@ -540,155 +546,155 @@ function calculateTotal() {
 
 async function addGathersArray(index, id, table_request, total_request) {
 
-    const ResulttableGathers = document.getElementById('table-gathers-selected');
-    let ExistingRowOrder = document.getElementById("row-" + id);
+	const ResulttableGathers = document.getElementById('table-gathers-selected');
+	let ExistingRowOrder = document.getElementById("row-" + id);
 
-    if (ExistingRowOrder) {
-        window.alert("Comanda ja selecionada");
-        return;
-    }
+	if (ExistingRowOrder) {
+		window.alert("Comanda ja selecionada");
+		return;
+	}
 
-    let newTableGathers = {
-        id: id,
-        table_request: table_request,
-        total_request: parseFloat(total_request.replace('', ''))
-    }
+	let newTableGathers = {
+		id: id,
+		table_request: table_request,
+		total_request: parseFloat(total_request.replace('', ''))
+	}
 
-    tableSelected.push(newTableGathers);
+	tableSelected.push(newTableGathers);
 
-    let numericValueTotal = parseFloat(total_request);
-    let FormmatedTotalValue = numericValueTotal.toFixed(2);
+	let numericValueTotal = parseFloat(total_request);
+	let FormmatedTotalValue = numericValueTotal.toFixed(2);
 
-    let newTableInsert = ResulttableGathers.insertRow();
-    newTableInsert.id = "row-" + id;
-    newTableInsert.innerHTML = "<td id='order-id'>" + id + "</td>" +
-        "<td id='order-table-request'>" + table_request + "</td>" +
-        "<td id='order-total-request" + id + "'>" + FormmatedTotalValue + "</td>" +
-        "<td style='margin: 6px; padding: 6px;'>" +
-        "<div>" +
-        "<button onclick='removertableSelected(" + id + ")' id='button-delete-" + id + "' class='btn-delete' type='button'>Deletar</button>" +
-        "</div>" +
-        "</td>";
-    updateTotalizador();
+	let newTableInsert = ResulttableGathers.insertRow();
+	newTableInsert.id = "row-" + id;
+	newTableInsert.innerHTML = "<td id='order-id'>" + id + "</td>" +
+		"<td id='order-table-request'>" + table_request + "</td>" +
+		"<td id='order-total-request" + id + "'>" + FormmatedTotalValue + "</td>" +
+		"<td style='margin: 6px; padding: 6px;'>" +
+		"<div>" +
+		"<button onclick='removertableSelected(" + id + ")' id='button-delete-" + id + "' class='btn-delete' type='button'>Deletar</button>" +
+		"</div>" +
+		"</td>";
+	updateTotalizador();
 }
 
 function removertableSelected(id) {
 
-    let rowToRemoveOrder = document.getElementById("row-" + id);
+	let rowToRemoveOrder = document.getElementById("row-" + id);
 
-    if (tableSelected.length > 0) {
+	if (tableSelected.length > 0) {
 
-        let productIndexOrder = tableSelected.id = id;
+		let productIndexOrder = tableSelected.id = id;
 
-        if (productIndexOrder !== -1) {
+		if (productIndexOrder !== -1) {
 
-            let tableOrderRow = tableSelected.id = id;
-            let productQuantityCellOrder = 1;
+			let tableOrderRow = tableSelected.id = id;
+			let productQuantityCellOrder = 1;
 
-            if (productQuantityCellOrder) {
-                let number = tableSelected.table_request - 1;
+			if (productQuantityCellOrder) {
+				let number = tableSelected.table_request - 1;
 
-                if (number >= 1) {
-                    tableOrderRow.table_request = number;
-                    productQuantityCellOrder = number;
-                } else {
-                    tableSelected.splice(productIndexOrder, 1);
-                    rowToRemoveOrder.remove();
-                }
-            }
-        } else {
-            console.error("Produto não encontrado no array.");
-        }
-    } else {
-        console.error("Array de produtos está vazio");
-    }
-    updateTotalizador();
+				if (number >= 1) {
+					tableOrderRow.table_request = number;
+					productQuantityCellOrder = number;
+				} else {
+					tableSelected.splice(productIndexOrder, 1);
+					rowToRemoveOrder.remove();
+				}
+			}
+		} else {
+			console.error("Produto não encontrado no array.");
+		}
+	} else {
+		console.error("Array de produtos está vazio");
+	}
+	updateTotalizador();
 }
 
 function updateAmountOrder(totalOrderRequest) {
-    let totalElementOrderRequest = document.getElementById('totalizador');
-    if (totalElementOrderRequest) {
-        totalElementOrderRequest.textContent = 'R$ ' + totalOrderRequest.toFixed(2);
-    }
+	let totalElementOrderRequest = document.getElementById('totalizador');
+	if (totalElementOrderRequest) {
+		totalElementOrderRequest.textContent = 'R$ ' + totalOrderRequest.toFixed(2);
+	}
 }
 
 function updateTotalizador() {
 
-    let totalOrderRequest = 0;
+	let totalOrderRequest = 0;
 
-    tableSelected.forEach(tableSelected => {
+	tableSelected.forEach(tableSelected => {
 
-        let quantityElementOrder = 1;
-        let valueElementOrder = document.getElementById('order-total-request' + tableSelected.id);
+		let quantityElementOrder = 1;
+		let valueElementOrder = document.getElementById('order-total-request' + tableSelected.id);
 
-        if (quantityElementOrder && valueElementOrder) {
-            let quantityElementOrderTotal = 1 || 0;
-            let valueOrders = parseFloat(valueElementOrder.textContent) || 0;
+		if (quantityElementOrder && valueElementOrder) {
+			let quantityElementOrderTotal = 1 || 0;
+			let valueOrders = parseFloat(valueElementOrder.textContent) || 0;
 
-            totalOrderRequest += quantityElementOrderTotal * valueOrders;
-        } else {
-            console.error('Elementos não encontrados para comanda de ID:', tableSelected.id);
-        }
-    });
+			totalOrderRequest += quantityElementOrderTotal * valueOrders;
+		} else {
+			console.error('Elementos não encontrados para comanda de ID:', tableSelected.id);
+		}
+	});
 
-    let totalElementOrderRequest = document.getElementById('totalizador');
-    if (totalElementOrderRequest) {
-        totalElementOrderRequest.textContent = 'R$ ' + totalOrderRequest.toFixed(2);
-    }
+	let totalElementOrderRequest = document.getElementById('totalizador');
+	if (totalElementOrderRequest) {
+		totalElementOrderRequest.textContent = 'R$ ' + totalOrderRequest.toFixed(2);
+	}
 
-    updateAmountOrder(totalOrderRequest);
+	updateAmountOrder(totalOrderRequest);
 
-    return totalOrderRequest.toFixed(2);
+	return totalOrderRequest.toFixed(2);
 }
 
 async function GathersTables() {
 
-    let valueGathersTotal = document.getElementById('totalizador').textContent;
-    let valueTotalizadorOrderGathres = 0;
+	let valueGathersTotal = document.getElementById('totalizador').textContent;
+	let valueTotalizadorOrderGathres = 0;
 
-    if (valueGathersTotal === 0) {
-        window.alert("Valor total zerado, por favror contante o suporte")
-        return false;
-    } else {
-        valueTotalizadorOrderGathres = parseFloat(valueGathersTotal.replace(/R\$\s/g, ''));
-    }
+	if (valueGathersTotal === 0) {
+		window.alert("Valor total zerado, por favror contante o suporte")
+		return false;
+	} else {
+		valueTotalizadorOrderGathres = parseFloat(valueGathersTotal.replace(/R\$\s/g, ''));
+	}
 
-    const RequestDataGathers = {
-        tables: tableSelected,
-        valueTotalizadorOrderGathres: valueTotalizadorOrderGathres
-    }
+	const RequestDataGathers = {
+		tables: tableSelected,
+		valueTotalizadorOrderGathres: valueTotalizadorOrderGathres
+	}
 
-    if (tableSelected.length === 0) {
-        window.alert("Nenhuma comanda selecionada")
-    } else {
-        try {
+	if (tableSelected.length === 0) {
+		window.alert("Nenhuma comanda selecionada")
+	} else {
+		try {
 
-            let urlOrderGathres = 'http://localhost/Klitzke/ajax/gathers_tables.php';
+			let urlOrderGathres = 'http://localhost/Klitzke/ajax/gathers_tables.php';
 
-            const RequestTables = await fetch(urlOrderGathres, {
-                method: 'POST', headers: {
-                    'Content-Type': 'application/json',
-                }, body: JSON.stringify(RequestDataGathers)
-            });
+			const RequestTables = await fetch(urlOrderGathres, {
+				method: 'POST', headers: {
+					'Content-Type': 'application/json',
+				}, body: JSON.stringify(RequestDataGathers)
+			});
 
-            const responseTablesBody = await RequestTables.text();
+			const responseTablesBody = await RequestTables.text();
 
-            if (responseTablesBody.startsWith('<')) {
-                console.error('Erro ao enviar dados para o PHP:', responseTablesBody);
-                return;
-            }
+			if (responseTablesBody.startsWith('<')) {
+				console.error('Erro ao enviar dados para o PHP:', responseTablesBody);
+				return;
+			}
 
-            const responseTables = JSON.parse(responseTablesBody);
+			const responseTables = JSON.parse(responseTablesBody);
 
-            if (responseTables && responseTables.success) {
-                window.alert('Comandas ajuntada com sucesso');
-            } else {
-                console.error('Erro ao tentar agrupar comandas:', responseTables ? responseTables.error : 'Resposta vazia');
-            }
-        } catch (error) {
-            console.error('Erro ao enviar dados para o PHP:', error);
-        }
-    }
+			if (responseTables && responseTables.success) {
+				window.alert('Comandas ajuntada com sucesso');
+			} else {
+				console.error('Erro ao tentar agrupar comandas:', responseTables ? responseTables.error : 'Resposta vazia');
+			}
+		} catch (error) {
+			console.error('Erro ao enviar dados para o PHP:', error);
+		}
+	}
 }
 
 /***/
@@ -742,25 +748,25 @@ async function GathersTables() {
 
 /* CARDS DE MENSAGENS */
 function showErrorMessageRequest(message) {
-    const errorContainerRequest = document.getElementById('erro-global-h2');
-    const errorMessageElementRequest = document.getElementById('erro-global-h2');
-    errorMessageElementRequest.textContent = message;
-    errorContainerRequest.style.display = 'flex';
-    setTimeout(() => {
-        errorMessageElementRequest.textContent = '';
-        errorContainerRequest.style.display = 'none';
-    }, 3000);
+	const errorContainerRequest = document.getElementById('erro-global-h2');
+	const errorMessageElementRequest = document.getElementById('erro-global-h2');
+	errorMessageElementRequest.textContent = message;
+	errorContainerRequest.style.display = 'flex';
+	setTimeout(() => {
+		errorMessageElementRequest.textContent = '';
+		errorContainerRequest.style.display = 'none';
+	}, 3000);
 }
 
 function showSuccessMessageRequest(message) {
-    const successContainerRequest = document.querySelector('sucess-global');
-    const successMessageElementRequest = document.getElementById('sucess-global-h2');
-    successMessageElementRequest.textContent = message;
-    successContainerRequest.style.display = 'flex';
-    setTimeout(() => {
-        successMessageElementRequest.textContent = '';
-        successContainerRequest.style.display = 'none';
-    }, 3000);
+	const successContainerRequest = document.querySelector('sucess-global');
+	const successMessageElementRequest = document.getElementById('sucess-global-h2');
+	successMessageElementRequest.textContent = message;
+	successContainerRequest.style.display = 'flex';
+	setTimeout(() => {
+		successMessageElementRequest.textContent = '';
+		successContainerRequest.style.display = 'none';
+	}, 3000);
 }
 
 /***/
