@@ -164,7 +164,12 @@ document.addEventListener('DOMContentLoaded', function () {
 
       numberTable.value = TableNumber;
       searchResultTable.innerHTML = '';
-      SearchTable.innerHTML = '';
+
+      if (SearchTable) {
+        SearchTable.innerHTML = '';
+      } else {
+        console.error('Elemento SearchTable não encontrado.');
+      }
     }
   });
   productResult.addEventListener('click', function (event) {
@@ -361,15 +366,15 @@ function deleteSelectedRow(row, quantityCell) {
 
 
 function addItemCard() {
-  var sourceTable, commandIdCell, destinationTable, numberIdtable, rows, currentCommandId, existingCardOrder;
+  var sourceTable, commandIdCell, destinationTable, numberIdTable, rows, existingCardOrder, invoiceRequestButton;
   return regeneratorRuntime.async(function addItemCard$(_context4) {
     while (1) {
       switch (_context4.prev = _context4.next) {
         case 0:
           sourceTable = document.querySelector('.tbody-request');
-          commandIdCell = document.getElementById('command-cell').textContent;
+          commandIdCell = document.getElementById('command-cell').textContent.trim();
           destinationTable = document.getElementById('destination-table');
-          numberIdtable = document.getElementById('number-table').textContent;
+          numberIdTable = document.getElementById('number-table').textContent.trim();
 
           if (sourceTable) {
             _context4.next = 7;
@@ -400,27 +405,31 @@ function addItemCard() {
           return _context4.abrupt("return");
 
         case 14:
-          currentCommandId = commandIdCell;
           existingCardOrder = document.getElementById('card-order');
-          console.log(existingCardOrder);
 
-          if (!existingCardOrder) {
+          if (existingCardOrder.style.display = 'none') {
+            existingCardOrder.style.display = 'flex';
             existingCardOrder = document.createElement('div');
             existingCardOrder.id = 'card-order';
             existingCardOrder.classList.add('left', 'card-order');
-            existingCardOrder.innerHTML = "\n            <div class=\"card-order-content\">\n                <div class=\"card-list\">\n                    <h2>Itens na comanda</h2>\n                    <button type=\"button\" id=\"add-more-items\" class=\"btn-add-more-items right\">Adicionar mais itens</button>\n                </div>\n                <table>\n                    <thead>\n                        <tr>\n                            <td>#</td>\n                            <td>Nome</td>\n                            <td>Qtd.</td>\n                            <td>Valor</td>\n                            <td>Comanda</td>\n                        </tr>\n                    </thead>\n                    <tbody id=\"destination-table\">\n\t\t\t\t\t\t\t\t\t\t\t<tr>\n\n\t\t\t\t\t\t\t\t\t\t\t</tr>\n                    </tbody>\n                </table>\n            </div>\n            <div class=\"card-list\">\n                <button type=\"button\" id=\"invoice-request\" class=\"invoice-request left\">Gerar Pedido</button>\n            </div>\n        ";
+            existingCardOrder.innerHTML = "\n\t\t\t\t\t<div class=\"card-order-content\">\n\t\t\t\t\t\t\t<div class=\"card-list\">\n\t\t\t\t\t\t\t\t\t<h2>Itens na comanda</h2>\n\t\t\t\t\t\t\t\t\t<button type=\"button\" id=\"add-more-items\" class=\"btn-add-more-items right\">Adicionar mais itens</button>\n\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t<table>\n\t\t\t\t\t\t\t\t\t<thead>\n\t\t\t\t\t\t\t\t\t\t\t<tr>\n\t\t\t\t\t\t\t\t\t\t\t\t\t<td>#</td>\n\t\t\t\t\t\t\t\t\t\t\t\t\t<td>Nome</td>\n\t\t\t\t\t\t\t\t\t\t\t\t\t<td>Qtd.</td>\n\t\t\t\t\t\t\t\t\t\t\t\t\t<td>Valor</td>\n\t\t\t\t\t\t\t\t\t\t\t\t\t<td>Comanda</td>\n\t\t\t\t\t\t\t\t\t\t\t</tr>\n\t\t\t\t\t\t\t\t\t</thead>\n\t\t\t\t\t\t\t\t\t<tbody id=\"destination-table\">\n\t\t\t\t\t\t\t\t\t\t\t<tr>\n\t\t\t\t\t\t\t\t\t\t\t</tr>\n\t\t\t\t\t\t\t\t\t</tbody>\n\t\t\t\t\t\t\t</table>\n\t\t\t\t\t</div>\n\t\t\t\t\t<div class=\"card-list\">\n\t\t\t\t\t\t\t<button type=\"button\" id=\"invoice-request\" class=\"invoice-request left\">Gerar Pedido</button>\n\t\t\t\t\t</div>\n\t\t\t";
             document.body.appendChild(existingCardOrder);
+            invoiceRequestButton = existingCardOrder.querySelector('#invoice-request');
+            invoiceRequestButton.addEventListener('click', function () {
+              console.log('Pedido gerado para a comanda:', commandIdCell);
+            });
           }
 
-          existingCardOrder.dataset.commandId = currentCommandId;
+          existingCardOrder.dataset.commandId = commandIdCell;
+          destinationTable.innerHTML = '';
           rows.forEach(function (row) {
             var clonedRow = row.cloneNode(true);
             destinationTable.appendChild(clonedRow);
           });
           sourceTable.innerHTML = '';
-          numberIdtable.innerHTML = '';
+          numberIdTable.innerHTML = '';
 
-        case 22:
+        case 21:
         case "end":
           return _context4.stop();
       }

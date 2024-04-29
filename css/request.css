@@ -210,10 +210,12 @@ input[type="text"] {
     border: none;
     border-radius: 4px;
     cursor: pointer;
+    transition: background-color 0.3s ease;
 }
 
 .btn-add-card-item:hover {
     background: #cadb34;
+    transition: background-color 0.3s ease;
 }
 
 .btn-add-more-items {
@@ -228,6 +230,7 @@ input[type="text"] {
 
 .btn-add-more-items:hover {
     background: rgb(35, 37, 94);
+    transition: background-color 0.3s ease;
 }
 
 /* AJUNTAR COMANDAS */
@@ -326,6 +329,7 @@ section h2 {
 
 .button-gathers:hover {
     background-color: #3498db;
+    transition: background-color 0.3s ease;
 }
 
 .info-total-gathers {
@@ -341,6 +345,7 @@ section h2 {
     display: none;
     justify-content: start;
     align-items: center;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 .card-order-content {
