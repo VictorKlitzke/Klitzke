@@ -245,6 +245,7 @@ function updatePedido() {
       Command.textContent = numberTableRequest;
       Quantity.classList.add('quantity-cell');
       Value.classList.add('value-cell');
+      Command.id = 'command-cell';
       newRow.addEventListener('click', function () {
         selectRow(newRow);
       });
@@ -360,33 +361,66 @@ function deleteSelectedRow(row, quantityCell) {
 
 
 function addItemCard() {
+  var sourceTable, commandIdCell, destinationTable, numberIdtable, rows, currentCommandId, existingCardOrder;
   return regeneratorRuntime.async(function addItemCard$(_context4) {
     while (1) {
       switch (_context4.prev = _context4.next) {
         case 0:
-          console.log(sourceTable.children.length === 0);
+          sourceTable = document.querySelector('.tbody-request');
+          commandIdCell = document.getElementById('command-cell').textContent;
+          destinationTable = document.getElementById('destination-table');
+          numberIdtable = document.getElementById('number-table').textContent;
 
-          if (!(sourceTable.children.length === 0)) {
-            _context4.next = 6;
+          if (sourceTable) {
+            _context4.next = 7;
             break;
           }
 
-          window.alert('Não tem nenhum item na comanda');
+          console.error('Elemento sourceTable não encontrado');
           return _context4.abrupt("return");
 
-        case 6:
-          console.log(cardOrder.style.display = "flex");
+        case 7:
+          rows = sourceTable.querySelectorAll('tr');
 
-          if (cardOrder.style.display === "none") {
-            cardOrder.style.display = "flex";
-            sourceTable.querySelectorAll('tr').forEach(function (row) {
-              var clonedRow = row.cloneNode(true);
-              destinationTable.appendChild(clonedRow);
-            });
-            console.log(destinationTable);
+          if (!(rows.length === 0)) {
+            _context4.next = 11;
+            break;
           }
 
-        case 8:
+          window.alert('Não há nenhum item na comanda');
+          return _context4.abrupt("return");
+
+        case 11:
+          if (destinationTable) {
+            _context4.next = 14;
+            break;
+          }
+
+          console.error('Elemento destinationTable não encontrado');
+          return _context4.abrupt("return");
+
+        case 14:
+          currentCommandId = commandIdCell;
+          existingCardOrder = document.getElementById('card-order');
+          console.log(existingCardOrder);
+
+          if (!existingCardOrder) {
+            existingCardOrder = document.createElement('div');
+            existingCardOrder.id = 'card-order';
+            existingCardOrder.classList.add('left', 'card-order');
+            existingCardOrder.innerHTML = "\n            <div class=\"card-order-content\">\n                <div class=\"card-list\">\n                    <h2>Itens na comanda</h2>\n                    <button type=\"button\" id=\"add-more-items\" class=\"btn-add-more-items right\">Adicionar mais itens</button>\n                </div>\n                <table>\n                    <thead>\n                        <tr>\n                            <td>#</td>\n                            <td>Nome</td>\n                            <td>Qtd.</td>\n                            <td>Valor</td>\n                            <td>Comanda</td>\n                        </tr>\n                    </thead>\n                    <tbody id=\"destination-table\">\n\t\t\t\t\t\t\t\t\t\t\t<tr>\n\n\t\t\t\t\t\t\t\t\t\t\t</tr>\n                    </tbody>\n                </table>\n            </div>\n            <div class=\"card-list\">\n                <button type=\"button\" id=\"invoice-request\" class=\"invoice-request left\">Gerar Pedido</button>\n            </div>\n        ";
+            document.body.appendChild(existingCardOrder);
+          }
+
+          existingCardOrder.dataset.commandId = currentCommandId;
+          rows.forEach(function (row) {
+            var clonedRow = row.cloneNode(true);
+            destinationTable.appendChild(clonedRow);
+          });
+          sourceTable.innerHTML = '';
+          numberIdtable.innerHTML = '';
+
+        case 22:
         case "end":
           return _context4.stop();
       }

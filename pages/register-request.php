@@ -65,7 +65,7 @@ $request = Controllers::SelectAll(
     <div class="card-request-finallize right w40">
         <div class="request-list">
             <h2>Itens do pedido</h2>
-            <button id="add-card-item" type="button" class="add-card-item right">Gerar card de pedido</button>
+            <button id="add-card-item" type="button" class="btn-add-card-item right">Gerar card de pedido</button>
         </div>
         <div class="box-content">
             <div class="list">
@@ -73,7 +73,6 @@ $request = Controllers::SelectAll(
 
                     <thead>
                         <tr>
-                            <td>Comanda</td>
                             <td>#</td>
                             <td>Nome</td>
                             <td>
@@ -82,6 +81,7 @@ $request = Controllers::SelectAll(
                             <td>
                                 <p>Valor</p>
                             </td>
+                            <td>Comanda</td>
                         </tr>
                     </thead>
                     <tbody class="tbody-request">
@@ -100,15 +100,16 @@ $request = Controllers::SelectAll(
         <div class="card-order-content">
             <div class="card-list">
                 <h2>Itens na comanda</h2>
-                <button type="button" id="add-more-items" class="add-more-items right">Adicionar mais itens</button>
+                <button type="button" id="add-more-items" class="btn-add-more-items right">Adicionar mais itens</button>
             </div>
             <table>
                 <thead>
                     <tr>
-                        <td>Comanda</td>
+                        <td>#</td>
                         <td>Nome</td>
                         <td>Qtd.</td>
                         <td>Valor</td>
+                        <td>Comanda</td>
                     </tr>
                 </thead>
                 <tbody id="destination-table">
@@ -117,9 +118,9 @@ $request = Controllers::SelectAll(
                     </tr>
                 </tbody>
             </table>
-            <div class="card-list">
-                <button type="button" id="invoice-request" class="invoice-request left">Gerar Pedido</button>
-            </div>
+        </div>
+        <div class="card-list">
+            <button type="button" id="invoice-request" class="invoice-request left">Gerar Pedido</button>
         </div>
     </div>
 
