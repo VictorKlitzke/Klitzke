@@ -312,6 +312,8 @@ async function addItemCard() {
                 destinationTable.appendChild(clonedRow);
             });
 
+            sourceTable.innerHTML = "";
+
             console.log(destinationTable);
         }
     }
