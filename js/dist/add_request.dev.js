@@ -7,7 +7,7 @@ var tableSelected = [];
 var addButtonCard = document.getElementById('add-card-item');
 var sourceTable = document.querySelector('.card-request-finallize .tbody-request');
 var destinationTable = document.querySelector('destination-table');
-var cardOrder = document.getElementById('card-order');
+var existingCardOrder = document.getElementById('card-order');
 document.addEventListener('DOMContentLoaded', function () {
   var productSRequestearch = document.getElementById('product-request-search');
   var SearchTable = document.getElementById('search-table');
@@ -366,7 +366,7 @@ function deleteSelectedRow(row, quantityCell) {
 
 
 function addItemCard() {
-  var sourceTable, commandIdCell, destinationTable, numberIdTable, rows, existingCardOrder, invoiceRequestButton;
+  var sourceTable, commandIdCell, destinationTable, numberIdTable, rows, invoiceRequestButton;
   return regeneratorRuntime.async(function addItemCard$(_context4) {
     while (1) {
       switch (_context4.prev = _context4.next) {
@@ -374,7 +374,7 @@ function addItemCard() {
           sourceTable = document.querySelector('.tbody-request');
           commandIdCell = document.getElementById('command-cell').textContent.trim();
           destinationTable = document.getElementById('destination-table');
-          numberIdTable = document.getElementById('number-table').textContent.trim();
+          numberIdTable = document.getElementById('number-table');
 
           if (sourceTable) {
             _context4.next = 7;
@@ -405,8 +405,6 @@ function addItemCard() {
           return _context4.abrupt("return");
 
         case 14:
-          existingCardOrder = document.getElementById('card-order');
-
           if (existingCardOrder.style.display = 'none') {
             existingCardOrder.style.display = 'flex';
             existingCardOrder = document.createElement('div');
@@ -429,7 +427,7 @@ function addItemCard() {
           sourceTable.innerHTML = '';
           numberIdTable.innerHTML = '';
 
-        case 21:
+        case 20:
         case "end":
           return _context4.stop();
       }

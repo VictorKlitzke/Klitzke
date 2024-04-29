@@ -6,7 +6,7 @@ var tableSelected = [];
 var addButtonCard = document.getElementById('add-card-item');
 var sourceTable = document.querySelector('.card-request-finallize .tbody-request');
 var destinationTable = document.querySelector('destination-table');
-var cardOrder = document.getElementById('card-order');
+var existingCardOrder = document.getElementById('card-order');
 
 document.addEventListener('DOMContentLoaded', function () {
 
@@ -304,8 +304,8 @@ async function addItemCard() {
 	const sourceTable = document.querySelector('.tbody-request');
 	const commandIdCell = document.getElementById('command-cell').textContent.trim();
 	const destinationTable = document.getElementById('destination-table');
-	const numberIdTable = document.getElementById('number-table').textContent.trim();
-
+	const numberIdTable = document.getElementById('number-table');
+	
 	if (!sourceTable) {
 		console.error('Elemento sourceTable não encontrado');
 		return;
@@ -321,8 +321,6 @@ async function addItemCard() {
 		console.error('Elemento destinationTable não encontrado');
 		return;
 	}
-
-	let existingCardOrder = document.getElementById('card-order');
 
 	if (existingCardOrder.style.display = 'none') {
 		existingCardOrder.style.display = 'flex';
@@ -373,6 +371,7 @@ async function addItemCard() {
 
 	sourceTable.innerHTML = '';
 	numberIdTable.innerHTML = '';
+
 }
 
 /***/
