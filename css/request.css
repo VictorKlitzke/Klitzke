@@ -1,10 +1,4 @@
 .card-request,
-.card-request-finallize,
-.box-prepare {
-    margin-bottom: 20px;
-}
-
-.card-request,
 .card-request-finallize {
     background: #202020;
     border: 1px solid #ccc;
@@ -189,17 +183,17 @@ input[type="text"] {
 }
 
 .invoice-request {
-    background: rgb(76, 125, 76);
-    padding: 4px;
-    color: #ccc;
-    font-size: 18px;
+    background: #007bff;
+    color: #fff;
+    padding: 10px 20px;
     border: none;
-    border-radius: 4px;
+    border-radius: 5px;
     cursor: pointer;
+    transition: background-color 0.3s ease;
 }
 
 .invoice-request:hover {
-    background: green;
+    background: #0056b3;
 }
 
 .btn-add-card-item {
@@ -343,8 +337,9 @@ section h2 {
 
 .card-order {
     display: none;
-    justify-content: start;
-    align-items: center;
+    background-color: #202020;
+    border: 1px solid #ccc;
+    border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
@@ -361,11 +356,35 @@ section h2 {
     display: flex;
     justify-content: space-between;
     background: #1d1d1d;
-    padding: 15px;
+    padding: 5px;
     color: #ccc;
     border-top-left-radius: 7px;
     border-top-right-radius: 7px;
 }
-#result-table {
-    display: none;
+
+.card-footer, .total-card {
+    margin-top: 15px;
+}
+
+@media (max-width: 768px) {
+    .card-order, .card-list {
+        flex-direction: column;
+    }
+
+    .card-order-content {
+        width: 100%;
+    }
+
+    .card-list {
+        flex-direction: column;
+        padding: 15px;
+    }
+
+    .card-footer {
+        margin-top: 20px;
+    }
+
+    .table-gathers-selected {
+        height: auto;
+    }
 }
