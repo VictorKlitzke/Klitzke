@@ -183,12 +183,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 });
 
-class SalesHandler {
-}
-
 async function finalizeSalePortion() {
-
-    console.log('Chamando finalizeSalePortion');
 
     let totalAmountElement = document.getElementById('totalAmount');
     let totalValuezPortion = 0;

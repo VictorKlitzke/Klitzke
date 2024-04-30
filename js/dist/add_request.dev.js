@@ -1,5 +1,7 @@
 "use strict";
 
+function _readOnlyError(name) { throw new Error("\"" + name + "\" is read-only"); }
+
 var selectedRequest = [];
 var numbersTableRequest = [];
 var newListProducts = [];
@@ -366,7 +368,7 @@ function deleteSelectedRow(row, quantityCell) {
 
 
 function addItemCard() {
-  var sourceTable, commandIdCell, destinationTable, numberIdTable, rows, invoiceRequestButton;
+  var sourceTable, commandIdCell, destinationTable, numberIdTable, totalizadorCard, totalcard, rows, invoiceRequestButton;
   return regeneratorRuntime.async(function addItemCard$(_context4) {
     while (1) {
       switch (_context4.prev = _context4.next) {
@@ -375,43 +377,52 @@ function addItemCard() {
           commandIdCell = document.getElementById('command-cell').textContent.trim();
           destinationTable = document.getElementById('destination-table');
           numberIdTable = document.getElementById('number-table');
+          totalizadorCard = document.getElementById('totalizador-request');
+          totalcard = document.getElementById('totalizador-card');
 
           if (sourceTable) {
-            _context4.next = 7;
+            _context4.next = 9;
             break;
           }
 
           console.error('Elemento sourceTable não encontrado');
           return _context4.abrupt("return");
 
-        case 7:
+        case 9:
+          console.log(totalizadorCard);
+          totalcard = (_readOnlyError("totalcard"), 0);
+
+          if (totalizadorCard) {
+            totalcard = (_readOnlyError("totalcard"), parseFloat(totalizadorCard.textContent) || 0);
+          }
+
+          console.log(totalcard);
           rows = sourceTable.querySelectorAll('tr');
 
           if (!(rows.length === 0)) {
-            _context4.next = 11;
+            _context4.next = 17;
             break;
           }
 
           window.alert('Não há nenhum item na comanda');
           return _context4.abrupt("return");
 
-        case 11:
+        case 17:
           if (destinationTable) {
-            _context4.next = 14;
+            _context4.next = 20;
             break;
           }
 
           console.error('Elemento destinationTable não encontrado');
           return _context4.abrupt("return");
 
-        case 14:
+        case 20:
           if (existingCardOrder.style.display = 'none') {
             existingCardOrder.style.display = 'flex';
             existingCardOrder = document.createElement('div');
             existingCardOrder.id = 'card-order';
-            existingCardOrder.classList.add('left', 'card-order');
-            existingCardOrder.innerHTML = "\n\t\t\t\t\t<div class=\"card-order-content\">\n\t\t\t\t\t\t\t<div class=\"card-list\">\n\t\t\t\t\t\t\t\t\t<h2>Itens na comanda</h2>\n\t\t\t\t\t\t\t\t\t<button type=\"button\" id=\"add-more-items\" class=\"btn-add-more-items right\">Adicionar mais itens</button>\n\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t<table>\n\t\t\t\t\t\t\t\t\t<thead>\n\t\t\t\t\t\t\t\t\t\t\t<tr>\n\t\t\t\t\t\t\t\t\t\t\t\t\t<td>#</td>\n\t\t\t\t\t\t\t\t\t\t\t\t\t<td>Nome</td>\n\t\t\t\t\t\t\t\t\t\t\t\t\t<td>Qtd.</td>\n\t\t\t\t\t\t\t\t\t\t\t\t\t<td>Valor</td>\n\t\t\t\t\t\t\t\t\t\t\t\t\t<td>Comanda</td>\n\t\t\t\t\t\t\t\t\t\t\t</tr>\n\t\t\t\t\t\t\t\t\t</thead>\n\t\t\t\t\t\t\t\t\t<tbody id=\"destination-table\">\n\t\t\t\t\t\t\t\t\t\t\t<tr>\n\t\t\t\t\t\t\t\t\t\t\t</tr>\n\t\t\t\t\t\t\t\t\t</tbody>\n\t\t\t\t\t\t\t</table>\n\t\t\t\t\t</div>\n\t\t\t\t\t<div class=\"card-list\">\n\t\t\t\t\t\t\t<button type=\"button\" id=\"invoice-request\" class=\"invoice-request left\">Gerar Pedido</button>\n\t\t\t\t\t</div>\n\t\t\t";
-            document.body.appendChild(existingCardOrder);
+            existingCardOrder.classList.add('right', 'card-order');
+            existingCardOrder.innerHTML = "\n\t\t\t\t\t\t<div class=\"card-order-content\">\n\t\t\t\t\t\t\t<div class=\"card-list\">\n\t\t\t\t\t\t\t\t\t<h2>Itens na comanda</h2>\n\t\t\t\t\t\t\t\t\t<button type=\"button\" id=\"add-more-items\" class=\"btn-add-more-items right\">Adicionar mais itens</button>\n\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t<table>\n\t\t\t\t\t\t\t\t\t<thead>\n\t\t\t\t\t\t\t\t\t\t\t<tr>\n\t\t\t\t\t\t\t\t\t\t\t\t\t<td>#</td>\n\t\t\t\t\t\t\t\t\t\t\t\t\t<td>Nome</td>\n\t\t\t\t\t\t\t\t\t\t\t\t\t<td>Qtd.</td>\n\t\t\t\t\t\t\t\t\t\t\t\t\t<td>Valor</td>\n\t\t\t\t\t\t\t\t\t\t\t\t\t<td>Comanda</td>\n\t\t\t\t\t\t\t\t\t\t\t</tr>\n\t\t\t\t\t\t\t\t\t</thead>\n\t\t\t\t\t\t\t\t\t<tbody id=\"destination-table\">\n\t\t\t\t\t\t\t\t\t\t\t<tr>\n\t\t\t\t\t\t\t\t\t\t\t</tr>\n\t\t\t\t\t\t\t\t\t</tbody>\n\t\t\t\t\t\t\t</table>\n\t\t\t\t\t\t\t\t<div class=\"card-footer right\">\n\t\t\t\t\t\t\t\t<button type=\"button\" id=\"invoice-request\" class=\"invoice-request\">Gerar Pedido</button>\n\t\t\t\t\t\t\t\t<p class=\"left total-card\" id=\"totalizador-card\">R$</p>\n\t\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t</div>\n\t\t\t";
             invoiceRequestButton = existingCardOrder.querySelector('#invoice-request');
             invoiceRequestButton.addEventListener('click', function () {
               console.log('Pedido gerado para a comanda:', commandIdCell);
@@ -426,8 +437,10 @@ function addItemCard() {
           });
           sourceTable.innerHTML = '';
           numberIdTable.innerHTML = '';
+          totalizadorCard.innerHTML = '';
+          document.body.appendChild(existingCardOrder);
 
-        case 20:
+        case 28:
         case "end":
           return _context4.stop();
       }

@@ -111,7 +111,7 @@ document.addEventListener('DOMContentLoaded', function () {
 			numberTable.value = TableNumber;
 
 			searchResultTable.innerHTML = '';
-			if (SearchTable){
+			if (SearchTable) {
 				SearchTable.innerHTML = '';
 			} else {
 				console.error('Elemento SearchTable não encontrado.');
@@ -218,8 +218,7 @@ function updatePedido() {
 			Actions.appendChild(deleteButton);
 
 			selectedRequest.push({
-				id:
-					requestID,
+				id: requestID,
 				Name: requestName,
 				stock_quantity: parseInt(requestQuantity),
 				value: requestValue,
@@ -305,11 +304,22 @@ async function addItemCard() {
 	const commandIdCell = document.getElementById('command-cell').textContent.trim();
 	const destinationTable = document.getElementById('destination-table');
 	const numberIdTable = document.getElementById('number-table');
-	
+	const totalizadorCard = document.getElementById('totalizador-request');
+	const totalcard = document.getElementById('totalizador-card');
+
 	if (!sourceTable) {
 		console.error('Elemento sourceTable não encontrado');
 		return;
 	}
+
+	console.log(totalizadorCard);
+
+	totalcard = 0;
+	if (totalizadorCard) {
+		totalcard = parseFloat(totalizadorCard.textContent) || 0;
+	}
+
+	console.log(totalcard);
 
 	const rows = sourceTable.querySelectorAll('tr');
 	if (rows.length === 0) {
@@ -326,9 +336,9 @@ async function addItemCard() {
 		existingCardOrder.style.display = 'flex';
 		existingCardOrder = document.createElement('div');
 		existingCardOrder.id = 'card-order';
-		existingCardOrder.classList.add('left', 'card-order');
+		existingCardOrder.classList.add('right', 'card-order');
 		existingCardOrder.innerHTML = `
-					<div class="card-order-content">
+						<div class="card-order-content">
 							<div class="card-list">
 									<h2>Itens na comanda</h2>
 									<button type="button" id="add-more-items" class="btn-add-more-items right">Adicionar mais itens</button>
@@ -348,12 +358,12 @@ async function addItemCard() {
 											</tr>
 									</tbody>
 							</table>
-					</div>
-					<div class="card-list">
-							<button type="button" id="invoice-request" class="invoice-request left">Gerar Pedido</button>
-					</div>
+								<div class="card-footer right">
+								<button type="button" id="invoice-request" class="invoice-request">Gerar Pedido</button>
+								<p class="left total-card" id="totalizador-card">R$</p>
+								</div>
+						</div>
 			`;
-		document.body.appendChild(existingCardOrder);
 
 		const invoiceRequestButton = existingCardOrder.querySelector('#invoice-request');
 		invoiceRequestButton.addEventListener('click', () => {
@@ -371,6 +381,9 @@ async function addItemCard() {
 
 	sourceTable.innerHTML = '';
 	numberIdTable.innerHTML = '';
+	totalizadorCard.innerHTML = '';
+
+	document.body.appendChild(existingCardOrder);
 
 }
 

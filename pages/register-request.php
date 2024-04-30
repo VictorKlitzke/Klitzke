@@ -118,9 +118,10 @@ $request = Controllers::SelectAll(
                     </tr>
                 </tbody>
             </table>
-        </div>
-        <div class="card-list">
-            <button type="button" id="invoice-request" class="invoice-request left">Gerar Pedido</button>
+            <div class="card-footer right">
+                <button type="button" id="invoice-request" class="invoice-request">Gerar Pedido</button>
+            </div>
+            <h2 class="left total-card" id="totalizador-card">R$</h2>
         </div>
     </div>
 
