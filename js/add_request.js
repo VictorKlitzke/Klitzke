@@ -196,7 +196,9 @@ function updatePedido() {
 			Command.textContent = numberTableRequest;
 
 			Quantity.classList.add('quantity-cell');
+			Quantity.id = 'quantity-cell';
 			Value.classList.add('value-cell');
+			Value.id = 'value-cell';
 			Command.id = 'command-cell';
 
 			newRow.addEventListener('click', function () {
@@ -302,24 +304,17 @@ async function deleteSelectedRow(row, quantityCell) {
 async function addItemCard() {
 	const sourceTable = document.querySelector('.tbody-request');
 	const commandIdCell = document.getElementById('command-cell').textContent.trim();
-	const destinationTable = document.getElementById('destination-table');
 	const numberIdTable = document.getElementById('number-table');
 	const totalizadorCard = document.getElementById('totalizador-request');
-	const totalcard = document.getElementById('totalizador-card');
+	let existingCardOrder = document.getElementById('card-order');
+	const quantityCell = document.getElementById('quantity-cell');
+	const valueCell = document.getElementById('value-cell');
+	let totalcard = 0;
 
 	if (!sourceTable) {
 		console.error('Elemento sourceTable não encontrado');
 		return;
 	}
-
-	console.log(totalizadorCard);
-
-	totalcard = 0;
-	if (totalizadorCard) {
-		totalcard = parseFloat(totalizadorCard.textContent) || 0;
-	}
-
-	console.log(totalcard);
 
 	const rows = sourceTable.querySelectorAll('tr');
 	if (rows.length === 0) {
@@ -327,18 +322,35 @@ async function addItemCard() {
 		return;
 	}
 
-	if (!destinationTable) {
-		console.error('Elemento destinationTable não encontrado');
-		return;
-	}
+	rows.forEach((row) => {
 
-	if (existingCardOrder.style.display = 'none') {
-		existingCardOrder.style.display = 'flex';
+		if (quantityCell && valueCell) {
+			const quantityText = quantityCell.textContent.trim();
+			const valueText = valueCell.textContent.trim().replace('R$ ', '');
+
+			const quantity = parseInt(quantityText, 10);
+			const value = parseFloat(valueText);
+
+			if (!isNaN(quantity) && !isNaN(value)) {
+				const lineTotal = quantity * value;
+				totalcard += lineTotal;
+
+			} else {
+				console.error('Erro ao converter quantidade ou valor para números.');
+			}
+		} else {
+			console.error('Elementos .quantity-cell ou .value-cell não encontrados na linha.');
+		}
+	});
+
+	if (existingCardOrder.style.display = 'none' || existingCardOrder.dataset.commandId !== commandIdCell) {
+
+		existingCardOrder.style.display = 'flex'
 		existingCardOrder = document.createElement('div');
 		existingCardOrder.id = 'card-order';
-		existingCardOrder.classList.add('right', 'card-order');
+		existingCardOrder.classList.add('card-order', 'right');
 		existingCardOrder.innerHTML = `
-						<div class="card-order-content">
+					<div class="card-order-content">
 							<div class="card-list">
 									<h2>Itens na comanda</h2>
 									<button type="button" id="add-more-items" class="btn-add-more-items right">Adicionar mais itens</button>
@@ -358,33 +370,29 @@ async function addItemCard() {
 											</tr>
 									</tbody>
 							</table>
-								<div class="card-footer right">
-								<button type="button" id="invoice-request" class="invoice-request">Gerar Pedido</button>
-								<p class="left total-card" id="totalizador-card">R$</p>
-								</div>
-						</div>
+							<div class="card-footer right">
+									<button type="button" id="invoice-request" class="invoice-request">Gerar Pedido</button>
+									<h2 class="left total-card" id="totalizador-card">R$ ${totalcard.toFixed(2)}</h2>
+							</div>
+					</div>
 			`;
 
-		const invoiceRequestButton = existingCardOrder.querySelector('#invoice-request');
-		invoiceRequestButton.addEventListener('click', () => {
-			console.log('Pedido gerado para a comanda:', commandIdCell);
+		document.body.appendChild(existingCardOrder);
+
+		const destinationTable = document.getElementById('destination-table');
+		destinationTable.innerHTML = '';
+		rows.forEach((row) => {
+			const clonedRow = row.cloneNode(true);
+			destinationTable.appendChild(clonedRow);
 		});
+
+	} else {
+		console.log('O número da comanda é o mesmo. Atualizando o card existente.');
 	}
 
-	existingCardOrder.dataset.commandId = commandIdCell;
-	destinationTable.innerHTML = '';
-
-	rows.forEach((row) => {
-		const clonedRow = row.cloneNode(true);
-		destinationTable.appendChild(clonedRow);
-	});
-
 	sourceTable.innerHTML = '';
-	numberIdTable.innerHTML = '';
+	numberIdTable.value = '';
 	totalizadorCard.innerHTML = '';
-
-	document.body.appendChild(existingCardOrder);
-
 }
 
 /***/

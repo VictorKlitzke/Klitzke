@@ -9,8 +9,6 @@ document.addEventListener("DOMContentLoaded", function() {
         }
     });
 
-    console.log(menuBtn);
-
     menuBtn.addEventListener('click', function() {
         menu.classList.toggle('show-menu');
     });
@@ -32,14 +30,6 @@ document.addEventListener("DOMContentLoaded", function() {
         menu.classList.remove('show-menu');
     });
 });
-
-
-
-
-
-
-
-
 
 function ToggleRegister() {
     let subMenuRegister = document.getElementById('registers');

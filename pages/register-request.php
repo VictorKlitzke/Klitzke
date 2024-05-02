@@ -102,22 +102,24 @@ $request = Controllers::SelectAll(
                 <h2>Itens na comanda</h2>
                 <button type="button" id="add-more-items" class="btn-add-more-items right">Adicionar mais itens</button>
             </div>
-            <table>
-                <thead>
-                    <tr>
-                        <td>#</td>
-                        <td>Nome</td>
-                        <td>Qtd.</td>
-                        <td>Valor</td>
-                        <td>Comanda</td>
-                    </tr>
-                </thead>
-                <tbody id="destination-table">
-                    <tr>
+            <div class="row-table-request">
+                <table>
+                    <thead>
+                        <tr>
+                            <td>#</td>
+                            <td>Nome</td>
+                            <td>Qtd.</td>
+                            <td>Valor</td>
+                            <td>Comanda</td>
+                        </tr>
+                    </thead>
+                    <tbody class="destination-table" id="destination-table">
+                        <tr>
 
-                    </tr>
-                </tbody>
-            </table>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
             <div class="card-footer right">
                 <button type="button" id="invoice-request" class="invoice-request">Gerar Pedido</button>
             </div>
