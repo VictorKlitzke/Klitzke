@@ -31,14 +31,6 @@ document.addEventListener("DOMContentLoaded", function() {
     });
 });
 
-
-
-
-
-
-
-
-
 function ToggleRegister() {
     let subMenuRegister = document.getElementById('registers');
     subMenuRegister.style.display = subMenuRegister.style.display === 'none' ? 'block' : 'none';

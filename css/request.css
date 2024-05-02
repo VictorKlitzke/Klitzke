@@ -343,8 +343,12 @@ section h2 {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
+.row-table-request {
+    overflow: scroll;
+}
+
 .card-order-content {
-    height: 200px;
+    height: 300px;
     width: 580px;
     padding: 10px;
     background: #202020;
