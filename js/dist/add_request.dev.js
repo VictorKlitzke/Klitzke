@@ -1,7 +1,5 @@
 "use strict";
 
-function _readOnlyError(name) { throw new Error("\"" + name + "\" is read-only"); }
-
 var selectedRequest = [];
 var numbersTableRequest = [];
 var newListProducts = [];
@@ -251,7 +249,9 @@ function updatePedido() {
       Value.textContent = requestValue;
       Command.textContent = numberTableRequest;
       Quantity.classList.add('quantity-cell');
+      Quantity.id = 'quantity-cell';
       Value.classList.add('value-cell');
+      Value.id = 'value-cell';
       Command.id = 'command-cell';
       newRow.addEventListener('click', function () {
         selectRow(newRow);
@@ -368,79 +368,82 @@ function deleteSelectedRow(row, quantityCell) {
 
 
 function addItemCard() {
-  var sourceTable, commandIdCell, destinationTable, numberIdTable, totalizadorCard, totalcard, rows, invoiceRequestButton;
+  var sourceTable, commandIdCell, numberIdTable, totalizadorCard, existingCardOrder, quantityCell, valueCell, totalcard, rows, _destinationTable;
+
   return regeneratorRuntime.async(function addItemCard$(_context4) {
     while (1) {
       switch (_context4.prev = _context4.next) {
         case 0:
           sourceTable = document.querySelector('.tbody-request');
           commandIdCell = document.getElementById('command-cell').textContent.trim();
-          destinationTable = document.getElementById('destination-table');
           numberIdTable = document.getElementById('number-table');
           totalizadorCard = document.getElementById('totalizador-request');
-          totalcard = document.getElementById('totalizador-card');
+          existingCardOrder = document.getElementById('card-order');
+          quantityCell = document.getElementById('quantity-cell');
+          valueCell = document.getElementById('value-cell');
+          totalcard = 0;
 
           if (sourceTable) {
-            _context4.next = 9;
+            _context4.next = 11;
             break;
           }
 
           console.error('Elemento sourceTable não encontrado');
           return _context4.abrupt("return");
 
-        case 9:
-          console.log(totalizadorCard);
-          totalcard = (_readOnlyError("totalcard"), 0);
-
-          if (totalizadorCard) {
-            totalcard = (_readOnlyError("totalcard"), parseFloat(totalizadorCard.textContent) || 0);
-          }
-
-          console.log(totalcard);
+        case 11:
           rows = sourceTable.querySelectorAll('tr');
 
           if (!(rows.length === 0)) {
-            _context4.next = 17;
+            _context4.next = 15;
             break;
           }
 
           window.alert('Não há nenhum item na comanda');
           return _context4.abrupt("return");
 
-        case 17:
-          if (destinationTable) {
-            _context4.next = 20;
-            break;
-          }
+        case 15:
+          rows.forEach(function (row) {
+            if (quantityCell && valueCell) {
+              var quantityText = quantityCell.textContent.trim();
+              var valueText = valueCell.textContent.trim().replace('R$ ', '');
+              var quantity = parseInt(quantityText, 10);
+              var value = parseFloat(valueText);
 
-          console.error('Elemento destinationTable não encontrado');
-          return _context4.abrupt("return");
+              if (!isNaN(quantity) && !isNaN(value)) {
+                var lineTotal = quantity * value;
+                totalcard += lineTotal;
+              } else {
+                console.error('Erro ao converter quantidade ou valor para números.');
+              }
+            } else {
+              console.error('Elementos .quantity-cell ou .value-cell não encontrados na linha.');
+            }
+          });
 
-        case 20:
-          if (existingCardOrder.style.display = 'none') {
+          if (existingCardOrder.style.display = 'none' || existingCardOrder.dataset.commandId !== commandIdCell) {
             existingCardOrder.style.display = 'flex';
             existingCardOrder = document.createElement('div');
             existingCardOrder.id = 'card-order';
-            existingCardOrder.classList.add('right', 'card-order');
-            existingCardOrder.innerHTML = "\n\t\t\t\t\t\t<div class=\"card-order-content\">\n\t\t\t\t\t\t\t<div class=\"card-list\">\n\t\t\t\t\t\t\t\t\t<h2>Itens na comanda</h2>\n\t\t\t\t\t\t\t\t\t<button type=\"button\" id=\"add-more-items\" class=\"btn-add-more-items right\">Adicionar mais itens</button>\n\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t<table>\n\t\t\t\t\t\t\t\t\t<thead>\n\t\t\t\t\t\t\t\t\t\t\t<tr>\n\t\t\t\t\t\t\t\t\t\t\t\t\t<td>#</td>\n\t\t\t\t\t\t\t\t\t\t\t\t\t<td>Nome</td>\n\t\t\t\t\t\t\t\t\t\t\t\t\t<td>Qtd.</td>\n\t\t\t\t\t\t\t\t\t\t\t\t\t<td>Valor</td>\n\t\t\t\t\t\t\t\t\t\t\t\t\t<td>Comanda</td>\n\t\t\t\t\t\t\t\t\t\t\t</tr>\n\t\t\t\t\t\t\t\t\t</thead>\n\t\t\t\t\t\t\t\t\t<tbody id=\"destination-table\">\n\t\t\t\t\t\t\t\t\t\t\t<tr>\n\t\t\t\t\t\t\t\t\t\t\t</tr>\n\t\t\t\t\t\t\t\t\t</tbody>\n\t\t\t\t\t\t\t</table>\n\t\t\t\t\t\t\t\t<div class=\"card-footer right\">\n\t\t\t\t\t\t\t\t<button type=\"button\" id=\"invoice-request\" class=\"invoice-request\">Gerar Pedido</button>\n\t\t\t\t\t\t\t\t<p class=\"left total-card\" id=\"totalizador-card\">R$</p>\n\t\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t</div>\n\t\t\t";
-            invoiceRequestButton = existingCardOrder.querySelector('#invoice-request');
-            invoiceRequestButton.addEventListener('click', function () {
-              console.log('Pedido gerado para a comanda:', commandIdCell);
+            existingCardOrder.classList.add('card-order', 'right');
+            existingCardOrder.innerHTML = "\n\t\t\t\t\t<div class=\"card-order-content\">\n\t\t\t\t\t\t\t<div class=\"card-list\">\n\t\t\t\t\t\t\t\t\t<h2>Itens na comanda</h2>\n\t\t\t\t\t\t\t\t\t<button type=\"button\" id=\"add-more-items\" class=\"btn-add-more-items right\">Adicionar mais itens</button>\n\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t<table>\n\t\t\t\t\t\t\t\t\t<thead>\n\t\t\t\t\t\t\t\t\t\t\t<tr>\n\t\t\t\t\t\t\t\t\t\t\t\t\t<td>#</td>\n\t\t\t\t\t\t\t\t\t\t\t\t\t<td>Nome</td>\n\t\t\t\t\t\t\t\t\t\t\t\t\t<td>Qtd.</td>\n\t\t\t\t\t\t\t\t\t\t\t\t\t<td>Valor</td>\n\t\t\t\t\t\t\t\t\t\t\t\t\t<td>Comanda</td>\n\t\t\t\t\t\t\t\t\t\t\t</tr>\n\t\t\t\t\t\t\t\t\t</thead>\n\t\t\t\t\t\t\t\t\t<tbody id=\"destination-table\">\n\t\t\t\t\t\t\t\t\t\t\t<tr>\n\t\t\t\t\t\t\t\t\t\t\t</tr>\n\t\t\t\t\t\t\t\t\t</tbody>\n\t\t\t\t\t\t\t</table>\n\t\t\t\t\t\t\t<div class=\"card-footer right\">\n\t\t\t\t\t\t\t\t\t<button type=\"button\" id=\"invoice-request\" class=\"invoice-request\">Gerar Pedido</button>\n\t\t\t\t\t\t\t\t\t<h2 class=\"left total-card\" id=\"totalizador-card\">R$ ".concat(totalcard.toFixed(2), "</h2>\n\t\t\t\t\t\t\t</div>\n\t\t\t\t\t</div>\n\t\t\t");
+            document.body.appendChild(existingCardOrder);
+            _destinationTable = document.getElementById('destination-table');
+            _destinationTable.innerHTML = '';
+            rows.forEach(function (row) {
+              var clonedRow = row.cloneNode(true);
+
+              _destinationTable.appendChild(clonedRow);
             });
+          } else {
+            console.log('O número da comanda é o mesmo. Atualizando o card existente.');
           }
 
-          existingCardOrder.dataset.commandId = commandIdCell;
-          destinationTable.innerHTML = '';
-          rows.forEach(function (row) {
-            var clonedRow = row.cloneNode(true);
-            destinationTable.appendChild(clonedRow);
-          });
           sourceTable.innerHTML = '';
-          numberIdTable.innerHTML = '';
+          numberIdTable.value = '';
           totalizadorCard.innerHTML = '';
-          document.body.appendChild(existingCardOrder);
 
-        case 28:
+        case 20:
         case "end":
           return _context4.stop();
       }
