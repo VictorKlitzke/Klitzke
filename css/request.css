@@ -333,3 +333,6 @@ section h2 {
     border-top-left-radius: 7px;
     border-top-right-radius: 7px;
 }
+#result-table {
+    display: none;
+}
