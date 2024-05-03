@@ -214,6 +214,29 @@ class Controllers
 
         return $exec->fetchAll();
     }
+    public static function SelectAllFormPayment($name_table, $start = null, $end = null)
+    {
+        $sql = Db::Connection();
+        if ($start == null && $end == null) {
+            $exec = $sql->prepare("SELECT
+                                        id_forms,
+                                        name forms_payment
+                                    FROM
+                                        $name_table
+                                    ORDER BY fp.id ASC");
+        } else {
+            $exec = $sql->prepare("SELECT
+                                        id id_forms,
+                                        name forms_payment
+                                    FROM
+                                        $name_table
+                                    ORDER BY r.id ASC 
+                                    LIMIT $start,$end");
+        }
+        $exec->execute();
+
+        return $exec->fetchAll();
+    }
 
     public static function SelectProduct($name_table, $query = '', $ts = '')
     {

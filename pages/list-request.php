@@ -64,8 +64,16 @@ $request = Controllers::SelectAll('request', ($currentPage - 1) * $porPage, $por
 
                         <td style="display: flex; justify-content: center; gap: 10px; margin: 6px; padding: 6px;">
                             <div>
-                                <a class="btn-disable" href="<?php echo INCLUDE_PATH; ?>">Faturar
-                                </a>
+                                <button class="btn-disable" type="button"
+                                    id="btn-list-request-invoicing-<?php echo $key; ?>" 
+                                    onclick="AddModalinvoicing(
+                                                                '<?php echo $value['id_table']; ?>',
+                                                                '<?php echo $value['date_request']; ?>',
+                                                                '<?php echo $value['total_request']; ?>',
+                                                                '<?php echo $value['STATUS_REQUEST']; ?>'
+                                                            )">
+                                    Faturar
+                                </button>
                             </div>
                         </td>
                     </tr>
@@ -161,7 +169,8 @@ $request = Controllers::SelectAll('request', ($currentPage - 1) * $porPage, $por
                         <td style="display: flex; justify-content: center; gap: 10px; margin: 6px; padding: 6px;">
                             <div>
                                 <form method="post" action="./ajax/ungroup_order.php">
-                                    <input type="hidden" name="id_table_gathers" value="<?php echo base64_encode($value["principal_command_id"]); ?>">
+                                    <input type="hidden" name="id_table_gathers"
+                                        value="<?php echo base64_encode($value["principal_command_id"]); ?>">
                                     <button type="submit" class="btn-ungroup">Desagrupar</button>
                                 </form>
                             </div>
@@ -210,3 +219,39 @@ $request = Controllers::SelectAll('request', ($currentPage - 1) * $porPage, $por
     ?>
 
 </div>
+
+
+<div class="overlay-invo">
+    <div class="modal-invo" id="modal-invo">
+        <div class="modal-content-">
+            <div class="button-forms">
+                <?php
+                $forms_payment = Controllers::SelectAllFormPayment('forms_payment');
+
+                foreach ($forms_payment as $key => $value) {
+
+                    ?>
+
+                    <button type="button" id="">
+                        <?php echo htmlspecialchars(
+                            $value["id_forms"]
+                        ); ?>
+                    </button>
+                    <button type="button">
+                        <?php echo htmlspecialchars(
+                            $value["forms_payment"]
+                        ); ?>
+                    </button>
+
+                <?php } ?>
+            </div>
+            <div class="info-invo">
+                <h2 id="total-request"></h2>
+                <h2 id="status-request"></h2>
+                <h2 id="date-request"></h2>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="<?php echo INCLUDE_PATH_PANEL; ?>../js/modal_invoicing.js"></script>
