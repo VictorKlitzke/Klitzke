@@ -278,6 +278,7 @@ include_once 'config/config.php';
     <script src="<?php echo INCLUDE_PATH; ?>./js/alert.js"></script>
     <script src="<?php echo INCLUDE_PATH; ?>./js/values.js"></script>
     <script src="<?php echo INCLUDE_PATH; ?>./js/menu.js"></script>
+    <script src="./js/modal_invoicing.js"></script>
    
 </body>
 

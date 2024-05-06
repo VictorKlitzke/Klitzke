@@ -1,11 +1,4 @@
 <?php
-
-if (isset($_POST['delete'])) {
-    $del = intval($_POST['delete']);
-    Controllers::DeleteRequest($del);
-    header('Location: ' . INCLUDE_PATH . 'list-request');
-}
-
 $currentPage = isset($_POST['page']) ? (int) ($_POST['page']) : 1;
 $porPage = 20;
 
@@ -13,7 +6,7 @@ $request = Controllers::SelectAll('request', ($currentPage - 1) * $porPage, $por
 ?>
 
 <div class="box-content left w100">
-    <div class=""
+    <div
         style="display: flex; background: #ccc; padding: 9px; margin: 4px; border-radius: 4px; justify-content: space-between;">
         <h2 style="color: #000">Lista de pedidos</h2>
         <div class="btn-ajust" style="flex-grow: 1; text-align: center; max-width: 180px;">
@@ -64,14 +57,9 @@ $request = Controllers::SelectAll('request', ($currentPage - 1) * $porPage, $por
 
                         <td style="display: flex; justify-content: center; gap: 10px; margin: 6px; padding: 6px;">
                             <div>
-                                <button class="btn-disable" type="button"
-                                    id="btn-list-request-invoicing-<?php echo $key; ?>" 
-                                    onclick="AddModalinvoicing(
-                                                                '<?php echo $value['id_table']; ?>',
-                                                                '<?php echo $value['date_request']; ?>',
-                                                                '<?php echo $value['total_request']; ?>',
-                                                                '<?php echo $value['STATUS_REQUEST']; ?>'
-                                                            )">
+                                <button
+                                    onclick="AddModalinvoicing('<?php echo $value['id_table']; ?>','<?php echo $value['date_request']; ?>','<?php echo $value['total_request']; ?>','<?php echo $value['STATUS_REQUEST']; ?>')"
+                                    class="btn-disable" type="button" id="btn-list-request-invoicing-<?php echo $key; ?>">
                                     Faturar
                                 </button>
                             </div>
