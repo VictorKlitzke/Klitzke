@@ -52,36 +52,26 @@ class Controllers
 
     public static function SelectRequest($name_table, $start = null, $end = null)
     {
-        if ($start == null && $end == null) {
-            $exec = Db::Connection()->prepare("SELECT 
-                                                    R.*,
-                                                    U.name NAME_USER,
-                                                    CASE 
-                                                        WHEN R.status = 1 THEN 'EM ATENDIMENTO'
-                                                        WHEN R.status = 2 THEN 'FINALIZADA'
-                                                        WHEN R.status = 3 THEN 'CONCLUIDO'
-                                                        WHEN R.status = 4 THEN 'AGRUPADOS'
-                                                    END 
-                                                    STATUS_REQUEST
-                                                FROM 
-                                                    request R
-                                                    INNER JOIN users U ON U.id = R.id_users_request");
-        } else {
-            $exec = Db::Connection()->prepare("SELECT 
-                                                    R.*,
-                                                    U.name NAME_USER,
-                                                    CASE 
-                                                        WHEN R.status = 1 THEN 'EM ATENDIMENTO'
-                                                        WHEN R.status = 2 THEN 'FINALIZADA'
-                                                        WHEN R.status = 3 THEN 'CONCLUIDO'
-                                                        WHEN R.status = 4 THEN 'AGRUPADOS'
-                                                    END 
-                                                    STATUS_REQUEST
-                                                FROM 
-                                                    request R
-                                                    INNER JOIN users U ON U.id = R.id_users_request");
+        $sql = Db::Connection();
+        $query = "SELECT 
+                    R.*,
+                    U.name AS NAME_USER,
+                    CASE 
+                        WHEN R.status = 1 THEN 'EM ATENDIMENTO'
+                        WHEN R.status = 2 THEN 'FINALIZADA'
+                        WHEN R.status = 3 THEN 'CONCLUÍDO'
+                        WHEN R.status = 4 THEN 'AGRUPADOS'
+                    END AS STATUS_REQUEST
+                FROM 
+                    $name_table R
+                    INNER JOIN users U ON U.id = R.id_users_request
+                ORDER BY R.id ASC";
+
+        if ($start !== null && $end !== null) {
+            $query .= " LIMIT $start, $end";
         }
 
+        $exec = $sql->prepare($query);
         $exec->execute();
 
         return $exec->fetchAll();
@@ -89,35 +79,28 @@ class Controllers
 
     public static function SelectrequestGathers($name_table, $start = null, $end = null)
     {
-        if ($start == null && $end == null) {
-            $exec = Db::Connection()->prepare("SELECT
-                                                rp.id_table principal_command_id,
-                                                rs.id_table grouped_command_id,
-                                                rg.status,
-                                                rg.value_total,
-                                                rg.created_at
-                                            FROM
-                                                request_gathers rg
-                                                inner join request rp on rp.id = rg.principal_command_id
-                                                inner join request rs on rs.id = rg.grouped_command_id ");
-        } else {
-                $exec = Db::Connection()->prepare("SELECT
-                                                    rp.id_table principal_command_id,
-                                                    rs.id_table grouped_command_id,
-                                                    rg.status,
-                                                    rg.value_total,
-                                                    rg.created_at
-                                                FROM
-                                                    request_gathers rg
-                                                    inner join request rp on rp.id = rg.principal_command_id
-                                                    inner join request rs on rs.id = rg.grouped_command_id ");
+        $sql = Db::Connection();
+        $query = "SELECT
+                    rp.id_table AS principal_command_id,
+                    rs.id_table AS grouped_command_id,
+                    rg.status,
+                    rg.value_total,
+                    rg.created_at
+                FROM
+                    $name_table rg
+                    INNER JOIN request rp ON rp.id = rg.principal_command_id
+                    INNER JOIN request rs ON rs.id = rg.grouped_command_id
+                ORDER BY rp.id ASC";
+
+        if ($start !== null && $end !== null) {
+            $query .= " LIMIT $start, $end";
         }
 
+        $exec = $sql->prepare($query);
         $exec->execute();
 
         return $exec->fetchAll();
     }
-
 
     public static function SelectBoxPdv($name_table, $start = null, $end = null, $user_filter = null)
     {
@@ -217,22 +200,18 @@ class Controllers
     public static function SelectAllFormPayment($name_table, $start = null, $end = null)
     {
         $sql = Db::Connection();
-        if ($start == null && $end == null) {
-            $exec = $sql->prepare("SELECT
-                                        id_forms,
-                                        name forms_payment
-                                    FROM
-                                        $name_table
-                                    ORDER BY fp.id ASC");
-        } else {
-            $exec = $sql->prepare("SELECT
-                                        id id_forms,
-                                        name forms_payment
-                                    FROM
-                                        $name_table
-                                    ORDER BY r.id ASC 
-                                    LIMIT $start,$end");
+        $query = "SELECT
+                    id AS id,
+                    name AS forms_payment
+                FROM
+                    $name_table
+                ORDER BY id ASC";
+                
+        if ($start !== null && $end !== null) {
+            $query .= " LIMIT $start, $end";
         }
+
+        $exec = $sql->prepare($query);
         $exec->execute();
 
         return $exec->fetchAll();
