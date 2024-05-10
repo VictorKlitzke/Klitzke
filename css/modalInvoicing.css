@@ -61,7 +61,7 @@
 }
 
 .Invo-Fat {
-    background: rgb(122, 222, 122)23;
+    background: rgb(122, 222, 122);
 }
 
 .button-forms-invo button {
@@ -74,10 +74,6 @@
     color: #fff;
     cursor: pointer;
     transition: background 0.3s ease;
-}
-
-.button-forms-invo button:hover {
-    background: #0056b3;
 }
 
 #total_request {

@@ -231,9 +231,9 @@ $request = Controllers::SelectAll('request', ($currentPage - 1) * $porPage, $por
 					$forms_payments = Controllers::SelectAllFormPayment("form_payment");
 					foreach ($forms_payments as $key => $value) {
 				?>
-					<button><?php echo $value['forms_payment']; ?></button>
+					<button class="Invo-forms"><?php echo $value['forms_payment']; ?></button>
 				<?php } ?>
-				<button class="right Invo-Fat" type="button">Faturar</button>
+				<button onclick="CloseInvo()" class="right Invo-Fat" type="button">Faturar</button>
 			</div>
 		</div>
 	</div>
