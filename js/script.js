@@ -1,3 +1,5 @@
+const { Button } = require("bootstrap");
+
 let OpenModalInvoicing = document.getElementById('modal-invo');
 let overlayModalInvoicing = document.getElementById('overlay-invo');
 let closeModalInvo = document.getElementById('modal-invo-close');
@@ -42,7 +44,8 @@ function ModalFaturamento(id_table, date_request, total_request, STATUS_REQUEST)
         id_table: id_table,
         date_request: date_request,
         total_request: total_request,
-        status_request: STATUS_REQUEST
+        status_request: STATUS_REQUEST,
+        Button: ButtonFatInvo
     }
 
     SelectedInvos.push(orderPedidos);
@@ -53,6 +56,8 @@ async function CloseInvo() {
     let responseInvo = {
         SelectedInvos: orderPedidos,
     }
+
+    console.log(responseInvo);
 
     try {
         const responseserver = await fetch("", {

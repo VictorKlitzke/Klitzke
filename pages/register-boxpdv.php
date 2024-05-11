@@ -50,8 +50,6 @@ foreach ($company as $key => $values) {
                 Panel::Alert('sucess', 'Caixa foi aberto no valor de ' . $value);
             }
         }
-    } else {
-        Panel::Alert('error', 'Nenhum usuário logado encontrado!!!');
     }
 }
 ?>
