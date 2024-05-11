@@ -9,8 +9,6 @@ document.addEventListener("DOMContentLoaded", function() {
         }
     });
 
-    console.log(menuBtn);
-
     menuBtn.addEventListener('click', function() {
         menu.classList.toggle('show-menu');
     });
@@ -69,16 +67,4 @@ function ToggleReport() {
     let subMenuReport = document.getElementById('report');
     subMenuReport.style.display = subMenuReport.style.display === 'none' ? 'block' : 'none';
     subMenuReport.style.padding = '5px';
-}
-
-function loadPage(url) {
-    var content = document.getElementById('content');
-    var xhr = new XMLHttpRequest();
-    xhr.onreadystatechange = function() {
-        if (xhr.readyState == 4 && xhr.status == 200) {
-            content.innerHTML = xhr.responseText;
-        }
-    };
-    xhr.open('GET', url, true);
-    xhr.send();
 }

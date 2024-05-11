@@ -765,7 +765,6 @@ function showSuccessMessageRequest(message) {
 
 /***/
 
-
 document.querySelector('.button-request').addEventListener('click', updatePedido, calculateTotal());
 // document.querySelector('.invoice-request').addEventListener('click', generetorRequest);
 // document.querySelector('.button-order').addEventListener('click', AddProductOrder());
