@@ -25,7 +25,7 @@ $request = Controllers::SelectAll(
                 <input type="text" id="search-table" name="search-table" placeholder="Adicionar comanda" />
                 <ul id="result-table" style="display: none;"></ul>
             </div>
-            
+
         </div>
     </div>
     <div class="card-request left w40">
@@ -116,7 +116,10 @@ $request = Controllers::SelectAll(
                     </thead>
                     <tbody class="destination-table" id="destination-table">
                         <tr>
-
+                            <td>1</td>
+                            <td></td>
+                            <td id="quantity-cell-card"></td>
+                            <td id="value-cell-card"></td>
                         </tr>
                     </tbody>
                 </table>
@@ -138,25 +141,25 @@ $request = Controllers::SelectAll(
         <span id="success-message-request"></span>
     </div>
     <div id="error-container-request" class="error-container-hidden"
-    style="color: black; background: #f75353; display: none; align-items: center; justify-content: center; padding: 20px; top: 50%; left: 50%; width: 100%;">
-    <span id="error-message-request"></span>
-</div>
+        style="color: black; background: #f75353; display: none; align-items: center; justify-content: center; padding: 20px; top: 50%; left: 50%; width: 100%;">
+        <span id="error-message-request"></span>
+    </div>
 
-<div id="success-container-request" class="success-container-hidden"
-    style="color: black; background: green; display: none; align-items: center; justify-content: center; padding: 20px; top: 50%; left: 50%; width: 100%;">
-    <span id="success-message-request"></span>
-</div>
+    <div id="success-container-request" class="success-container-hidden"
+        style="color: black; background: green; display: none; align-items: center; justify-content: center; padding: 20px; top: 50%; left: 50%; width: 100%;">
+        <span id="success-message-request"></span>
+    </div>
 
 </form>
 <script src="<?php echo INCLUDE_PATH_PANEL; ?>../js/add_request.js"></script>
 
 <script>
-    document.addEventListener("DOMContentLoaded", function() {
+    document.addEventListener("DOMContentLoaded", function () {
         var searchTable = document.getElementById("search-table");
         var resultTable = document.getElementById("result-table");
 
         // Adicionamos um evento de entrada (input) ao campo de entrada
-        searchTable.addEventListener("input", function() {
+        searchTable.addEventListener("input", function () {
             // Verificamos se há algum valor no campo de entrada
             if (searchTable.value.trim() !== "") {
                 // Exibimos o #result-table
@@ -168,7 +171,7 @@ $request = Controllers::SelectAll(
         });
 
         // Adicionamos um evento de clique fora do campo de entrada para ocultar o #result-table
-        document.addEventListener("click", function(event) {
+        document.addEventListener("click", function (event) {
             // Verificamos se o clique não foi dentro do #result-table ou #search-table
             if (event.target !== resultTable && event.target !== searchTable) {
                 // Ocultamos o #result-table
@@ -177,7 +180,7 @@ $request = Controllers::SelectAll(
         });
     });
 
-    
+
 </script>
 
 <script src="<?php echo INCLUDE_PATH_PANEL; ?>../js/add_request.js"></script>

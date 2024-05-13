@@ -311,7 +311,9 @@ async function addItemCard() {
 	const valueCell = document.getElementById('value-cell');
 	let totalcard = 0;
 
-	if (!sourceTable) {
+	console.log(sourceTable);
+
+	if (sourceTable == null || sourceTable.innerHTML == '') {
 		console.error('Elemento sourceTable não encontrado');
 		return;
 	}
@@ -343,12 +345,14 @@ async function addItemCard() {
 		}
 	});
 
+	console.log(sourceTable.commandIdCell);
+
 	if (existingCardOrder.style.display = 'none' || existingCardOrder.dataset.commandId !== commandIdCell) {
 
 		existingCardOrder.style.display = 'flex'
 		existingCardOrder = document.createElement('div');
 		existingCardOrder.id = 'card-order';
-		existingCardOrder.classList.add('card-order', 'right');
+		existingCardOrder.classList.add('card-order');
 		existingCardOrder.innerHTML = `
 					<div class="card-order-content">
 							<div class="card-list">
@@ -814,7 +818,6 @@ async function GathersTables() {
 //         }
 //     }
 // }
-
 
 /* CARDS DE MENSAGENS */
 function showErrorMessageRequest(message) {
