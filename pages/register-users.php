@@ -3,7 +3,7 @@
 if (isset($_POST['action'])) {
   $name = $_POST['name'];
   $email = $_POST['email'];
-  $password = $_POST['password'];
+  $password = password_hash($_POST['password'], PASSWORD_DEFAULT);
   $phone = $_POST['phone'];
   $function = $_POST['function'];
   $commission = $_POST['commission'];

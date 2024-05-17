@@ -116,10 +116,7 @@ $request = Controllers::SelectAll(
                     </thead>
                     <tbody class="destination-table" id="destination-table">
                         <tr>
-                            <td>1</td>
-                            <td></td>
-                            <td id="quantity-cell-card"></td>
-                            <td id="value-cell-card"></td>
+                           
                         </tr>
                     </tbody>
                 </table>
@@ -182,5 +179,3 @@ $request = Controllers::SelectAll(
 
 
 </script>
-
-<script src="<?php echo INCLUDE_PATH_PANEL; ?>../js/add_request.js"></script>

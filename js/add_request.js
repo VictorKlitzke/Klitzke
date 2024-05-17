@@ -302,101 +302,123 @@ async function deleteSelectedRow(row, quantityCell) {
 /* CODIGO PARA ADICONAR ITENS NO CARD */
 
 async function addItemCard() {
-	const sourceTable = document.querySelector('.tbody-request');
-	const commandIdCell = document.getElementById('command-cell').textContent.trim();
-	const numberIdTable = document.getElementById('number-table');
-	const totalizadorCard = document.getElementById('totalizador-request');
-	let existingCardOrder = document.getElementById('card-order');
-	const quantityCell = document.getElementById('quantity-cell');
-	const valueCell = document.getElementById('value-cell');
-	let totalcard = 0;
+    const sourceTable = document.querySelector('.tbody-request');
+    const numberIdTable = document.getElementById('number-table');
+    const totalizadorCard = document.getElementById('totalizador-request');
+    let existingCardOrder = document.getElementById('card-order');
+    let totalcard = 0;
 
-	console.log(sourceTable);
+    if (!sourceTable || sourceTable.innerHTML.trim() === '') {
+        window.alert('Itens do pedido não encontrados, entre em contato com o suporte!');
+        return;
+    }
 
-	if (sourceTable == null || sourceTable.innerHTML == '') {
-		console.error('Elemento sourceTable não encontrado');
-		return;
-	}
+    const rows = sourceTable.querySelectorAll('tr');
+    if (rows.length === 0) {
+        window.alert('Não há nenhum item na comanda');
+        return;
+    }
 
-	const rows = sourceTable.querySelectorAll('tr');
-	if (rows.length === 0) {
-		window.alert('Não há nenhum item na comanda');
-		return;
-	}
+    if (!existingCardOrder || existingCardOrder.dataset.commandId !== numberIdTable.value.trim()) {
+        existingCardOrder = createNewCard(numberIdTable.value.trim());
+        document.body.appendChild(existingCardOrder);
+    }
 
-	rows.forEach((row) => {
+    const destinationTable = existingCardOrder.querySelector('.destination-table');
+    if (!destinationTable) {
+        console.error('Elemento .destination-table não encontrado no card.');
+        return;
+    }
 
-		if (quantityCell && valueCell) {
-			const quantityText = quantityCell.textContent.trim();
-			const valueText = valueCell.textContent.trim().replace('R$ ', '');
+    rows.forEach((row, index) => {
+		const cells = row.cells;
+		console.log(`Número de células na linha ${index + 1}: ${cells.length}`);
+	   
+		// Verificar se a linha possui células antes de processar
+		if (cells.length > 0) {
+			// Acessar o conteúdo das células e processar
+			const productID = cells[0].textContent.trim();
+			const productName = cells[1].textContent.trim();
+			const quantityText = cells[2].textContent.trim();
+			const unitPriceText = cells[3].textContent.trim().replace('R$ ', '');
+	
+			// Verificar se o conteúdo das células é válido antes de processar
+			if (productID && productName && quantityText && unitPriceText) {
+				const quantity = parseInt(quantityText, 10);
+				const unitPrice = parseFloat(unitPriceText);
+	
+				if (!isNaN(quantity) && !isNaN(unitPrice)) {
+					// Processar os dados das células normalmente
+					const lineTotal = quantity * unitPrice;
+					totalcard += lineTotal;
+	
+					const newRow = document.createElement('tr');
+					newRow.innerHTML = `
+						<td>${productID}</td>
+						<td>${productName}</td>
+						<td>${quantity}</td>
+						<td>R$ ${unitPrice.toFixed(2)}</td>
+					`;
 
-			const quantity = parseInt(quantityText, 10);
-			const value = parseFloat(valueText);
-
-			if (!isNaN(quantity) && !isNaN(value)) {
-				const lineTotal = quantity * value;
-				totalcard += lineTotal;
-
+					console.log(newRow);
+	
+					const destinationTable = existingCardOrder.querySelector('.destination-table');
+					if (destinationTable) {
+						destinationTable.appendChild(newRow);
+					}
+				} else {
+					console.error(`Erro ao converter quantidade ou valor para números na linha ${index + 1}.`);
+				}
 			} else {
-				console.error('Erro ao converter quantidade ou valor para números.');
+				console.error(`Erro: A linha ${index + 1} não contém dados suficientes para processamento.`);
 			}
 		} else {
-			console.error('Elementos .quantity-cell ou .value-cell não encontrados na linha.');
+			console.error(`Erro: A linha ${index + 1} não contém células.`);
 		}
 	});
+	
+    const totalizadorElement = existingCardOrder.querySelector('.total-card');
+    if (totalizadorElement) {
+        totalizadorElement.textContent = `R$ ${totalcard.toFixed(2)}`;
+    }
 
-	console.log(sourceTable.commandIdCell);
+    sourceTable.innerHTML = '';
+    numberIdTable.value = '';
+    totalizadorCard.textContent = '';
+}
 
-	if (existingCardOrder.style.display = 'none' || existingCardOrder.dataset.commandId !== commandIdCell) {
+function createNewCard(commandId) {
+    const newCard = document.createElement('div');
+    newCard.id = 'card-order';
+    newCard.classList.add('card-order');
+    newCard.dataset.commandId = commandId;
 
-		existingCardOrder.style.display = 'flex'
-		existingCardOrder = document.createElement('div');
-		existingCardOrder.id = 'card-order';
-		existingCardOrder.classList.add('card-order');
-		existingCardOrder.innerHTML = `
-					<div class="card-order-content">
-							<div class="card-list">
-									<h2>Itens na comanda</h2>
-									<button type="button" id="add-more-items" class="btn-add-more-items right">Adicionar mais itens</button>
-							</div>
-							<table>
-									<thead>
-											<tr>
-													<td>#</td>
-													<td>Nome</td>
-													<td>Qtd.</td>
-													<td>Valor</td>
-													<td>Comanda</td>
-											</tr>
-									</thead>
-									<tbody id="destination-table">
-											<tr>
-											</tr>
-									</tbody>
-							</table>
-							<div class="card-footer right">
-									<button type="button" id="invoice-request" class="invoice-request">Gerar Pedido</button>
-									<h2 class="left total-card" id="totalizador-card">R$ ${totalcard.toFixed(2)}</h2>
-							</div>
-					</div>
-			`;
+    newCard.innerHTML = `
+        <div class="card-order-content">
+            <div class="card-list">
+                <h2>Itens na comanda ${commandId}</h2>
+            </div>
+            <div class="row-table-request">
+                <table>
+                    <thead>
+                        <tr>
+                            <td>Comanda</td>
+                            <td>Nome</td>
+                            <td>Qtd.</td>
+                            <td>Valor</td>
+                        </tr>
+                    </thead>
+                    <tbody class="destination-table"></tbody>
+                </table>
+            </div>
+            <div class="card-footer right">
+                <button type="button" class="invoice-request">Gerar Pedido</button>
+                <h2 class="left total-card" id="totalizador-card">R$ 0.00</h2>
+            </div>
+        </div>
+    `;
 
-		document.body.appendChild(existingCardOrder);
-
-		const destinationTable = document.getElementById('destination-table');
-		destinationTable.innerHTML = '';
-		rows.forEach((row) => {
-			const clonedRow = row.cloneNode(true);
-			destinationTable.appendChild(clonedRow);
-		});
-
-	} else {
-		console.log('O número da comanda é o mesmo. Atualizando o card existente.');
-	}
-
-	sourceTable.innerHTML = '';
-	numberIdTable.value = '';
-	totalizadorCard.innerHTML = '';
+    return newCard;
 }
 
 /***/
