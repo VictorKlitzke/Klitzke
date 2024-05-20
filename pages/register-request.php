@@ -97,37 +97,6 @@ $request = Controllers::SelectAll(
         </div>
     </div>
 
-    <div class="card-order left" id="card-order">
-        <div class="card-order-content">
-            <div class="card-list">
-                <h2>Itens na comanda</h2>
-                <button type="button" id="add-more-items" class="btn-add-more-items right">Adicionar mais itens</button>
-            </div>
-            <div class="row-table-request">
-                <table>
-                    <thead>
-                        <tr>
-                            <td>#</td>
-                            <td>Nome</td>
-                            <td>Qtd.</td>
-                            <td>Valor</td>
-                            <td>Comanda</td>
-                        </tr>
-                    </thead>
-                    <tbody class="destination-table" id="destination-table">
-                        <tr>
-                           
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-            <div class="card-footer right">
-                <button type="button" id="invoice-request" class="invoice-request">Gerar Pedido</button>
-            </div>
-            <h2 class="left total-card" id="totalizador-card">R$</h2>
-        </div>
-    </div>
-
     <div id="error-container-request"
         style="color: black; display: none; background: #f75353; display: none; align-items: center; justify-content: center; padding: 20px; top: 50%; left: 50%; width: 100%;">
         <span id="error-message-request"></span>
@@ -147,7 +116,34 @@ $request = Controllers::SelectAll(
         <span id="success-message-request"></span>
     </div>
 
+    <div class="overlay-invo" id="overlay-invo">
+        <div class="modal-invo" id="modal-invo">
+            <div class="navbar-invo">
+                <h2>Fechar pedido</h2>
+                <svg id="modal-invo-close" style="cursor: pointer;" fill="#fff" xmlns="http://www.w3.org/2000/svg" height="24px"
+                     viewBox="0 0 24 24" width="24px">
+                    <path d="M0 0h24v24H0z" fill="none" />
+                    <path
+                            d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" />
+                </svg>
+            </div>
+            <div class="modal-content">
+                <div id="orderDetails"></div>
+                <div class="button-forms-invo">
+                    <?php
+                    $forms_payments = Controllers::SelectAllFormPayment("form_payment");
+                    foreach ($forms_payments as $key => $value) {
+                        ?>
+                        <button type="button" class="Invo-forms"><?php echo $value['forms_payment']; ?></button>
+                    <?php } ?>
+                    <button onclick="CloseInvo()" class="right Invo-Fat" type="button">Faturar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
 </form>
+
 <script src="<?php echo INCLUDE_PATH_PANEL; ?>../js/add_request.js"></script>
 
 <script>

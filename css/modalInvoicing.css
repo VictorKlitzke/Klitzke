@@ -57,7 +57,11 @@
 
 .button-forms-invo {
     display: flex;
-    flex-wrap: wrap;
+    background: #ccc;
+    padding: 12px 2px 2px 2px;
+    margin: 4px;
+    border-radius: 7px;
+    justify-content: center;
 }
 
 .Invo-Fat {

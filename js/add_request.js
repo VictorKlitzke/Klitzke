@@ -1,12 +1,20 @@
-var selectedRequest = [];
-var numbersTableRequest = [];
-var newListProducts = [];
-var tableSelected = [];
+let selectedRequest = [];
+let numbersTableRequest = [];
+let newListProducts = [];
+let tableSelected = [];
+let SelectedInvos = [];
+let SelectedFatPed = [];
 
-var addButtonCard = document.getElementById('add-card-item');
-var sourceTable = document.querySelector('.card-request-finallize .tbody-request');
-var destinationTable = document.querySelector('destination-table');
-var existingCardOrder = document.getElementById('card-order');
+let addButtonCard = document.getElementById('add-card-item');
+let sourceTable = document.querySelector('.card-request-finallize .tbody-request');
+let destinationTable = document.querySelector('destination-table');
+let existingCardOrder = document.getElementById('card-order');
+
+let OpenModalInvoicing = document.getElementById('modal-invo');
+let overlayModalInvoicing = document.getElementById('overlay-invo');
+let closeModalInvo = document.getElementById('modal-invo-close');
+let ButtonFatInvo = document.querySelectorAll('.Invo-forms');
+let buttonCardPed = document.getElementById('add-card-item');
 
 document.addEventListener('DOMContentLoaded', function () {
 
@@ -207,6 +215,7 @@ function updatePedido() {
 
 			var deleteButton = document.createElement('button');
 			deleteButton.textContent = 'Deletar';
+			deleteButton.type = 'button';
 			deleteButton.style.backgroundColor = 'red';
 			deleteButton.style.borderRadius = '5px';
 			deleteButton.style.border = 'none';
@@ -269,7 +278,8 @@ function selectRow(row) {
 
 		row.classList.add('selected-row');
 		deleteButton.style.display = 'inline';
-		row.style.backgroundColor = '#202020';
+		row.style.backgroundColor = '#ccc';
+		row.style.color = '#000';
 	} else {
 		console.error("Botão de exclusão não encontrado.");
 	}
@@ -302,123 +312,146 @@ async function deleteSelectedRow(row, quantityCell) {
 /* CODIGO PARA ADICONAR ITENS NO CARD */
 
 async function addItemCard() {
-    const sourceTable = document.querySelector('.tbody-request');
-    const numberIdTable = document.getElementById('number-table');
-    const totalizadorCard = document.getElementById('totalizador-request');
-    let existingCardOrder = document.getElementById('card-order');
-    let totalcard = 0;
+	const sourceTable = document.querySelector('.tbody-request');
+	const numberIdTable = document.getElementById('number-table');
+	let totalcard = 0;
+	let existingCardOrder = null;
+	let existingRow = null;
 
-    if (!sourceTable || sourceTable.innerHTML.trim() === '') {
-        window.alert('Itens do pedido não encontrados, entre em contato com o suporte!');
-        return;
-    }
+	if (sourceTable.innerHTML === '') {
+		buttonCardPed.disabled;
+		window.alert('Sem nenhum item para gerar o card dos pedidos!');
+	}
 
-    const rows = sourceTable.querySelectorAll('tr');
-    if (rows.length === 0) {
-        window.alert('Não há nenhum item na comanda');
-        return;
-    }
+	if (!sourceTable || sourceTable.innerHTML.trim() === '') {
+		window.alert('Itens do pedido não encontrados, entre em contato com o suporte!');
+		return;
+	}
 
-    if (!existingCardOrder || existingCardOrder.dataset.commandId !== numberIdTable.value.trim()) {
-        existingCardOrder = createNewCard(numberIdTable.value.trim());
-        document.body.appendChild(existingCardOrder);
-    }
+	const rowsCardP = sourceTable.querySelectorAll('tr');
 
-    const destinationTable = existingCardOrder.querySelector('.destination-table');
-    if (!destinationTable) {
-        console.error('Elemento .destination-table não encontrado no card.');
-        return;
-    }
+	const currentCommandId = numberIdTable.value.trim();
+	if (!currentCommandId) {
+		window.alert('Número da comanda não pode ser vazio.');
+		return;
+	}
 
-    rows.forEach((row, index) => {
-		const cells = row.cells;
-		console.log(`Número de células na linha ${index + 1}: ${cells.length}`);
-	   
-		// Verificar se a linha possui células antes de processar
-		if (cells.length > 0) {
-			// Acessar o conteúdo das células e processar
-			const productID = cells[0].textContent.trim();
-			const productName = cells[1].textContent.trim();
-			const quantityText = cells[2].textContent.trim();
-			const unitPriceText = cells[3].textContent.trim().replace('R$ ', '');
-	
-			// Verificar se o conteúdo das células é válido antes de processar
-			if (productID && productName && quantityText && unitPriceText) {
-				const quantity = parseInt(quantityText, 10);
-				const unitPrice = parseFloat(unitPriceText);
-	
-				if (!isNaN(quantity) && !isNaN(unitPrice)) {
-					// Processar os dados das células normalmente
-					const lineTotal = quantity * unitPrice;
-					totalcard += lineTotal;
-	
-					const newRow = document.createElement('tr');
-					newRow.innerHTML = `
-						<td>${productID}</td>
-						<td>${productName}</td>
-						<td>${quantity}</td>
-						<td>R$ ${unitPrice.toFixed(2)}</td>
-					`;
-
-					console.log(newRow);
-	
-					const destinationTable = existingCardOrder.querySelector('.destination-table');
-					if (destinationTable) {
-						destinationTable.appendChild(newRow);
-					}
-				} else {
-					console.error(`Erro ao converter quantidade ou valor para números na linha ${index + 1}.`);
-				}
-			} else {
-				console.error(`Erro: A linha ${index + 1} não contém dados suficientes para processamento.`);
-			}
-		} else {
-			console.error(`Erro: A linha ${index + 1} não contém células.`);
+	// Verifica se já existe um card com o currentCommandId
+	document.querySelectorAll('.card-order').forEach(card => {
+		if (card.dataset.commandId === currentCommandId) {
+			existingCardOrder = card;
 		}
 	});
-	
-    const totalizadorElement = existingCardOrder.querySelector('.total-card');
-    if (totalizadorElement) {
-        totalizadorElement.textContent = `R$ ${totalcard.toFixed(2)}`;
-    }
 
-    sourceTable.innerHTML = '';
-    numberIdTable.value = '';
-    totalizadorCard.textContent = '';
+	if (!existingCardOrder) {
+		existingCardOrder = createNewCard(currentCommandId);
+		document.body.appendChild(existingCardOrder);
+	} else if (existingCardOrder.dataset.commandId === currentCommandId) {
+		console.log("functionando!!")
+	}
+
+	const destinationTable = existingCardOrder.querySelector('.destination-table');
+	if (!destinationTable) {
+		window.alert('Elemento .destination-table não encontrado no card, entre em contato com o suporte!');
+		return;
+	}
+
+	rowsCardP.forEach((row) => {
+		const cells = Array.from(row.children);
+
+		if (cells.length < 4) {
+			console.warn('A linha não contém células suficientes:', row);
+			return;
+		}
+
+		const productID = cells[0].textContent.trim();
+		const productName = cells[1].textContent.trim();
+		const quantityText = cells[2].textContent.trim();
+		const unitPriceText = cells[3].textContent.trim().replace('R$ ', '');
+		const quantity = parseInt(quantityText, 10);
+		const unitPrice = parseFloat(unitPriceText);
+
+		// Verifica se já existe uma linha com o mesmo produto na tabela de destino
+		Array.from(destinationTable.querySelectorAll('tr')).forEach(destRow => {
+			const destCells = Array.from(destRow.children);
+			if (destCells.length > 0 && destCells[0].textContent.trim() === productID) {
+				existingRow = destRow;
+			}
+		});
+
+		if (existingRow) {
+			// Atualiza a quantidade e o valor total se a linha já existir
+			const existingQuantity = parseInt(existingRow.children[2].textContent, 10);
+			const newQuantity = existingQuantity + quantity;
+			existingRow.children[2].textContent = newQuantity;
+			const newLineTotal = newQuantity * unitPrice;
+			totalcard += quantity * unitPrice; // Adiciona o total da nova quantidade
+			existingRow.children[3].textContent = `R$ ${newLineTotal.toFixed(2)}`;
+		} else {
+			// Adiciona uma nova linha se não existir
+			const newRow = document.createElement('tr');
+			newRow.innerHTML = `
+                <td>${productID}</td>
+                <td>${productName}</td>
+                <td>${quantity}</td>
+                <td>R$ ${(quantity * unitPrice).toFixed(2)}</td>
+            `;
+			destinationTable.appendChild(newRow);
+			totalcard += quantity * unitPrice;
+		}
+
+		let PedFat = {
+			productID: productID,
+			productName: productName,
+			quantity: quantity,
+			totalcard: totalcard
+		}
+		SelectedFatPed.push(PedFat);
+	})
+
+	const totalizadorElement = existingCardOrder.querySelector('.total-card');
+	if (totalizadorElement) {
+		totalizadorElement.textContent = `R$ ${totalcard.toFixed(2)}`;
+	}
+
+	sourceTable.innerHTML = '';
+	numberIdTable.value = '';
+	const totalizadorCard = document.getElementById('totalizador-request');
+	totalizadorCard.textContent = '';
 }
 
 function createNewCard(commandId) {
-    const newCard = document.createElement('div');
-    newCard.id = 'card-order';
-    newCard.classList.add('card-order');
-    newCard.dataset.commandId = commandId;
+	const newCard = document.createElement('div');
+	newCard.classList.add('content');
+	newCard.dataset.commandId = commandId;
 
-    newCard.innerHTML = `
-        <div class="card-order-content">
-            <div class="card-list">
-                <h2>Itens na comanda ${commandId}</h2>
-            </div>
-            <div class="row-table-request">
-                <table>
-                    <thead>
-                        <tr>
-                            <td>Comanda</td>
-                            <td>Nome</td>
-                            <td>Qtd.</td>
-                            <td>Valor</td>
-                        </tr>
-                    </thead>
-                    <tbody class="destination-table"></tbody>
-                </table>
-            </div>
-            <div class="card-footer right">
-                <button type="button" class="invoice-request">Gerar Pedido</button>
-                <h2 class="left total-card" id="totalizador-card">R$ 0.00</h2>
-            </div>
-        </div>
+	newCard.innerHTML = `
+		<div class="card-order left">
+			<div class="card-list">
+				<h2>Itens na comanda ${commandId}</h2>
+			</div>
+			<div class="row-table-request">
+				<table>
+					<thead>
+						<tr>
+							<td>#</td>
+							<td>Nome</td>
+							<td>Qtd.</td>
+							<td>Valor</td>
+						</tr>
+					</thead>
+					<tbody class="destination-table" id="destination-table">
+					</tbody>
+				</table>
+			</div>
+			<div class="card-footer right">
+				<button type="button" id="invoice-request" class="invoice-request" onclick="ModalFaturamento()">Gerar Pedido</button>
+			</div>
+			<h2 class="left total-card" id="totalizador-card">R$ 0.00</h2>
+		</div>
     `;
 
-    return newCard;
+	return newCard;
 }
 
 /***/
@@ -638,6 +671,89 @@ function calculateTotal() {
 
 // }
 
+/* MODAL DE FATURAMENTO DE PEDIDO */
+
+// function closemodalData() {
+//
+// 	if (OpenModalInvoicingFat.style.display == 'block' && overlayModalInvoicingFat.style.display == "block") {
+// 		OpenModalInvoicingFat.style.display = "none";
+// 		overlayModalInvoicingFat.style.display = "none";
+// 	}
+// };
+//
+// function ModalFaturamento(id_table, date_request, total_request, STATUS_REQUEST) {
+// 	if (STATUS_REQUEST === "AGRUPADOS") {
+// 		window.alert("Esse pedido esta agrupados");
+// 		return;
+// 	} else {
+// 		OpenModalInvoicingFat.style.display = 'block';
+// 		overlayModalInvoicingFat.style.display = 'block';
+//
+// 		const id_table_invoFat = document.getElementById('id-table');
+// 		const value_request_totalFat = document.getElementById('total-request');
+// 		const date_request_invoFat = document.getElementById('date-request');
+// 		const status_request_invoFat = document.getElementById('status-request');
+//
+// 		id_table_invoFat.textContent = "Comanda: " + id_table;
+// 		value_request_totalFat.innerHTML = "Total pedido " + '<input type="text" id="total_request" value="' + total_request + '" />';
+// 		date_request_invoFat.textContent = "Data do pedido: " + date_request;
+// 		status_request_invoFat.textContent = "Status: " + STATUS_REQUEST;
+//
+// 		ButtonFat.forEach(function (button) {
+// 			button.addEventListener("click", function () {
+// 				button.style.background = "rgb(58, 204, 82)";
+// 			})
+// 			button.addEventListener("dblclick", function () {
+// 				button.style.background = "";
+// 			})
+// 		});
+// 	}
+//
+// 	let orderPedidosFat = {
+// 		id_table: id_table,
+// 		date_request: date_request,
+// 		total_request: total_request,
+// 		status_request: STATUS_REQUEST,
+// 		Button: ButtonFatInvo
+// 	}
+//
+// 	SelectedInvosFat.push(orderPedidosFat);
+// }
+//
+// async function CloseInvo() {
+//
+// 	let responseInvo = {
+// 		SelectedInvosFat: orderPedidosFat,
+// 	}
+//
+// 	try {
+// 		const responseserver = await fetch("", {
+// 			method: 'POST',
+// 			headers: {
+// 				'Content-Type': 'application/json',
+// 			},
+// 			body: JSON.stringify(responseInvo),
+// 		})
+//
+// 		const response = await responseserver.text();
+// 		console.log('Response from server:', response);
+// 		const responseDataInvo = JSON.parse(response);
+//
+// 		if (responseDataInvo && responseDataInvo.success) {
+// 			window.alert('Pedido finalizada com sucesso!');
+// 			// const saleId = responseData.id;
+// 			// window.location.href = 'pages/proof.php?sale_id=' + saleId;
+// 		} else {
+// 			console.error('Erro ao faturar pedido:', responseDataInvo ? responseDataInvo.error : 'Resposta vazia');
+// 		}
+// 	} catch (error) {
+// 		console.log("Erro ao faturar Pedido" + SelectedInvos.id_table + error);
+// 	}
+//
+// }
+
+/**/
+
 /* CODIGO DE AGRUPAMENTO DE COMANDAS */
 
 async function addGathersArray(index, id, table_request, total_request) {
@@ -842,6 +958,7 @@ async function GathersTables() {
 // }
 
 /* CARDS DE MENSAGENS */
+
 function showErrorMessageRequest(message) {
 	const errorContainerRequest = document.getElementById('erro-global-h2');
 	const errorMessageElementRequest = document.getElementById('erro-global-h2');
@@ -865,6 +982,80 @@ function showSuccessMessageRequest(message) {
 }
 
 /***/
+
+/* CARD DE FATURAMENTO */
+
+closeModalInvo.addEventListener("click", function () {
+	OpenModalInvoicing.style.display = "none";
+	overlayModalInvoicing.style.display = "none";
+});
+
+function ModalFaturamento() {
+
+	let totalcard = document.getElementById('totalizador-card');
+
+	OpenModalInvoicing.style.display = 'block';
+	overlayModalInvoicing.style.display = 'block';
+
+	const orderDetails = document.getElementById('orderDetails');
+
+	const itemElement = document.createElement('div');
+	itemElement.innerHTML = `
+        <span>Status: Em Atendimento</span>
+        <br/>
+        Total: R$<input type="text" value="${totalcard.innerText}"/>
+        <hr>
+        <br>
+    `;
+	orderDetails.appendChild(itemElement);
+
+	ButtonFatInvo.forEach(function (button) {
+		button.addEventListener("click", function () {
+			button.style.background = "rgb(58, 204, 82)";
+		})
+		console.log(ButtonFatInvo);
+		button.addEventListener("dblclick", function () {
+			button.style.background = "";
+		})
+	});
+
+}
+
+async function CloseInvo() {
+
+	let responseInvo = {
+		SelectedInvos: orderPedidos,
+	}
+
+	console.log(responseInvo);
+
+	try {
+		const responseserver = await fetch("", {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+			},
+			body: JSON.stringify(responseInvo),
+		})
+
+		const response = await responseserver.text();
+		console.log('Response from server:', response);
+		const responseDataInvo = JSON.parse(response);
+
+		if (responseDataInvo && responseDataInvo.success) {
+			window.alert('Pedido finalizada com sucesso!');
+			// const saleId = responseData.id;
+			// window.location.href = 'pages/proof.php?sale_id=' + saleId;
+		} else {
+			console.error('Erro ao faturar pedido:', responseDataInvo ? responseDataInvo.error : 'Resposta vazia');
+		}
+	} catch (error) {
+		console.log("Erro ao faturar Pedido" + SelectedInvos.id_table + error);
+	}
+
+}
+
+/**/
 
 document.querySelector('.button-request').addEventListener('click', updatePedido, calculateTotal());
 // document.querySelector('.invoice-request').addEventListener('click', generetorRequest);

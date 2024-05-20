@@ -23,7 +23,8 @@ include_once 'config/config.php';
   <link rel="stylesheet" href="<?php echo INCLUDE_PATH_PANEL; ?>../css/selectedClients.css" />
   <link rel="stylesheet" href="<?php echo INCLUDE_PATH_PANEL; ?>../css/modalPortion.css" />
   <link rel="stylesheet" href="<?php echo INCLUDE_PATH_PANEL; ?>../css/font-awesome.min.css">
-  <!-- <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous"> -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/2.0.7/css/dataTables.dataTables.css"/>
+<!--   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">-->
   <link rel="icon" href="<?php echo INCLUDE_PATH; ?>./public/logo/favicon.ico" type="image/x-icon" />
   <title>Klitzke Software - Admin</title>
 </head>
@@ -231,7 +232,7 @@ include_once 'config/config.php';
         <div class="navbar-boxpdv">
           <h2>Fechamento do caixa</h2>
           <svg id="close-boxpdv-modal" style="cursor: pointer;" fill="#fff" xmlns="http://www.w3.org/2000/svg"
-            height="24px" viewBox="0 0 24 24" width="24px" fill="#000000">
+               height="24px" viewBox="0 0 24 24" width="24px">
             <path d="M0 0h24v24H0z" fill="none" />
             <path
               d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" />
@@ -280,7 +281,6 @@ include_once 'config/config.php';
   <script language="JavaScript" type="text/javascript" src="<?php echo INCLUDE_PATH; ?>./js/alert.js"></script>
   <script language="JavaScript" type="text/javascript" src="<?php echo INCLUDE_PATH; ?>./js/values.js"></script>
   <script language="JavaScript" type="text/javascript" src="<?php echo INCLUDE_PATH; ?>./js/menu.js"></script>
-  <script language="JavaScript" type="text/javascript" src="<?php echo INCLUDE_PATH; ?>./js/script.js"></script>
 
 </body>
 
