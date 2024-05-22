@@ -967,6 +967,7 @@ function fieldsTotalForms(button) {
 			<strong>${button.textContent}</strong><input id="payment-final-fat" type="text" style="text-align: left" placeholder="Valor a ser pago"/>
 		</div>
 		<br/>
+		<br/>
 	`;
 
 	const orderDetails = document.getElementById('orderDetails');
