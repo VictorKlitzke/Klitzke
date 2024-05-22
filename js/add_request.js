@@ -1,12 +1,19 @@
-var selectedRequest = [];
-var numbersTableRequest = [];
-var newListProducts = [];
-var tableSelected = [];
+let selectedRequest = [];
+let tableSelected = [];
+let SelectedInvos = [];
+let SelectedFatPed = [];
+let ButtonSelected = [];
 
-var addButtonCard = document.getElementById('add-card-item');
-var sourceTable = document.querySelector('.card-request-finallize .tbody-request');
-var destinationTable = document.querySelector('destination-table');
-var existingCardOrder = document.getElementById('card-order');
+let addButtonCard = document.getElementById('add-card-item');
+let sourceTable = document.querySelector('.card-request-finallize .tbody-request');
+let destinationTable = document.querySelector('destination-table');
+let existingCardOrder = document.getElementById('card-order');
+
+let OpenModalInvoicing = document.getElementById('modal-invo');
+let overlayModalInvoicing = document.getElementById('overlay-invo');
+let closeModalInvo = document.getElementById('modal-invo-close');
+let ButtonFatInvo = document.querySelectorAll('.Invo-forms');
+let buttonCardPed = document.getElementById('add-card-item');
 
 document.addEventListener('DOMContentLoaded', function () {
 
@@ -207,6 +214,7 @@ function updatePedido() {
 
 			var deleteButton = document.createElement('button');
 			deleteButton.textContent = 'Deletar';
+			deleteButton.type = 'button';
 			deleteButton.style.backgroundColor = 'red';
 			deleteButton.style.borderRadius = '5px';
 			deleteButton.style.border = 'none';
@@ -269,7 +277,8 @@ function selectRow(row) {
 
 		row.classList.add('selected-row');
 		deleteButton.style.display = 'inline';
-		row.style.backgroundColor = '#202020';
+		row.style.backgroundColor = '#ccc';
+		row.style.color = '#000';
 	} else {
 		console.error("Botão de exclusão não encontrado.");
 	}
@@ -302,97 +311,148 @@ async function deleteSelectedRow(row, quantityCell) {
 /* CODIGO PARA ADICONAR ITENS NO CARD */
 
 async function addItemCard() {
-	const sourceTable = document.querySelector('.tbody-request');
-	const commandIdCell = document.getElementById('command-cell').textContent.trim();
+
 	const numberIdTable = document.getElementById('number-table');
-	const totalizadorCard = document.getElementById('totalizador-request');
-	let existingCardOrder = document.getElementById('card-order');
-	const quantityCell = document.getElementById('quantity-cell');
-	const valueCell = document.getElementById('value-cell');
+	const rowstableProducts = document.getElementById('command-cell');
+
 	let totalcard = 0;
+	let existingCardOrder = null;
+	let existingRow = null;
 
-	if (!sourceTable) {
-		console.error('Elemento sourceTable não encontrado');
+	if (rowstableProducts == '' || rowstableProducts == null) {
+		window.alert('Itens do pedido não encontrados, itens pedidos vazio');
+		return false;
+	}
+
+	if (!sourceTable || sourceTable.innerHTML.trim() === '') {
+		window.alert('Itens do pedido não encontrados, entre em contato com o suporte!');
 		return;
 	}
 
-	const rows = sourceTable.querySelectorAll('tr');
-	if (rows.length === 0) {
-		window.alert('Não há nenhum item na comanda');
+	const rowsCardP = sourceTable.querySelectorAll('tr');
+
+	const currentCommandId = numberIdTable.value.trim();
+	if (!currentCommandId) {
+		window.alert('Número da comanda não pode ser vazio.');
 		return;
 	}
 
-	rows.forEach((row) => {
-
-		if (quantityCell && valueCell) {
-			const quantityText = quantityCell.textContent.trim();
-			const valueText = valueCell.textContent.trim().replace('R$ ', '');
-
-			const quantity = parseInt(quantityText, 10);
-			const value = parseFloat(valueText);
-
-			if (!isNaN(quantity) && !isNaN(value)) {
-				const lineTotal = quantity * value;
-				totalcard += lineTotal;
-
-			} else {
-				console.error('Erro ao converter quantidade ou valor para números.');
-			}
-		} else {
-			console.error('Elementos .quantity-cell ou .value-cell não encontrados na linha.');
+	// Verifica se já existe um card com o currentCommandId
+	document.querySelectorAll('.card-order').forEach(card => {
+		if (card.dataset.commandId === currentCommandId) {
+			existingCardOrder = card;
 		}
 	});
 
-	if (existingCardOrder.style.display = 'none' || existingCardOrder.dataset.commandId !== commandIdCell) {
-
-		existingCardOrder.style.display = 'flex'
-		existingCardOrder = document.createElement('div');
-		existingCardOrder.id = 'card-order';
-		existingCardOrder.classList.add('card-order', 'right');
-		existingCardOrder.innerHTML = `
-					<div class="card-order-content">
-							<div class="card-list">
-									<h2>Itens na comanda</h2>
-									<button type="button" id="add-more-items" class="btn-add-more-items right">Adicionar mais itens</button>
-							</div>
-							<table>
-									<thead>
-											<tr>
-													<td>#</td>
-													<td>Nome</td>
-													<td>Qtd.</td>
-													<td>Valor</td>
-													<td>Comanda</td>
-											</tr>
-									</thead>
-									<tbody id="destination-table">
-											<tr>
-											</tr>
-									</tbody>
-							</table>
-							<div class="card-footer right">
-									<button type="button" id="invoice-request" class="invoice-request">Gerar Pedido</button>
-									<h2 class="left total-card" id="totalizador-card">R$ ${totalcard.toFixed(2)}</h2>
-							</div>
-					</div>
-			`;
-
+	if (!existingCardOrder) {
+		existingCardOrder = createNewCard(currentCommandId);
 		document.body.appendChild(existingCardOrder);
+	} else if (existingCardOrder.dataset.commandId === currentCommandId) {
+		console.log("functionando!!")
+	}
 
-		const destinationTable = document.getElementById('destination-table');
-		destinationTable.innerHTML = '';
-		rows.forEach((row) => {
-			const clonedRow = row.cloneNode(true);
-			destinationTable.appendChild(clonedRow);
+	const destinationTable = existingCardOrder.querySelector('.destination-table');
+	if (!destinationTable) {
+		window.alert('Elemento .destination-table não encontrado no card, entre em contato com o suporte!');
+		return;
+	}
+
+	rowsCardP.forEach((row) => {
+		const cells = Array.from(row.children);
+
+		if (cells.length < 4) {
+			console.warn('A linha não contém células suficientes:', row);
+			return;
+		}
+
+		const productID = cells[0].textContent.trim();
+		const productName = cells[1].textContent.trim();
+		const quantityText = cells[2].textContent.trim();
+		const unitPriceText = cells[3].textContent.trim().replace('R$ ', '');
+		const quantity = parseInt(quantityText, 10);
+		const unitPrice = parseFloat(unitPriceText);
+
+		// Verifica se já existe uma linha com o mesmo produto na tabela de destino
+		Array.from(destinationTable.querySelectorAll('tr')).forEach(destRow => {
+			const destCells = Array.from(destRow.children);
+			if (destCells.length > 0 && destCells[0].textContent.trim() === productID) {
+				existingRow = destRow;
+			}
 		});
 
-	} else {
-		console.log('O número da comanda é o mesmo. Atualizando o card existente.');
+		if (existingRow) {
+			// Atualiza a quantidade e o valor total se a linha já existir
+			const existingQuantity = parseInt(existingRow.children[2].textContent, 10);
+			const newQuantity = existingQuantity + quantity;
+			existingRow.children[2].textContent = newQuantity;
+			const newLineTotal = newQuantity * unitPrice;
+			totalcard += quantity * unitPrice; // Adiciona o total da nova quantidade
+			existingRow.children[3].textContent = `R$ ${newLineTotal.toFixed(2)}`;
+		} else {
+			// Adiciona uma nova linha se não existir
+			const newRow = document.createElement('tr');
+			newRow.innerHTML = `
+                <td>${productID}</td>
+                <td>${productName}</td>
+                <td>${quantity}</td>
+                <td>R$ ${(quantity * unitPrice).toFixed(2)}</td>
+            `;
+			destinationTable.appendChild(newRow);
+			totalcard += quantity * unitPrice;
+		}
+
+		let PedFat = {
+			productID: productID,
+			productName: productName,
+			quantity: quantity,
+			totalcard: totalcard
+		}
+		SelectedFatPed.push(PedFat);
+	})
+
+	const totalizadorElement = existingCardOrder.querySelector('.total-card');
+	if (totalizadorElement) {
+		totalizadorElement.textContent = `R$ ${totalcard.toFixed(2)}`;
 	}
 
 	sourceTable.innerHTML = '';
 	numberIdTable.value = '';
-	totalizadorCard.innerHTML = '';
+	const totalizadorCard = document.getElementById('totalizador-request');
+	totalizadorCard.textContent = '';
+}
+
+function createNewCard(commandId) {
+	const newCard = document.createElement('div');
+	newCard.classList.add('content');
+	newCard.dataset.commandId = commandId;
+
+	newCard.innerHTML = `
+		<div class="card-order left">
+			<div class="card-list">
+				<h2>Itens na comanda ${commandId}</h2>
+			</div>
+			<div class="row-table-request">
+				<table>
+					<thead>
+						<tr>
+							<td>#</td>
+							<td>Nome</td>
+							<td>Qtd.</td>
+							<td>Valor</td>
+						</tr>
+					</thead>
+					<tbody class="destination-table" id="destination-table">
+					</tbody>
+				</table>
+			</div>
+			<div class="card-footer right">
+				<button type="button" id="invoice-request" class="invoice-request" onclick="ModalFaturamento()">Gerar Pedido</button>
+			</div>
+			<h2 class="left total-card" id="totalizador-card">R$ 0.00</h2>
+		</div>
+    `;
+
+	return newCard;
 }
 
 /***/
@@ -612,6 +672,89 @@ function calculateTotal() {
 
 // }
 
+/* MODAL DE FATURAMENTO DE PEDIDO */
+
+// function closemodalData() {
+//
+// 	if (OpenModalInvoicingFat.style.display == 'block' && overlayModalInvoicingFat.style.display == "block") {
+// 		OpenModalInvoicingFat.style.display = "none";
+// 		overlayModalInvoicingFat.style.display = "none";
+// 	}
+// };
+//
+// function ModalFaturamento(id_table, date_request, total_request, STATUS_REQUEST) {
+// 	if (STATUS_REQUEST === "AGRUPADOS") {
+// 		window.alert("Esse pedido esta agrupados");
+// 		return;
+// 	} else {
+// 		OpenModalInvoicingFat.style.display = 'block';
+// 		overlayModalInvoicingFat.style.display = 'block';
+//
+// 		const id_table_invoFat = document.getElementById('id-table');
+// 		const value_request_totalFat = document.getElementById('total-request');
+// 		const date_request_invoFat = document.getElementById('date-request');
+// 		const status_request_invoFat = document.getElementById('status-request');
+//
+// 		id_table_invoFat.textContent = "Comanda: " + id_table;
+// 		value_request_totalFat.innerHTML = "Total pedido " + '<input type="text" id="total_request" value="' + total_request + '" />';
+// 		date_request_invoFat.textContent = "Data do pedido: " + date_request;
+// 		status_request_invoFat.textContent = "Status: " + STATUS_REQUEST;
+//
+// 		ButtonFat.forEach(function (button) {
+// 			button.addEventListener("click", function () {
+// 				button.style.background = "rgb(58, 204, 82)";
+// 			})
+// 			button.addEventListener("dblclick", function () {
+// 				button.style.background = "";
+// 			})
+// 		});
+// 	}
+//
+// 	let orderPedidosFat = {
+// 		id_table: id_table,
+// 		date_request: date_request,
+// 		total_request: total_request,
+// 		status_request: STATUS_REQUEST,
+// 		Button: ButtonFatInvo
+// 	}
+//
+// 	SelectedInvosFat.push(orderPedidosFat);
+// }
+//
+// async function CloseInvo() {
+//
+// 	let responseInvo = {
+// 		SelectedInvosFat: orderPedidosFat,
+// 	}
+//
+// 	try {
+// 		const responseserver = await fetch("", {
+// 			method: 'POST',
+// 			headers: {
+// 				'Content-Type': 'application/json',
+// 			},
+// 			body: JSON.stringify(responseInvo),
+// 		})
+//
+// 		const response = await responseserver.text();
+// 		console.log('Response from server:', response);
+// 		const responseDataInvo = JSON.parse(response);
+//
+// 		if (responseDataInvo && responseDataInvo.success) {
+// 			window.alert('Pedido finalizada com sucesso!');
+// 			// const saleId = responseData.id;
+// 			// window.location.href = 'pages/proof.php?sale_id=' + saleId;
+// 		} else {
+// 			console.error('Erro ao faturar pedido:', responseDataInvo ? responseDataInvo.error : 'Resposta vazia');
+// 		}
+// 	} catch (error) {
+// 		console.log("Erro ao faturar Pedido" + SelectedInvos.id_table + error);
+// 	}
+//
+// }
+
+/**/
+
 /* CODIGO DE AGRUPAMENTO DE COMANDAS */
 
 async function addGathersArray(index, id, table_request, total_request) {
@@ -769,54 +912,8 @@ async function GathersTables() {
 
 /***/
 
-// async function generetorRequest() {
-
-//     let totalElementOrderRequestRequest = document.getElementById('totalizador-request');
-//     let TotalValueRequest = 0;
-//     if (totalElementOrderRequestRequest) {
-//         TotalValueRequest = parseFloat(totalElementOrderRequestRequest.textContent.replace('R$ ', '')) || 0;
-//     }
-//     let numberTableRequest = document.getElementById('number-table').value;
-
-//     let RequestData = {
-//         TotalValueRequest: TotalValueRequest,
-//         requestProducts: selectedRequest,
-//         numberTableRequest: numberTableRequest
-//     };
-
-//     console.log(RequestData);
-
-//     if (requestProducts.length === 0) {
-//         showErrorMessageRequest('Nenhum produto selecionado!!');
-//         return true;
-//     } else {
-//         try {
-//             let urlRequest = 'http://localhost/Klitzke/ajax/add_request.php';
-
-//             const responseRequest = await fetch(urlRequest, {
-//                 method: 'POST',
-//                 headers: {
-//                     'Content-Type': 'application/json'
-//                 }, body: JSON.stringify(RequestData),
-//             });
-
-//             const responseBodyRequest = await responseRequest.text();
-//             const responseDataRequest = JSON.parse(responseBodyRequest);
-
-//             if (responseDataRequest && responseDataRequest.success) {
-//                 showSuccessMessageRequest('Pedido gerado com sucesso!');
-//             } else {
-//                 console.error('Erro ao registrar venda:', responseDataRequest ? responseDataRequest.error : 'Resposta vazia');
-//             }
-
-//         } catch (error) {
-//             console.error('Erro ao enviar dados para o PHP:', error);
-//         }
-//     }
-// }
-
-
 /* CARDS DE MENSAGENS */
+
 function showErrorMessageRequest(message) {
 	const errorContainerRequest = document.getElementById('erro-global-h2');
 	const errorMessageElementRequest = document.getElementById('erro-global-h2');
@@ -840,6 +937,121 @@ function showSuccessMessageRequest(message) {
 }
 
 /***/
+
+/* CARD DE FATURAMENTO */
+
+closeModalInvo.addEventListener("click", function () {
+	OpenModalInvoicing.style.display = "none";
+	overlayModalInvoicing.style.display = "none";
+});
+
+function ModalFaturamento() {
+
+	const totalcardElement = document.getElementById('totalizador-card');
+	const totalcardValue = totalcardElement ? totalcardElement.innerText.replace('R$', '').trim() : '0.00';
+
+	const OpenModalInvoicing = document.getElementById('modal-invo');
+	const overlayModalInvoicing = document.getElementById('overlay-invo');
+	const orderDetails = document.getElementById('orderDetails');
+
+	orderDetails.innerHTML = '';
+
+	const itemElement = document.createElement('div');
+	itemElement.style.alignItems = 'center';
+
+	itemElement.innerHTML = `
+        <span>Status: Em Atendimento</span>
+        <br/>
+        <br/>
+        <div style="display: flex; align-items: center;">
+        	<strong>Total</strong><input id="total-card-final" type="text" value="${totalcardValue}"/>
+		</div>
+        <br>
+    `;
+	orderDetails.appendChild(itemElement);
+
+	OpenModalInvoicing.style.display = 'block';
+	overlayModalInvoicing.style.display = 'block';
+
+	const ButtonFatInvo = document.querySelectorAll('.Invo-forms');
+	ButtonFatInvo.forEach(function (button) {
+		button.addEventListener("click", function () {
+			button.style.background = "rgb(58, 204, 82)";
+		});
+		console.log(button)
+		button.addEventListener("dblclick", function () {
+			button.style.background = "";
+		});
+
+		let buttonPed = {
+			button: button
+		}
+		ButtonSelected.push(buttonPed);
+	});
+
+	document.getElementById('modal-invo-close').onclick = function() {
+		OpenModalInvoicing.style.display = 'none';
+		overlayModalInvoicing.style.display = 'none';
+	};
+
+	window.onclick = function(event) {
+		if (event.target == overlayModalInvoicing) {
+			OpenModalInvoicing.style.display = 'none';
+			overlayModalInvoicing.style.display = 'none';
+		}
+	};
+}
+
+async function CloseInvo() {
+
+	let totalCardFinal = document.getElementById('total-card-final').value
+	totalCardFinal.replace('R$', '').trim();
+
+	let PedFat = SelectedFatPed || '';
+
+	if (totalCardFinal == '') {
+		window.alert("Total esta vazio!");
+		return;
+	}
+
+	let responseInvo = {
+		SelectedFatPed: PedFat,
+		totalCardFinal: totalCardFinal
+	}
+
+	console.log(responseInvo)
+
+	if (responseInvo.SelectedFatPed == null) {
+		window.alert("Erro ao buscar itens de pedido para faturamento!")
+		return;
+	}
+
+	try {
+		const responseserver = await fetch("", {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+			},
+			body: JSON.stringify(responseInvo),
+		})
+
+		const response = await responseserver.text();
+		console.log('Response from server:', response);
+		const responseDataInvo = JSON.parse(response);
+
+		if (responseDataInvo && responseDataInvo.success) {
+			window.alert('Pedido finalizada com sucesso!');
+		} else {
+			window.alert("Erro ao faturar pedido, por favor entre em contato com o suporte")
+			console.error('Erro ao faturar pedido:', responseDataInvo ? responseDataInvo.error : 'Resposta vazia');
+		}
+	} catch (error) {
+		console.log("Erro ao faturar Pedido" + SelectedInvos.id_table + error);
+	}
+
+}
+
+/**/
 
 document.querySelector('.button-request').addEventListener('click', updatePedido, calculateTotal());
 // document.querySelector('.invoice-request').addEventListener('click', generetorRequest);

@@ -160,3 +160,28 @@
         width: 100%; /* Layout responsivo para dispositivos móveis */
     }
 }
+
+
+
+
+	let rowsCardProducts = document.getElementById('destination-table').value;
+	const orderDetails = document.getElementById('orderDetails');
+	const idTable = document.getElementById('id-table');
+	const currentCommandId = document.getElementById('number-table').value.trim();
+
+	SelectedFatPed.forEach(item => {
+		const itemElement = document.createElement('div');
+		itemElement.innerHTML = `
+			<span>#: ${item.productID}</span>
+			<span>Produto: ${item.productName}</span>
+			<span>Quantidade: ${item.quantity}</span>
+			<span>Total: R$ ${item.totalcard.toFixed(2)}</span>
+			<hr>
+		`;
+		orderDetails.appendChild(itemElement);
+	});
+
+	// Preenche os detalhes do pedido
+	idTable.textContent = `Número da Comanda: ${currentCommandId}`;
+	document.getElementById('status-request').textContent = 'Status: Pendente';
+	document.getElementById('date-request').textContent = `Data do pedido: ${new Date().toLocaleDateString()}`;

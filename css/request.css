@@ -4,6 +4,7 @@
     border: 1px solid #ccc;
     height: 580px;
     border-radius: 7px;
+    margin-bottom: 25px;
 }
 
 .table-number {
@@ -54,7 +55,7 @@
 }
 
 h4 {
-    font-size: 168x;
+    font-size: 16px;
 }
 
 .caracteres input {
@@ -336,24 +337,20 @@ section h2 {
 /* CARDS DE ADD MAIS ITENS */
 
 .card-order {
-    display: none;
+    padding: 6px;
     background-color: #202020;
     border: 1px solid #ccc;
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-.row-table-request {
-    overflow: scroll;
+.card-order-content {
+    padding: 10px;
 }
 
-.card-order-content {
-    height: 300px;
-    width: 580px;
-    padding: 10px;
-    background: #202020;
-    border: 1px solid #ccc;
-    border-radius: 10px;
+.row-table-request {
+    overflow-y: scroll;
+    height: 250px;
 }
 
 .card-list {
