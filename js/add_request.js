@@ -951,19 +951,32 @@ closeModalInvo.addEventListener("click", function () {
 });
 
 function fieldsTotalForms(button) {
+	const buttonId = button.dataset.paymentId;
+	const existingInput = document.querySelector(`.input-total-card[data-payment-id="${buttonId}"]`);
+
+	if (existingInput) {
+		existingInput.style.display = 'block';
+		return;
+	}
+
 	const newInput = document.createElement('div');
 	newInput.classList.add('input-total-card');
+	newInput.dataset.paymentId = buttonId;
 	newInput.innerHTML = `
-		<div>
-			<strong>Valor a ser pago</strong><input id="total-card-final" type="text"/>
+		<div style="display: flex; align-items: center;">
+			<strong>${button.textContent}</strong><input id="payment-final-fat" type="text" style="text-align: left" placeholder="Valor a ser pago"/>
 		</div>
+		<br/>
 	`;
+
+	const orderDetails = document.getElementById('orderDetails');
+	orderDetails.appendChild(newInput);
 }
 
 function ModalFaturamento(commandId) {
 
-	console.log(commandId)
-	const totalcardElement = document.getElementById('totalizador-card');
+	const totalcardElement = document.getElementById('totalizador-card' + commandId);
+	console.log(totalcardElement)
 	const totalcardValue = totalcardElement ? totalcardElement.innerText.replace('R$', '').trim() : '0.00';
 
 	const OpenModalInvoicing = document.getElementById('modal-invo');
@@ -996,6 +1009,11 @@ function ModalFaturamento(commandId) {
 			button.style.background = "rgb(58, 204, 82)";
 		});
 		button.addEventListener("dblclick", function () {
+			const paymentId = button.dataset.paymentId;
+			const inputTotalCard = document.querySelector(`.input-total-card[data-payment-id="${paymentId}"]`);
+			if (inputTotalCard) {
+				inputTotalCard.style.display = 'none';
+			}
 			button.style.background = "";
 		});
 
@@ -1020,10 +1038,14 @@ function ModalFaturamento(commandId) {
 
 async function CloseInvo() {
 
+	let paymentFormsValor = document.getElementById('payment-final-fat');
+	paymentFormsValor.replace('R$', '').trim();
+
 	let totalCardFinal = document.getElementById('total-card-final').value
 	totalCardFinal.replace('R$', '').trim();
 
 	let PedFat = SelectedFatPed || '';
+	let buttonPed = ButtonSelected || '';
 
 	if (totalCardFinal == '') {
 		window.alert("Total esta vazio!");
@@ -1032,7 +1054,9 @@ async function CloseInvo() {
 
 	let responseInvo = {
 		SelectedFatPed: PedFat,
-		totalCardFinal: totalCardFinal
+		totalCardFinal: totalCardFinal,
+		ButtonSelected: buttonPed,
+		paymentFormsValor: paymentFormsValor
 	}
 
 	console.log(responseInvo)
