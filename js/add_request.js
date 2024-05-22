@@ -446,11 +446,16 @@ function createNewCard(commandId) {
 				</table>
 			</div>
 			<div class="card-footer right">
-				<button type="button" id="invoice-request" class="invoice-request" onclick="ModalFaturamento()">Gerar Pedido</button>
+				<button type="button" id="invoice-request-${commandId}" class="invoice-request">Gerar Pedido</button>
 			</div>
 			<h2 class="left total-card" id="totalizador-card">R$ 0.00</h2>
 		</div>
     `;
+
+	const invoiceButton = newCard.querySelector(`#invoice-request-${commandId}`);
+	invoiceButton.addEventListener('click', function() {
+		ModalFaturamento(commandId);
+	});
 
 	return newCard;
 }
@@ -945,8 +950,19 @@ closeModalInvo.addEventListener("click", function () {
 	overlayModalInvoicing.style.display = "none";
 });
 
-function ModalFaturamento() {
+function fieldsTotalForms(button) {
+	const newInput = document.createElement('div');
+	newInput.classList.add('input-total-card');
+	newInput.innerHTML = `
+		<div>
+			<strong>Valor a ser pago</strong><input id="total-card-final" type="text"/>
+		</div>
+	`;
+}
 
+function ModalFaturamento(commandId) {
+
+	console.log(commandId)
 	const totalcardElement = document.getElementById('totalizador-card');
 	const totalcardValue = totalcardElement ? totalcardElement.innerText.replace('R$', '').trim() : '0.00';
 
@@ -976,9 +992,9 @@ function ModalFaturamento() {
 	const ButtonFatInvo = document.querySelectorAll('.Invo-forms');
 	ButtonFatInvo.forEach(function (button) {
 		button.addEventListener("click", function () {
+			fieldsTotalForms(button);
 			button.style.background = "rgb(58, 204, 82)";
 		});
-		console.log(button)
 		button.addEventListener("dblclick", function () {
 			button.style.background = "";
 		});
