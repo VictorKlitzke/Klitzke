@@ -1,17 +1,0 @@
-
-OWeb:AvoidCommentedOutCodeCheck"Remove this commented out code.(¾×ôK8™³µù1
-¥,Web:MouseEventWithoutKeyboardEquivalentCheckI"@Add a 'onKeyPress|onKeyDown|onKeyUp' attribute to this <h2> tag.(Àãè‰8ï­¡ù1J$db96ae72-f037-4a52-8de6-fa1fbaddca44
-”	Web:S6847I"RNon-interactive elements should not be assigned mouse or keyboard event listeners.(Àãè‰8ğ­¡ù1J$bf27d2ba-03c6-4e1a-8bef-a3b06b6433ae
-ª,Web:MouseEventWithoutKeyboardEquivalentChecka"@Add a 'onKeyPress|onKeyDown|onKeyUp' attribute to this <h2> tag.(œ¹ßˆüÿÿÿÿ8ğ­¡ù1J$3ec3f39d-8e8e-4673-9ac9-b568fa3c5c9f
-™	Web:S6847a"RNon-interactive elements should not be assigned mouse or keyboard event listeners.(œ¹ßˆüÿÿÿÿ8ğ­¡ù1J$9ffd5b13-4bd9-45e7-ba37-76c8f8c7e057
-¥,Web:MouseEventWithoutKeyboardEquivalentCheckz"@Add a 'onKeyPress|onKeyDown|onKeyUp' attribute to this <h2> tag.(¼ë™¢8ñ­¡ù1J$a5cf35fd-68dd-49f1-864d-c4d3174c0d76
-”	Web:S6847z"RNon-interactive elements should not be assigned mouse or keyboard event listeners.(¼ë™¢8ñ­¡ù1J$2ab8d042-876a-4cab-9f10-19b64125bb95
-«,Web:MouseEventWithoutKeyboardEquivalentCheck‡"@Add a 'onKeyPress|onKeyDown|onKeyUp' attribute to this <h2> tag.(îŞØÈüÿÿÿÿ8ñ­¡ù1J$76b43cc0-d876-48e6-9aad-1816ce99486a
-š	Web:S6847‡"RNon-interactive elements should not be assigned mouse or keyboard event listeners.(îŞØÈüÿÿÿÿ8ò­¡ù1J$9f15635a-a34a-4dc0-8493-e1984925f4da
-¦,Web:MouseEventWithoutKeyboardEquivalentCheck"@Add a 'onKeyPress|onKeyDown|onKeyUp' attribute to this <h2> tag.(¼Óâ£8ò­¡ù1J$a647b3ea-b81a-4c54-844a-48d4ba83a1c2
-•	Web:S6847"RNon-interactive elements should not be assigned mouse or keyboard event listeners.(¼Óâ£8ò­¡ù1J$d9e8b257-ad0d-4183-9d73-c1f98f0aea4f
-Yphp:S113"'Add a new line at the end of this file.J$b5bfe05b-3148-49d8-9916-52cda6ca5cbe
-ˆ	php:S1192Ï"GDefine a constant instead of duplicating this literal ":boxId" 4 times.(ÍÜ¸ıÿÿÿÿJ$ac768f08-f3e2-41b1-8db5-bd196ca24a8b
-‘	php:S4833"QReplace "include_once" with namespace import mechanism through the "use" keyword.(º²‹õüÿÿÿÿJ$203ea28c-4e7a-499e-8121-03f48d302607
-‘	php:S4833"QReplace "include_once" with namespace import mechanism through the "use" keyword.(•¾ô¥ıÿÿÿÿJ$9aa255d0-4db0-4354-b395-6ae1b12a5b0f
-‘	php:S4833"QReplace "include_once" with namespace import mechanism through the "use" keyword.(·º¾”ûÿÿÿÿJ$87788c3d-371e-4f78-9fe6-2f96a3d888ab

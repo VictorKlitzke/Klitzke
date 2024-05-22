@@ -1,9 +1,8 @@
 let selectedRequest = [];
-let numbersTableRequest = [];
-let newListProducts = [];
 let tableSelected = [];
 let SelectedInvos = [];
 let SelectedFatPed = [];
+let ButtonSelected = [];
 
 let addButtonCard = document.getElementById('add-card-item');
 let sourceTable = document.querySelector('.card-request-finallize .tbody-request');
@@ -312,15 +311,17 @@ async function deleteSelectedRow(row, quantityCell) {
 /* CODIGO PARA ADICONAR ITENS NO CARD */
 
 async function addItemCard() {
-	const sourceTable = document.querySelector('.tbody-request');
+
 	const numberIdTable = document.getElementById('number-table');
+	const rowstableProducts = document.getElementById('command-cell');
+
 	let totalcard = 0;
 	let existingCardOrder = null;
 	let existingRow = null;
 
-	if (sourceTable.innerHTML === '') {
-		buttonCardPed.disabled;
-		window.alert('Sem nenhum item para gerar o card dos pedidos!');
+	if (rowstableProducts == '' || rowstableProducts == null) {
+		window.alert('Itens do pedido não encontrados, itens pedidos vazio');
+		return false;
 	}
 
 	if (!sourceTable || sourceTable.innerHTML.trim() === '') {
@@ -911,52 +912,6 @@ async function GathersTables() {
 
 /***/
 
-// async function generetorRequest() {
-
-//     let totalElementOrderRequestRequest = document.getElementById('totalizador-request');
-//     let TotalValueRequest = 0;
-//     if (totalElementOrderRequestRequest) {
-//         TotalValueRequest = parseFloat(totalElementOrderRequestRequest.textContent.replace('R$ ', '')) || 0;
-//     }
-//     let numberTableRequest = document.getElementById('number-table').value;
-
-//     let RequestData = {
-//         TotalValueRequest: TotalValueRequest,
-//         requestProducts: selectedRequest,
-//         numberTableRequest: numberTableRequest
-//     };
-
-//     console.log(RequestData);
-
-//     if (requestProducts.length === 0) {
-//         showErrorMessageRequest('Nenhum produto selecionado!!');
-//         return true;
-//     } else {
-//         try {
-//             let urlRequest = 'http://localhost/Klitzke/ajax/add_request.php';
-
-//             const responseRequest = await fetch(urlRequest, {
-//                 method: 'POST',
-//                 headers: {
-//                     'Content-Type': 'application/json'
-//                 }, body: JSON.stringify(RequestData),
-//             });
-
-//             const responseBodyRequest = await responseRequest.text();
-//             const responseDataRequest = JSON.parse(responseBodyRequest);
-
-//             if (responseDataRequest && responseDataRequest.success) {
-//                 showSuccessMessageRequest('Pedido gerado com sucesso!');
-//             } else {
-//                 console.error('Erro ao registrar venda:', responseDataRequest ? responseDataRequest.error : 'Resposta vazia');
-//             }
-
-//         } catch (error) {
-//             console.error('Erro ao enviar dados para o PHP:', error);
-//         }
-//     }
-// }
-
 /* CARDS DE MENSAGENS */
 
 function showErrorMessageRequest(message) {
@@ -992,42 +947,84 @@ closeModalInvo.addEventListener("click", function () {
 
 function ModalFaturamento() {
 
-	let totalcard = document.getElementById('totalizador-card');
+	const totalcardElement = document.getElementById('totalizador-card');
+	const totalcardValue = totalcardElement ? totalcardElement.innerText.replace('R$', '').trim() : '0.00';
 
-	OpenModalInvoicing.style.display = 'block';
-	overlayModalInvoicing.style.display = 'block';
-
+	const OpenModalInvoicing = document.getElementById('modal-invo');
+	const overlayModalInvoicing = document.getElementById('overlay-invo');
 	const orderDetails = document.getElementById('orderDetails');
 
+	orderDetails.innerHTML = '';
+
 	const itemElement = document.createElement('div');
+	itemElement.style.alignItems = 'center';
+
 	itemElement.innerHTML = `
         <span>Status: Em Atendimento</span>
         <br/>
-        Total: R$<input type="text" value="${totalcard.innerText}"/>
-        <hr>
+        <br/>
+        <div style="display: flex; align-items: center;">
+        	<strong>Total</strong><input id="total-card-final" type="text" value="${totalcardValue}"/>
+		</div>
         <br>
     `;
 	orderDetails.appendChild(itemElement);
 
+	OpenModalInvoicing.style.display = 'block';
+	overlayModalInvoicing.style.display = 'block';
+
+	const ButtonFatInvo = document.querySelectorAll('.Invo-forms');
 	ButtonFatInvo.forEach(function (button) {
 		button.addEventListener("click", function () {
 			button.style.background = "rgb(58, 204, 82)";
-		})
-		console.log(ButtonFatInvo);
+		});
+		console.log(button)
 		button.addEventListener("dblclick", function () {
 			button.style.background = "";
-		})
+		});
+
+		let buttonPed = {
+			button: button
+		}
+		ButtonSelected.push(buttonPed);
 	});
 
+	document.getElementById('modal-invo-close').onclick = function() {
+		OpenModalInvoicing.style.display = 'none';
+		overlayModalInvoicing.style.display = 'none';
+	};
+
+	window.onclick = function(event) {
+		if (event.target == overlayModalInvoicing) {
+			OpenModalInvoicing.style.display = 'none';
+			overlayModalInvoicing.style.display = 'none';
+		}
+	};
 }
 
 async function CloseInvo() {
 
-	let responseInvo = {
-		SelectedInvos: orderPedidos,
+	let totalCardFinal = document.getElementById('total-card-final').value
+	totalCardFinal.replace('R$', '').trim();
+
+	let PedFat = SelectedFatPed || '';
+
+	if (totalCardFinal == '') {
+		window.alert("Total esta vazio!");
+		return;
 	}
 
-	console.log(responseInvo);
+	let responseInvo = {
+		SelectedFatPed: PedFat,
+		totalCardFinal: totalCardFinal
+	}
+
+	console.log(responseInvo)
+
+	if (responseInvo.SelectedFatPed == null) {
+		window.alert("Erro ao buscar itens de pedido para faturamento!")
+		return;
+	}
 
 	try {
 		const responseserver = await fetch("", {
@@ -1044,9 +1041,8 @@ async function CloseInvo() {
 
 		if (responseDataInvo && responseDataInvo.success) {
 			window.alert('Pedido finalizada com sucesso!');
-			// const saleId = responseData.id;
-			// window.location.href = 'pages/proof.php?sale_id=' + saleId;
 		} else {
+			window.alert("Erro ao faturar pedido, por favor entre em contato com o suporte")
 			console.error('Erro ao faturar pedido:', responseDataInvo ? responseDataInvo.error : 'Resposta vazia');
 		}
 	} catch (error) {

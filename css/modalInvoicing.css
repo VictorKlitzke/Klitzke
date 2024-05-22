@@ -18,13 +18,14 @@
     transform: translate(-50%, -50%);
     background: #202020;
     border: 1px solid #ccc;
-    border-radius: 4px;
-    width: 80%; 
-    max-width: 500px;
+    border-radius: 10px;
+    width: 80%;
+    max-width: 600px;
     padding: 20px;
     color: #fff;
     display: flex;
     flex-direction: column;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
 }
 
 .navbar-invo {
@@ -36,12 +37,12 @@
 
 .navbar-invo h2 {
     margin: 0;
-    color: #fff; 
+    color: #fff;
 }
 
 #modal-invo-close {
     cursor: pointer;
-    fill: #fff; 
+    fill: #fff;
 }
 
 .info-invo {
@@ -55,23 +56,12 @@
     color: #ccc;
 }
 
-.button-forms-invo {
-    display: flex;
-    background: #ccc;
-    padding: 12px 2px 2px 2px;
-    margin: 4px;
-    border-radius: 7px;
-    justify-content: center;
-}
-
 .Invo-Fat {
     background: rgb(122, 222, 122);
 }
 
 .button-forms-invo button {
     padding: 10px 15px;
-    margin-right: 10px;
-    margin-bottom: 10px;
     border: none;
     border-radius: 4px;
     background: #007bff;
@@ -80,6 +70,16 @@
     transition: background 0.3s ease;
 }
 
-#total_request {
-    width: 50%;
+.button-forms-invo button:hover {
+    background: #0056b3;
+}
+
+#orderDetails span {
+    color: #ccc;
+}
+
+#orderDetails input {
+    color: #fff;
+    background: transparent;
+    text-align: right;
 }
