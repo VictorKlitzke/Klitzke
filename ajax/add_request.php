@@ -25,9 +25,9 @@ function status_boxpdv_request($status)
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $request_data = json_decode(file_get_contents('php://input'), true);
 
-    $selectedRequest = $request_data['requestProducts'] ?? [];
-    $total_value_request = $request_data['TotalValueRequest'] ?? '';
-    $number_table_request = $request_data['numberTableRequest'] ?? '';
+    $SelectedFatPed = $request_data['SelectedFatPed'] ?? [];
+    $totalCardFinal = $request_data['totalCardFinal'] ?? '';
+    $ButtonSelected = $request_data['ButtonSelected'] ?? '';
 
     try {
 
@@ -66,9 +66,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             $last_request_id = $sql->lastInsertId();
 
-            foreach ($selectedRequest as $requestProduct) {
+            foreach ($SelectedFatPed as $SelectedFatPed) {
 
-                $productId = isset($requestProduct['id']) ? $requestProduct['id'] : null;
+                $productId = isset($SelectedFatPed['id']) ? $SelectedFatPed['id'] : null;
 
                 if ($productId === null) {
 
@@ -76,8 +76,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                 } else {
 
-                    $productQuantity = $requestProduct['stock_quantity'];
-                    $productValue = floatval($requestProduct['value']);
+                    $productQuantity = $SelectedFatPed['stock_quantity'];
+                    $productValue = floatval($SelectedFatPed['value']);
 
                     $exec = $sql->prepare("INSERT INTO request_items (id_request, id_products, quantity, price_request) 
                                 VALUES (:last_request_id, :product_id, :product_stock_quantity, :product_value)");
@@ -90,9 +90,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 }
             }
 
-            $exec = $sql->prepare("UPDATE table_requests SET status_table = 1 WHERE id = :id_table");
+            $exec = $sql->prepare("UPDATE table_requests SET status_table = 1 WHERE id = :product_stock_quantity");
             $exec->bindParam(':id_table', $number_table_request, PDO::PARAM_INT);
             $exec->execute();
+
+            $checkoutStock = $sql->prepare("SELECT id FROM products WHERE id = :productid AND stock_quantity - :product_stock_quantity < 0");
+            $checkoutStock->bindValue('productid', $productId, PDO::PARAM_INT);
+            $checkoutStock->bindValue('product_stock_quantity', $productQuantity, PDO::PARAM_INT);
+            $checkoutStock->execute();
+
+            if ($checkoutStock.rowCount() < 0) {
+                $exec = $sql->prepare("");
+                $exec->execute();
+            }
 
             $sql->commit();
 

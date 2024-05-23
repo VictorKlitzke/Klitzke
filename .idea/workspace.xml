@@ -5,6 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="3b3e1754-2842-4421-b6cf-d81c30d263dc" name="Changes" comment="Erros de ccard de produtos para os pedidos">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ajax/add_request.php" beforeDir="false" afterPath="$PROJECT_DIR$/ajax/add_request.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/js/add_request.js" beforeDir="false" afterPath="$PROJECT_DIR$/js/add_request.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -67,7 +69,7 @@
       <workItem from="1715998794870" duration="42000" />
       <workItem from="1716041538502" duration="259000" />
       <workItem from="1716041836929" duration="305000" />
-      <workItem from="1716042185293" duration="32873000" />
+      <workItem from="1716042185293" duration="35318000" />
     </task>
     <servers />
   </component>

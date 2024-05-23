@@ -1,0 +1,11 @@
+
+Z	php:S11317"@Remove the useless trailing whitespaces at the end of this line.(»ƒ»êøÿÿÿÿ
+Z	php:S1131L"@Remove the useless trailing whitespaces at the end of this line.(ÕÌƒäøÿÿÿÿ
+mphp:S100"TRename function "status_boxpdv" to match the regular expression ^[a-z][a-zA-Z0-9]*$.(ÂÞÑüùÿÿÿÿ
+7	php:S1780~"Remove this closing tag "?>".(Ö‘äÏúÿÿÿÿ
+3php:S113"'Add a new line at the end of this file.
+Zphp:S112("FDefine and throw a dedicated exception instead of using a generic one.(ùéŽ¶
+e	php:S1192O"KDefine a constant instead of duplicating this literal ":productId" 4 times.( òÒ¥ýÿÿÿÿ
+f	php:S1192P"QDefine a constant instead of duplicating this literal ":productQuantity" 4 times.(–Ë½Ù
+k	php:S4833"QReplace "include_once" with namespace import mechanism through the "use" keyword.(ÜÈæœþÿÿÿÿ
+k	php:S4833"QReplace "include_once" with namespace import mechanism through the "use" keyword.(µœäÑþÿÿÿÿ

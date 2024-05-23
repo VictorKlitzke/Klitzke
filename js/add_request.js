@@ -413,6 +413,7 @@ async function addItemCard() {
 	const totalizadorElement = existingCardOrder.querySelector('.total-card');
 	if (totalizadorElement) {
 		totalizadorElement.textContent = `R$ ${totalcard.toFixed(2)}`;
+		totalizadorElement.id = `totalizador-card${currentCommandId}`;
 	}
 
 	sourceTable.innerHTML = '';
@@ -448,7 +449,7 @@ function createNewCard(commandId) {
 			<div class="card-footer right">
 				<button type="button" id="invoice-request-${commandId}" class="invoice-request">Gerar Pedido</button>
 			</div>
-			<h2 class="left total-card" id="totalizador-card">R$ 0.00</h2>
+			<h2 class="left total-card" id="totalizador-card${commandId}">R$ 0.00</h2>
 		</div>
     `;
 
@@ -508,257 +509,6 @@ function calculateTotal() {
 	return totalRequest.toFixed(2);
 
 }
-
-// function AddProductOrder(id, name, stock_quantity, value_product) {
-//     let tbody = document.querySelector('#items-list-order');
-//     let existingRow = document.querySelector(`product-${id}`);
-
-//     if (existingRow) {
-//         let quantityCell = existingRow.querySelector('.product-quantity-order');
-//         let valueCell = existingRow.querySelector('.product-value-order');
-
-//         if (quantityCell && valueCell) {
-//             let currentQuantity = parseInt(quantityCell.textContent);
-//             let currentValue = parseFloat(valueCell.textContent.replace('R$', '').trim());
-
-//             if (currentQuantity < stock_quantity) {
-//                 window.alert("Estoque insuficiente para adicionar mais deste produto.");
-//                 return false;
-//             }
-
-//             quantityCell.textContent = currentQuantity + 1;
-
-//             let newValue = currentValue + parseFloat(value_product);
-//             valueCell.textContent = `R$ ${newValue.toFixed(2)}`;
-
-//             let productIndex = newListProducts.findIndex(product => product.id === id);
-//             if (productIndex !== -1) {
-//                 newListProducts[productIndex].stock_quantity++;
-//                 newListProducts[productIndex].value_product += parseFloat(value_product);
-//             }
-//         } else {
-//             console.error('Elementos de quantidade ou valor não encontrados na linha existente.');
-//         }
-//     } else {
-//         let newRow = document.createElement('tr');
-//         newRow.className = 'tr-order';
-//         newRow.id = `product-${id}`;
-
-//         newRow.innerHTML = `
-//             <td class='product-id-order'>${id}</td>
-//             <td class='product-name-order'>${name}</td>
-//             <td class='product-quantity-order'>1</td>
-//             <td class='product-value-order'>R$ ${value_product}</td>
-//             <td style='margin: 6px; padding: 6px; cursor: pointer;'>
-//                 <button onclick='deleteItemFromOrder(${id})' class='btn-delete' type='button'>Deletar</button>
-//             </td>
-//         `;
-
-//         tbody.appendChild(newRow);
-
-//         calculateTotalRequestOrder();
-
-//         let newProduct = {
-//             name: name,
-//             stock_quantity: 1,
-//             value_product: parseFloat(value_product)
-//         };
-//         newListProducts.push(newProduct);
-//     }
-
-//     // console.log(newListProducts);
-// }
-
-// function deleteItemFromOrder(id) {
-//     let rowToDelete = document.getElementById(`product-${id}`);
-
-//     if (rowToDelete) {
-//         let quantityCell = rowToDelete.querySelector('.product-quantity-order');
-//         let currentQuantity = parseInt(quantityCell.textContent);
-
-//         if (currentQuantity > 1) {
-//             quantityCell.textContent = currentQuantity - 1;
-
-//             let productIndex = newListProducts.findIndex(product => product.name === name);
-//             if (productIndex !== -1) {
-//                 newListProducts[productIndex].stock_quantity--;
-//                 newListProducts[productIndex].value_product -= parseFloat(newListProducts[productIndex].value_product);
-//             }
-//         } else {
-//             rowToDelete.remove();
-//             newListProducts = newListProducts.filter(product => product.id !== id);
-//         }
-//     } else {
-//         window.alert("Produto não encontrado na comanda.");
-//     }
-
-//     calculateTotalRequestOrder();
-// }
-
-// async function AddProductItems() {
-
-//     let totalizadorOrder = document.getElementById('total-order-value').textContent
-//     let valueTotalizadorOrder = 0;
-//     if (totalizadorOrder) {
-//         valueTotalizadorOrder = parseFloat(totalizadorOrder.textContent.replace('R$ ', '')) || 0;
-//     }
-
-//     const responseDataNewList = {
-//         newProduct: newListProducts,
-//         valueTotalizadorOrder: valueTotalizadorOrder,
-//     }
-
-//     console.log(responseDataNewList);
-
-//     if (newListProducts.length <= 0) {
-//         showErrorMessageRequest("Nenhum produto selecionado")
-//     } else {
-//         try {
-//             let urlOrder = '';
-
-//             const response = await fetch(urlOrder, {
-//                 method: 'POST',
-//                 headers: {
-//                     'Content-Type': 'application/json',
-//                 },
-//                 body: JSON.stringify(requestData),
-//             });
-
-//             const OrderResponse = await response.text();
-//             const responseDataOrder = JSON.parse(OrderResponse);
-
-//             if (responseDataOrder && responseDataOrder.success) {
-//                 showSuccessMessage('Venda finalizada com sucesso!');
-//             } else {
-//                 console.error('Erro ao registrar venda:', responseDataOrder ? responseDataOrder.error : 'Resposta vazia');
-//             }
-//         } catch (error) {
-//             showErrorMessageRequest("Erro ao enviar pedido")
-//         }
-//     }
-// }
-
-// function updateTotalAmountRequestOrder(valueRequestOrder) {
-
-//     let totalElementOrderRequestRequestOrder = document.getElementById('total-order-value');
-
-//     if (totalElementOrderRequestRequestOrder) {
-//         totalElementOrderRequestRequestOrder.textContent = 'R$ ' + valueRequestOrder.toFixed(2);
-//     }
-// }
-
-// function calculateTotalRequestOrder() {
-
-//     let totalRequestOrder = 0;
-
-//     newListProducts.forEach(newProduct => {
-
-//         let quantityElementOrderRequest = 1;
-//         let valueElementOrderRequest = document.getElementById('order-total-request');
-
-//         if (quantityElementOrderRequest && valueElementOrderRequest) {
-//             let quantityElementOrderTotalRequestOrder = parseInt(quantityElementOrderRequest.textContent) || 0;
-//             let valueRequestOrder = parseFloat(valueElementOrderRequest.textContent) || 0;
-
-//             totalRequestOrder += quantityElementOrderTotalRequestOrder * valueRequestOrder;
-//         } else {
-//             console.error('Elementos não encontrados para o produto ID:', newProduct.id);
-//         }
-//     });
-
-//     let totalElementOrderRequestRequestOrder = document.getElementById('total-order-value');
-//     if (totalElementOrderRequestRequestOrder) {
-//         totalElementOrderRequestRequestOrder.textContent = 'R$ ' + totalRequestOrder.toFixed(2);
-//     }
-
-//     updateTotalAmountRequestOrder(totalRequestOrder);
-
-//     return totalRequestOrder.toFixed(2);
-
-// }
-
-/* MODAL DE FATURAMENTO DE PEDIDO */
-
-// function closemodalData() {
-//
-// 	if (OpenModalInvoicingFat.style.display == 'block' && overlayModalInvoicingFat.style.display == "block") {
-// 		OpenModalInvoicingFat.style.display = "none";
-// 		overlayModalInvoicingFat.style.display = "none";
-// 	}
-// };
-//
-// function ModalFaturamento(id_table, date_request, total_request, STATUS_REQUEST) {
-// 	if (STATUS_REQUEST === "AGRUPADOS") {
-// 		window.alert("Esse pedido esta agrupados");
-// 		return;
-// 	} else {
-// 		OpenModalInvoicingFat.style.display = 'block';
-// 		overlayModalInvoicingFat.style.display = 'block';
-//
-// 		const id_table_invoFat = document.getElementById('id-table');
-// 		const value_request_totalFat = document.getElementById('total-request');
-// 		const date_request_invoFat = document.getElementById('date-request');
-// 		const status_request_invoFat = document.getElementById('status-request');
-//
-// 		id_table_invoFat.textContent = "Comanda: " + id_table;
-// 		value_request_totalFat.innerHTML = "Total pedido " + '<input type="text" id="total_request" value="' + total_request + '" />';
-// 		date_request_invoFat.textContent = "Data do pedido: " + date_request;
-// 		status_request_invoFat.textContent = "Status: " + STATUS_REQUEST;
-//
-// 		ButtonFat.forEach(function (button) {
-// 			button.addEventListener("click", function () {
-// 				button.style.background = "rgb(58, 204, 82)";
-// 			})
-// 			button.addEventListener("dblclick", function () {
-// 				button.style.background = "";
-// 			})
-// 		});
-// 	}
-//
-// 	let orderPedidosFat = {
-// 		id_table: id_table,
-// 		date_request: date_request,
-// 		total_request: total_request,
-// 		status_request: STATUS_REQUEST,
-// 		Button: ButtonFatInvo
-// 	}
-//
-// 	SelectedInvosFat.push(orderPedidosFat);
-// }
-//
-// async function CloseInvo() {
-//
-// 	let responseInvo = {
-// 		SelectedInvosFat: orderPedidosFat,
-// 	}
-//
-// 	try {
-// 		const responseserver = await fetch("", {
-// 			method: 'POST',
-// 			headers: {
-// 				'Content-Type': 'application/json',
-// 			},
-// 			body: JSON.stringify(responseInvo),
-// 		})
-//
-// 		const response = await responseserver.text();
-// 		console.log('Response from server:', response);
-// 		const responseDataInvo = JSON.parse(response);
-//
-// 		if (responseDataInvo && responseDataInvo.success) {
-// 			window.alert('Pedido finalizada com sucesso!');
-// 			// const saleId = responseData.id;
-// 			// window.location.href = 'pages/proof.php?sale_id=' + saleId;
-// 		} else {
-// 			console.error('Erro ao faturar pedido:', responseDataInvo ? responseDataInvo.error : 'Resposta vazia');
-// 		}
-// 	} catch (error) {
-// 		console.log("Erro ao faturar Pedido" + SelectedInvos.id_table + error);
-// 	}
-//
-// }
-
-/**/
 
 /* CODIGO DE AGRUPAMENTO DE COMANDAS */
 
@@ -976,8 +726,7 @@ function fieldsTotalForms(button) {
 
 function ModalFaturamento(commandId) {
 
-	const totalcardElement = document.getElementById('totalizador-card' + commandId);
-	console.log(totalcardElement)
+	const totalcardElement = document.getElementById(`totalizador-card${commandId}`);
 	const totalcardValue = totalcardElement ? totalcardElement.innerText.replace('R$', '').trim() : '0.00';
 
 	const OpenModalInvoicing = document.getElementById('modal-invo');
