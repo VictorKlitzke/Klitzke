@@ -405,7 +405,8 @@ async function addItemCard() {
 			productID: productID,
 			productName: productName,
 			quantity: quantity,
-			totalcard: totalcard
+			totalcard: totalcard,
+			currentCommandId: currentCommandId
 		}
 		SelectedFatPed.push(PedFat);
 	})
@@ -713,8 +714,8 @@ function fieldsTotalForms(button) {
 	newInput.classList.add('input-total-card');
 	newInput.dataset.paymentId = buttonId;
 	newInput.innerHTML = `
-		<div style="display: flex; align-items: center;">
-			<strong>${button.textContent}</strong><input id="payment-final-fat" type="text" style="text-align: left" placeholder="Valor a ser pago"/>
+		<div style="display: flex; align-items: center; text-align: right">
+			<strong>${button.textContent}</strong><input id="payment-final-fat" type="text" placeholder="Valor a ser pago"/>
 		</div>
 		<br/>
 		<br/>
@@ -789,7 +790,7 @@ function ModalFaturamento(commandId) {
 async function CloseInvo() {
 
 	let paymentFormsValor = document.getElementById('payment-final-fat');
-	paymentFormsValor.replace('R$', '').trim();
+	paymentFormsValor.value;
 
 	let totalCardFinal = document.getElementById('total-card-final').value
 	totalCardFinal.replace('R$', '').trim();
@@ -806,7 +807,7 @@ async function CloseInvo() {
 		SelectedFatPed: PedFat,
 		totalCardFinal: totalCardFinal,
 		ButtonSelected: buttonPed,
-		paymentFormsValor: paymentFormsValor
+		// paymentFormsValor: paymentFormsValor
 	}
 
 	console.log(responseInvo)
@@ -826,7 +827,6 @@ async function CloseInvo() {
 		})
 
 		const response = await responseserver.text();
-		console.log('Response from server:', response);
 		const responseDataInvo = JSON.parse(response);
 
 		if (responseDataInvo && responseDataInvo.success) {
