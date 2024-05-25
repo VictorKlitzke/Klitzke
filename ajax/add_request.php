@@ -91,9 +91,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $productId = isset($SelectedFatPed['productID']) ? $SelectedFatPed['productID'] : null;
 
                 if ($productId === null) {
-
-                    break;
-
+                    echo json_encode(['error' => true, 'message' => htmlspecialchars('Id do produto não encontrado')]);
+                    return;
                 } else {
 
                     $productQuantity = $SelectedFatPed['quantity'];
@@ -117,7 +116,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $exec->bindParam(':product_stock_quantity', $productQuantity, PDO::PARAM_INT);
                     $exec->bindParam(':product_value', $productValue, PDO::PARAM_STR);
                     $exec->execute();
+                }
 
+                foreach ($ButtonSelected as $ButtonSelected) {
+                    $button_id = $ButtonSelected['paymentId'];
+                    $value_payment = $ButtonSelected['paymentValue'];
+
+                    if (!$button_id or !$value_payment) {
+                        echo json_encode(['error' => true, 'message' => htmlspecialchars('Não foi possivel fazer faturamento de pedido')]);
+                    }
+
+                    $payment_table = $sql->prepare("INSERT INTO request_payments (id_request, id_payment_method, value_payment) VALUES(:id_request, :id_payment_method, :value_payment)");
+                    $payment_table->bindValue('id_request', $last_request_id, PDO::PARAM_INT);
+                    $payment_table->bindValue('id_payment_method', $button_id, PDO::PARAM_INT);
+                    $payment_table->bindValue('value_payment', $value_payment, PDO::PARAM_STR);
+                    $payment_table->execute();
                 }
 
                 $table_update = $sql->prepare("UPDATE table_requests SET status_table = 1 WHERE id = :id_table");
@@ -145,7 +158,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             $sql->commit();
 
-            echo json_encode(['success' => true, 'message' => htmlspecialchars('Pedido registrado com sucesso')]);
+        echo json_encode(['success' => true, 'message' => htmlspecialchars('Pedido registrado com sucesso')]);
         }
     } catch (PDOException $e) {
         $sql->rollBack();

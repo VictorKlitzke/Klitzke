@@ -1,3 +1,4 @@
+// const dotenv = require("dotenv");
 let selectedRequest = [];
 let tableSelected = [];
 let SelectedInvos = [];
@@ -715,9 +716,8 @@ function fieldsTotalForms(button) {
 	newInput.dataset.paymentId = buttonId;
 	newInput.innerHTML = `
 		<div style="display: flex; align-items: center; text-align: right">
-			<strong>${button.textContent}</strong><input id="payment-final-fat" type="text" placeholder="Valor a ser pago"/>
+			<strong>${button.textContent}</strong><input id="payment-final-fat-${buttonId}" type="text" placeholder="Valor a ser pago"/>
 		</div>
-		<br/>
 		<br/>
 	`;
 
@@ -727,6 +727,7 @@ function fieldsTotalForms(button) {
 
 function ModalFaturamento(commandId) {
 
+	console.log(commandId);
 	const totalcardElement = document.getElementById(`totalizador-card${commandId}`);
 	const totalcardValue = totalcardElement ? totalcardElement.innerText.replace('R$', '').trim() : '0.00';
 
@@ -758,6 +759,13 @@ function ModalFaturamento(commandId) {
 		button.addEventListener("click", function () {
 			fieldsTotalForms(button);
 			button.style.background = "rgb(58, 204, 82)";
+			let buttonPed = {
+				buttonId: button.dataset.paymentId,
+				buttonText: button.textContent
+			}
+			ButtonSelected.push(buttonPed);
+
+			console.log(buttonPed)
 		});
 		button.addEventListener("dblclick", function () {
 			const paymentId = button.dataset.paymentId;
@@ -766,12 +774,11 @@ function ModalFaturamento(commandId) {
 				inputTotalCard.style.display = 'none';
 			}
 			button.style.background = "";
+			const index = ButtonSelected.findIndex(item => item.buttonId === paymentId);
+			if (index > -1) {
+				ButtonSelected.splice(index, 1);
+			}
 		});
-
-		let buttonPed = {
-			button: button
-		}
-		ButtonSelected.push(buttonPed);
 	});
 
 	document.getElementById('modal-invo-close').onclick = function() {
@@ -789,14 +796,23 @@ function ModalFaturamento(commandId) {
 
 async function CloseInvo() {
 
-	let paymentFormsValor = document.getElementById('payment-final-fat');
-	paymentFormsValor.value;
-
 	let totalCardFinal = document.getElementById('total-card-final').value
 	totalCardFinal.replace('R$', '').trim();
 
 	let PedFat = SelectedFatPed || '';
-	let buttonPed = ButtonSelected || '';
+
+	let paymentFormsValor = ButtonSelected.map(button => {
+		const input = document.getElementById(`payment-final-fat-${button.buttonId}`);
+		return {
+			paymentId: button.buttonId,
+			paymentValue: input ? input.value.trim() : ''
+		};
+	}).filter(item => item.paymentValue !== '');
+
+	if (!ButtonSelected) {
+		window.alert("Nenhum valor nas formas de pagemento");
+		return;
+	}
 
 	if (totalCardFinal == '') {
 		window.alert("Total esta vazio!");
@@ -806,11 +822,10 @@ async function CloseInvo() {
 	let responseInvo = {
 		SelectedFatPed: PedFat,
 		totalCardFinal: totalCardFinal,
-		ButtonSelected: buttonPed,
-		// paymentFormsValor: paymentFormsValor
+		ButtonSelected: paymentFormsValor
 	}
 
-	console.log(responseInvo)
+	console.log(responseInvo);
 
 	if (responseInvo.SelectedFatPed == null) {
 		window.alert("Erro ao buscar itens de pedido para faturamento!")
@@ -818,7 +833,7 @@ async function CloseInvo() {
 	}
 
 	try {
-		const responseserver = await fetch("", {
+		const responseserver = await fetch(`http://localhost/Klitzke/ajax/add_request.php`, {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json',
@@ -826,8 +841,16 @@ async function CloseInvo() {
 			body: JSON.stringify(responseInvo),
 		})
 
-		const response = await responseserver.text();
-		const responseDataInvo = JSON.parse(response);
+		const responseText = await responseserver.text();
+		let responseDataInvo;
+
+		try {
+			responseDataInvo = JSON.parse(responseText);
+		} catch (error) {
+			console.error("Erro ao analisar JSON:", error);
+			window.alert("Erro inesperado ao processar a faturamento de pedido. Entre em contato com o suporte.");
+			return;
+		}
 
 		if (responseDataInvo && responseDataInvo.success) {
 			window.alert('Pedido finalizada com sucesso!');
