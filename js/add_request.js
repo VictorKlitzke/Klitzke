@@ -15,6 +15,7 @@ let overlayModalInvoicing = document.getElementById('overlay-invo');
 let closeModalInvo = document.getElementById('modal-invo-close');
 let ButtonFatInvo = document.querySelectorAll('.Invo-forms');
 let buttonCardPed = document.getElementById('add-card-item');
+let closeInvoButton = document.getElementById('Invo-Fat');
 
 document.addEventListener('DOMContentLoaded', function () {
 
@@ -430,7 +431,7 @@ function createNewCard(commandId) {
 	newCard.dataset.commandId = commandId;
 
 	newCard.innerHTML = `
-		<div class="card-order left">
+		<div class="card-order left" id="card-order">
 			<div class="card-list">
 				<h2>Itens na comanda ${commandId}</h2>
 			</div>
@@ -727,7 +728,6 @@ function fieldsTotalForms(button) {
 
 function ModalFaturamento(commandId) {
 
-	console.log(commandId);
 	const totalcardElement = document.getElementById(`totalizador-card${commandId}`);
 	const totalcardValue = totalcardElement ? totalcardElement.innerText.replace('R$', '').trim() : '0.00';
 
@@ -792,14 +792,29 @@ function ModalFaturamento(commandId) {
 			overlayModalInvoicing.style.display = 'none';
 		}
 	};
+
+	if (closeInvoButton) {
+		closeInvoButton.dataset.commandId = commandId;
+	} else {
+		console.error("Invo-Fat not found in the DOM.");
+	}
 }
 
 async function CloseInvo() {
 
+	const cardOrderFat = document.getElementById('card-order');
+	const CloseButtonInvo = document.getElementById('Invo-Fat');
+	const commandId = CloseButtonInvo ? CloseButtonInvo.dataset.commandId : null;
+
 	let totalCardFinal = document.getElementById('total-card-final').value
 	totalCardFinal.replace('R$', '').trim();
 
-	let PedFat = SelectedFatPed || '';
+	let PedFat = SelectedFatPed.filter(item => item.currentCommandId === commandId);
+
+	if (!commandId) {
+		window.alert("Erro: Numero da comanda não encontrada!");
+		return;
+	}
 
 	let paymentFormsValor = ButtonSelected.map(button => {
 		const input = document.getElementById(`payment-final-fat-${button.buttonId}`);
@@ -809,7 +824,7 @@ async function CloseInvo() {
 		};
 	}).filter(item => item.paymentValue !== '');
 
-	if (!ButtonSelected) {
+	if (paymentFormsValor == null || paymentFormsValor == '' ) {
 		window.alert("Nenhum valor nas formas de pagemento");
 		return;
 	}
@@ -824,8 +839,6 @@ async function CloseInvo() {
 		totalCardFinal: totalCardFinal,
 		ButtonSelected: paymentFormsValor
 	}
-
-	console.log(responseInvo);
 
 	if (responseInvo.SelectedFatPed == null) {
 		window.alert("Erro ao buscar itens de pedido para faturamento!")
@@ -847,19 +860,20 @@ async function CloseInvo() {
 		try {
 			responseDataInvo = JSON.parse(responseText);
 		} catch (error) {
-			console.error("Erro ao analisar JSON:", error);
 			window.alert("Erro inesperado ao processar a faturamento de pedido. Entre em contato com o suporte.");
 			return;
 		}
 
 		if (responseDataInvo && responseDataInvo.success) {
 			window.alert('Pedido finalizada com sucesso!');
+			cardOrderFat.style.display = 'none';
+			OpenModalInvoicing.style.display = 'none';
+			overlayModalInvoicing.style.display = 'none';
 		} else {
 			window.alert("Erro ao faturar pedido, por favor entre em contato com o suporte")
-			console.error('Erro ao faturar pedido:', responseDataInvo ? responseDataInvo.error : 'Resposta vazia');
 		}
 	} catch (error) {
-		console.log("Erro ao faturar Pedido" + SelectedInvos.id_table + error);
+		window.alert("Erro ao faturar Pedido" + error);
 	}
 
 }

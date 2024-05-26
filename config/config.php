@@ -9,6 +9,10 @@ define('USER', 'root');
 define('PASSWORD', 'root');
 define('DATABASE', 'Klitzke');
 
+$title_home = 'Klitzke Software - Admin';
+$title_login = 'Klitzke software - login';
+$chave_secret = 'EFEGREWSWREGERGEGBTBBFDGBTGHERTGSFDSGVB';
+
 define('INCLUDE_PATH', 'http://localhost/Klitzke/');
 define('INCLUDE_PATH_PANEL', INCLUDE_PATH . 'pages/');
 define('BASE_DIR_PAINEL', __DIR__ . '/public');

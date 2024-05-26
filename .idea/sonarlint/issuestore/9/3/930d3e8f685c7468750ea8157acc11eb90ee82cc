@@ -1,11 +1,0 @@
-
-‡	php:S1131N"@Remove the useless trailing whitespaces at the end of this line.(Ë‘ÙØùÿÿÿÿ8Í‹Ëˆû1J$12f3c68b-e0db-49c4-affa-75ed476ec5d0
-‚	php:S1131p"@Remove the useless trailing whitespaces at the end of this line.(•‡û8Î‹Ëˆû1J$752f0d31-13eb-4a06-8677-41e9a3018eec
-php:S100"\Rename function "status_boxpdv_request" to match the regular expression ^[a-z][a-zA-Z0-9]*$.(«·›ó8Î‹Ëˆû1J$0ac1c5a8-ead6-4765-b5f6-f55c90b0b6e9
-e	php:S1780«"Remove this closing tag "?>".(Ö‘äÏúÿÿÿÿ8Ï‹Ëˆû1J$63846c65-9a17-4f28-9543-15ec789e466a
-‡php:S112)"FDefine and throw a dedicated exception instead of using a generic one.(€òöÅ8Ï‹Ëˆû1J$5947268c-57fa-4e7b-9b0b-8ab1952fb2ea
-`php:S125m"Remove this commented out code.(çÔŸ¨8Ğ‹Ëˆû1J$4cf436e0-5411-4a44-836c-3404282e4b04
-˜	php:S4833"QReplace "include_once" with namespace import mechanism through the "use" keyword.(ÜÈæœşÿÿÿÿ8Ğ‹Ëˆû1J$7e688a84-9b47-44d2-b094-d6a9d5f1467b
-˜	php:S4833"QReplace "include_once" with namespace import mechanism through the "use" keyword.(µœäÑşÿÿÿÿ8Ğ‹Ëˆû1J$3c51e9cc-e67f-4803-b4d4-5c8441d8b02d
-^	php:S2010E"Replace "or" with "||".(¶øæÿÿÿÿÿ8Ñ‹Ëˆû1J$5a10dff9-a3ac-47b5-b362-d0c778567894
-^	php:S2010}"Replace "or" with "||".(¯•‰¹ùÿÿÿÿ8Ã„òˆû1J$fd7316a4-a426-461b-9ac6-f348a0878243

@@ -136,7 +136,7 @@ $request = Controllers::SelectAll(
                         ?>
                         <button type="button" class="Invo-forms" data-payment-id="<?php echo $value['id']; ?>"><?php echo $value['forms_payment']; ?></button>
                     <?php } ?>
-                    <button onclick="CloseInvo()" class="right Invo-Fat" type="button">Faturar</button>
+                    <button onclick="CloseInvo()" class="right Invo-Fat" id="Invo-Fat" type="button">Faturar</button>
                 </div>
             </div>
         </div>
