@@ -2,6 +2,7 @@
   "dependencies": {
     "bootstrap": "^5.3.3",
     "datatables.net-dt": "^1.13.8",
-    "dotenv": "^16.4.5"
+    "dotenv": "^16.4.5",
+    "env": "^0.0.2"
   }
 }

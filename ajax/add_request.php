@@ -25,9 +25,9 @@ function status_boxpdv_request($status)
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $request_data = json_decode(file_get_contents('php://input'), true);
 
-    $selectedRequest = $request_data['requestProducts'] ?? [];
-    $total_value_request = $request_data['TotalValueRequest'] ?? '';
-    $number_table_request = $request_data['numberTableRequest'] ?? '';
+    $SelectedFatPed = $request_data['SelectedFatPed'] ?? [];
+    $totalCardFinal = $request_data['totalCardFinal'] ?? '';
+    $ButtonSelected = $request_data['ButtonSelected'] ?? '';
 
     try {
 
@@ -53,31 +53,61 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $exec->execute();
             $result = $exec->fetchAll(PDO::FETCH_ASSOC);
 
-            $exec = $sql->prepare("INSERT INTO request (id_table, total_request, id_boxpdv_request, id_users_request, date_request, status) 
+           if (empty($id_users_request)) {
+               echo json_encode(['error' => true, 'message' => htmlspecialchars('Usuario nao encontrado')]);
+               return true;
+           }
+
+           if (empty($id_boxpdv_request)) {
+               echo json_encode(['error' => true, 'message' => htmlspecialchars('Caixa não encontrado')]);
+               return true;
+           }
+
+            foreach ($SelectedFatPed as $SelectedFatPed) {
+                $current_command = $SelectedFatPed['currentCommandId'];
+
+                if ($current_command == null or $current_command == '') {
+                    echo json_encode(['error' => true, 'message' => htmlspecialchars('Comanda não encontrada')]);
+                    break;
+                }
+
+                if (!is_numeric($current_command)) {
+                    echo json_encode(['error' => true, 'message' => htmlspecialchars('Valor do produto precisa ser valido')]);
+                }
+
+                $exec = $sql->prepare("INSERT INTO request (id_table, total_request, id_boxpdv_request, id_users_request, date_request, status) 
                 VALUES (:id_table, :total_request, :id_boxpdv_request, :id_users_request, NOW(), :status)");
-            
-            $exec->bindParam(':id_table', $number_table_request, PDO::PARAM_INT);
-            $exec->bindParam(':id_users_request', $id_users_request, PDO::PARAM_INT);
-            $exec->bindParam(':total_request', $total_value_request, PDO::PARAM_INT);
-            $exec->bindParam(':id_boxpdv_request', $id_boxpdv_request, PDO::PARAM_INT);
-            $status = 1;
-            $exec->bindParam(':status', $status, PDO::PARAM_INT);
-            $exec->execute();
 
-            $last_request_id = $sql->lastInsertId();
+                $exec->bindParam(':id_table', $current_command, PDO::PARAM_INT);
+                $exec->bindParam(':id_users_request', $id_users_request, PDO::PARAM_INT);
+                $exec->bindParam(':total_request', $totalCardFinal, PDO::PARAM_INT);
+                $exec->bindParam(':id_boxpdv_request', $id_boxpdv_request, PDO::PARAM_INT);
+                $status = 1;
+                $exec->bindParam(':status', $status, PDO::PARAM_INT);
+                $exec->execute();
 
-            foreach ($selectedRequest as $requestProduct) {
+                $last_request_id = $sql->lastInsertId();
 
-                $productId = isset($requestProduct['id']) ? $requestProduct['id'] : null;
+                $productId = isset($SelectedFatPed['productID']) ? $SelectedFatPed['productID'] : null;
 
                 if ($productId === null) {
-
-                    break;
-
+                    echo json_encode(['error' => true, 'message' => htmlspecialchars('Id do produto não encontrado')]);
+                    return;
                 } else {
 
-                    $productQuantity = $requestProduct['stock_quantity'];
-                    $productValue = floatval($requestProduct['value']);
+                    $productQuantity = $SelectedFatPed['quantity'];
+                    $productValue = floatval($SelectedFatPed['totalcard']);
+
+                    if (!floatval($productValue)) {
+                        echo json_encode(['error' => true, 'message' => htmlspecialchars('Valor do produto precisa ser valido')]);
+                    }
+
+                    if (!intval($productQuantity)) {
+                        echo json_encode(['error' => true, 'message' => htmlspecialchars('Quantidade do produto precisa ser valido')]);
+                    }
+
+//                    var_dump($productQuantity);
+//                    var_dump($productValue);die();
 
                     $exec = $sql->prepare("INSERT INTO request_items (id_request, id_products, quantity, price_request) 
                                 VALUES (:last_request_id, :product_id, :product_stock_quantity, :product_value)");
@@ -86,17 +116,49 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $exec->bindParam(':product_stock_quantity', $productQuantity, PDO::PARAM_INT);
                     $exec->bindParam(':product_value', $productValue, PDO::PARAM_STR);
                     $exec->execute();
-
                 }
+
+                foreach ($ButtonSelected as $ButtonSelected) {
+                    $button_id = $ButtonSelected['paymentId'];
+                    $value_payment = $ButtonSelected['paymentValue'];
+
+                    if (!$button_id or !$value_payment) {
+                        echo json_encode(['error' => true, 'message' => htmlspecialchars('Não foi possivel fazer faturamento de pedido')]);
+                    }
+
+                    $payment_table = $sql->prepare("INSERT INTO request_payments (id_request, id_payment_method, value_payment) VALUES(:id_request, :id_payment_method, :value_payment)");
+                    $payment_table->bindValue('id_request', $last_request_id, PDO::PARAM_INT);
+                    $payment_table->bindValue('id_payment_method', $button_id, PDO::PARAM_INT);
+                    $payment_table->bindValue('value_payment', $value_payment, PDO::PARAM_STR);
+                    $payment_table->execute();
+                }
+
+                $table_update = $sql->prepare("UPDATE table_requests SET status_table = 1 WHERE id = :id_table");
+                $table_update->bindParam(':id_table', $current_command, PDO::PARAM_INT);
+                $table_update->execute();
+
             }
 
-            $exec = $sql->prepare("UPDATE table_requests SET status_table = 1 WHERE id = :id_table");
-            $exec->bindParam(':id_table', $number_table_request, PDO::PARAM_INT);
-            $exec->execute();
+            $checkoutStock = $sql->prepare("SELECT id FROM products WHERE id = :productid AND stock_quantity - :product_stock_quantity < 0");
+            $checkoutStock->bindValue('productid', $productId, PDO::PARAM_INT);
+            $checkoutStock->bindValue('product_stock_quantity', $productQuantity, PDO::PARAM_INT);
+            $checkoutStock->execute();
+
+            if ($checkoutStock->rowCount() > 0) {
+                $exec = $sql->prepare("UPDATE products SET stock_quantity = stock_quantity - :productquantity AND status_product = 'negativo' WHERE id = :productId");
+                $exec->bindParam('productId', $productId , PDO::PARAM_INT);
+                $exec->bindParam('productquantity', $productQuantity , PDO::PARAM_INT);
+                $exec->execute();
+            } else {
+                $exec = $sql->prepare("UPDATE products SET stock_quantity = stock_quantity - :productquantity AND status_product = 'Em estoque' WHERE id = :productId");
+                $exec->bindParam('productId', $productId , PDO::PARAM_INT);
+                $exec->bindParam('productquantity', $productQuantity , PDO::PARAM_INT);
+                $exec->execute();
+            }
 
             $sql->commit();
 
-            echo json_encode(['success' => true, 'message' => htmlspecialchars('Pedido registrado com sucesso')]);
+        echo json_encode(['success' => true, 'message' => htmlspecialchars('Pedido registrado com sucesso')]);
         }
     } catch (PDOException $e) {
         $sql->rollBack();

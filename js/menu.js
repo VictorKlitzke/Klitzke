@@ -60,3 +60,9 @@ function ToggleReport() {
     subMenuReport.style.display = subMenuReport.style.display === 'none' ? 'block' : 'none';
     subMenuReport.style.padding = '5px';
 }
+
+function ToggleCompany() {
+    let subMenuCompany = document.getElementById('company');
+    subMenuCompany.style.display = subMenuCompany.style.display === 'none' ? 'block' : 'none';
+    subMenuCompany.style.padding = '5px';
+}

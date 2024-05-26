@@ -1,7 +1,9 @@
 <?php
 
+global $title_login;
+global $chave_secret;
 include_once './services/db.php';
-include_once './classes/pane.php';
+include_once './classes/panel.php';
 
 if (isset($_POST['action'])) {
     $login = $_POST['name'];
@@ -15,6 +17,23 @@ if (isset($_POST['action'])) {
         $info = $exec->fetch();
         $storedPassword = $info['password']; 
         if (password_verify($userProvidedPassword, $storedPassword)) {
+
+            $secretKey = $chave_secret;
+            $issuedAt = time();
+            $expirationTime = $issuedAt + 3600;
+            $payload = [
+                'iat' => $issuedAt,
+                'exp' => $expirationTime,
+                'data' => [
+                    'id' => $info['id'],
+                    'name' => $login,
+                ]
+            ];
+
+            $jwt = base64_encode(json_encode($payload)) . '.' . base64_encode(hash_hmac('sha256', json_encode($payload), $secretKey, true));
+
+            setcookie('jwt', $jwt, $expirationTime, '/', '', false, true);
+
             $_SESSION['login'] = true;
             $_SESSION['name'] = $login;
             $_SESSION['id'] = $info['id'];
@@ -42,7 +61,7 @@ if (isset($_POST['action'])) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="<?php echo INCLUDE_PATH; ?>css/login.css" />
     <link rel="icon" href="<?php echo INCLUDE_PATH; ?>./public/logo/favicon.ico" type="image/x-icon" />
-    <title>Klitzke software - login</title>
+    <title><?php echo $title_login; ?></title>
 </head>
 
 <body>

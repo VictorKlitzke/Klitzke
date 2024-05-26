@@ -1,3 +1,4 @@
+// const dotenv = require("dotenv");
 let selectedRequest = [];
 let tableSelected = [];
 let SelectedInvos = [];
@@ -14,6 +15,7 @@ let overlayModalInvoicing = document.getElementById('overlay-invo');
 let closeModalInvo = document.getElementById('modal-invo-close');
 let ButtonFatInvo = document.querySelectorAll('.Invo-forms');
 let buttonCardPed = document.getElementById('add-card-item');
+let closeInvoButton = document.getElementById('Invo-Fat');
 
 document.addEventListener('DOMContentLoaded', function () {
 
@@ -405,7 +407,8 @@ async function addItemCard() {
 			productID: productID,
 			productName: productName,
 			quantity: quantity,
-			totalcard: totalcard
+			totalcard: totalcard,
+			currentCommandId: currentCommandId
 		}
 		SelectedFatPed.push(PedFat);
 	})
@@ -413,6 +416,7 @@ async function addItemCard() {
 	const totalizadorElement = existingCardOrder.querySelector('.total-card');
 	if (totalizadorElement) {
 		totalizadorElement.textContent = `R$ ${totalcard.toFixed(2)}`;
+		totalizadorElement.id = `totalizador-card${currentCommandId}`;
 	}
 
 	sourceTable.innerHTML = '';
@@ -427,7 +431,7 @@ function createNewCard(commandId) {
 	newCard.dataset.commandId = commandId;
 
 	newCard.innerHTML = `
-		<div class="card-order left">
+		<div class="card-order left" id="card-order">
 			<div class="card-list">
 				<h2>Itens na comanda ${commandId}</h2>
 			</div>
@@ -446,11 +450,16 @@ function createNewCard(commandId) {
 				</table>
 			</div>
 			<div class="card-footer right">
-				<button type="button" id="invoice-request" class="invoice-request" onclick="ModalFaturamento()">Gerar Pedido</button>
+				<button type="button" id="invoice-request-${commandId}" class="invoice-request">Gerar Pedido</button>
 			</div>
-			<h2 class="left total-card" id="totalizador-card">R$ 0.00</h2>
+			<h2 class="left total-card" id="totalizador-card${commandId}">R$ 0.00</h2>
 		</div>
     `;
+
+	const invoiceButton = newCard.querySelector(`#invoice-request-${commandId}`);
+	invoiceButton.addEventListener('click', function() {
+		ModalFaturamento(commandId);
+	});
 
 	return newCard;
 }
@@ -503,257 +512,6 @@ function calculateTotal() {
 	return totalRequest.toFixed(2);
 
 }
-
-// function AddProductOrder(id, name, stock_quantity, value_product) {
-//     let tbody = document.querySelector('#items-list-order');
-//     let existingRow = document.querySelector(`product-${id}`);
-
-//     if (existingRow) {
-//         let quantityCell = existingRow.querySelector('.product-quantity-order');
-//         let valueCell = existingRow.querySelector('.product-value-order');
-
-//         if (quantityCell && valueCell) {
-//             let currentQuantity = parseInt(quantityCell.textContent);
-//             let currentValue = parseFloat(valueCell.textContent.replace('R$', '').trim());
-
-//             if (currentQuantity < stock_quantity) {
-//                 window.alert("Estoque insuficiente para adicionar mais deste produto.");
-//                 return false;
-//             }
-
-//             quantityCell.textContent = currentQuantity + 1;
-
-//             let newValue = currentValue + parseFloat(value_product);
-//             valueCell.textContent = `R$ ${newValue.toFixed(2)}`;
-
-//             let productIndex = newListProducts.findIndex(product => product.id === id);
-//             if (productIndex !== -1) {
-//                 newListProducts[productIndex].stock_quantity++;
-//                 newListProducts[productIndex].value_product += parseFloat(value_product);
-//             }
-//         } else {
-//             console.error('Elementos de quantidade ou valor não encontrados na linha existente.');
-//         }
-//     } else {
-//         let newRow = document.createElement('tr');
-//         newRow.className = 'tr-order';
-//         newRow.id = `product-${id}`;
-
-//         newRow.innerHTML = `
-//             <td class='product-id-order'>${id}</td>
-//             <td class='product-name-order'>${name}</td>
-//             <td class='product-quantity-order'>1</td>
-//             <td class='product-value-order'>R$ ${value_product}</td>
-//             <td style='margin: 6px; padding: 6px; cursor: pointer;'>
-//                 <button onclick='deleteItemFromOrder(${id})' class='btn-delete' type='button'>Deletar</button>
-//             </td>
-//         `;
-
-//         tbody.appendChild(newRow);
-
-//         calculateTotalRequestOrder();
-
-//         let newProduct = {
-//             name: name,
-//             stock_quantity: 1,
-//             value_product: parseFloat(value_product)
-//         };
-//         newListProducts.push(newProduct);
-//     }
-
-//     // console.log(newListProducts);
-// }
-
-// function deleteItemFromOrder(id) {
-//     let rowToDelete = document.getElementById(`product-${id}`);
-
-//     if (rowToDelete) {
-//         let quantityCell = rowToDelete.querySelector('.product-quantity-order');
-//         let currentQuantity = parseInt(quantityCell.textContent);
-
-//         if (currentQuantity > 1) {
-//             quantityCell.textContent = currentQuantity - 1;
-
-//             let productIndex = newListProducts.findIndex(product => product.name === name);
-//             if (productIndex !== -1) {
-//                 newListProducts[productIndex].stock_quantity--;
-//                 newListProducts[productIndex].value_product -= parseFloat(newListProducts[productIndex].value_product);
-//             }
-//         } else {
-//             rowToDelete.remove();
-//             newListProducts = newListProducts.filter(product => product.id !== id);
-//         }
-//     } else {
-//         window.alert("Produto não encontrado na comanda.");
-//     }
-
-//     calculateTotalRequestOrder();
-// }
-
-// async function AddProductItems() {
-
-//     let totalizadorOrder = document.getElementById('total-order-value').textContent
-//     let valueTotalizadorOrder = 0;
-//     if (totalizadorOrder) {
-//         valueTotalizadorOrder = parseFloat(totalizadorOrder.textContent.replace('R$ ', '')) || 0;
-//     }
-
-//     const responseDataNewList = {
-//         newProduct: newListProducts,
-//         valueTotalizadorOrder: valueTotalizadorOrder,
-//     }
-
-//     console.log(responseDataNewList);
-
-//     if (newListProducts.length <= 0) {
-//         showErrorMessageRequest("Nenhum produto selecionado")
-//     } else {
-//         try {
-//             let urlOrder = '';
-
-//             const response = await fetch(urlOrder, {
-//                 method: 'POST',
-//                 headers: {
-//                     'Content-Type': 'application/json',
-//                 },
-//                 body: JSON.stringify(requestData),
-//             });
-
-//             const OrderResponse = await response.text();
-//             const responseDataOrder = JSON.parse(OrderResponse);
-
-//             if (responseDataOrder && responseDataOrder.success) {
-//                 showSuccessMessage('Venda finalizada com sucesso!');
-//             } else {
-//                 console.error('Erro ao registrar venda:', responseDataOrder ? responseDataOrder.error : 'Resposta vazia');
-//             }
-//         } catch (error) {
-//             showErrorMessageRequest("Erro ao enviar pedido")
-//         }
-//     }
-// }
-
-// function updateTotalAmountRequestOrder(valueRequestOrder) {
-
-//     let totalElementOrderRequestRequestOrder = document.getElementById('total-order-value');
-
-//     if (totalElementOrderRequestRequestOrder) {
-//         totalElementOrderRequestRequestOrder.textContent = 'R$ ' + valueRequestOrder.toFixed(2);
-//     }
-// }
-
-// function calculateTotalRequestOrder() {
-
-//     let totalRequestOrder = 0;
-
-//     newListProducts.forEach(newProduct => {
-
-//         let quantityElementOrderRequest = 1;
-//         let valueElementOrderRequest = document.getElementById('order-total-request');
-
-//         if (quantityElementOrderRequest && valueElementOrderRequest) {
-//             let quantityElementOrderTotalRequestOrder = parseInt(quantityElementOrderRequest.textContent) || 0;
-//             let valueRequestOrder = parseFloat(valueElementOrderRequest.textContent) || 0;
-
-//             totalRequestOrder += quantityElementOrderTotalRequestOrder * valueRequestOrder;
-//         } else {
-//             console.error('Elementos não encontrados para o produto ID:', newProduct.id);
-//         }
-//     });
-
-//     let totalElementOrderRequestRequestOrder = document.getElementById('total-order-value');
-//     if (totalElementOrderRequestRequestOrder) {
-//         totalElementOrderRequestRequestOrder.textContent = 'R$ ' + totalRequestOrder.toFixed(2);
-//     }
-
-//     updateTotalAmountRequestOrder(totalRequestOrder);
-
-//     return totalRequestOrder.toFixed(2);
-
-// }
-
-/* MODAL DE FATURAMENTO DE PEDIDO */
-
-// function closemodalData() {
-//
-// 	if (OpenModalInvoicingFat.style.display == 'block' && overlayModalInvoicingFat.style.display == "block") {
-// 		OpenModalInvoicingFat.style.display = "none";
-// 		overlayModalInvoicingFat.style.display = "none";
-// 	}
-// };
-//
-// function ModalFaturamento(id_table, date_request, total_request, STATUS_REQUEST) {
-// 	if (STATUS_REQUEST === "AGRUPADOS") {
-// 		window.alert("Esse pedido esta agrupados");
-// 		return;
-// 	} else {
-// 		OpenModalInvoicingFat.style.display = 'block';
-// 		overlayModalInvoicingFat.style.display = 'block';
-//
-// 		const id_table_invoFat = document.getElementById('id-table');
-// 		const value_request_totalFat = document.getElementById('total-request');
-// 		const date_request_invoFat = document.getElementById('date-request');
-// 		const status_request_invoFat = document.getElementById('status-request');
-//
-// 		id_table_invoFat.textContent = "Comanda: " + id_table;
-// 		value_request_totalFat.innerHTML = "Total pedido " + '<input type="text" id="total_request" value="' + total_request + '" />';
-// 		date_request_invoFat.textContent = "Data do pedido: " + date_request;
-// 		status_request_invoFat.textContent = "Status: " + STATUS_REQUEST;
-//
-// 		ButtonFat.forEach(function (button) {
-// 			button.addEventListener("click", function () {
-// 				button.style.background = "rgb(58, 204, 82)";
-// 			})
-// 			button.addEventListener("dblclick", function () {
-// 				button.style.background = "";
-// 			})
-// 		});
-// 	}
-//
-// 	let orderPedidosFat = {
-// 		id_table: id_table,
-// 		date_request: date_request,
-// 		total_request: total_request,
-// 		status_request: STATUS_REQUEST,
-// 		Button: ButtonFatInvo
-// 	}
-//
-// 	SelectedInvosFat.push(orderPedidosFat);
-// }
-//
-// async function CloseInvo() {
-//
-// 	let responseInvo = {
-// 		SelectedInvosFat: orderPedidosFat,
-// 	}
-//
-// 	try {
-// 		const responseserver = await fetch("", {
-// 			method: 'POST',
-// 			headers: {
-// 				'Content-Type': 'application/json',
-// 			},
-// 			body: JSON.stringify(responseInvo),
-// 		})
-//
-// 		const response = await responseserver.text();
-// 		console.log('Response from server:', response);
-// 		const responseDataInvo = JSON.parse(response);
-//
-// 		if (responseDataInvo && responseDataInvo.success) {
-// 			window.alert('Pedido finalizada com sucesso!');
-// 			// const saleId = responseData.id;
-// 			// window.location.href = 'pages/proof.php?sale_id=' + saleId;
-// 		} else {
-// 			console.error('Erro ao faturar pedido:', responseDataInvo ? responseDataInvo.error : 'Resposta vazia');
-// 		}
-// 	} catch (error) {
-// 		console.log("Erro ao faturar Pedido" + SelectedInvos.id_table + error);
-// 	}
-//
-// }
-
-/**/
 
 /* CODIGO DE AGRUPAMENTO DE COMANDAS */
 
@@ -945,9 +703,32 @@ closeModalInvo.addEventListener("click", function () {
 	overlayModalInvoicing.style.display = "none";
 });
 
-function ModalFaturamento() {
+function fieldsTotalForms(button) {
+	const buttonId = button.dataset.paymentId;
+	const existingInput = document.querySelector(`.input-total-card[data-payment-id="${buttonId}"]`);
 
-	const totalcardElement = document.getElementById('totalizador-card');
+	if (existingInput) {
+		existingInput.style.display = 'block';
+		return;
+	}
+
+	const newInput = document.createElement('div');
+	newInput.classList.add('input-total-card');
+	newInput.dataset.paymentId = buttonId;
+	newInput.innerHTML = `
+		<div style="display: flex; align-items: center; text-align: right">
+			<strong>${button.textContent}</strong><input id="payment-final-fat-${buttonId}" type="text" placeholder="Valor a ser pago"/>
+		</div>
+		<br/>
+	`;
+
+	const orderDetails = document.getElementById('orderDetails');
+	orderDetails.appendChild(newInput);
+}
+
+function ModalFaturamento(commandId) {
+
+	const totalcardElement = document.getElementById(`totalizador-card${commandId}`);
 	const totalcardValue = totalcardElement ? totalcardElement.innerText.replace('R$', '').trim() : '0.00';
 
 	const OpenModalInvoicing = document.getElementById('modal-invo');
@@ -976,17 +757,28 @@ function ModalFaturamento() {
 	const ButtonFatInvo = document.querySelectorAll('.Invo-forms');
 	ButtonFatInvo.forEach(function (button) {
 		button.addEventListener("click", function () {
+			fieldsTotalForms(button);
 			button.style.background = "rgb(58, 204, 82)";
-		});
-		console.log(button)
-		button.addEventListener("dblclick", function () {
-			button.style.background = "";
-		});
+			let buttonPed = {
+				buttonId: button.dataset.paymentId,
+				buttonText: button.textContent
+			}
+			ButtonSelected.push(buttonPed);
 
-		let buttonPed = {
-			button: button
-		}
-		ButtonSelected.push(buttonPed);
+			console.log(buttonPed)
+		});
+		button.addEventListener("dblclick", function () {
+			const paymentId = button.dataset.paymentId;
+			const inputTotalCard = document.querySelector(`.input-total-card[data-payment-id="${paymentId}"]`);
+			if (inputTotalCard) {
+				inputTotalCard.style.display = 'none';
+			}
+			button.style.background = "";
+			const index = ButtonSelected.findIndex(item => item.buttonId === paymentId);
+			if (index > -1) {
+				ButtonSelected.splice(index, 1);
+			}
+		});
 	});
 
 	document.getElementById('modal-invo-close').onclick = function() {
@@ -1000,14 +792,42 @@ function ModalFaturamento() {
 			overlayModalInvoicing.style.display = 'none';
 		}
 	};
+
+	if (closeInvoButton) {
+		closeInvoButton.dataset.commandId = commandId;
+	} else {
+		console.error("Invo-Fat not found in the DOM.");
+	}
 }
 
 async function CloseInvo() {
 
+	const cardOrderFat = document.getElementById('card-order');
+	const CloseButtonInvo = document.getElementById('Invo-Fat');
+	const commandId = CloseButtonInvo ? CloseButtonInvo.dataset.commandId : null;
+
 	let totalCardFinal = document.getElementById('total-card-final').value
 	totalCardFinal.replace('R$', '').trim();
 
-	let PedFat = SelectedFatPed || '';
+	let PedFat = SelectedFatPed.filter(item => item.currentCommandId === commandId);
+
+	if (!commandId) {
+		window.alert("Erro: Numero da comanda não encontrada!");
+		return;
+	}
+
+	let paymentFormsValor = ButtonSelected.map(button => {
+		const input = document.getElementById(`payment-final-fat-${button.buttonId}`);
+		return {
+			paymentId: button.buttonId,
+			paymentValue: input ? input.value.trim() : ''
+		};
+	}).filter(item => item.paymentValue !== '');
+
+	if (paymentFormsValor == null || paymentFormsValor == '' ) {
+		window.alert("Nenhum valor nas formas de pagemento");
+		return;
+	}
 
 	if (totalCardFinal == '') {
 		window.alert("Total esta vazio!");
@@ -1016,10 +836,9 @@ async function CloseInvo() {
 
 	let responseInvo = {
 		SelectedFatPed: PedFat,
-		totalCardFinal: totalCardFinal
+		totalCardFinal: totalCardFinal,
+		ButtonSelected: paymentFormsValor
 	}
-
-	console.log(responseInvo)
 
 	if (responseInvo.SelectedFatPed == null) {
 		window.alert("Erro ao buscar itens de pedido para faturamento!")
@@ -1027,7 +846,7 @@ async function CloseInvo() {
 	}
 
 	try {
-		const responseserver = await fetch("", {
+		const responseserver = await fetch(`http://localhost/Klitzke/ajax/add_request.php`, {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json',
@@ -1035,18 +854,26 @@ async function CloseInvo() {
 			body: JSON.stringify(responseInvo),
 		})
 
-		const response = await responseserver.text();
-		console.log('Response from server:', response);
-		const responseDataInvo = JSON.parse(response);
+		const responseText = await responseserver.text();
+		let responseDataInvo;
+
+		try {
+			responseDataInvo = JSON.parse(responseText);
+		} catch (error) {
+			window.alert("Erro inesperado ao processar a faturamento de pedido. Entre em contato com o suporte.");
+			return;
+		}
 
 		if (responseDataInvo && responseDataInvo.success) {
 			window.alert('Pedido finalizada com sucesso!');
+			cardOrderFat.style.display = 'none';
+			OpenModalInvoicing.style.display = 'none';
+			overlayModalInvoicing.style.display = 'none';
 		} else {
 			window.alert("Erro ao faturar pedido, por favor entre em contato com o suporte")
-			console.error('Erro ao faturar pedido:', responseDataInvo ? responseDataInvo.error : 'Resposta vazia');
 		}
 	} catch (error) {
-		console.log("Erro ao faturar Pedido" + SelectedInvos.id_table + error);
+		window.alert("Erro ao faturar Pedido" + error);
 	}
 
 }
