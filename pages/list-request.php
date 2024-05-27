@@ -9,11 +9,11 @@ $request = Controllers::SelectAll('request', ($currentPage - 1) * $porPage, $por
 	<div
 		style="display: flex; background: #ccc; padding: 9px; margin: 4px; border-radius: 4px; justify-content: space-between;">
 		<h2 style="color: #000">Lista de pedidos</h2>
-		<div class="btn-ajust" style="flex-grow: 1; text-align: center; max-width: 180px;">
-			<a class="btn-ajust" href="<?php echo htmlspecialchars(INCLUDE_PATH . 'gather-tables'); ?>">
-				Agrupar Comandas
-			</a>
-		</div>
+<!--		<div class="btn-ajust" style="flex-grow: 1; text-align: center; max-width: 180px;">-->
+<!--			<a class="btn-ajust" href="--><?php //echo htmlspecialchars(INCLUDE_PATH . 'gather-tables'); ?><!--">-->
+<!--				Agrupar Comandas-->
+<!--			</a>-->
+<!--		</div>-->
 	</div>
 	<div class="list">
 		<table>
@@ -56,14 +56,19 @@ $request = Controllers::SelectAll('request', ($currentPage - 1) * $porPage, $por
 						</td>
 
 						<td style="display: flex; justify-content: center; gap: 10px; margin: 6px; padding: 6px;">
-							<div>
-								<button
-									onclick="ModalFaturamento('<?php echo $value['id_table']; ?>','<?php echo $value['date_request']; ?>','<?php echo $value['total_request']; ?>','<?php echo $value['STATUS_REQUEST']; ?>')"
-									class="btn-disable" type="button" id="btn-list-request-invoicing-<?php echo $key; ?>">
-									Faturar
-								</button>
+                            <?php if ($value["STATUS_REQUEST"] == "INATIVADA") {
 
-							</div>
+                            ?>
+                            <div>
+                                <button class="btn-disable-invo">Inativado</button>
+                            </div>
+                            <?php } else { ?>
+                            <div>
+                                <button onclick="InativarInvo(this)" type="button" data-id="<?php echo $value['id']; ?>"
+                                        class="btn-disable"> Inativar Pedido
+                                </button>
+                            </div>
+                            <?php } ?>
 						</td>
 					</tr>
 				</tbody>

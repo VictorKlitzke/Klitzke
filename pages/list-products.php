@@ -56,6 +56,9 @@ $products = Controllers::SelectAll('products', ($currentPage - 1) * $porPage, $p
                         <div>
                             <a actionBtn="delete" class="btn-delete" href="<?php echo INCLUDE_PATH ?>list-products?delete=<?php echo $value['id']; ?>">Deletar</a>
                         </div>
+                        <div>
+                            <a onclick="ShowOnPage(this)" data-id="<?php echo $value['id']; ?>" class="btn-edit"> Mostrar na pagina </a>
+                        </div>
                     </td>
                 </tr>
                 </tbody>

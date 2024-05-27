@@ -855,6 +855,7 @@ async function CloseInvo() {
 		})
 
 		const responseText = await responseserver.text();
+
 		let responseDataInvo;
 
 		try {

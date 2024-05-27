@@ -58,7 +58,7 @@ class Controllers
                     U.name AS NAME_USER,
                     CASE 
                         WHEN R.status = 1 THEN 'EM ATENDIMENTO'
-                        WHEN R.status = 2 THEN 'FINALIZADA'
+                        WHEN R.status = 2 THEN 'INATIVADA'
                         WHEN R.status = 3 THEN 'CONCLUÍDO'
                         WHEN R.status = 4 THEN 'AGRUPADOS'
                     END AS STATUS_REQUEST

@@ -279,6 +279,7 @@ include_once 'config/config.php';
   </div>
 
   <script language="JavaScript" type="text/javascript" src="<?php echo INCLUDE_PATH; ?>./js/main.js"></script>
+  <script language="JavaScript" type="text/javascript" src="<?php echo INCLUDE_PATH; ?>./js/list_request.js"></script>
   <script language="JavaScript" type="text/javascript" src="<?php echo INCLUDE_PATH; ?>./js/alert.js"></script>
   <script language="JavaScript" type="text/javascript" src="<?php echo INCLUDE_PATH; ?>./js/values.js"></script>
   <script language="JavaScript" type="text/javascript" src="<?php echo INCLUDE_PATH; ?>./js/menu.js"></script>

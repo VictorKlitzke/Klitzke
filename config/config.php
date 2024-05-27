@@ -9,9 +9,17 @@ define('USER', 'root');
 define('PASSWORD', 'root');
 define('DATABASE', 'Klitzke');
 
+if (isset($_SESSION['name_company'])) {
+    $title_page_delivery = $_SESSION['name_company'];
+} else {
+    echo 'erro ao buscar nome da empresa';
+}
+
 $title_home = 'Klitzke Software - Admin';
 $title_login = 'Klitzke software - login';
 $chave_secret = 'EFEGREWSWREGERGEGBTBBFDGBTGHERTGSFDSGVB';
+
+define('INCLUDE_DELIVERY', 'http://localhost/Klitzke/page_delivery/');
 
 define('INCLUDE_PATH', 'http://localhost/Klitzke/');
 define('INCLUDE_PATH_PANEL', INCLUDE_PATH . 'pages/');

@@ -53,15 +53,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $exec->execute();
             $result = $exec->fetchAll(PDO::FETCH_ASSOC);
 
-           if (empty($id_users_request)) {
-               echo json_encode(['error' => true, 'message' => htmlspecialchars('Usuario nao encontrado')]);
-               return true;
-           }
-
-           if (empty($id_boxpdv_request)) {
-               echo json_encode(['error' => true, 'message' => htmlspecialchars('Caixa não encontrado')]);
-               return true;
-           }
+//           if (empty($id_users_request)) {
+//               echo json_encode(['error' => true, 'message' => htmlspecialchars('Usuario nao encontrado')]);
+//               return true;
+//           }
+//
+//           if (empty($id_boxpdv_request)) {
+//               echo json_encode(['error' => true, 'message' => htmlspecialchars('Caixa não encontrado')]);
+//               return true;
+//           }
 
             foreach ($SelectedFatPed as $SelectedFatPed) {
                 $current_command = $SelectedFatPed['currentCommandId'];
@@ -82,7 +82,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $exec->bindParam(':id_users_request', $id_users_request, PDO::PARAM_INT);
                 $exec->bindParam(':total_request', $totalCardFinal, PDO::PARAM_INT);
                 $exec->bindParam(':id_boxpdv_request', $id_boxpdv_request, PDO::PARAM_INT);
-                $status = 1;
+                $status = 3;
                 $exec->bindParam(':status', $status, PDO::PARAM_INT);
                 $exec->execute();
 

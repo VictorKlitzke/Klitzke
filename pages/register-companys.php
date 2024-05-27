@@ -1,7 +1,7 @@
 <?php
 
 if (isset($_POST['action'])) {
-  $name = $_POST['name'];
+  $name_company = $_POST['name'];
   $cnpj = $_POST['cnpj'];
   $state_registration = $_POST['state_registration'];
   $email = $_POST['email'];
@@ -9,14 +9,14 @@ if (isset($_POST['action'])) {
   $address = $_POST['address'];
   $city = $_POST['city'];
   $state = $_POST['state'];
-  if ($name == '' || $state_registration == '' || $phone == '' || $cnpj == '') {
+  if ($name_company == '' || $state_registration == '' || $phone == '' || $cnpj == '') {
     Panel::Alert('attention', 'Os campos não podem ficar vázios!');
   } else {
     $verification = Db::Connection()->prepare("SELECT * FROM `company` WHERE name = ? AND cnpj = ? AND state_registration = ? AND email = ?
                                                       AND phone = ? AND address = ? AND city = ? AND state = ?");
     $verification->execute(
       array(
-        $name = $_POST['name'],
+        $name_company = $_POST['name'],
         $_POST['cnpj'],
         $_POST['state_registration'],
         $_POST['email'],
@@ -28,7 +28,7 @@ if (isset($_POST['action'])) {
     );
     if ($verification->rowCount() == 0) {
       $arr = [
-        'name' => $name,
+         'name' => $name_company,
         'cnpj' => $cnpj,
         'state_registration' => $state_registration,
         'email' => $email,
@@ -39,7 +39,8 @@ if (isset($_POST['action'])) {
         'name_table' => 'company'
       ];
       Controllers::Insert($arr);
-      Panel::Alert('sucess', 'O cadastro da empresa ' . $name . ' foi realizado com sucesso!');
+      Panel::Alert('sucess', 'O cadastro da empresa ' . $name_company . ' foi realizado com sucesso!');
+        $_SESSION['name_company'] = $name_company;
     } else {
       Panel::Alert('error', 'Já existe uma empresa com este nome!');
     }
