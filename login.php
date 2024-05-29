@@ -41,13 +41,12 @@ if (isset($_POST['action'])) {
             $_SESSION['function'] = $info['function'];
             $_SESSION['commission'] = $info['commission'];
             $_SESSION['target_commission'] = $info['target_commission'];
+            $_SESSION['access'] = $info['access'];
             header('Location: ' . INCLUDE_PATH);
             die();
         } else {
             Panel::Alert('error', 'Credenciais inválidas. Ocorreu um erro ao fazer login.');
         }
-    } else {
-        Panel::Alert('error', 'Credenciais inválidas. Ocorreu um erro ao fazer login.');
     }
 }
 

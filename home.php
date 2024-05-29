@@ -76,55 +76,55 @@ include_once 'config/config.php';
         <a <?php SelectedMenu('register-users') ?> href="<?php echo INCLUDE_PATH; ?>register-users">
           Cadastrar Usuários
         </a>
-        <a <?php SelectedMenu('register-suppliers') ?> href="<?php echo INCLUDE_PATH; ?>register-suppliers">
+        <a <?php SelectedMenu('register-suppliers'); ?> href="<?php echo INCLUDE_PATH; ?>register-suppliers">
           Cadastrar Fornecedores
         </a>
-        <a <?php SelectedMenu('register-clients') ?> href="<?php echo INCLUDE_PATH; ?>register-clients">
+        <a <?php SelectedMenu('register-clients'); ?> href="<?php echo INCLUDE_PATH; ?>register-clients">
           Cadastrar Clientes
         </a>
-        <a <?php SelectedMenu('register-companys') ?> href="<?php echo INCLUDE_PATH; ?>register-companys">
+        <a <?php SelectedMenu('register-companys'); ?> href="<?php echo INCLUDE_PATH; ?>register-companys">
           Cadastrar Empresa
         </a>
-        <a <?php SelectedMenu('register-stockcontrol') ?> href="<?php echo INCLUDE_PATH; ?>register-stockcontrol">
+        <a <?php SelectedMenu('register-stockcontrol'); ?> href="<?php echo INCLUDE_PATH; ?>register-stockcontrol">
           Cadastrar Produtos
         </a>
-        <a <?php SelectedMenu('register-table') ?> href="<?php echo INCLUDE_PATH; ?>register-table">Cadastrar Mesa
+        <a <?php SelectedMenu('register-table'); ?> href="<?php echo INCLUDE_PATH; ?>register-table">Cadastrar Mesa
         </a>
-        <a <?php SelectedMenu('register-back-account') ?>
+        <a <?php SelectedMenu('register-back-account'); ?>
           href="<?php echo INCLUDE_PATH; ?>register-back-account">Cadastrar Conta Bancaria
         </a>
       </div>
 
       <h2 style="cursor: pointer;" onclick="ToggleLists()">Listagens</h2>
       <div id="list-registers" style="display: none;">
-        <a <?php SelectedMenu('list-users') ?> href="<?php echo INCLUDE_PATH; ?>list-users">
+        <a <?php SelectedMenu('list-users'); ?> href="<?php echo INCLUDE_PATH; ?>list-users">
           Lista de Usuários
         </a>
-        <a <?php SelectedMenu('list-clients') ?> href="<?php echo INCLUDE_PATH; ?>list-clients">
+        <a <?php SelectedMenu('list-clients'); ?> href="<?php echo INCLUDE_PATH; ?>list-clients">
           Lista de Clientes
         </a>
-        <a <?php SelectedMenu('list-suppliers') ?> href="<?php echo INCLUDE_PATH; ?>list-suppliers">
+        <a <?php SelectedMenu('list-suppliers'); ?> href="<?php echo INCLUDE_PATH; ?>list-suppliers">
           Lista de Fornecedores
         </a>
-        <a <?php SelectedMenu('list-boxpdv') ?> href="<?php echo INCLUDE_PATH; ?>list-boxpdv">
+        <a <?php SelectedMenu('list-boxpdv'); ?> href="<?php echo INCLUDE_PATH; ?>list-boxpdv">
           Lista de Caixas
         </a>
-        <a <?php SelectedMenu('list-products') ?> href="<?php echo INCLUDE_PATH; ?>list-products">
+        <a <?php SelectedMenu('list-products'); ?> href="<?php echo INCLUDE_PATH; ?>list-products">
           Lista de Produtos
         </a>
-        <a <?php SelectedMenu('list-sales') ?> href="<?php echo INCLUDE_PATH; ?>list-sales">
+        <a <?php SelectedMenu('list-sales'); ?> href="<?php echo INCLUDE_PATH; ?>list-sales">
           Lista de Vendas
         </a>
-        <a <?php SelectedMenu('list-request') ?> href="<?php echo INCLUDE_PATH; ?>list-request">
+        <a <?php SelectedMenu('list-request'); ?> href="<?php echo INCLUDE_PATH; ?>list-request">
           Lista de Pedidos
         </a>
       </div>
 
       <h2 style="cursor: pointer;" onclick="ToggleInvoicing()">Faturamento</h2>
       <div id="invoicing" style="display: none;">
-        <a <?php SelectedMenu('register-boxpdv') ?> href="<?php echo INCLUDE_PATH; ?>register-boxpdv">Abrir Caixa</a>
-        <a <?php SelectedMenu('register-sales') ?> href="<?php echo INCLUDE_PATH; ?>register-sales">Vendas</a>
-        <a <?php SelectedMenu('register-request') ?> href="<?php echo INCLUDE_PATH; ?>register-request">Pedidos</a>
+        <a <?php SelectedMenu('register-boxpdv'); ?> href="<?php echo INCLUDE_PATH; ?>register-boxpdv">Abrir Caixa</a>
+        <a <?php SelectedMenu('register-sales'); ?> href="<?php echo INCLUDE_PATH; ?>register-sales">Vendas</a>
+        <a <?php SelectedMenu('register-request'); ?> href="<?php echo INCLUDE_PATH; ?>register-request">Pedidos</a>
       </div>
 
       <h2 style="cursor: pointer" onclick="ToggleCompany()">Minha Empresa</h2>

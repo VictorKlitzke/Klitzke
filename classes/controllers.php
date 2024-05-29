@@ -162,6 +162,7 @@ class Controllers
 
         return $exec->fetchAll();
     }
+    
     public static function SelectAllTableRequests($name_table, $start = null, $end = null)
     {
         $sql = Db::Connection();
@@ -197,6 +198,7 @@ class Controllers
 
         return $exec->fetchAll();
     }
+
     public static function SelectAllFormPayment($name_table, $start = null, $end = null)
     {
         $sql = Db::Connection();
@@ -349,6 +351,7 @@ class Controllers
         }
         return $exec->fetch();
     }
+
     public static function SelectRequestItensOrder($name_table, $query = '', $ts = '')
     {
         $sql = Db::Connection();
@@ -488,6 +491,7 @@ class Controllers
         }
         $exec->execute();
     }
+
     public static function DeleteRequest($id)
     {
         $sql = Db::Connection();

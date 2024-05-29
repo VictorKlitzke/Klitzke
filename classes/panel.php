@@ -20,6 +20,7 @@ class Panel
       return false;
     }
   }
+  
   public static function UploadsImg($file)
   {
     $fileFormat = explode('.', $file['name']);

@@ -33,6 +33,16 @@ function SelectedMenu($par)
     }
 }
 
+function VerificationAccess() {
+
+    if ($_SESSION['access'] >= 50) {
+        include_once('./error/error-access.php');
+    } else {
+        echo 'Erro';
+    }
+
+}
+
 function VerificationMenu()
 {
     if ($_SESSION['function'] == 'Gerente' || $_SESSION['function'] == 'CEO') {
