@@ -242,6 +242,8 @@ async function finalizeSalePortion() {
 
 async function finalizeSale() {
 
+    let rowProducts = document.getElementById('row-1');
+
     let totalAmountElement = document.getElementById('totalAmount');
     let totalValue = 0;
     if (totalAmountElement) {
@@ -278,6 +280,7 @@ async function finalizeSale() {
 
             if (responseData && responseData.success) {
                 showSuccessMessage('Venda finalizada com sucesso!');
+                rowProducts.innerHTML == '';
             } else {
                 console.error('Erro ao registrar venda:', responseData ? responseData.error : 'Resposta vazia');
             }
@@ -441,9 +444,29 @@ function updateProductQuantity(id, stock_quantity) {
 
 function validateStock(stock_quantity, qnt) {
 
-    if (stock_quantity < qnt) {
-        window.alert("Você não possui estoque suficiente!");
-        return false;
+    if (qnt > stock_quantity) {
+
+        console.log(stock_quantity > qnt);
+
+        const continueValidate = confirm("Você não possui estoque suficiente, Deseja continuar?")
+        if (!continueValidate) {
+            return false;
+        }
+
+        console.log(continueValidate);
+
+    } else {
+        return false
     }
-    return true;
+}
+
+async function closeModalPortion() {
+    const portionSalesModal = document.getElementById('portion-sales');
+    const overlayModalPortion = document.getElementById('overlay-portion');
+    const closeModalPortion = document.getElementById('close-portion');
+
+    if ((portionSalesModal.style.display === 'block' && overlayModalPortion.style.display === 'block')) {
+        portionSalesModal.style.display = 'none'
+        overlayModalPortion.style.display = 'none'
+    }
 }

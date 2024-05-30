@@ -9,11 +9,11 @@ define('USER', 'root');
 define('PASSWORD', 'root');
 define('DATABASE', 'Klitzke');
 
-if (isset($_SESSION['name_company'])) {
-    $title_page_delivery = $_SESSION['name_company'];
-} else {
-    echo 'erro ao buscar nome da empresa';
-}
+//if (isset($_SESSION['name_company'])) {
+//    $title_page_delivery = $_SESSION['name_company'];
+//} else {
+//    echo 'erro ao buscar nome da empresa';
+//}
 
 $title_home = 'Klitzke Software - Admin';
 $title_login = 'Klitzke software - login';

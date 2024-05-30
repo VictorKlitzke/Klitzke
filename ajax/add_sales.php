@@ -24,9 +24,9 @@ function status_boxpdv($status)
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $requestData = json_decode(file_get_contents('php://input'), true);
 
-    $selectedPaymentMethod = $requestData['idPaymentMethod'] ?? '';
-    $id_sales_client = $requestData['salesIdClient'] ?? '';
-    $selectedProducts = $requestData['products'] ?? [];
+    $selectedPaymentMethod = isset($requestData['idPaymentMethod']) ? $requestData['idPaymentMethod'] : '';
+    $id_sales_client = $requestData['salesIdClient'] = '';
+    $selectedProducts = $requestData['products'] = [];
 
     try {
 
@@ -47,10 +47,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $checkBoxOpen->execute();
             $id_boxpdv = $checkBoxOpen->fetchColumn();
 
+            if (!$id_boxpdv) {
+                echo json_encode(['error' => 'Nenhum caixa aberto']);
+                return;
+            }
+
             $exec = $sql->prepare("SELECT * FROM sales WHERE id_users = :user_id");
             $exec->bindParam(':user_id', $user_id, PDO::PARAM_INT);
             $exec->execute();
             $result = $exec->fetchAll(PDO::FETCH_ASSOC);
+
+            if (!$user_id) {
+                echo json_encode(['error' => 'Nenhum usuário logado']);
+                return;
+            }
 
             $exec = $sql->prepare("INSERT INTO sales (id_payment_method, id_client, id_boxpdv, id_users, date_sales, status) 
                 VALUES (:paymentMethod, :salesClient, :id_boxpdv, :id_users, NOW(), :status)");

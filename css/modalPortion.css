@@ -86,4 +86,5 @@
 
 .nav-portion {
     display: flex;
+    justify-content: space-between;
 }
