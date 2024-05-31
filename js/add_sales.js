@@ -51,6 +51,7 @@ function AddSelectProducts(index, id, name, stock_quantity, value) {
         };
 
         validateStock(stock_quantity, 1);
+        console.log(validateStock(stock_quantity, 1));
         selectedProducts.push(newProduct);
 
         let newRow = trProduct.insertRow();

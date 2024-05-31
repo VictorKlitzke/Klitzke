@@ -99,11 +99,7 @@ $sales = Controllers::SelectSales('sales', ($currentPage - 1) * $porPage, $porPa
 
                         <td style="display: flex; justify-content: center; gap: 10px; margin: 6px; padding: 6px;">
                             <?php
-                            
                                 if($value['status'] == 2) {
-
-                                
-                            
                             ?>
                             
                             <div>
@@ -117,12 +113,9 @@ $sales = Controllers::SelectSales('sales', ($currentPage - 1) * $porPage, $porPa
                             <?php } else { ?>
 
                             <div>
-                                <form action="./ajax/cancel_sales.php" method="post">
-                                    <input name="id_sales" type="hidden" type="submit" value="<?php echo base64_encode($value['id']); ?>" />
-                                    <input name="status_sales" type="hidden" type="submit" value="<?php echo base64_encode($value['status_sales']); ?>" />
-
-                                    <button class="btn-cancel">Cancelar venda</button>
-                                </form>
+                                <button onclick="CancelSales(this)" data-id="<?php echo $value['id']; ?>"
+                                        type="button" class="btn-cancel">Cancelar venda
+                                </button>
                             </div>
 
                             <?php } ?>
