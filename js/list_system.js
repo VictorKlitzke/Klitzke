@@ -310,3 +310,73 @@ async function CloseModalInfo() {
     }
 
 }
+
+async function DetailsOrder(button) {
+
+    const id_pedido_details = button.getAttribute('data-id');
+    const ModalOpenDetails = document.getElementById('modal-print-request');
+    const overlayDetailsrequest = document.getElementById('overlay-details-request');
+
+    if (!id_pedido_details) {
+        window.alert("ID do pedido nao encontrado!");
+        return;
+    }
+
+    try {
+        let url = `${BASE_URL}details_order.php`;
+
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ id_pedido_details: id_pedido_details })
+        });
+
+        const result = await response.json();
+
+        if (result.success) {
+            const items = result.items;
+
+            const requestIdElement = document.getElementById('requestID');
+            const modalTableBodyRequest = document.getElementById('modalTable-request').getElementsByTagName('tbody')[0];
+
+            requestIdElement.textContent = id_pedido_details;
+            modalTableBodyRequest.innerHTML = '';
+
+            items.forEach(item => {
+                let row = modalTableBodyRequest.insertRow();
+                row.insertCell(0).textContent = item.comanda;
+                row.insertCell(1).textContent = item.name;
+                row.insertCell(2).textContent = item.quantity;
+                row.insertCell(3).textContent = item.price_request;
+                row.insertCell(4).textContent = item.users;
+                row.insertCell(5).textContent = item.form_payment;
+                row.insertCell(6).textContent = item.pagamento_por_forma;
+                row.insertCell(7).textContent = item.status_request;
+                row.insertCell(8).textContent = item.total_request;
+            });
+
+            ModalOpenDetails.style.display = 'block';
+            overlayDetailsrequest.style.display = 'block';
+        } else {
+            window.alert('Erro ao buscar itens da venda: ' + result.error);
+        }
+
+    } catch (error) {
+        window.alert("Erro interno, entre em contato com o suporte" + error);
+    }
+}
+
+async function CloseModalInfoRequest() {
+
+    const overlayDetails = document.getElementById('overlay-details-request');
+    const modalDetails = document.getElementById('modal-print-request');
+
+    if ((overlayDetails.style.display === 'block' && modalDetails.style.display === 'block')) {
+        overlayDetails.style.display = 'none';
+        modalDetails.style.display = 'none';
+    }
+
+}
+
