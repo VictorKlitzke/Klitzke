@@ -150,10 +150,10 @@ include_once 'config/config.php';
     </div>
   </div>
 
-  <header>
+  <header id="header">
     <div class="center">
 
-      <div class="menu-btn">
+      <div class="menu-btn" onclick="OpenMenu()">
         <svg xmlns="http://www.w3.org/2000/svg" height="18" viewBox="0 -960 960 960" width="20" fill="#fff">
           <path d="M120-240v-80h720v80H120Zm0-200v-80h720v80H120Zm0-200v-80h720v80H120Z" />
         </svg>
@@ -189,7 +189,7 @@ include_once 'config/config.php';
     </div>
   </header>
 
-  <div class="content">
+  <div class="content" id="content">
 
     <?php Panel::LoadPage(); ?>
 
@@ -285,5 +285,4 @@ include_once 'config/config.php';
   <script language="JavaScript" type="text/javascript" src="<?php echo INCLUDE_PATH; ?>./js/menu.js"></script>
 
 </body>
-
 </html>

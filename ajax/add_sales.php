@@ -25,8 +25,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $requestData = json_decode(file_get_contents('php://input'), true);
 
     $selectedPaymentMethod = isset($requestData['idPaymentMethod']) ? $requestData['idPaymentMethod'] : '';
-    $id_sales_client = $requestData['salesIdClient'] = '';
-    $selectedProducts = $requestData['products'] = [];
+    $id_sales_client = $requestData['salesIdClient'] ?? '';
+    $selectedProducts = $requestData['products'] ?? [];
 
     try {
 

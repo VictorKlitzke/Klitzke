@@ -19,7 +19,6 @@ document.addEventListener('DOMContentLoaded', function () {
     OverlayPortion = document.querySelector('.overlay-portion');
 });
 
-
 function AddSelectProducts(index, id, name, stock_quantity, value) {
     let productAlreadyExists = false;
 
@@ -261,6 +260,8 @@ async function finalizeSale() {
         products: selectedProducts
     };
 
+    console.log(requestData)
+
     if (selectedProducts.length === 0) {
         showErrorMessage('Erro ao registrar venda, nenhum produto selecionado');
 
@@ -360,14 +361,6 @@ function removeProduct(id) {
     calculateTotal();
 }
 
-// if (process.env.NODE_ENV !== 'production') {
-//     console.log('Valor sensível:', valorSensivel);
-// }
-
-// if (process.env.NODE_ENV === 'development') {
-//     console.log('Somente exibido em ambiente de desenvolvimento');
-// }
-
 document
     .getElementById("sales-search-form")
     .addEventListener("submit", function (event) {
@@ -454,8 +447,6 @@ function validateStock(stock_quantity, qnt) {
             return false;
         }
 
-        console.log(continueValidate);
-
     } else {
         return false
     }
@@ -467,7 +458,7 @@ async function closeModalPortion() {
     const closeModalPortion = document.getElementById('close-portion');
 
     if ((portionSalesModal.style.display === 'block' && overlayModalPortion.style.display === 'block')) {
-        portionSalesModal.style.display = 'none'
-        overlayModalPortion.style.display = 'none'
+        portionSalesModal.style.display = 'none';
+        overlayModalPortion.style.display = 'none';
     }
 }

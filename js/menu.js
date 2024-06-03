@@ -1,35 +1,47 @@
 const menuBtn = document.querySelector('.menu-btn');
 const menu = document.querySelector('.menu');
+const header = document.getElementById('header');
+const content = document.getElementById('content');
 
-document.addEventListener("DOMContentLoaded", function() {
-    menuBtn.addEventListener("click", async(e) => {
-        if ((CloseBoxpdv.style.display = "block")) {
-            CloseBoxpdv.style.display = "none";
-            CloseBoxpdv.style.transition = "transform 0.9s";
-        }
-    });
+var open = true;
+var windowSize = window.innerWidth;
+var targetSizeMenu = (windowSize <= 400) ? 200 : 250;
 
-    menuBtn.addEventListener('click', function() {
-        menu.classList.toggle('show-menu');
-    });
+document.addEventListener('DOMContentLoaded', function() {
 
-    const menuItems = document.querySelectorAll('.items-menu a');
-    menuItems.forEach(function(item) {
-        item.addEventListener('click', function() {
-            menu.classList.remove('menu-btn');
-        });
-    });
+if (windowSize <= 768) {
+    menu.style.width = '0';
+    menu.style.left = '0';
+    content.style.width = '0';
+    content.style.left = '0';
+    open = false;
+}
 
-    const overlay = document.querySelector('.overlay');
-    overlay.addEventListener('click', function() {
-        menu.classList.remove('menu-btn');
-    });
-
-    const closeBoxpdv = document.querySelector('#close-boxpdv-modal');
-    closeBoxpdv.addEventListener('click', function() {
-        menu.classList.remove('show-menu');
-    });
 });
+
+async function OpenMenu() {
+    if (open) {
+        menu.style.width = '0';
+        menu.style.padding = '0';
+        open = false;
+        content.style.width = '100%';
+        header.style.width = '100%';
+        content.style.left = '0';
+        header.style.left = '0';
+    } else {
+        menu.style.display = 'block';
+        menu.style.width = targetSizeMenu + 'px';
+        menu.style.padding = '10px 0';
+        open = true;
+
+        if (windowSize > 768) {
+            content.style.width = 'calc(100% - 250px)';
+            header.style.width = 'calc(100% - 250px)';
+        }
+        content.style.left = targetSizeMenu + 'px';
+        header.style.left = targetSizeMenu + 'px';
+    }
+}
 
 function ToggleRegister() {
     let subMenuRegister = document.getElementById('registers');

@@ -103,35 +103,33 @@ $sales = Controllers::SelectSales('sales', ($currentPage - 1) * $porPage, $porPa
                             ?>
                             
                             <div>
-                                <form action="./ajax/reopen_sales.php" method="post">
-                                    <input name="id_sales" type="hidden" type="submit" value="<?php echo base64_encode($value['id']); ?>" />
-                                    
-                                    <button class="btn-reopen">Reabrir venda</button>
-                                </form>
+                                <button onclick="ReopenSales(this)"
+                                        type="button" data-id="<?php echo $value['id'] ?>" class="btn-reopen">Reabrir venda
+                                </button>
                             </div>
 
                             <?php } else { ?>
 
-                            <div>
-                                <button onclick="CancelSales(this)" data-id="<?php echo $value['id']; ?>"
-                                        type="button" class="btn-cancel">Cancelar venda
-                                </button>
-                            </div>
+                                    <div>
+                                        <button onclick="CancelSales(this)" data-id="<?php echo $value['id']; ?>"
+                                                type="button" class="btn-cancel">Cancelar venda
+                                        </button>
+                                    </div>
 
                             <?php } ?>
 
                             <div>
-                                <form action="" method="post">
-                                    <input name="id_sales" type="hidden" type="submit" value="<?php echo base64_encode($value['id']); ?>" />
-                                    <button class="btn-delete">Imprimir</button>
-                                </form>
+                                <button onclick="PrintOut(this)" data-id="<?php echo $value['id']; ?>"
+                                        type="button" class="btn-delete">Imprimir
+                                </button>
                             </div>
 
                             <div>
-                            <button id="details-<?php echo $Key; ?>" onclick="InfoSales(<?php echo $key; ?>,'<?php echo $value['users']; ?>','<?php echo $value['clients']; ?>','<?php echo $value['form_payment']; ?>','<?php echo $value['quantity']; ?>','<?php echo $value['value']; ?>','<?php echo $value['total_value']; ?>')" class="btn-details">
-                                <p>Mais detalhes</p>
-                            </button>
+                                <button onclick="Details(this)" data-id="<?php echo $value['id']; ?>" type="button" class="btn-details">
+                                    <p>Mais detalhes</p>
+                                </button>
                             </div>
+
                         </td>
                     </tr>
                 </tbody>
@@ -139,6 +137,29 @@ $sales = Controllers::SelectSales('sales', ($currentPage - 1) * $porPage, $porPa
             <?php } ?>
 
         </table>
+    </div>
+</div>
+
+<div class="overlay-details" id="overlay-details">
+    <div id="modal-print" class="modal">
+        <div class="modal-content-details" id="modal-content-details">
+            <span class="close-details" onclick="CloseModalInfo()" id="close-details">&times;</span>
+            <h1>Venda ID: <span id="saleId"></span></h1>
+            <table id="modalTable" border="1">
+                <thead>
+                <tr>
+                    <th>Cliente</th>
+                    <th>Status</th>
+                    <th>Produto</th>
+                    <th>Quantidade</th>
+                    <th>Valor</th>
+                    <th>Forma de pagamento</th>
+                    <th>Usuario</th>
+                </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
     </div>
 </div>
 

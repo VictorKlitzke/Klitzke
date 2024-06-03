@@ -15,14 +15,12 @@ $data = json_decode(file_get_contents('php://input'), true);
 if (!isset($data['id_sales_cancel']) || empty($data['id_sales_cancel'])) {
     echo json_encode([
         'success' => false,
-        'message' => 'ID do pedido não fornecido.'
+        'message' => 'ID da venda não fornecido.'
     ]);
     exit;
 }
 
 $id_sales_cancel = $data['id_sales_cancel'];
-
-var_dump($id_sales_cancel);die();
 
 $exec = $sql->prepare("SELECT * FROM sales WHERE id = :id_inativar");
 $exec->bindValue('id_inativar', $id_sales_cancel, PDO::PARAM_INT);
@@ -57,7 +55,7 @@ function updateSales($id_sales_cancel, $sql){
         $exec->execute();
 
         $exec_item = $sql->prepare("UPDATE sales_items SET status_item = :status_item_cancel WHERE id_sales = :id_sales_cancel");
-        $exec_item->bindValue('status', $status_item_cancel, PDO::PARAM_INT);
+        $exec_item->bindValue('status_item_cancel', $status_item_cancel, PDO::PARAM_INT);
         $exec_item->bindValue('id_sales_cancel', $id_sales_cancel, PDO::PARAM_INT);
         $exec_item->execute();
 

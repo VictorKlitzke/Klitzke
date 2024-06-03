@@ -367,25 +367,18 @@ section h2 {
     margin-top: 15px;
 }
 
-@media (max-width: 768px) {
-    .card-order, .card-list {
-        flex-direction: column;
+@media only screen and (max-width: 1600px) {
+    .card-request-finallize {
+        width: 100%;
+        margin-top: 12px;
     }
 
-    .card-order-content {
+    .card-request {
         width: 100%;
     }
 
-    .card-list {
-        flex-direction: column;
-        padding: 15px;
+    #add-card-item {
+
     }
 
-    .card-footer {
-        margin-top: 20px;
-    }
-
-    .table-gathers-selected {
-        height: auto;
-    }
 }
