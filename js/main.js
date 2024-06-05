@@ -57,11 +57,6 @@ async function closeBox() {
   let valueMoney = parseFloat(document.getElementById('value_money').value);
   let closeDate = document.getElementById('date_close').value;
 
-  if (!valueCredit || !valueDebit || !valuePIX || !valueMoney || !closeDate) {
-    console.log('Por favor, preencha todos os campos.');
-    return;
-  }
-
   let confirmClose = confirm('Deseja realmente fechar o caixa?');
 
   if (confirmClose) {

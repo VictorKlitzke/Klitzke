@@ -5,9 +5,27 @@ include_once 'classes/controllers.php';
 include_once 'config/config.php';
 ?>
 
-<?php if (isset($_GET['loggout'])) {
+<?php
+
+if (isset($_GET['loggout'])) {
   Panel::Loggout();
-} ?>
+}
+
+$sql = Db::Connection();
+
+$check_code = $sql->prepare("SELECT * FROM validade_system WHERE id_users = ? ORDER BY date_final DESC LIMIT 1");
+$check_code->execute([$_SESSION['id']]);
+$current_date = date('Y-m-d H:i:s');
+
+if ($check_code->rowCount() > 0) {
+    $validity_info = $check_code->fetch();
+    if ($current_date > $validity_info['date_final']) {
+        Panel::Alert('error', 'Seu código de acesso expirou.');
+        die();
+    }
+}
+
+?>
 
 <!DOCTYPE html>
 

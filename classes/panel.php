@@ -45,11 +45,11 @@ class Panel
 
   public static function Alert($type, $message)
   {
-    if ($type == 'sucess') {
+    if ($type = 'sucess') {
       echo '<div id="alert" class="alert alert-sucess"> ' . $message . '</div>';
-    } elseif ($type == 'error') {
+    } elseif ($type = 'error') {
       echo '<div id="alert" class="alert alert-error">' . $message . '</div>';
-    } elseif ($type == 'attention') {
+    } elseif ($type = 'attention') {
       echo '<div id="alert" class="alert alert-warning">' . $message . '</div>';
     }
   }

@@ -1,9 +1,12 @@
 <?php
-
 global $title_login;
 global $chave_secret;
 include_once './services/db.php';
 include_once './classes/panel.php';
+
+function generateRandomCode($length = 10) {
+    return substr(str_shuffle("0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"), 0, $length);
+}
 
 if (isset($_POST['action'])) {
     $login = $_POST['name'];
@@ -15,8 +18,25 @@ if (isset($_POST['action'])) {
 
     if ($exec->rowCount() == 1) {
         $info = $exec->fetch();
-        $storedPassword = $info['password']; 
+        $storedPassword = $info['password'];
         if (password_verify($userProvidedPassword, $storedPassword)) {
+
+            if ($info['access'] != 100) {
+                $randomCode = generateRandomCode(10) . date('Ymd');
+                $dateStart = date('Y-m-d H:i:s');
+                $dateFinal = date('Y-m-d H:i:s', strtotime($dateStart . ' + 15 days'));
+
+                $insertCode = $sql->prepare("INSERT INTO validade_system (code, date_start, date_final, id_users) 
+                                             VALUES(:code, :date_start, :date_final, :id_users)");
+                $insertCode->bindValue(':code', $randomCode, PDO::PARAM_STR);
+                $insertCode->bindValue(':date_start', $dateStart, PDO::PARAM_STR);
+                $insertCode->bindValue(':date_final', $dateFinal, PDO::PARAM_STR);
+                $insertCode->bindValue(':id_users', $info['id'], PDO::PARAM_INT);
+                $insertCode->execute();
+
+            }
+
+        }
 
             $secretKey = $chave_secret;
             $issuedAt = time();
@@ -42,14 +62,15 @@ if (isset($_POST['action'])) {
             $_SESSION['commission'] = $info['commission'];
             $_SESSION['target_commission'] = $info['target_commission'];
             $_SESSION['access'] = $info['access'];
+            $_SESSION['random_code'] = $randomCode;
+            $_SESSION['access'] = $info['access'];
+
             header('Location: ' . INCLUDE_PATH);
             die();
         } else {
             Panel::Alert('error', 'Credenciais inválidas. Ocorreu um erro ao fazer login.');
         }
-    }
 }
-
 ?>
 
 <!DOCTYPE html>

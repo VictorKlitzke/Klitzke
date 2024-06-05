@@ -10,8 +10,6 @@ F
 pages/list-request.php,7/1/7197363018ead9dbdce376834384c6870f0e7630
 D
 ajax/add_request.php,9/3/930d3e8f685c7468750ea8157acc11eb90ee82cc
-B
-js/list_request.js,a/2/a2a2acbd5c560ffb9c6000d808e0657eb31efe8e
 :
 
 js/main.js,d/a/dae13fd6f331d1c91ab58b06e81d05cb8958bfb1
@@ -29,3 +27,5 @@ E
 ajax/close_boxpdv.php,0/4/045227ebda07a314cfb3888ac24e4647ecf526cb
 @
 ajax/disable.php,2/8/287fe0fce76cc49208a349defe6e0d49f56e98e6
+9
+	login.php,a/7/a7beef4050e4205c8b59eb204ec9bb15ce01d9c0
