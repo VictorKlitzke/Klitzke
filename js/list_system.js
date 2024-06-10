@@ -1,4 +1,4 @@
-const BASE_URL = "http://localhost/Klitzke/ajax/";
+const BASE_URL = "http://localhost:3000/Klitzke/ajax/";
 
 async function InativarInvo(button) {
 

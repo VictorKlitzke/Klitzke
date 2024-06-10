@@ -50,7 +50,6 @@ function AddSelectProducts(index, id, name, stock_quantity, value) {
         };
 
         validateStock(stock_quantity, 1);
-        console.log(validateStock(stock_quantity, 1));
         selectedProducts.push(newProduct);
 
         let newRow = trProduct.insertRow();
@@ -212,7 +211,7 @@ async function finalizeSalePortion() {
         } else {
 
             try {
-                const responsePortion = await fetch('http://localhost/Klitzke/ajax/add_sales_portion.php', {
+                const responsePortion = await fetch(`${BASE_URL}add_sales_portion.php`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -221,7 +220,6 @@ async function finalizeSalePortion() {
                 });
 
                 const responseBodyPortion = await responsePortion.text();
-                console.log('Response from server:', responseBodyPortion);
                 const responseDataPortion = JSON.parse(responseBodyPortion);
 
                 if (responseDataPortion && responseDataPortion.success) {
@@ -260,14 +258,12 @@ async function finalizeSale() {
         products: selectedProducts
     };
 
-    console.log(requestData)
-
     if (selectedProducts.length === 0) {
         showErrorMessage('Erro ao registrar venda, nenhum produto selecionado');
 
     } else {
         try {
-            let url = 'http://localhost/Klitzke/ajax/add_sales.php';
+            let url = `${BASE_URL}add_sales.php`;
 
             const response = await fetch(url, {
                 method: 'POST',
@@ -278,19 +274,32 @@ async function finalizeSale() {
             });
 
             const responseBody = await response.text();
-            const responseData = JSON.parse(responseBody);
 
-            if (responseData && responseData.success) {
+            if (selectedPaymentMethod === '1') {
+                const pixCode = responseBody.qrCodeDataUri;
+                showQRCode(pixCode);
+            } else {
                 showSuccessMessage('Venda finalizada com sucesso!');
                 rowProducts.innerHTML == '';
-            } else {
-                console.error('Erro ao registrar venda:', responseData ? responseData.error : 'Resposta vazia');
             }
 
         } catch (error) {
-            console.error('Erro ao enviar dados para o PHP:', error);
+            window.alert('Erro ao enviar dados para o PHP:' + error);
         }
     }
+}
+
+function showQRCode(qrCodeDataUri) {
+    let qrCodeContainer = document.getElementById('qrcode');
+
+    if (!qrCodeContainer) {
+        qrCodeContainer = document.createElement('div');
+        qrCodeContainer.id = 'qrcode';
+        document.body.appendChild(qrCodeContainer);
+    }
+
+    qrCodeContainer.innerHTML = `<img src="${qrCodeDataUri}" style="width: 500px; display: flex; justify-content: center; align-items: center; z-index: 999" />`;
+    qrCodeContainer.style.display = 'block';
 }
 
 function updateTotalAmount(total) {
@@ -439,8 +448,6 @@ function updateProductQuantity(id, stock_quantity) {
 function validateStock(stock_quantity, qnt) {
 
     if (qnt > stock_quantity) {
-
-        console.log(stock_quantity > qnt);
 
         const continueValidate = confirm("Você não possui estoque suficiente, Deseja continuar?")
         if (!continueValidate) {

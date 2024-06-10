@@ -846,7 +846,7 @@ async function CloseInvo() {
 	}
 
 	try {
-		const responseserver = await fetch(`http://localhost/Klitzke/ajax/add_request.php`, {
+		const responseserver = await fetch(`${BASE_URL}add_request.php`, {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json',

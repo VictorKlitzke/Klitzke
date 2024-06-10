@@ -78,3 +78,9 @@ function ToggleCompany() {
     subMenuCompany.style.display = subMenuCompany.style.display === 'none' ? 'block' : 'none';
     subMenuCompany.style.padding = '5px';
 }
+
+function ToggleNoteFiscal() {
+    let subMenuFiscal = document.getElementById('fiscal');
+    subMenuFiscal.style.display = subMenuFiscal.style.display === 'none' ? 'block' : 'none';
+    subMenuFiscal.style.padding = '5px';
+}

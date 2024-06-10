@@ -1,8 +1,16 @@
 {
-  "dependencies": {
-    "bootstrap": "^5.3.3",
-    "datatables.net-dt": "^1.13.8",
-    "dotenv": "^16.4.5",
-    "env": "^0.0.2"
+  "name": "klitzke",
+  "version": "1.0.0",
+  "description": "Desenvolvimento de um sistema de vendas",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "browser-sync": "^3.0.2",
+    "gulp": "^5.0.0"
   }
 }
