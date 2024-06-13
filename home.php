@@ -156,7 +156,7 @@ if ($checkCode->rowCount() > 0) {
 
         <h2 style="cursor: pointer;" onclick="ToggleNoteFiscal()">Nota Fiscal</h2>
         <div id="fiscal" style="display: none;">
-            <a href="<?php echo INCLUDE_PATH; ?>list-product-delivery"> Buscar XML </a>
+            <a href="<?php echo INCLUDE_PATH; ?>search-xml"> Buscar XML </a>
         </div>
 
         <h2 style="cursor: pointer;" onclick="ToggleReport()">Relatórios</h2>
@@ -300,7 +300,6 @@ if ($checkCode->rowCount() > 0) {
 <script language="JavaScript" type="text/javascript" src="<?php echo INCLUDE_PATH; ?>./js/alert.js"></script>
 <script language="JavaScript" type="text/javascript" src="<?php echo INCLUDE_PATH; ?>./js/values.js"></script>
 <script language="JavaScript" type="text/javascript" src="<?php echo INCLUDE_PATH; ?>./js/menu.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 
 </body>
 </html>

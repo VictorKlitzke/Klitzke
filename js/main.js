@@ -86,4 +86,60 @@ async function closeBox() {
         console.log('Erro ao fechar o caixa. Tente novamente.');
       });
   }
-} 
+}
+
+asnyc function UploadXML() {
+  const InputXML = document.getElementById("xmlfile");
+  const file = InputXML.files[0];
+
+  if (!file) {
+    window.alert("Por favor, adicionar o numero do xml");
+  }
+
+  const reader = FileReader();
+  reader.onload = function (event) {
+    const xmlContent = event.target.result;
+
+    let responseData = {
+      xmlData: xmlContent
+    }
+    try {
+
+      const url = `${BASE_URL}`;
+
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(requestData),
+      });
+
+      if (response.success) {
+        ViewProducts(response.products);
+      } else {
+        window.alert("erro ao ser mostrado os items da nf-e");
+      }
+
+    } catch (error) {
+      window.alert("Erro ao fazer requisição da busca do XML, contate o suporte" + error);
+    }
+  }
+  reader.readAsText(file);
+}
+
+function ViewProducts(products) {
+  const productsContainer = document.getElementById('xml-product');
+  productsContainer.innerHTML = '';
+
+  products.forEach(product => {
+    const productDiv = document.createElement('div');
+    productDiv.className = 'product';
+    productDiv.innerHTML = `
+                <strong>Nome:</strong> ${product.name}<br>
+                <strong>Quantidade:</strong> ${product.quantity}<br>
+                <strong>Preço:</strong> R$ ${product.price}
+            `;
+    productsContainer.appendChild(productDiv);
+  });
+}

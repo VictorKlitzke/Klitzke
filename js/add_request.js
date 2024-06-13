@@ -55,7 +55,7 @@ document.addEventListener('DOMContentLoaded', function () {
 			}
 
 		} catch (error) {
-			window.alert("Erro ao buscar comanda. Por favor contante o suporte", response.error.message);
+			window.alert("Erro ao buscar comanda. Por favor contante o suporte" + error);
 		};
 	});
 

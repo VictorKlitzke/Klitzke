@@ -1,12 +1,12 @@
 <?php
 
-require_once '/phpqrcodemain/src/QROptions.php';
-require_once '/phpqrcodemain/src/QRCode.php';
-require_once '/phpqrcodemain/src/Output/QRCodeOutputException.php';
-require_once '/phpqrcodemain/src/Output/QRGdImage.php';
-
-use chillerlan\phpqrcodemain\QRCode;
-use chillerlan\phpqrcodemain\QROptions;
+//require_once '/phpqrcodemain/src/QROptions.php';
+//require_once '/phpqrcodemain/src/QRCode.php';
+//require_once '/phpqrcodemain/src/Output/QRCodeOutputException.php';
+//require_once '/phpqrcodemain/src/Output/QRGdImage.php';
+//
+//use chillerlan\phpqrcodemain\QRCode;
+//use chillerlan\phpqrcodemain\QROptions;
 
 
 include_once '../config/config.php';
@@ -104,20 +104,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $checkBoxOpen->execute();
             $id_boxpdv = $checkBoxOpen->fetchColumn();
 
-//            if (!$id_boxpdv) {
-//                echo json_encode(['error' => 'Nenhum caixa aberto']);
-//                return;
-//            }
+            if (!$id_boxpdv) {
+                echo json_encode(['error' => 'Nenhum caixa aberto']);
+                return;
+            }
 
             $exec = $sql->prepare("SELECT * FROM sales WHERE id_users = :user_id");
             $exec->bindParam(':user_id', $user_id, PDO::PARAM_INT);
             $exec->execute();
             $result = $exec->fetchAll(PDO::FETCH_ASSOC);
 
-//            if (!$user_id) {
-//                echo json_encode(['error' => 'Nenhum usuário logado']);
-//                return;
-//            }
+            if (!$user_id) {
+                echo json_encode(['error' => 'Nenhum usuário logado']);
+                return;
+            }
 
             $exec = $sql->prepare("INSERT INTO sales (id_payment_method, id_client, id_boxpdv, id_users, date_sales, status) 
                 VALUES (:paymentMethod, :salesClient, :id_boxpdv, :id_users, NOW(), :status)");
@@ -175,27 +175,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $exec->bindParam(':lastSaleId', $lastSaleId, PDO::PARAM_INT);
             $exec->execute();
 
-            $qr_code_pix = '';
-            if ($selectedPaymentMethod === '1') {
-                $totalValue = '';
-                $totalValue = $requestData['totalValue'];
-                $qr_code_pix = generateQrCodePIX($totalValue);
-            }
-
-            if ($selectedPaymentMethod === '1' && !empty($qr_code_pix)) {
-                $options = new QROptions([
-                    'eccLevel' => QRCode::ECC_L,
-                    'outputType' => QRCode::OUTPUT_IMAGE_PNG,
-                    'version' => 5,
-                ]);
-
-                $qrcode = new QRCode($options);
-                $qrCodeDataUri = $qrcode->render($qr_code_pix);
-
-                echo json_encode(['success' => true, 'saleId' => $lastSaleId, 'pixCode' => $qr_code_pix, 'qrCodeDataUri' => $qrCodeDataUri]);
-            } else {
-                echo json_encode(['success' => true, 'saleId' => $lastSaleId, 'pixCode' => $qr_code_pix]);
-            }
+//            $qr_code_pix = '';
+//            if ($selectedPaymentMethod === '1') {
+//                $totalValue = '';
+//                $totalValue = $requestData['totalValue'];
+//                $qr_code_pix = generateQrCodePIX($totalValue);
+//            }
+//
+//            if ($selectedPaymentMethod === '1' && !empty($qr_code_pix)) {
+//                $options = new QROptions([
+//                    'eccLevel' => QRCode::ECC_L,
+//                    'outputType' => QRCode::OUTPUT_IMAGE_PNG,
+//                    'version' => 5,
+//                ]);
+//
+//                $qrcode = new QRCode($options);
+//                $qrCodeDataUri = $qrcode->render($qr_code_pix);
+//
+//                echo json_encode(['success' => true, 'saleId' => $lastSaleId, 'pixCode' => $qr_code_pix, 'qrCodeDataUri' => $qrCodeDataUri]);
+//            } else {
+//                echo json_encode(['success' => true, 'saleId' => $lastSaleId, 'pixCode' => $qr_code_pix]);
+//            }
 
             $sql->commit();
 
