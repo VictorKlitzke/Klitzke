@@ -76,9 +76,12 @@ async function closeBox() {
       .then(response => response.json())
       .then(data => {
         if (data && data.success) {
-          console.log('Caixa fechado com sucesso.');
+          window.alert('Caixa fechado com sucesso.');
+          CloseBoxpdv.style.display = 'none';
+          overlay.style.display = 'none';
+          window.location.reload();
         } else {
-          console.log('Erro ao fechar o caixa. Tente novamente.');
+          window.alert('Erro ao fechar o caixa. Tente novamente.');
         }
       })
       .catch(error => {
@@ -88,45 +91,80 @@ async function closeBox() {
   }
 }
 
-asnyc function UploadXML() {
-  const InputXML = document.getElementById("xmlfile");
+function UploadXML() {
+  const InputXML = document.getElementById("xmlFile");
   const file = InputXML.files[0];
 
   if (!file) {
-    window.alert("Por favor, adicionar o numero do xml");
+    window.alert("Por favor, adicione um arquivo xml");
+    return;
   }
 
-  const reader = FileReader();
-  reader.onload = function (event) {
+  const reader = new FileReader();
+  reader.onload = function(event) {
     const xmlContent = event.target.result;
 
-    let responseData = {
-      xmlData: xmlContent
-    }
-    try {
+    const url = `${BASE_CLASS}XMLFile.php`;
 
-      const url = `${BASE_URL}`;
+    const response = fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ xmlData: xmlContent }),
+    })
+        .then(response => response.text())
+            console.log(response)
+        .then(data => {
+          if (data.success) {
+            ViewProducts(data.products);
+          } else {
+            window.alert("Erro ao mostrar os itens da NF-e: " + data.message);
+          }
+        })
+        .catch(error => {
+          window.alert("Erro ao ler XML, contate o suporte: " + error);
+        });
+  };
 
-      const response = await fetch(url, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(requestData),
-      });
-
-      if (response.success) {
-        ViewProducts(response.products);
-      } else {
-        window.alert("erro ao ser mostrado os items da nf-e");
-      }
-
-    } catch (error) {
-      window.alert("Erro ao fazer requisição da busca do XML, contate o suporte" + error);
-    }
-  }
   reader.readAsText(file);
 }
+
+const xmlData = `
+<?xml version="1.0" encoding="UTF-8"?>
+<nfeProc xmlns="http://www.portalfiscal.inf.br/nfe" versao="4.00">
+    <NFe>
+        <infNFe>
+            <det nItem="1">
+                <prod>
+                    <cProd>123456</cProd>
+                    <cEAN>7891234567895</cEAN>
+                    <xProd>Produto A</xProd>
+                    <NCM>12345678</NCM>
+                    <CFOP>5102</CFOP>
+                    <uCom>UN</uCom>
+                    <qCom>10.0000</qCom>
+                    <vUnCom>5.00</vUnCom>
+                    <vProd>50.00</vProd>
+                </prod>
+            </det>
+            <det nItem="2">
+                <prod>
+                    <cProd>789012</cProd>
+                    <cEAN>7891234567896</cEAN>
+                    <xProd>Produto B</xProd>
+                    <NCM>87654321</NCM>
+                    <CFOP>5102</CFOP>
+                    <uCom>UN</uCom>
+                    <qCom>5.0000</uCom>
+                    <vUnCom>10.00</vUnCom>
+                    <vProd>50.00</vProd>
+                </prod>
+            </det>
+        </infNFe>
+    </NFe>
+</nfeProc>
+`;
 
 function ViewProducts(products) {
   const productsContainer = document.getElementById('xml-product');

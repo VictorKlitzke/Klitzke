@@ -1,4 +1,5 @@
 const BASE_URL = "http://localhost:3000/Klitzke/ajax/";
+const BASE_CLASS = "http://localhost:3000/Klitzke/classes/";
 
 async function InativarInvo(button) {
 
@@ -36,6 +37,7 @@ async function InativarInvo(button) {
 
             if (result.success) {
                 window.alert("Pedido inativado com suceesso");
+                window.location.reload();
             } else {
                 window.alert("Erro ao inativar pedido: " + result.message);
             }

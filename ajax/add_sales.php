@@ -1,14 +1,5 @@
 <?php
 
-//require_once '/phpqrcodemain/src/QROptions.php';
-//require_once '/phpqrcodemain/src/QRCode.php';
-//require_once '/phpqrcodemain/src/Output/QRCodeOutputException.php';
-//require_once '/phpqrcodemain/src/Output/QRGdImage.php';
-//
-//use chillerlan\phpqrcodemain\QRCode;
-//use chillerlan\phpqrcodemain\QROptions;
-
-
 include_once '../config/config.php';
 include_once '../services/db.php';
 
@@ -174,28 +165,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $exec->bindParam(':totalValue', $requestData['totalValue'], PDO::PARAM_STR);
             $exec->bindParam(':lastSaleId', $lastSaleId, PDO::PARAM_INT);
             $exec->execute();
-
-//            $qr_code_pix = '';
-//            if ($selectedPaymentMethod === '1') {
-//                $totalValue = '';
-//                $totalValue = $requestData['totalValue'];
-//                $qr_code_pix = generateQrCodePIX($totalValue);
-//            }
-//
-//            if ($selectedPaymentMethod === '1' && !empty($qr_code_pix)) {
-//                $options = new QROptions([
-//                    'eccLevel' => QRCode::ECC_L,
-//                    'outputType' => QRCode::OUTPUT_IMAGE_PNG,
-//                    'version' => 5,
-//                ]);
-//
-//                $qrcode = new QRCode($options);
-//                $qrCodeDataUri = $qrcode->render($qr_code_pix);
-//
-//                echo json_encode(['success' => true, 'saleId' => $lastSaleId, 'pixCode' => $qr_code_pix, 'qrCodeDataUri' => $qrCodeDataUri]);
-//            } else {
-//                echo json_encode(['success' => true, 'saleId' => $lastSaleId, 'pixCode' => $qr_code_pix]);
-//            }
 
             $sql->commit();
 

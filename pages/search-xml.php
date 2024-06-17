@@ -13,7 +13,7 @@
             </div>
 
             <div class="form-group">
-                <button class="form-group" type="submit" id="" onclick="UploadXML()">Buscar</button>
+                <button class="form-group" type="button" id="" onclick="UploadXML()">Buscar</button>
             </div>
         </form>
 

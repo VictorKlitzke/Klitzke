@@ -274,13 +274,12 @@ async function finalizeSale() {
             });
 
             const responseBody = await response.text();
+            const responseData = JSON.parse(responseBody);
 
-            if (selectedPaymentMethod === '1') {
-                const pixCode = responseBody.qrCodeDataUri;
-                showQRCode(pixCode);
-            } else {
+            if (responseData && responseData.success) {
                 showSuccessMessage('Venda finalizada com sucesso!');
-                rowProducts.innerHTML == '';
+            } else {
+                console.error('Erro ao registrar venda:', responseData ? responseData.error : 'Resposta vazia');
             }
 
         } catch (error) {
