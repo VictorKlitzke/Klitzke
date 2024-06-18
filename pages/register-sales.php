@@ -161,8 +161,6 @@
                     <input type="text" id="clientSelectedSales" name="clientSelectedSales"
                         placeholder="Buscar Clientes" />
                 </form>
-                <div class="box-content">
-                    <div class="list">
                         <table>
                             <thead>
                                 <tr>
@@ -212,10 +210,7 @@
                                 </tbody>
 
                             <?php } ?>
-
                         </table>
-                    </div>
-                </div>
             </div>
         </div>
     </div>

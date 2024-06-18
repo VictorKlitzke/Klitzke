@@ -110,8 +110,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 return;
             }
 
-            $exec = $sql->prepare("INSERT INTO sales (id_payment_method, id_client, id_boxpdv, id_users, date_sales, status) 
-                VALUES (:paymentMethod, :salesClient, :id_boxpdv, :id_users, NOW(), :status)");
+                $exec = $sql->prepare("INSERT INTO sales (id_payment_method, id_client, id_boxpdv, id_users, date_sales, status) 
+                    VALUES (:paymentMethod, :salesClient, :id_boxpdv, :id_users, NOW(), :status)");
             $exec->bindParam(':paymentMethod', $selectedPaymentMethod, PDO::PARAM_INT);
             $exec->bindParam(':salesClient', $id_sales_client, PDO::PARAM_INT);
             $exec->bindParam(':id_users', $user_id, PDO::PARAM_INT);

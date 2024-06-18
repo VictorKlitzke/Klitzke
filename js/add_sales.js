@@ -8,6 +8,9 @@ let portionValues;
 const trProduct = document.getElementById("product-result");
 const tdButton = document.getElementById("button-product");
 
+const ModalSalesPortion = document.getElementById('portion-sales');
+const overlayPortion = document.getElementById('overlay-portion');
+
 const saveButton = document.getElementById('button-portion');
 const descPortionTbody = document.getElementById('desc-portion');
 const totalPortionElement = document.getElementById('total-portion-sales');
@@ -224,13 +227,14 @@ async function finalizeSalePortion() {
 
                 if (responseDataPortion && responseDataPortion.success) {
                     showSuccessMessage('Venda finalizada com sucesso!');
-                    // const saleId = responseData.id;
-                    // window.location.href = 'pages/proof.php?sale_id=' + saleId;
+
+                    overlayPortion.style.display = 'none';
+                    ModalSalesPortion.style.display = 'none';
                 } else {
-                    console.error('Erro ao registrar venda:', responseDataPortion ? responseDataPortion.error : 'Resposta vazia');
+                    window.alert('Erro ao registrar venda:', responseDataPortion ? responseDataPortion.error : 'Resposta vazia');
                 }
             } catch (error) {
-                console.error('Erro ao enviar dados para o PHP:', error);
+                window.alert('Erro ao enviar dados para o PHP:', error);
             }
         }
     } else {
@@ -279,7 +283,7 @@ async function finalizeSale() {
             if (responseData && responseData.success) {
                 showSuccessMessage('Venda finalizada com sucesso!');
             } else {
-                console.error('Erro ao registrar venda:', responseData ? responseData.error : 'Resposta vazia');
+                console.error('Caixa não foi aberto, para essa operação' );
             }
 
         } catch (error) {
@@ -399,6 +403,12 @@ document.addEventListener("DOMContentLoaded", function () {
             selectedClientId = row.querySelector("td:first-child").textContent;
 
             if (salesPageElement) {
+                let clientSearch = document.getElementById('client-search-sales');
+                let overlay = document.getElementById('overlay');
+
+                clientSearch.style.display = 'none';
+                overlay.style.display = 'none';
+
                 salesPageElement.innerHTML =
                     "Codigo do cliente: " + selectedClientId + " Nome do cliente: " + clientName;
             }
