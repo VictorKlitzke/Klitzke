@@ -1,37 +1,47 @@
 <?php
 
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
+$user_id = isset($_SESSION['id']) ? $_SESSION['id'] : null;
+
 if (isset($_POST['action'])) {
-  $name = $_POST['name'];
-  $email = $_POST['email'];
-  $password = password_hash($_POST['password'], PASSWORD_DEFAULT);
-  $phone = $_POST['phone'];
-  $function = $_POST['function'];
-  $commission = $_POST['commission'];
-  $target_commission = $_POST['target_commission'];
-  if ($name == '' || $password == '' || $target_commission == '' || $commission == '') {
-    Panel::Alert('attention', 'Os campos não podem ficar vázios!');
-  } else {
-    $verification = Db::Connection()->prepare("SELECT * FROM `users` WHERE name = ? AND email = ? AND password = ? AND function = ? AND phone = ? AND commission = ? AND target_commission = ?");
-    $verification->execute(array($_POST['name'], $_POST['email'], $_POST['password'], $_POST['phone'], $_POST['function'], $_POST['commission'], $_POST['target_commission']));
-    if ($verification->rowCount() == 0) {
+    $name = trim($_POST['name']);
+    $email = filter_var(trim($_POST['email']), FILTER_VALIDATE_EMAIL);
+    $password = password_hash(trim($_POST['password']), PASSWORD_DEFAULT);
+    $phone = trim($_POST['phone']);
+    $function = trim($_POST['function']);
+    $commission = filter_var($_POST['commission'], FILTER_VALIDATE_FLOAT);
+    $target_commission = filter_var($_POST['target_commission'], FILTER_VALIDATE_FLOAT);
+    $access = filter_var($_POST['access'], FILTER_VALIDATE_INT);
 
-      $arr = [
-        'name' => $name, 
-        'email' => $email, 
-        'password' => $password, 
-        'phone' => $phone, 
-        'function' => $function, 
-        'commission' => $commission, 
-        'target_commission' => $target_commission, 
-        'name_table' => 'users'
-      ];
-      Controllers::Insert($arr);
-      Panel::Alert('sucess', $name . ' foi cadastrado com sucesso!');
+    if (!$name || !$email || !$password || !$phone || !$function || $commission === false || $target_commission === false || $access === false) {
+        Panel::Alert('attention', 'Os campos não podem ficar vazios ou inválidos!');
     } else {
-      Panel::Alert('error', 'Já existe uma usuario com este nome!');
-    }
-  }
+        $verification = Db::Connection()->prepare("SELECT * FROM `users` WHERE email = ?");
+        $verification->execute([$email]);
 
+        if ($verification->rowCount() == 0) {
+            $arr = [
+                'name' => $name,
+                'email' => $email,
+                'password' => $password,
+                'phone' => $phone,
+                'function' => $function,
+                'commission' => $commission,
+                'target_commission' => $target_commission,
+                'access' => $access,
+                'name_table' => 'users'
+            ];
+            Controllers::Insert($arr);
+            Panel::Alert('success', htmlspecialchars($name) . ' foi cadastrado com sucesso!');
+            $message_log = "Usuário cadastrado: " . htmlspecialchars($name);
+            Panel::LogAction($user_id, 'Cadastrando usuário', $message_log);
+        } else {
+            Panel::Alert('error', 'Já existe um usuário com este email!');
+        }
+    }
 }
 ?>
 
@@ -66,6 +76,14 @@ if (isset($_POST['action'])) {
     <div class="content-form">
       <label for="">Commisao por meta</label>
       <input type="number" name="target_commission">
+    </div>
+    <div class="content-form">
+      <label for="">Nivel de acesso</label>
+      <select name="access">
+          <option value="100">Administrador</option>
+          <option value="50">Moderado</option>
+          <option value="10">Padrão</option>
+      </select>
     </div>
     <div class="content-form">
       <input type="hidden" name="name_table" value="users" />

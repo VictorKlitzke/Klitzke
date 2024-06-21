@@ -5,6 +5,8 @@ global $chave_secret;
 include_once './services/db.php';
 include_once './classes/panel.php';
 
+$disable = "NULL";
+
 function generateRandomCode($length = 10) {
     return substr(str_shuffle("0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"), 0, $length);
 }
@@ -62,7 +64,7 @@ if (isset($_POST['action'])) {
             $_SESSION['commission'] = $info['commission'];
             $_SESSION['target_commission'] = $info['target_commission'];
             $_SESSION['access'] = $info['access'];
-            $_SESSION['random_code'] = $random_code; // Armazena o código na sessão para uso posterior, se necessário
+            $_SESSION['random_code'] = $random_code;
 
             header('Location: ' . INCLUDE_PATH);
             die();
