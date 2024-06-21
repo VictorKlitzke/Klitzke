@@ -46,21 +46,19 @@ $users = Controllers::SelectAll('users', ($currentPage - 1) * $porPage, $porPage
             <div>
               <a class="btn-edit" href="<?php echo INCLUDE_PATH ?>edit-users?id=<?php echo base64_encode($value['id']); ?>">Editar</a>
             </div>
-            <!-- <div>
-              <a href="">
-                <form method="post" action="./ajax/disable.php">
-                  <input type="hidden" name="id" value="<?php echo base64_encode($value['id']); ?>">
-                    <input type="hidden" name="disable_id" value="<?php //echo base64_encode($value['disable']); 
-                                                                      ?>"> 
-                  <button onclick="confirmDesativar()" class="btn-disable">
-                    Desativar
-                  </button>
-                </form>
-              </a>
-            </div> -->
+
+            <div>
+              <button onclick="InativarUsers(this)" type="button"
+                      data-id="<?php echo $value['id']; ?>" class="btn-disable"
+              >
+                  Desativar
+              </button>
+            </div>
+
             <div>
               <a actionBtn="delete" class="btn-delete" href="<?php echo INCLUDE_PATH ?>list-users?delete=<?php echo $value['id']; ?>">Deletar</a>
             </div>
+
           </td>
         </tr>
 

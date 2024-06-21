@@ -382,3 +382,40 @@ async function CloseModalInfoRequest() {
 
 }
 
+async function InativarUsers(button) {
+
+    const id_users_inativar = button.getAttribute('data-id')
+
+    if (!id_users_inativar) {
+        window.alert("Usuário não foi encontrado!");
+    }
+
+    const continueInativar = confirm("Deseja continuar com a instivação do usuário?")
+
+    if (continueInativar) {
+        try {
+
+            const url = `${BASE_URL}disable.php`;
+
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({id_users_inativar: id_users_inativar})
+            })
+
+            const responseBody = await response.json();
+
+            if (responseBody.success) {
+                window.alert("Usuário com ID " + id_users_inativar + " inativado com sucesso!");
+            } else {
+                window.alert(responseBody.message);
+            }
+
+        } catch (error) {
+            window.alert("Erro ao fazer requisição!" + error);
+        }
+    }
+}
+

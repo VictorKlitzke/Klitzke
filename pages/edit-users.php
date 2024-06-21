@@ -12,6 +12,7 @@
 
 
 <?php
+
 if (isset($_POST['action'])) {
 
   $name = $_POST['name'];

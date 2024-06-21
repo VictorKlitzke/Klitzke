@@ -67,4 +67,17 @@ class Panel
       include('pages/main.php');
     }
   }
+
+  public static function LogAction($user_id, $action, $description) {
+
+    $sql = Db::Connection();
+
+    $exec = $sql->prepare("INSERT INTO logs (user_id, action_type, details, date) 
+                            VALUES (:user_id, :action_type, :description, NOW())");
+    $exec->bindValue(':user_id', $user_id, PDO::PARAM_INT);
+    $exec->bindValue(':action_type', $action, PDO::PARAM_STR);
+    $exec->bindValue(':description', $description, PDO::PARAM_STR);
+    $exec->execute();
+
+  }
 }
