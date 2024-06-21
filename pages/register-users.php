@@ -4,6 +4,8 @@ ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
+$disable = 1;
+
 $user_id = isset($_SESSION['id']) ? $_SESSION['id'] : null;
 
 if (isset($_POST['action'])) {
@@ -32,6 +34,7 @@ if (isset($_POST['action'])) {
                 'commission' => $commission,
                 'target_commission' => $target_commission,
                 'access' => $access,
+                'disable' => $disable,
                 'name_table' => 'users'
             ];
             Controllers::Insert($arr);
