@@ -4,7 +4,7 @@
 
   include_once 'config/config.php'; include_once 'classes/panel.php';
 
-  if(Panel::Logged() == true){
+  if(Panel::Logged()){
 		include('home.php');
 	}else{
 		include('login.php');

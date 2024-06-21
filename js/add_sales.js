@@ -8,6 +8,9 @@ let portionValues;
 const trProduct = document.getElementById("product-result");
 const tdButton = document.getElementById("button-product");
 
+const ModalSalesPortion = document.getElementById('portion-sales');
+const overlayPortion = document.getElementById('overlay-portion');
+
 const saveButton = document.getElementById('button-portion');
 const descPortionTbody = document.getElementById('desc-portion');
 const totalPortionElement = document.getElementById('total-portion-sales');
@@ -18,7 +21,6 @@ document.addEventListener('DOMContentLoaded', function () {
     Portion = document.querySelector('.portion-sales');
     OverlayPortion = document.querySelector('.overlay-portion');
 });
-
 
 function AddSelectProducts(index, id, name, stock_quantity, value) {
     let productAlreadyExists = false;
@@ -212,7 +214,7 @@ async function finalizeSalePortion() {
         } else {
 
             try {
-                const responsePortion = await fetch('http://localhost/Klitzke/ajax/add_sales_portion.php', {
+                const responsePortion = await fetch(`${BASE_URL}add_sales_portion.php`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -221,18 +223,18 @@ async function finalizeSalePortion() {
                 });
 
                 const responseBodyPortion = await responsePortion.text();
-                console.log('Response from server:', responseBodyPortion);
                 const responseDataPortion = JSON.parse(responseBodyPortion);
 
                 if (responseDataPortion && responseDataPortion.success) {
                     showSuccessMessage('Venda finalizada com sucesso!');
-                    // const saleId = responseData.id;
-                    // window.location.href = 'pages/proof.php?sale_id=' + saleId;
+
+                    overlayPortion.style.display = 'none';
+                    ModalSalesPortion.style.display = 'none';
                 } else {
-                    console.error('Erro ao registrar venda:', responseDataPortion ? responseDataPortion.error : 'Resposta vazia');
+                    window.alert('Erro ao registrar venda:', responseDataPortion ? responseDataPortion.error : 'Resposta vazia');
                 }
             } catch (error) {
-                console.error('Erro ao enviar dados para o PHP:', error);
+                window.alert('Erro ao enviar dados para o PHP:', error);
             }
         }
     } else {
@@ -241,6 +243,8 @@ async function finalizeSalePortion() {
 }
 
 async function finalizeSale() {
+
+    let rowProducts = document.getElementById('row-1');
 
     let totalAmountElement = document.getElementById('totalAmount');
     let totalValue = 0;
@@ -263,7 +267,7 @@ async function finalizeSale() {
 
     } else {
         try {
-            let url = 'http://localhost/Klitzke/ajax/add_sales.php';
+            let url = `${BASE_URL}add_sales.php`;
 
             const response = await fetch(url, {
                 method: 'POST',
@@ -279,13 +283,26 @@ async function finalizeSale() {
             if (responseData && responseData.success) {
                 showSuccessMessage('Venda finalizada com sucesso!');
             } else {
-                console.error('Erro ao registrar venda:', responseData ? responseData.error : 'Resposta vazia');
+                console.error('Caixa não foi aberto, para essa operação' );
             }
 
         } catch (error) {
-            console.error('Erro ao enviar dados para o PHP:', error);
+            window.alert('Erro ao enviar dados para o PHP:' + error);
         }
     }
+}
+
+function showQRCode(qrCodeDataUri) {
+    let qrCodeContainer = document.getElementById('qrcode');
+
+    if (!qrCodeContainer) {
+        qrCodeContainer = document.createElement('div');
+        qrCodeContainer.id = 'qrcode';
+        document.body.appendChild(qrCodeContainer);
+    }
+
+    qrCodeContainer.innerHTML = `<img src="${qrCodeDataUri}" style="width: 500px; display: flex; justify-content: center; align-items: center; z-index: 999" />`;
+    qrCodeContainer.style.display = 'block';
 }
 
 function updateTotalAmount(total) {
@@ -356,14 +373,6 @@ function removeProduct(id) {
     calculateTotal();
 }
 
-// if (process.env.NODE_ENV !== 'production') {
-//     console.log('Valor sensível:', valorSensivel);
-// }
-
-// if (process.env.NODE_ENV === 'development') {
-//     console.log('Somente exibido em ambiente de desenvolvimento');
-// }
-
 document
     .getElementById("sales-search-form")
     .addEventListener("submit", function (event) {
@@ -394,6 +403,12 @@ document.addEventListener("DOMContentLoaded", function () {
             selectedClientId = row.querySelector("td:first-child").textContent;
 
             if (salesPageElement) {
+                let clientSearch = document.getElementById('client-search-sales');
+                let overlay = document.getElementById('overlay');
+
+                clientSearch.style.display = 'none';
+                overlay.style.display = 'none';
+
                 salesPageElement.innerHTML =
                     "Codigo do cliente: " + selectedClientId + " Nome do cliente: " + clientName;
             }
@@ -441,9 +456,25 @@ function updateProductQuantity(id, stock_quantity) {
 
 function validateStock(stock_quantity, qnt) {
 
-    if (stock_quantity < qnt) {
-        window.alert("Você não possui estoque suficiente!");
-        return false;
+    if (qnt > stock_quantity) {
+
+        const continueValidate = confirm("Você não possui estoque suficiente, Deseja continuar?")
+        if (!continueValidate) {
+            return false;
+        }
+
+    } else {
+        return false
     }
-    return true;
+}
+
+async function closeModalPortion() {
+    const portionSalesModal = document.getElementById('portion-sales');
+    const overlayModalPortion = document.getElementById('overlay-portion');
+    const closeModalPortion = document.getElementById('close-portion');
+
+    if ((portionSalesModal.style.display === 'block' && overlayModalPortion.style.display === 'block')) {
+        portionSalesModal.style.display = 'none';
+        overlayModalPortion.style.display = 'none';
+    }
 }

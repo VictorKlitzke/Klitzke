@@ -10,6 +10,54 @@ error_reporting(E_ALL);
 header("Access-Control-Allow-Origin: *");
 header("Content-Type: application/json");
 
+function generateQrCodePIX($totalValue) {
+
+    $sql = Db::Connection();
+
+    $exec = $sql->prepare("SELECT pix, account_holder_name, city FROM banck_account WHERE id = :id LIMIT 1");
+    $id_pix = 1;
+    $exec->bindValue(':id', $id_pix, PDO::PARAM_INT);
+    $exec->execute();
+    $pix = $exec->fetch(PDO::FETCH_ASSOC);
+
+    if (!$pix) {
+        throw new Exception('Dados da conta bancária não encontrados.');
+    }
+
+    $pix_key = $pix['pix'];
+    $name_company = $pix['account_holder_name'];
+    $city_company = $pix['city'];
+    $transition = uniqid();
+
+    $payload = "000201"
+        . "26" . str_pad(strlen("BR.GOV.BCB.PIX"), 2, '0', STR_PAD_LEFT) . "BR.GOV.BCB.PIX"
+        . "01" . str_pad(strlen($pix_key), 2, '0', STR_PAD_LEFT) . $pix_key
+        . "52" . "0000"
+        . "53" . "986"
+        . "54" . str_pad(number_format(floatval($totalValue), 2, '.', ''), 2, '0', STR_PAD_LEFT)
+        . "58" . "BR"
+        . "59" . str_pad($name_company, 25, ' ', STR_PAD_RIGHT)
+        . "60" . str_pad($city_company, 15, ' ', STR_PAD_RIGHT)
+        . "62" . str_pad(strlen($transition), 2, '0', STR_PAD_LEFT) . $transition;
+
+    $crc16 = function ($str) {
+        $crc = 0xFFFF;
+        for ($c = 0; $c < strlen($str); $c++) {
+            $crc ^= ord($str[$c]) << 8;
+            for ($i = 0; $i < 8; $i++) {
+                if (($crc <<= 1) & 0x10000) $crc ^= 0x1021;
+                $crc &= 0xFFFF;
+            }
+        }
+        return strtoupper(dechex($crc));
+
+    };
+
+    $codigoPIX = $payload . "6304" . $crc16($payload . "6304");
+
+    return $codigoPIX;
+}
+
 function status_boxpdv($status)
 {
     $sql = Db::Connection();
@@ -24,7 +72,7 @@ function status_boxpdv($status)
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $requestData = json_decode(file_get_contents('php://input'), true);
 
-    $selectedPaymentMethod = $requestData['idPaymentMethod'] ?? '';
+    $selectedPaymentMethod = isset($requestData['idPaymentMethod']) ? $requestData['idPaymentMethod'] : '';
     $id_sales_client = $requestData['salesIdClient'] ?? '';
     $selectedProducts = $requestData['products'] ?? [];
 
@@ -47,13 +95,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $checkBoxOpen->execute();
             $id_boxpdv = $checkBoxOpen->fetchColumn();
 
+            if (!$id_boxpdv) {
+                echo json_encode(['error' => 'Nenhum caixa aberto']);
+                return;
+            }
+
             $exec = $sql->prepare("SELECT * FROM sales WHERE id_users = :user_id");
             $exec->bindParam(':user_id', $user_id, PDO::PARAM_INT);
             $exec->execute();
             $result = $exec->fetchAll(PDO::FETCH_ASSOC);
 
-            $exec = $sql->prepare("INSERT INTO sales (id_payment_method, id_client, id_boxpdv, id_users, date_sales, status) 
-                VALUES (:paymentMethod, :salesClient, :id_boxpdv, :id_users, NOW(), :status)");
+            if (!$user_id) {
+                echo json_encode(['error' => 'Nenhum usuário logado']);
+                return;
+            }
+
+                $exec = $sql->prepare("INSERT INTO sales (id_payment_method, id_client, id_boxpdv, id_users, date_sales, status) 
+                    VALUES (:paymentMethod, :salesClient, :id_boxpdv, :id_users, NOW(), :status)");
             $exec->bindParam(':paymentMethod', $selectedPaymentMethod, PDO::PARAM_INT);
             $exec->bindParam(':salesClient', $id_sales_client, PDO::PARAM_INT);
             $exec->bindParam(':id_users', $user_id, PDO::PARAM_INT);

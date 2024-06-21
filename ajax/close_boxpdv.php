@@ -3,6 +3,16 @@
 include_once '../config/config.php';
 include_once '../services/db.php';
 
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
+header("Access-Control-Allow-Origin: *");
+header("Access-Control-Allow-Headers: Content-Type, Authorization");
+header("Content-Type: application/json");
+
+$sql = Db::Connection();
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $requestData = json_decode(file_get_contents('php://input'), true);
 
@@ -13,7 +23,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $date_close = $requestData['close_date'] ?? '';
 
     try {
-        $sql = Db::Connection();
+
         $sql->beginTransaction();
 
         $checkBoxOpen = $sql->prepare("SELECT id FROM boxpdv WHERE status = 1");

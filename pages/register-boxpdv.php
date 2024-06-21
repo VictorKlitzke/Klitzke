@@ -1,53 +1,66 @@
 <?php
 
-$company = Controllers::SelectAll('company');
+include_once '../services/db.php';
 
+$company = Controllers::SelectAll('company');
 $users_id = isset($_SESSION['id']) ? $_SESSION['id'] : null;
 
-foreach ($company as $key => $values) {
-    if (isset($_POST['action'])) {
+$sql = Db::Connection();
 
-        $value = $_POST['value'];
-        $value = str_replace(',', '.', preg_replace("/[^0-9,.]/", "", $value));
-        number_format($value);
-        $open_date = $_POST['open_date'];
-        $observation = $_POST['observation'];
-        $id_company = $values['id'];
-        $status = $_POST['status'];
-        $id_users = $users_id;
+$exec = $sql->prepare("SELECT * FROM boxpdv WHERE status = 1 AND id_users = :id_users");
+$exec->bindValue('id_users', $users_id, PDO::PARAM_INT);
+$exec->execute();
+$result = $exec->fetch();
 
-        if ($value == '' || $open_date == '') {
-            Panel::Alert('attention', 'Os campo não podem ficar vázios!');
-        } else {
-            $verification = Db::Connection()->prepare("SELECT value, open_date, observation FROM `boxpdv` WHERE value = ? AND open_date = ? AND observation = ? 
+if ($result['status']
+) {
+    Panel::Alert('error', 'Já existe um caixa aberto com esse usuário!');
+} else {
+    foreach ($company as $key => $values) {
+        if (isset($_POST['action'])) {
+
+            $value = $_POST['value'];
+            $value = str_replace(',', '.', preg_replace("/[^0-9,.]/", "", $value));
+            number_format($value);
+            $open_date = $_POST['open_date'];
+            $observation = $_POST['observation'];
+            $id_company = $values['id'];
+            $status = $_POST['status'];
+            $id_users = $users_id;
+
+            if ($value == '' || $open_date == '') {
+                Panel::Alert('attention', 'Os campo não podem ficar vázios!');
+            } else {
+                $verification = Db::Connection()->prepare("SELECT value, open_date, observation FROM `boxpdv` WHERE value = ? AND open_date = ? AND observation = ? 
                                                         AND id_company = ? AND status = ? AND id_users = ?");
-            $verification->execute(
-                array(
-                    $_POST['value'],
-                    $_POST['open_date'],
-                    $_POST['observation'],
-                    $_POST['id_company'],
-                    $users_id,
-                    $status['status']
-                )
-            );
+                $verification->execute(
+                    array(
+                        $_POST['value'],
+                        $_POST['open_date'],
+                        $_POST['observation'],
+                        $_POST['id_company'],
+                        $users_id,
+                        $status['status']
+                    )
+                );
 
-            if ($verification->rowCount() == 0) {
-                $arr =
-                    [
-                        'value' => $value,
-                        'open_date' => $open_date,
-                        'observation' => $observation,
-                        'id_company' => $id_company,
-                        'status' => 1,
-                        'id_users' => $users_id,
-                        'name_table' => 'boxpdv'
-                    ];
+                if ($verification->rowCount() == 0) {
+                    $arr =
+                        [
+                            'value' => $value,
+                            'open_date' => $open_date,
+                            'observation' => $observation,
+                            'id_company' => $id_company,
+                            'status' => 1,
+                            'id_users' => $users_id,
+                            'name_table' => 'boxpdv'
+                        ];
 
-                Controllers::Insert($arr);
-                $_SESSION['value'] = $value;
-                $_SESSION['open_date'] = $open_date;
-                Panel::Alert('sucess', 'Caixa foi aberto no valor de ' . $value);
+                    Controllers::Insert($arr);
+                    $_SESSION['value'] = $value;
+                    $_SESSION['open_date'] = $open_date;
+                    Panel::Alert('sucess', 'Caixa foi aberto no valor de ' . $value);
+                }
             }
         }
     }

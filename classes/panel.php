@@ -20,6 +20,7 @@ class Panel
       return false;
     }
   }
+  
   public static function UploadsImg($file)
   {
     $fileFormat = explode('.', $file['name']);
@@ -46,9 +47,9 @@ class Panel
   {
     if ($type == 'sucess') {
       echo '<div id="alert" class="alert alert-sucess"> ' . $message . '</div>';
-    } elseif ($type == 'error') {
+    } else if ($type == 'error') {
       echo '<div id="alert" class="alert alert-error">' . $message . '</div>';
-    } elseif ($type == 'attention') {
+    } else if ($type == 'attention') {
       echo '<div id="alert" class="alert alert-warning">' . $message . '</div>';
     }
   }
@@ -65,5 +66,18 @@ class Panel
     } else {
       include('pages/main.php');
     }
+  }
+
+  public static function LogAction($user_id, $action, $description) {
+
+    $sql = Db::Connection();
+
+    $exec = $sql->prepare("INSERT INTO logs (user_id, action_type, details, date) 
+                            VALUES (:user_id, :action_type, :description, NOW())");
+    $exec->bindValue(':user_id', $user_id, PDO::PARAM_INT);
+    $exec->bindValue(':action_type', $action, PDO::PARAM_STR);
+    $exec->bindValue(':description', $description, PDO::PARAM_STR);
+    $exec->execute();
+
   }
 }

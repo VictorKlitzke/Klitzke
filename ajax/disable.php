@@ -1,31 +1,1 @@
-<?php 
-
-include_once '../config/config.php';
-include_once '../services/db.php';
-
-$id = base64_decode($_POST['id']);
-$disable_id = base64_decode($_POST['disable_id']);
-
-$sql = Db::Connection();
-$exec = $sql->prepare("SELECT * FROM users WHERE id = $id");
-$exec->execute(); 
-$disables = $exec->fetch();
-
-var_dump(store($id, $disable_id));
-
-if (!$disables) {
-  store($id, $disable_id);
-}
-
-function store($id, $disable_id){
-
- if ($disable_id == NULL) {
-  $sql = Db::Connection();
-  $exec = $sql->prepare("UPDATE users SET disable = 1 WHERE id = ?");
-  $exec->execute([$id]);
- } else {
-  return;
- }
-
-  header('Location: ' . INCLUDE_PATH . 'list-users');
-}
+<?phpinclude_once '../classes/panel.php';include_once '../config/config.php';include_once '../services/db.php';ini_set('display_errors', 1);ini_set('display_startup_errors', 1);error_reporting(E_ALL);header("Access-Control-Allow-Origin: *");header("Content-Type: application/json");$data = json_decode(file_get_contents('php://input'), true);$id_users_inativar = $data['id_users_inativar'];$user_id = isset($_SESSION['id']) ? $_SESSION['id'] : null;class Inativar {    public static function InativarUsers($id_users_inativar, $user_id) {        $sql = Db::Connection();        $exec1 = $sql->prepare("SELECT * FROM users where id = :id_users");        $exec1->bindValue(':id_users', $user_id, PDO::PARAM_INT);        $exec1->execute();        $result1 = $exec1->fetch();        $exec = $sql->prepare("SELECT * FROM users where id = :id_users_inativar");        $exec->bindValue(':id_users_inativar', $id_users_inativar, PDO::PARAM_INT);        $exec->execute();        $result = $exec->fetch();        if ($result1['access'] == 100) {            if ($result['disable'] != 2){                Panel::LogAction($user_id, 'Inativar usuário', "Usuário ID $id_users_inativar inativado.");                self::UpdateInativar($id_users_inativar, $sql);                echo json_encode([                    'success' => true,                    'message' => 'Usuário inativado com sucesso'                ]);            } else {                echo json_encode([                    'success' => false,                    'message' => 'Usuário já está inativado'                ]);            }        } else {            echo json_encode([                'success' => false,                'message' => 'Usuário não tem permissão para essa ação'            ]);        }    }    public static function UpdateInativar($id_users_inativar, $sql) {        $disable = 2;        try {            $sql->beginTransaction();            $exec = $sql->prepare("UPDATE users SET disable = :disable WHERE id = :id_users_inativar");            $exec->bindValue(':disable', $disable, PDO::PARAM_INT);            $exec->bindValue(':id_users_inativar', $id_users_inativar, PDO::PARAM_INT);            $exec->execute();            $sql->commit();        } catch (Exception $e) {            $sql->rollBack();            http_response_code(500);            echo json_encode(['error' => 'Erro no banco de dados: ' . $e->getMessage(), 'code' => $e->getCode()]);        }    }}Inativar::InativarUsers($id_users_inativar, $user_id);?>

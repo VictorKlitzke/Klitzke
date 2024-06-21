@@ -4,6 +4,7 @@
     border: 1px solid #ccc;
     height: 580px;
     border-radius: 7px;
+    margin-bottom: 25px;
 }
 
 .table-number {
@@ -54,7 +55,7 @@
 }
 
 h4 {
-    font-size: 168x;
+    font-size: 16px;
 }
 
 .caracteres input {
@@ -336,24 +337,20 @@ section h2 {
 /* CARDS DE ADD MAIS ITENS */
 
 .card-order {
-    display: none;
+    padding: 6px;
     background-color: #202020;
     border: 1px solid #ccc;
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-.row-table-request {
-    overflow: scroll;
+.card-order-content {
+    padding: 10px;
 }
 
-.card-order-content {
-    height: 300px;
-    width: 580px;
-    padding: 10px;
-    background: #202020;
-    border: 1px solid #ccc;
-    border-radius: 10px;
+.row-table-request {
+    overflow-y: scroll;
+    height: 250px;
 }
 
 .card-list {
@@ -370,25 +367,18 @@ section h2 {
     margin-top: 15px;
 }
 
-@media (max-width: 768px) {
-    .card-order, .card-list {
-        flex-direction: column;
+@media only screen and (max-width: 1600px) {
+    .card-request-finallize {
+        width: 100%;
+        margin-top: 12px;
     }
 
-    .card-order-content {
+    .card-request {
         width: 100%;
     }
 
-    .card-list {
-        flex-direction: column;
-        padding: 15px;
+    #add-card-item {
+
     }
 
-    .card-footer {
-        margin-top: 20px;
-    }
-
-    .table-gathers-selected {
-        height: auto;
-    }
 }

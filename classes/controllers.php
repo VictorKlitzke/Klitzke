@@ -58,7 +58,7 @@ class Controllers
                     U.name AS NAME_USER,
                     CASE 
                         WHEN R.status = 1 THEN 'EM ATENDIMENTO'
-                        WHEN R.status = 2 THEN 'FINALIZADA'
+                        WHEN R.status = 2 THEN 'INATIVADA'
                         WHEN R.status = 3 THEN 'CONCLUÍDO'
                         WHEN R.status = 4 THEN 'AGRUPADOS'
                     END AS STATUS_REQUEST
@@ -162,6 +162,7 @@ class Controllers
 
         return $exec->fetchAll();
     }
+    
     public static function SelectAllTableRequests($name_table, $start = null, $end = null)
     {
         $sql = Db::Connection();
@@ -197,6 +198,7 @@ class Controllers
 
         return $exec->fetchAll();
     }
+
     public static function SelectAllFormPayment($name_table, $start = null, $end = null)
     {
         $sql = Db::Connection();
@@ -349,6 +351,7 @@ class Controllers
         }
         return $exec->fetch();
     }
+
     public static function SelectRequestItensOrder($name_table, $query = '', $ts = '')
     {
         $sql = Db::Connection();
@@ -488,12 +491,5 @@ class Controllers
         }
         $exec->execute();
     }
-    public static function DeleteRequest($id)
-    {
-        $sql = Db::Connection();
-        $sql = Db::Connection();
-        $exec = $sql->prepare("DELETE r, ri FROM `request` r INNER JOIN request_items ri ON ri.id_request = r.id WHERE r.id = ?");
-        $exec->bindValue($id, PDO::PARAM_INT);
-        $exec->execute();
-    }
+
 }

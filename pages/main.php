@@ -242,41 +242,28 @@ $status_product = $products->fetchAll();
 
                   ?>
 
-                  <div>
-                    <form action="./ajax/reopen_sales.php" method="post">
-                      <input name="id_sales" type="hidden" type="submit"
-                        value="<?php echo base64_encode($value['id']); ?>" />
-
-                      <button class="btn-reopen">Reabrir venda</button>
-                    </form>
-                  </div>
+                    <div>
+                        <button onclick="ReopenSales(this)"
+                                type="button" data-id="<?php echo $value['id'] ?>" class="btn-reopen">Reabrir venda
+                        </button>
+                    </div>
 
                 <?php } else { ?>
 
-                  <div>
-                    <form action="./ajax/cancel_sales.php" method="post">
-                      <input name="id_sales" type="hidden" type="submit"
-                        value="<?php echo base64_encode($value['id']); ?>" />
-
-                      <button class="btn-cancel">Cancelar venda</button>
-                    </form>
-                  </div>
+                    <div>
+                        <button onclick="CancelSales(this)" data-id="<?php echo $value['id']; ?>"
+                                type="button" class="btn-cancel">Cancelar venda
+                        </button>
+                    </div>
 
                 <?php } ?>
 
-                <button class="btn-details" onclick="InfoSales(
-                                                      '<?php echo $value['id']; ?>',
-                                                      '<?php echo $value['users']; ?>',
-                                                      '<?php echo $value['clients']; ?>',
-                                                      '<?php echo $value['form_payment']; ?>',
-                                                      '<?php echo $value['status_sales']; ?>',
-                                                      '<?php echo $value['quantity']; ?>',
-                                                      '<?php echo $value['products']; ?>',
-                                                      '<?php echo $value['total_value']; ?>',
-                                                      '<?php echo $value['date_sales']; ?>'
-                                                    )">
-                  <p>Mais detalhes</p>
-                </button>
+                  <div>
+                      <button onclick="Details(this)" data-id="<?php echo $value['id']; ?>" type="button" class="btn-details">
+                          <p>Mais detalhes</p>
+                      </button>
+                  </div>
+
               </td>
             </tr>
           </tbody>
@@ -288,35 +275,25 @@ $status_product = $products->fetchAll();
   </div>
 </div>
 
-<div class="overlay-home" id="overlay-home">
-  <div class="product-info-sales" id="product-info-sales">
-    <div class="navbar-product-info-sales">
-      <h2>informação da venda</h2>
-      <svg id="product-info-modal" style="cursor: pointer;" fill="#fff" xmlns="http://www.w3.org/2000/svg" height="24px"
-        viewBox="0 0 24 24" width="24px" fill="#000000">
-        <path d="M0 0h24v24H0z" fill="none" />
-        <path
-          d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" />
-      </svg>
-    </div>
-    <div class="box-content">
-      <div class="center">
-        <div class="info-sales-product">
-
-          <div id="users-sales"></div>
-          <div id="clients-sales"></div>
-          <div id="form-payment-sales"></div>
-          <div id="status-sales"></div>
-          <div id="products-sales"></div>
-          <div id="quantity-sales"></div>
-          <div id="total-sales"></div>
-          <div id="date-sales"></div>
-
+<div class="overlay-details" id="overlay-details">
+    <div id="modal-print" class="modal">
+        <div class="modal-content-details" id="modal-content-details">
+            <span class="close-details" onclick="CloseModalInfo()" id="close-details">&times;</span>
+            <h1>Venda ID: <span id="saleId"></span></h1>
+            <table id="modalTable" border="1">
+                <thead>
+                <tr>
+                    <th>Cliente</th>
+                    <th>Status</th>
+                    <th>Produto</th>
+                    <th>Quantidade</th>
+                    <th>Valor</th>
+                    <th>Forma de pagamento</th>
+                    <th>Usuario</th>
+                </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
         </div>
-      </div>
     </div>
-  </div>
 </div>
-</div>
-
-<script src="<?php echo INCLUDE_PATH; ?>./js/product_info_sales.js"></script>
