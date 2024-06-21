@@ -5,7 +5,7 @@ global $chave_secret;
 include_once './services/db.php';
 include_once './classes/panel.php';
 
-$disable = "NULL";
+$disable = 1;
 
 function generateRandomCode($length = 10) {
     return substr(str_shuffle("0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"), 0, $length);
@@ -16,8 +16,10 @@ if (isset($_POST['action'])) {
     $userProvidedPassword = $_POST['password'];
 
     $sql = Db::Connection();
-    $exec = $sql->prepare("SELECT * FROM `users` WHERE name = ?");
-    $exec->execute(array($login));
+    $exec = $sql->prepare("SELECT * FROM `users` WHERE name = :login AND disable = :disable");
+    $exec->bindValue(':disable', $disable, PDO::PARAM_INT);
+    $exec->bindValue(':login', $login, PDO::PARAM_STR);
+    $exec->execute();
 
     if ($exec->rowCount() == 1) {
         $info = $exec->fetch();
