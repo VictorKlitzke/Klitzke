@@ -14,6 +14,7 @@ $title_login = 'Klitzke software - login';
 $chave_secret = 'EFEGREWSWREGERGEGBTBBFDGBTGHERTGSFDSGVB';
 
 define('INCLUDE_DELIVERY', 'http://localhost:3000/Klitzke/page_delivery/');
+define('INCLUDE_JAVASCRIPT', 'http://localhost:3000/Klitzke/js/');
 
 define('INCLUDE_PATH', 'http://localhost:3000/Klitzke/');
 define('INCLUDE_PATH_PANEL', INCLUDE_PATH . 'pages/');

@@ -15,7 +15,7 @@ async function InativarInvo(button) {
     if (continueInativar) {
         try {
 
-            let url = "http://localhost/Klitzke/ajax/inativar_request.php";
+            let url = `${BASE_URL}inativar_request.php`;
 
             const response = await fetch(url, {
                 method: 'POST',

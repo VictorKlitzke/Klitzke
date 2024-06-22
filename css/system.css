@@ -178,3 +178,16 @@
     text-decoration: none;
     cursor: pointer;
 }
+
+.button-registers {
+    background: #aaa;
+    padding: 4px;
+    margin: 4px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.button-registers:hover {
+    background: #1d1d1d;
+    color: #fff;
+}

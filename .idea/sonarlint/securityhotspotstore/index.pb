@@ -21,8 +21,6 @@ G
 classes/controllers.php,9/5/95f816a944a6c1bf0039974fd8843463dab7a0cc
 D
 pages/list-sales.php,6/c/6c20d95af4074ee8a7ff5135c2d2b2a4671b2224
-G
-ajax/Add_item_order.php,3/c/3c279ba962e4b99bc0fa6c780af2c9a4e64caab4
 E
 ajax/close_boxpdv.php,0/4/045227ebda07a314cfb3888ac24e4647ecf526cb
 @

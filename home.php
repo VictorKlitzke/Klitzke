@@ -295,11 +295,12 @@ if ($checkCode->rowCount() > 0) {
     </div>
 </div>
 
-<script language="JavaScript" type="text/javascript" src="<?php echo INCLUDE_PATH; ?>./js/main.js"></script>
-<script language="JavaScript" type="text/javascript" src="<?php echo INCLUDE_PATH; ?>./js/list_system.js"></script>
-<script language="JavaScript" type="text/javascript" src="<?php echo INCLUDE_PATH; ?>./js/alert.js"></script>
-<script language="JavaScript" type="text/javascript" src="<?php echo INCLUDE_PATH; ?>./js/values.js"></script>
-<script language="JavaScript" type="text/javascript" src="<?php echo INCLUDE_PATH; ?>./js/menu.js"></script>
-
+<script language="JavaScript" type="text/javascript" src="<?php echo INCLUDE_JAVASCRIPT; ?>main.js"></script>
+<script language="JavaScript" type="text/javascript" src="<?php echo INCLUDE_JAVASCRIPT; ?>register_system.js"></script>
+<script language="JavaScript" type="text/javascript" src="<?php echo INCLUDE_JAVASCRIPT; ?>list_system.js"></script>
+<script language="JavaScript" type="text/javascript" src="<?php echo INCLUDE_JAVASCRIPT; ?>alert.js"></script>
+<script language="JavaScript" type="text/javascript" src="<?php echo INCLUDE_JAVASCRIPT; ?>values.js"></script>
+<script language="JavaScript" type="text/javascript" src="<?php echo INCLUDE_JAVASCRIPT; ?>menu.js"></script>
+<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
 </body>
 </html>

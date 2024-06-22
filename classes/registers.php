@@ -10,13 +10,20 @@ error_reporting(E_ALL);
 header("Access-Control-Allow-Origin: *");
 header("Content-Type: application/json");
 
-$data = json_decode(file_get_contents('php://input'), true);
 $user_id = isset($_SESSION['id']) ? $_SESSION['id'] : null;
 
 $sql = Db::Connection();
 
+$data = json_decode(file_get_contents('php://input'), true);
+$response_users = $data['responseFields'];
+
+var_dump($response_users);die();
+
 class Register {
-    public static function RegisterUsers($sql) {
+    public static function RegisterUsers($sql, $response_users) {
+
+        var_dump($response_users);die();
+        $disable = 1;
 
     }
 
