@@ -65,17 +65,136 @@ async function RegisterUsers() {
     }
 }
 
+const getFieldsClients = () => {
+    return {
+        type: 'clients',
+        name: document.getElementById('name').value,
+        email: document.getElementById('email').value,
+        social_reason: document.getElementById('social_reason').value,
+        cpf: document.getElementById('cpf').value,
+        phone: document.getElementById('phone').value,
+        address: document.getElementById('address').value,
+        city: document.getElementById('city').value,
+        cep: document.getElementById('cep').value,
+        neighborhood: document.getElementById('neighborhood').value,
+    };
+}
 async function RegisterClients() {
+
+    const FieldsClients = await getFieldsClients();
+
+    if (FieldsClients.cpf == "") {
+        showMessage('Campos não podem ficar vazios, por favor preecha', 'warning');
+        return;
+    }
+
+    if (FieldsClients.cpf < 11) {
+        showMessage('CPF não pode ser menor que 11 digitos', 'warning');
+        return;
+    }
+
+    if (FieldsClients.cpf != Number || FieldsClients.cep != Number ||
+        FieldsClients.phone != Number) {
+            showMessage('CPF ou CEP ou Telefone, não pode ser diferentes de numeros', 'warning');
+            return;
+        }
+
+    let responseClients = {
+        type: FieldsClients.type,
+        name: FieldsClients.name,
+        email: FieldsClients.email,
+        social_reason: FieldsClients.social_reason,
+        cpf: FieldsClients.cpf,
+        phone: FieldsClients.phone,
+        address: FieldsClients.address,
+        city: FieldsClients.city,
+        cep: FieldsClients.cep,
+        neighborhood: FieldsClients.neighborhood,
+    }
+
     try {
+
+        let url = `${BASE_CONTROLLERS}registers.php`;
+
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(responseClients)
+        })
+
+        const responseBody = await response.text();
+
+        if (responseBody.success) {
+            showMessage("Cliente " + Fields.name + " cadastrado com sucesso!", 'success');
+        } else {
+            showMessage("Erro ao fazer cadastro " + Fields.name, 'error');
+        }
 
     } catch (error) {
         window.alert("Erro ao fazer requisição" + error);
     }
 }
 
+const getFieldsCompany = () => {
+    return {
+        type: 'company',
+        name: document.getElementById('name').value,
+        email: document.getElementById('email').value,
+        cnpj: document.getElementById('cnpj').value,
+        state_registration: document.getElementById('state_registration').value,
+        phone: document.getElementById('phone').value,
+        address: document.getElementById('address').value,
+        city: document.getElementById('city').value,
+        state: document.getElementById('state').value,
+    };
+}
 async function RegisterCompany() {
+
+    const FieldsCompany = await getFieldsCompany();
+
+    if (FieldsCompany.cnpj < 14) {
+        showMessage('CNPJ não pode ser menor que 14 digitos', 'warning');
+        return;
+    }
+
+    if (FieldsCompany.cnpj != Number || FieldsCompany.state_registration != Number || FieldsCompany.phone != Number) {
+        showMessage('CNPJ ou Inscrição estadual ou Telefone, não pode ser diferentes de numeros', 'warning');
+        return;
+    }
+
+    let responseCompany = {
+        type: FieldsCompany.type,
+        name: FieldsCompany.name,
+        email: FieldsCompany.email,
+        cnpj: FieldsCompany.cnpj,
+        state_registration: FieldsCompany.state_registration,
+        phone: FieldsCompany.phone,
+        address: FieldsCompany.address,
+        city: FieldsCompany.city,
+        state: FieldsCompany.state,
+    }
+
     try {
 
+        let url = `${BASE_CONTROLLERS}registers.php`;
+
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(responseCompany)
+        })
+
+        const responseBody = await response.text();
+
+        if (responseBody.success) {
+            showMessage("Empresa " + Fields.name + " cadastrado com sucesso!", 'success');
+        } else {
+            showMessage("Erro ao fazer cadastro " + Fields.name, 'error');
+        }
     } catch (error) {
         window.alert("Erro ao fazer requisição" + error);
     }
@@ -167,6 +286,43 @@ async function RegisterAccount() {
             showMessage('Conta cadastrada com sucesso', 'success');
         } else {
             showMessage('Erro ao cadastrar conta bancaria', 'error');
+        }
+
+    } catch (error) {
+        showMessage("Erro ao fazer requisição" + error, 'error');
+    }
+}
+const getFieldsProducts = () => {
+    return {
+
+    }
+}
+async function RegisterProducts() {
+
+    const FieldsProduct = await getFieldsProduct();
+
+    let responseProduct = {
+
+    }
+
+    try {
+
+        let url = `${BASE_CONTROLLERS}registers.php`;
+
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(responseProduct)
+        })
+
+        const responseBody = await response.json();
+
+        if (responseBody.success) {
+            showMessage('Produto cadastrado com sucesso', 'success');
+        } else {
+            showMessage('Erro ao cadastrar produto', 'error');
         }
 
     } catch (error) {

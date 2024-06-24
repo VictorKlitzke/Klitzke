@@ -209,7 +209,7 @@ async function finalizeSalePortion() {
 
         if (selectedProducts.length === 0) {
 
-            showErrorMessage('Erro ao registrar venda, nenhum produto selecionado');
+            showMessage('Erro ao registrar venda, nenhum produto selecionado', 'warning');
 
         } else {
 
@@ -226,15 +226,15 @@ async function finalizeSalePortion() {
                 const responseDataPortion = JSON.parse(responseBodyPortion);
 
                 if (responseDataPortion && responseDataPortion.success) {
-                    showSuccessMessage('Venda finalizada com sucesso!');
+                    showMessage('Venda finalizada com sucesso!', 'success');
 
                     overlayPortion.style.display = 'none';
                     ModalSalesPortion.style.display = 'none';
                 } else {
-                    window.alert('Erro ao registrar venda:', responseDataPortion ? responseDataPortion.error : 'Resposta vazia');
+                    showMessage('Erro ao registrar venda:', responseDataPortion ? responseDataPortion.error : 'Resposta vazia', 'error');
                 }
             } catch (error) {
-                window.alert('Erro ao enviar dados para o PHP:', error);
+                showMessage('Erro ao enviar dados para o PHP:', error, 'error');
             }
         }
     } else {
@@ -263,7 +263,7 @@ async function finalizeSale() {
     };
 
     if (selectedProducts.length === 0) {
-        showErrorMessage('Erro ao registrar venda, nenhum produto selecionado');
+        showMessage('Erro ao registrar venda, nenhum produto selecionado', 'warning');
 
     } else {
         try {
@@ -281,13 +281,13 @@ async function finalizeSale() {
             const responseData = JSON.parse(responseBody);
 
             if (responseData && responseData.success) {
-                showSuccessMessage('Venda finalizada com sucesso!');
+                showMessage('Venda finalizada com sucesso!', 'success');
             } else {
-                console.error('Caixa não foi aberto, para essa operação' );
+                showMessage('Caixa não foi aberto, para essa operação', 'error');
             }
 
         } catch (error) {
-            window.alert('Erro ao enviar dados para o PHP:' + error);
+            showMessage('Erro ao enviar dados para o PHP:' + error, 'error');
         }
     }
 }
@@ -415,28 +415,6 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     });
 });
-
-function showErrorMessage(message) {
-    const errorContainer = document.getElementById('error-container');
-    const errorMessageElement = document.getElementById('error-message');
-    errorMessageElement.textContent = message;
-    errorContainer.style.display = 'flex';
-    setTimeout(() => {
-        errorMessageElement.textContent = '';
-        errorContainer.style.display = 'none';
-    }, 3000);
-}
-
-function showSuccessMessage(message) {
-    const successContainer = document.getElementById('success-container');
-    const successMessageElement = document.getElementById('success-message');
-    successMessageElement.textContent = message;
-    successContainer.style.display = 'flex';
-    setTimeout(() => {
-        successMessageElement.textContent = '';
-        successContainer.style.display = 'none';
-    }, 3000);
-}
 
 const finishButton = document.getElementById('finish-sales');
 
