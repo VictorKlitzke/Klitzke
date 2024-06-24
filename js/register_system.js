@@ -1,5 +1,6 @@
-function FieldsUsers() {
+const FieldsUsers = () => {
     return {
+        type: 'users',
         name: document.getElementById("name").value,
         email: document.getElementById("email").value,
         password: document.getElementById("password").value,
@@ -10,7 +11,6 @@ function FieldsUsers() {
         access: document.getElementById("access").value
     };
 }
-
 async function RegisterUsers() {
 
     const Fields = await FieldsUsers();
@@ -25,6 +25,7 @@ async function RegisterUsers() {
     // }
 
     let responseFields = {
+        type: Fields.type,
         name: Fields.name,
         email: Fields.email,
         password: Fields.password,
@@ -35,31 +36,31 @@ async function RegisterUsers() {
         access: Fields.access
     }
 
-    console.log(responseFields);
-
     const continueRegisterUsers = confirm("Deseja cadastrar realmente esse usuário?");
 
     if (continueRegisterUsers) {
         try {
 
-            let url = `${BASE_CLASS}registers.php`;
+            let url = `${BASE_CONTROLLERS}registers.php`;
 
             const response = await fetch(url, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ responseFields })
+                body: JSON.stringify(responseFields)
             })
 
-            const responseBody = await response.json();
+            const responseBody = await response.text();
 
             if (responseBody.success) {
-                window.alert("Usuário " + Fields.name + " cadastrado com sucesso!");
+                showMessage("Usuário " + Fields.name + " cadastrado com sucesso!", 'success');
+            } else {
+                showMessage("Erro ao fazer cadastro " + Fields.name, 'error');
             }
 
         } catch (error) {
-            window.alert("Erro ao fazer requisição" + error);
+            showMessage("Erro ao fazer requisição" + error, 'error');
         }
     }
 }
@@ -77,5 +78,98 @@ async function RegisterCompany() {
 
     } catch (error) {
         window.alert("Erro ao fazer requisição" + error);
+    }
+}
+
+const getFieldsTable = () => {
+    return {
+        type : 'table_request',
+        name: document.getElementById("name").value,
+    }
+}
+async function RegisterTableRequest() {
+
+    const FieldsTable = await getFieldsTable();
+
+    if (FieldsTable.name == "") {
+        showMessage('Preencha todos os campos!', 'error');
+        return;
+    }
+
+    let responseFieldsTable = {
+        type: FieldsTable.type,
+        name: FieldsTable.name
+    }
+
+    try {
+
+        let url = `${BASE_CONTROLLERS}registers.php`;
+
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(responseFieldsTable)
+        })
+
+        const responseBody = await response.json();
+
+        if (responseBody.success) {
+            showMessage('Mesa cadastrada com sucesso', 'success');
+        } else {
+            showMessage('Erro ao cadastrar mesa', 'error');
+        }
+
+    } catch (error) {
+        showMessage("Erro ao fazer requisição" + error, 'error');
+    }
+}
+
+const getFieldsAccount = () => {
+    return {
+        type: 'account',
+        pix: document.getElementById('pix').value,
+        name_holder: document.getElementById('name_holder').value,
+        city: document.getElementById('city').value,
+    }
+}
+async function RegisterAccount() {
+
+    const FieldsAccount = await getFieldsAccount();
+
+    if (FieldsAccount.pix == "" || FieldsAccount.city == "" || FieldsAccount.name_holder == "") {
+        showMessage('Campos vazios, preencha os campos', 'warning');
+        return;
+    }
+
+    let responseAccount = {
+        pix: FieldsAccount.pix,
+        name_holder: FieldsAccount.name_holder,
+        city: FieldsAccount.city
+    }
+
+    try {
+
+        let url = `${BASE_CONTROLLERS}registers.php`;
+
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(responseAccount)
+        })
+
+        const responseBody = await response.json();
+
+        if (responseBody.success) {
+            showMessage('Conta cadastrada com sucesso', 'success');
+        } else {
+            showMessage('Erro ao cadastrar conta bancaria', 'error');
+        }
+
+    } catch (error) {
+        showMessage("Erro ao fazer requisição" + error, 'error');
     }
 }

@@ -39,9 +39,8 @@ if ($checkCode->rowCount() > 0) {
     <link rel="stylesheet" href="<?php echo INCLUDE_PATH_PANEL; ?>../css/request.css" />
     <link rel="stylesheet" href="<?php echo INCLUDE_PATH_PANEL; ?>../css/selectedClients.css" />
     <link rel="stylesheet" href="<?php echo INCLUDE_PATH_PANEL; ?>../css/modalPortion.css" />
-    <link rel="stylesheet" href="<?php echo INCLUDE_PATH_PANEL; ?>../css/font-awesome.min.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/2.0.7/css/dataTables.dataTables.css"/>
-    <!--   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">-->
+      <!-- <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous"> -->
     <link rel="icon" href="<?php echo INCLUDE_PATH; ?>./public/logo/favicon.ico" type="image/x-icon" />
     <title><?php echo $title_home; ?></title>
 </head>
@@ -293,12 +292,13 @@ if ($checkCode->rowCount() > 0) {
             </div>
         </div>
     </div>
+    <div class="message-container" id="message-container"></div>
 </div>
 
+<script language="JavaScript" type="text/javascript" src="<?php echo INCLUDE_JAVASCRIPT; ?>alert.js"></script>
 <script language="JavaScript" type="text/javascript" src="<?php echo INCLUDE_JAVASCRIPT; ?>main.js"></script>
 <script language="JavaScript" type="text/javascript" src="<?php echo INCLUDE_JAVASCRIPT; ?>register_system.js"></script>
 <script language="JavaScript" type="text/javascript" src="<?php echo INCLUDE_JAVASCRIPT; ?>list_system.js"></script>
-<script language="JavaScript" type="text/javascript" src="<?php echo INCLUDE_JAVASCRIPT; ?>alert.js"></script>
 <script language="JavaScript" type="text/javascript" src="<?php echo INCLUDE_JAVASCRIPT; ?>values.js"></script>
 <script language="JavaScript" type="text/javascript" src="<?php echo INCLUDE_JAVASCRIPT; ?>menu.js"></script>
 <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>

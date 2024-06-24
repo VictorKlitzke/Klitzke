@@ -6,7 +6,7 @@ if (isset($_GET['delete'])) {
   header('Location: ' . INCLUDE_PATH . 'list-users');
 }
 
-$currentPage = isset($_GET['page']) ? (int)($_GET['page']) : 1;
+$currentPage = isset($_GET['page']) ? (int) ($_GET['page']) : 1;
 $porPage = 20;
 
 $users = Controllers::SelectAll('users', ($currentPage - 1) * $porPage, $porPage);
@@ -32,10 +32,12 @@ $users = Controllers::SelectAll('users', ($currentPage - 1) * $porPage, $porPage
 
       foreach ($users as $key => $value) {
 
-      ?>
+        ?>
 
         <tr>
-          <td><p><?php echo htmlspecialchars($value['name']); ?></p></td>
+          <td>
+            <p><?php echo htmlspecialchars($value['name']); ?></p>
+          </td>
           <td><?php echo htmlspecialchars($value['email']); ?></td>
           <td><?php echo htmlspecialchars($value['phone']); ?></td>
           <td><?php echo htmlspecialchars($value['function']); ?></td>
@@ -44,19 +46,27 @@ $users = Controllers::SelectAll('users', ($currentPage - 1) * $porPage, $porPage
 
           <td style="display: flex; justify-content: center; gap: 10px; margin: 6px; padding: 6px;">
             <div>
-              <a class="btn-edit" href="<?php echo INCLUDE_PATH ?>edit-users?id=<?php echo base64_encode($value['id']); ?>">Editar</a>
+              <a class="btn-edit"
+                href="<?php echo INCLUDE_PATH ?>edit-users?id=<?php echo base64_encode($value['id']); ?>">Editar</a>
             </div>
 
             <div>
-              <button onclick="InativarUsers(this)" type="button"
-                      data-id="<?php echo $value['id']; ?>" class="btn-disable"
-              >
-                  Desativar
+              <?php if ($value['disable'] == 1){ ?>
+              <button onclick="InativarUsers(this)" type="button" data-id="<?php echo $value['id']; ?>"
+                class="btn-disable">
+                Desativar
               </button>
+              <?php } else { ?>
+                <button
+                class="btn-reopen">
+                Desativado
+              </button>
+              <?php } ?>
             </div>
 
             <div>
-              <a actionBtn="delete" class="btn-delete" href="<?php echo INCLUDE_PATH ?>list-users?delete=<?php echo $value['id']; ?>">Deletar</a>
+              <a actionBtn="delete" class="btn-delete"
+                href="<?php echo INCLUDE_PATH ?>list-users?delete=<?php echo $value['id']; ?>">Deletar</a>
             </div>
 
           </td>
@@ -81,9 +91,3 @@ $users = Controllers::SelectAll('users', ($currentPage - 1) * $porPage, $porPage
 
   ?>
 </div>
-<!-- <div id="confirm-box" class="confirm-box">
-  <p>Deseja realmente desativar o usuário?</p>
-  <button id="confirm-yes" class="confirm-yes">Sim</button>
-  <button id="confirm-no" class="confirm-no">Não</button>
-</div> -->
-<div id="message" class="message"></div>
