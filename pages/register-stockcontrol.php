@@ -4,56 +4,55 @@
     <form class="form">
         <div class="content-form">
             <label for="">Nome Produto</label>
-            <input type="text" name="name">
+            <input type="text" id="name">
         </div>
         <div class="content-form">
             <label for="">Quantidade</label>
-            <input type="text" name="quantity">
+            <input type="text" id="quantity">
         </div>
         <div class="content-form">
             <label for="">Quantidade no estoque</label>
-            <input type="text" name="stock_quantity">
+            <input type="text" id="stock_quantity">
         </div>
         <div class="content-form">
             <label for="">Código de Barras</label>
-            <input type="text" name="barcode">
+            <input type="text" id="barcode">
         </div>
         <div ref="cpf" class="content-form">
             <label for="">Preço</label>
-            <input type="text" name="value_product" id="value" oninput="formmaterReal(this)" placeholder="R$ 0,00">
+            <input type="text" id="value_product" id="value" oninput="formmaterReal(this)" placeholder="R$ 0,00">
         </div>
         <div class="content-form">
             <label for="">Valor de custo</label>
-            <input type="text" name="cost_value" id="value" oninput="formmaterReal(this)" placeholder="R$ 0,00">
+            <input type="text" id="cost_value" id="value" oninput="formmaterReal(this)" placeholder="R$ 0,00">
         </div>
         <div class="content-form">
             <label for="">Referencia</label>
-            <input type="text" name="reference">
+            <input type="text" id="reference">
         </div>
         <div class="content-form">
             <label for="">Modelo</label>
-            <input type="text" name="model">
+            <input type="text" id="model">
         </div>
         <div class="content-form">
             <label for="">Marca</label>
-            <input type="text" name="brand">
+            <input type="text" id="brand">
         </div>
         <div class="content-form">
             <label for="">Imagem do Produto</label>
-            <input type="file" name="flow">
+            <input type="file" id="flow">
         </div>
         <div class="content-form">
             <label for="">Data de registro</label>
-            <input type="date" name="register_date">
+            <input type="date" id="register_date">
         </div>
     </form>
     <button class="button-registers" onclick="RegisterProducts()" type="button">Cadastrar</button>
 </div>
 
 <script src="<?php echo INCLUDE_PATH_PANEL; ?>../js/values.js"></script>
-
 <script>
-<!-- Adicione este trecho de código dentro do bloco <script> -->
+
 document.addEventListener('DOMContentLoaded', function () {
     var form = document.querySelector('.form');
 

@@ -13,10 +13,10 @@ $title_home = 'Klitzke Software - Admin';
 $title_login = 'Klitzke software - login';
 $chave_secret = 'EFEGREWSWREGERGEGBTBBFDGBTGHERTGSFDSGVB';
 
-define('INCLUDE_DELIVERY', 'http://localhost:3000/Klitzke/page_delivery/');
-define('INCLUDE_JAVASCRIPT', 'http://localhost:3000/Klitzke/js/');
+define('INCLUDE_DELIVERY', 'http://localhost:33/Klitzke/page_delivery/');
+define('INCLUDE_JAVASCRIPT', 'http://localhost:33/Klitzke/js/');
 
-define('INCLUDE_PATH', 'http://localhost:3000/Klitzke/');
+define('INCLUDE_PATH', 'http://localhost:33/Klitzke/');
 define('INCLUDE_PATH_PANEL', INCLUDE_PATH . 'pages/');
 define('BASE_DIR_PAINEL', __DIR__ . '/public');
 

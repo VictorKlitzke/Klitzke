@@ -292,17 +292,52 @@ async function RegisterAccount() {
         showMessage("Erro ao fazer requisição" + error, 'error');
     }
 }
+
 const getFieldsProducts = () => {
     return {
+        type: 'products',
+        name: document.getElementById('name').value,
+        quantity: document.getElementById('quantity').value,
+        stock_quantity: document.getElementById('stock_quantity').value,
+        barcode: document.getElementById('barcode').value,
+        value_product: document.getElementById('value_product').value,
+        cost_value: document.getElementById('cost_value').value,
+        reference: document.getElementById('reference').value,
+        model: document.getElementById('model').value,
+        brand: document.getElementById('brand').value,
+        flow: document.getElementById('flow').value,
+        register_date: document.getElementById('register_date').value,
 
     }
 }
 async function RegisterProducts() {
 
+    const DateActual = new Date();
+
+    FieldsProduct.register_date = DateActual;
+
     const FieldsProduct = await getFieldsProduct();
 
-    let responseProduct = {
+    if (FieldsProduct.quantity != Number || FieldsProduct.stock_quantity != Nmber ||
+        FieldsProduct.barcode != Number || FieldsProduct.value_product != Number || FieldsProduct.cost_value != Number
+    ) {
+        showMessage('Quantidade e Quantidade estoque não podem ser diferente de numero', 'warning');
+        return;
+    }
 
+    let responseProduct = {
+        type: FieldsProduct.type,
+        name: FieldsProduct.name,
+        quantity: FieldsProduct.quantity,
+        stock_quantity: FieldsProduct.stock_quantity,
+        barcode: FieldsProduct.barcode,
+        value_product: FieldsProduct.value_product,
+        cost_value: FieldsProduct.cost_value,
+        reference: FieldsProduct.reference,
+        model: FieldsProduct.model,
+        brand: FieldsProduct.brand,
+        flow: FieldsProduct.flow,
+        register_date: FieldsProduct.register_date,
     }
 
     try {
@@ -320,12 +355,49 @@ async function RegisterProducts() {
         const responseBody = await response.json();
 
         if (responseBody.success) {
-            showMessage('Produto cadastrado com sucesso', 'success');
+            showMessage('Produto' + FieldsProduct.name + 'cadastrado com sucesso', 'success');
         } else {
             showMessage('Erro ao cadastrar produto', 'error');
         }
 
     } catch (error) {
         showMessage("Erro ao fazer requisição" + error, 'error');
+    }
+}
+
+const getFieldsForn = () => {
+    return {
+
+    }
+}
+async function RegisterForn() {
+    const FieldsForn = await getFieldsForn();
+
+    let responseForn = {
+
+    }
+
+    try {
+
+        let url = "";
+
+        const response = await fetch(url, {
+            method: "POST",
+            headers: {
+                '': 'Content-Type',
+            },
+            body: JSON.stringify(responseForn)
+        })
+
+        const responseBody = await response.json();
+
+        if (responseBody.success) {
+            showMessage('', '');
+        } else {
+            showMessage('', '');
+        }
+
+    } catch (error) {
+        showMessage('Erro na requisição' + error, 'error')
     }
 }
