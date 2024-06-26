@@ -83,7 +83,7 @@ async function RegisterClients() {
 
     const FieldsClients = await getFieldsClients();
 
-    if (FieldsClients.cpf == "") {
+    if (FieldsClients.cpf == "" || FieldsClients.name == "" || FieldsClients.social_reason == "") {
         showMessage('Campos não podem ficar vazios, por favor preecha', 'warning');
         return;
     }
@@ -367,14 +367,39 @@ async function RegisterProducts() {
 
 const getFieldsForn = () => {
     return {
-
+        type: 'forn',
+        name_company: document.getElementById('company').value,
+        fantasy_name: document.getElementById('fantasy_name').value,
+        email: document.getElementById('email').value,
+        phone: document.getElementById('phone').value,
+        address: document.getElementById('address').value,
+        city: document.getElementById('city').value,
+        state: document.getElementById('state').value,
+        cnpj: document.getElementById('cnpj').value
     }
 }
 async function RegisterForn() {
+
     const FieldsForn = await getFieldsForn();
 
-    let responseForn = {
+    if (FieldsForn.cnpj != Number) {
+        showMessage('CNPJ não pode ser diferente de numero', 'warning');
+        return;
+    }
 
+    if (FieldsForn.cnpj == ""|| FieldsForn.name_company == "" || FieldsForn.fantasy_name == "") {
+        showMessage('Campos não podem ficar vazios', 'warning');
+    }
+
+    let responseForn = {
+        name_company: FieldsForn.name_company,
+        fantasy_name: FieldsForn.fantasy_name,
+        email: FieldsForn.email,
+        phone: FieldsForn.phone,
+        address: FieldsForn.address,
+        city: FieldsForn.city,
+        state: FieldsForn.state,
+        cnpj: FieldsForn.cnpj,
     }
 
     try {
