@@ -36,33 +36,35 @@ async function RegisterUsers() {
         access: Fields.access
     }
 
-    const continueRegisterUsers = confirm("Deseja cadastrar realmente esse usuário?");
+    continueMessage(
+        "Deseja realmente cadastrar esse usuário?", "Sim", "Não", async function () {
+            try {
+                let url = `${BASE_CONTROLLERS}registers.php`;
 
-    if (continueRegisterUsers) {
-        try {
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(responseFields)
+                });
 
-            let url = `${BASE_CONTROLLERS}registers.php`;
+                const responseBody = await response.json();
 
-            const response = await fetch(url, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(responseFields)
-            })
+                if (responseBody.success) {
+                    showMessage("Usuário " + responseFields.name + " cadastrado com sucesso!", 'success');
+                } else {
+                    showMessage("Erro ao fazer cadastro: " + responseBody.message, 'error');
+                }
 
-            const responseBody = await response.text();
-
-            if (responseBody.success) {
-                showMessage("Usuário " + Fields.name + " cadastrado com sucesso!", 'success');
-            } else {
-                showMessage("Erro ao fazer cadastro " + Fields.name, 'error');
+            } catch (error) {
+                showMessage("Erro ao fazer requisição: " + error, 'error');
             }
-
-        } catch (error) {
-            showMessage("Erro ao fazer requisição" + error, 'error');
+        },
+        function () {
+            showMessage("Cadastro de usuário cancelado.", 'warning');
         }
-    }
+    );
 }
 
 const getFieldsClients = () => {
@@ -93,11 +95,21 @@ async function RegisterClients() {
         return;
     }
 
-    if (FieldsClients.cpf != Number || FieldsClients.cep != Number ||
-        FieldsClients.phone != Number) {
-            showMessage('CPF ou CEP ou Telefone, não pode ser diferentes de numeros', 'warning');
-            return;
-        }
+    if (FieldsClients.cep < 8) {
+        showMessage('CEP não pode ser menor que 8 digitos', 'warning');
+        return;
+    }
+
+    if (FieldsClients.phone < 8) {
+        showMessage('Telefone não pode ser menor que 8 digitos', 'warning');
+        return;
+    }
+
+    // if (FieldsClients.cpf != Number || FieldsClients.cep != Number ||
+    //     FieldsClients.phone != Number) {
+    //     showMessage('CPF ou CEP ou Telefone, não pode ser diferentes de numeros', 'warning');
+    //     return;
+    // }
 
     let responseClients = {
         type: FieldsClients.type,
@@ -112,29 +124,34 @@ async function RegisterClients() {
         neighborhood: FieldsClients.neighborhood,
     }
 
-    try {
+    continueMessage("Deseja realmente fazer cadastro de cliente?", "Sim", "Não", async function () {
+        try {
 
-        let url = `${BASE_CONTROLLERS}registers.php`;
-
-        const response = await fetch(url, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(responseClients)
-        })
-
-        const responseBody = await response.text();
-
-        if (responseBody.success) {
-            showMessage("Cliente " + Fields.name + " cadastrado com sucesso!", 'success');
-        } else {
-            showMessage("Erro ao fazer cadastro " + Fields.name, 'error');
+            let url = `${BASE_CONTROLLERS}registers.php`;
+    
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(responseClients)
+            })
+    
+            const responseBody = await response.json();
+    
+            if (responseBody.success) {
+                showMessage("Cliente " + Fields.name + " cadastrado com sucesso!", 'success');
+            } else {
+                showMessage("Erro ao fazer cadastro " + Fields.name, 'error');
+            }
+    
+        } catch (error) {
+            showMessage('Erro ao fazer requisição' + error, 'error');
         }
-
-    } catch (error) {
-        window.alert("Erro ao fazer requisição" + error);
-    }
+    },
+        function () {
+            showMessage('Cadastro de cliente cancelado', 'warning');
+        })
 }
 
 const getFieldsCompany = () => {
@@ -202,7 +219,7 @@ async function RegisterCompany() {
 
 const getFieldsTable = () => {
     return {
-        type : 'table_request',
+        type: 'table_request',
         name: document.getElementById("name").value,
     }
 }
@@ -375,20 +392,26 @@ const getFieldsForn = () => {
         address: document.getElementById('address').value,
         city: document.getElementById('city').value,
         state: document.getElementById('state').value,
-        cnpj: document.getElementById('cnpj').value
+        cnpj: document.getElementById('cnpj').value,
     }
 }
 async function RegisterForn() {
 
     const FieldsForn = await getFieldsForn();
 
-    if (FieldsForn.cnpj != Number) {
-        showMessage('CNPJ não pode ser diferente de numero', 'warning');
+    if (FieldsForn.cnpj == "" || FieldsForn.name_company == "" || FieldsForn.fantasy_name == "") {
+        showMessage('Campos não podem ficar vazios', 'warning');
         return;
     }
 
-    if (FieldsForn.cnpj == ""|| FieldsForn.name_company == "" || FieldsForn.fantasy_name == "") {
-        showMessage('Campos não podem ficar vazios', 'warning');
+    if (FieldsForn.cnpj < 14) {
+        showMessage('CNPJ não pode ser menor que 14 numeros', 'warning');
+        return;
+    }
+
+    if (FieldsForn.phone < 8) {
+        showMessage('Telefone não pode ser menor que 8 numeros', 'warning');
+        return;
     }
 
     let responseForn = {
@@ -402,27 +425,36 @@ async function RegisterForn() {
         cnpj: FieldsForn.cnpj,
     }
 
-    try {
+    continueMessage("Deseja continuar com o cadastro?", "Sim", "Não", async function () {
+        try {
 
-        let url = "";
+            let url = `${BASE_CONTROLLERS}registers.php`;
 
-        const response = await fetch(url, {
-            method: "POST",
-            headers: {
-                '': 'Content-Type',
-            },
-            body: JSON.stringify(responseForn)
-        })
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(responseForn)
+            });
 
-        const responseBody = await response.json();
+            console.log(await response.json());
 
-        if (responseBody.success) {
-            showMessage('', '');
-        } else {
-            showMessage('', '');
+            const responseBody = await response.json();
+
+            console.log(responseBody);
+
+            if (responseBody.success) {
+                showMessage('Fornecedor'+ FieldsForn.name_company +'cadastrado com sucesso', 'success');
+            } else {
+                showMessage('Erro ao fazer cadastro do fornecedor' + responseBody.error, 'error');
+            }
+
+        } catch (error) {
+            showMessage('Erro na requisição' + error, 'error')
         }
-
-    } catch (error) {
-        showMessage('Erro na requisição' + error, 'error')
+    }, function () {
+        showMessage('Cadastro de Fornecedor cancelado', 'warning');
     }
+    )
 }

@@ -3,38 +3,38 @@
   <form class="form">
     <div class="content-form">
       <label for="">Fornecedor</label>
-      <input type="text" name="company">
+      <input type="text" id="company">
     </div>
     <div class="content-form">
       <label for="">Nome Fantasia</label>
-      <input type="text" name="fantasy_name">
+      <input type="text" id="fantasy_name">
     </div>
     <div class="content-form">
       <label for="">Email</label>
-      <input type="email" name="email">
+      <input type="email" id="email">
     </div>
     <div class="content-form">
       <label for="">Telefone</label>
-      <input type="text" name="phone">
+      <input type="number" id="phone">
     </div>
     <div class="content-form">
       <label for="">Endereco</label>
-      <input type="text" name="address">
+      <input type="text" id="address">
     </div>
     <div class="content-form">
       <label for="">Cidade</label>
-      <input type="text" name="city">
+      <input type="text" id="city">
     </div>
     <div class="content-form">
       <label for="">Estado</label>
-      <input type="text" name="state">
+      <input type="text" id="state">
     </div>
     <div class="content-form">
       <label for="">CNPJ</label>
-      <input type="text" id="cnpj" placeholder="00.000.000/0000-00" oninput="formatarCNPJ(this)" maxlength="18" name="cnpjcpf">
+      <input type="text" id="cnpj" placeholder="00.000.000/0000-00" maxlength="14">
     </div>
-    <button class="button-registers" onclick="RegisterForn()" type="button">Cadastrar</button>
   </form>
+  <button class="button-registers" onclick="RegisterForn()" type="button">Cadastrar</button>
 </div>
 
 <script>

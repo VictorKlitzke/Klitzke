@@ -1,3 +1,4 @@
+
 const wrapper = document.querySelector('.wrapper');
 const registerLink = document.querySelector('.register-link');
 const loginLink = document.querySelector('.login-link');
@@ -10,35 +11,78 @@ loginLink.onclick = () => {
     wrapper.classList.remove('active');
 }
 
-document.addEventListener('DOMContentLoaded', function() {
-    const token = getCookie('jwt');
 
-    if (token) {
-        // Use o token conforme necessário
-        console.log('Token encontrado:', token);
-
-        console.log(token)
-
-        // Exemplo de como enviar o token em uma requisição AJAX
-        fetch('/some-protected-endpoint', {
-            method: 'GET',
-            headers: {
-                'Authorization': `Bearer ${token}`
-            }
-        }).then(response => {
-            return response.json();
-        }).then(data => {
-            console.log(data);
-        }).catch(error => {
-            console.error('Erro:', error);
-        });
-    } else {
-        console.log('Token não encontrado.');
+const getFieldsLogin = () => {
+    return {
+        type: 'login',
+        name: document.getElementById('name').value,
+        password: document.getElementById('password').value,
     }
-});
+}
+async function login() {
 
-function getCookie(name) {
-    const value = `; ${document.cookie}`;
-    const parts = value.split(`; ${name}=`);
-    if (parts.length === 2) return parts.pop().split(';').shift();
+    const FieldsLogin = await getFieldsLogin();
+
+    if (FieldsLogin.name == "" || FieldsLogin.password == "") {
+        showMessage('Campos não podem ser vazios', 'warning');
+        return;
+    }
+
+    try {
+
+        let url = `${BASE_CONTROLLERS}login.php`;
+
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(FieldsLogin)
+        })
+
+        if (!response.ok) {
+            throw new Error('Erro ao fazer requisição: ' + response.statusText);
+        }
+
+        const responseBody = await response.json();
+
+        if (responseBody.success) {
+            showMessage('Login realizado: ' + FieldsLogin.name, 'success');
+            window.location.href = `${BASE_PATH}`;
+        } else {
+            showMessage('Erro ao fazer login: ' + responseBody.message, 'error');
+        }
+
+    } catch (error) {
+        showMessage('Erro ao fazer requisição' + error, 'error');
+    }
+
+}
+
+async function logout() {
+    try {
+        let url = `${BASE_CONTROLLERS}logout.php`;
+
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error('Erro ao fazer requisição: ' + response.statusText);
+        }
+
+        const responseBody = await response.json();
+
+        if (responseBody.success) {
+            showMessage('Logout realizado com sucesso', 'success');
+        } else {
+            showMessage('Erro ao fazer logout: ' + responseBody.message, 'error');
+        }
+
+    } catch (error) {
+        showMessage('Erro ao fazer requisição: ' + error.message, 'error');
+    }
 }

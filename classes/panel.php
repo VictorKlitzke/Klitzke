@@ -1,5 +1,7 @@
 <?php
 
+include_once '../controllers/login.php';
+
 class Panel
 {
 
@@ -20,7 +22,7 @@ class Panel
       return false;
     }
   }
-  
+
   public static function UploadsImg($file)
   {
     $fileFormat = explode('.', $file['name']);
@@ -33,14 +35,27 @@ class Panel
 
   public static function Logged()
   {
-    return isset($_SESSION['login']) && $_SESSION['login'] === true;
-  }
+    $token = isset($_COOKIE['jwt']) ? $_COOKIE['jwt'] : null;
+    if (!$token) {
+      return false;
+    }
 
-  public static function Loggout()
-  {
-    setcookie('remember', 'true', time() - 1, '/');
-    session_destroy();
-    header('Location: ' . INCLUDE_PATH);
+    $payload = Login::validateJWT($token);
+    if ($payload === null) {
+      return false;
+    }
+
+    $sql = Db::Connection();
+
+    $userId = $payload->data['id'];
+    $stmt = $sql->prepare("SELECT COUNT(*) as count FROM users WHERE id = :id");
+    $stmt->bindValue(':id', $userId, PDO::PARAM_INT);
+    $stmt->execute();
+    $result = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    if ($result['count'] == 0) {
+      return false;
+    }
   }
 
   public static function Alert($type, $message)
@@ -59,25 +74,31 @@ class Panel
     if (isset($_GET["url"])) {
       $url = explode('/', $_GET["url"]);
       if (file_exists('pages/' . $url[0] . '.php')) {
-        include('pages/' . $url[0] . '.php');
+        include ('pages/' . $url[0] . '.php');
       } else {
         header('Location: ' . INCLUDE_PATH_PANEL);
       }
     } else {
-      include('pages/main.php');
+      include ('pages/main.php');
     }
   }
 
-  public static function LogAction($user_id, $action, $description) {
+  public static function LogAction($user_id, $action, $description, $today)
+  {
 
     $sql = Db::Connection();
 
-    $exec = $sql->prepare("INSERT INTO logs (users_id, action_type, description, date) 
-                            VALUES (:users_id, :action_type, :description, NOW())");
-    $exec->bindValue(':users_id', $user_id, PDO::PARAM_INT);
-    $exec->bindValue(':action_type', $action, PDO::PARAM_STR);
-    $exec->bindValue(':description', $description, PDO::PARAM_STR);
-    $exec->execute();
+    try {
+      $exec = $sql->prepare("INSERT INTO logs (users_id, action_type, description, date) 
+                            VALUES (:users_id, :action_type, :description, :date");
+      $exec->bindValue(':users_id', $user_id, PDO::PARAM_INT);
+      $exec->bindValue(':action_type', $action, PDO::PARAM_STR);
+      $exec->bindValue(':description', $description, PDO::PARAM_STR);
+      $exec->bindValue(':date', $today, PDO::PARAM_STR);
+      $exec->execute();
+    } catch (PDOException $e) {
+      error_log('Erro ao inserir log: ' . $e->getMessage());
+    }
 
   }
 }

@@ -16,11 +16,11 @@
     </div>
     <div ref="cpf" class="content-form">
       <label for="">CPF</label>
-      <input type="text" id="cpf" id="cpf" maxlength="14" placeholder="000.000.000-00">
+      <input type="text" id="cpf" maxlength="14" placeholder="000.000.000-00">
     </div>
     <div class="content-form">
       <label for="">Telefone</label>
-      <input type="text" id="phone">
+      <input type="number" id="phone">
     </div>
     <div class="content-form">
       <label for="">Endereco</label>
@@ -32,7 +32,7 @@
     </div>
     <div class="content-form">
       <label for="">CEP</label>
-      <input type="text" id="cep">
+      <input type="number" id="cep">
     </div>
     <div class="content-form">
       <label for="">Bairro</label>

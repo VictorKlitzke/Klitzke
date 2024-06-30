@@ -12,6 +12,7 @@ error_reporting(E_ALL);
 
 header("Access-Control-Allow-Origin: *");
 header("Content-Type: application/json");
+header("Access-Control-Allow-Headers: Content-Type, Authorization");
 
 $user_id = isset($_SESSION['id']) ? $_SESSION['id'] : null;
 
@@ -42,6 +43,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $response_company = $data;
     $response_clients = $data;
     $response_products = $data;
+    $response_forn = $data;
 
     if ($data['type'] == 'users') {
         Register::RegisterUsers($sql, $response_users, $user_id);
@@ -50,7 +52,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     } else if ($data['type'] == 'account') {
         Register::RegisterAccount($sql, $response_account, $user_id);
     } else if ($data['type'] == 'forn') {
-
+        Register::RegisterForn($sql, $response_forn, $user_id);
     } else if ($data['type'] == 'clients') {
         Register::RegisterClient($sql, $response_client, $user_id);
     } else if ($data['type'] == 'products') {
@@ -323,6 +325,54 @@ class Register
             echo json_encode(['error' => 'Erro no banco de dados: ' . $e->getMessage(), 'code' => $e->getCode()]);
         }
 
+    }
+
+    public static function RegisterForn($sql, $response_forn, $user_id) {
+
+        $today = date('Y-m-d H:i:s');
+
+        $name_company = filter_var($response_forn['name_company'], FILTER_SANITIZE_STRING);
+        $fantasy_name = filter_var($response_forn['fantasy_name'], FILTER_SANITIZE_STRING);
+        $email = filter_var($response_forn['email'], FILTER_VALIDATE_EMAIL);
+        $phone = filter_var($response_forn['phone'], FILTER_SANITIZE_STRING);
+        $address = filter_var($response_forn['address'], FILTER_SANITIZE_STRING);
+        $city = filter_var($response_forn['city'], FILTER_SANITIZE_STRING);
+        $state = filter_var($response_forn['state'], FILTER_SANITIZE_STRING);
+        $cnpj = filter_var($response_forn['cnpj'], FILTER_SANITIZE_STRING);
+    
+        if (empty($name_company) || empty($fantasy_name) || empty($email) || empty($phone) || empty($address) || empty($city) || empty($state) || empty($cnpj)) {
+            Response::json(false, 'Todos os campos são obrigatórios', $today);
+            return;
+        }
+    
+        try {
+    
+            $sql->beginTransaction();
+    
+            $exec = $sql->prepare("INSERT INTO suppliers (company, fantasy_name, email, phone, address, city, state, cnpjcpf) 
+                                   VALUES (:name_company, :fantasy_name, :email, :phone, :address, :city, :state, :cnpj)");
+    
+            $exec->bindParam(':name_company', $name_company);
+            $exec->bindParam(':fantasy_name', $fantasy_name);
+            $exec->bindParam(':email', $email);
+            $exec->bindParam(':phone', $phone);
+            $exec->bindParam(':address', $address);
+            $exec->bindParam(':city', $city);
+            $exec->bindParam(':state', $state);
+            $exec->bindParam(':cnpj', $cnpj);
+    
+            $exec->execute();
+    
+            $sql->commit();
+
+            $message_log = "Fornecedor $name_company cadastrado com sucesso";
+            Panel::LogAction($user_id, 'Cadastrar Fornecedor', $message_log);
+            Response::send(true, 'Fornecedor cadastrado com sucesso', $today);
+
+        } catch (Exception $e) {
+            http_response_code(500);
+            echo json_encode(['error' => 'Erro no banco de dados: ' . $e->getMessage(), 'code' => $e->getCode()]);
+        }
     }
 }
 

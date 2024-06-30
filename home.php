@@ -35,7 +35,6 @@ if ($checkCode->rowCount() > 0) {
     <link rel="stylesheet" href="<?php echo INCLUDE_PATH_PANEL; ?>../css/style.css" />
     <link rel="stylesheet" href="<?php echo INCLUDE_PATH_PANEL; ?>../css/sales.css" />
     <link rel="stylesheet" href="<?php echo INCLUDE_PATH_PANEL; ?>../css/main.css" />
-    <link rel="stylesheet" href="<?php echo INCLUDE_PATH_PANEL; ?>../css/delivery.css" />
     <link rel="stylesheet" href="<?php echo INCLUDE_PATH_PANEL; ?>../css/request.css" />
     <link rel="stylesheet" href="<?php echo INCLUDE_PATH_PANEL; ?>../css/selectedClients.css" />
     <link rel="stylesheet" href="<?php echo INCLUDE_PATH_PANEL; ?>../css/modalPortion.css" />
@@ -182,13 +181,13 @@ if ($checkCode->rowCount() > 0) {
                     d="M240-200h120v-240h240v240h120v-360L480-740 240-560v360Zm-80 80v-480l320-240 320 240v480H520v-240h-80v240H160Zm320-350Z" />
             </svg></span></a>
 
-            <a href="<?php echo INCLUDE_PATH; ?>?loggout">
+            <a onclick="logout()">
           <span>
             <svg xmlns="http://www.w3.org/2000/svg" height="18" viewBox="0 -960 960 960" width="20">
               <path fill="#fff"
                     d="M300-640v320l160-160-160-160ZM200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h560q33 0 56.5 23.5T840-760v560q0 33-23.5 56.5T760-120H200Zm440-80h120v-560H640v560Zm-80 0v-560H200v560h360Zm80 0h120-120Z" />
             </svg>
-          </span></a>
+          </span></av>
             <span>
           <div class="left">
             <a <?php if (@$_GET['url'] == 'config-system') { ?> style="background: #323232;" <?php } ?>
@@ -295,6 +294,7 @@ if ($checkCode->rowCount() > 0) {
     <div class="message-container" id="message-container"></div>
 </div>
 
+<script language="JavaScript" type="text/javascript" src="<?php echo INCLUDE_JAVASCRIPT; ?>login.js"></script>
 <script language="JavaScript" type="text/javascript" src="<?php echo INCLUDE_JAVASCRIPT; ?>alert.js"></script>
 <script language="JavaScript" type="text/javascript" src="<?php echo INCLUDE_JAVASCRIPT; ?>main.js"></script>
 <script language="JavaScript" type="text/javascript" src="<?php echo INCLUDE_JAVASCRIPT; ?>register_system.js"></script>
