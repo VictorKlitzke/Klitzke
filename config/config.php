@@ -14,10 +14,9 @@ $title_login = 'Klitzke software - login';
 $chave_secret = 'EFEGREWSWREGERGEGBTBBFDGBTGHERTGSFDSGVB';
 
 define('INCLUDE_JAVASCRIPT', 'http://localhost:3000/Klitzke/js/');
-define('INCLUDE_PATH_HOME', 'http://localhost:3000/Klitzke/home');
+define('INCLUDE_PATH_PANEL', INCLUDE_PATH . 'pages/');
 
 define('INCLUDE_PATH', 'http://localhost:3000/Klitzke/');
-define('INCLUDE_PATH_PANEL', INCLUDE_PATH . 'pages/');
 define('BASE_DIR_PAINEL', __DIR__ . '/public');
 
 function SelectedMenu($par)

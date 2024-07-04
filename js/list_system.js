@@ -1,7 +1,7 @@
 const BASE_URL = "http://localhost:3000/Klitzke/ajax/";
 const BASE_CLASS = "http://localhost:3000/Klitzke/classes/";
 const BASE_CONTROLLERS = "http://localhost:3000/Klitzke/controllers/";
-const BASE_PATH = "http://localhost:3000/Klitzke/home";
+const BASE_PATH = "http://localhost:3000/Klitzke/";
 
 async function InativarInvo(button) {
 

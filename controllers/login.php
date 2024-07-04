@@ -5,6 +5,7 @@ include_once '../services/db.php';
 include_once '../classes/panel.php';
 include_once '../classes/controllers.php';
 include_once '../helpers/response.php';
+include_once './authUser.php';
 
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
@@ -16,6 +17,7 @@ header("Access-Control-Allow-Headers: Content-Type, Authorization");
 
 $sql = Db::Connection();
 $secretKey = isset($GLOBALS['chave_secret']) ? $GLOBALS['chave_secret'] : $chave_secret;
+$today = date("Y-m-d H:i:s");
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $data = json_decode(file_get_contents('php://input'), true);
@@ -23,28 +25,25 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $response_users = $data;
 
     if (isset($data['type']) && $data['type'] == 'login') {
-
         $login = new Login($sql, $secretKey);
         $login->login($data);
-
     } else {
-        Response::json(false, 'Ação não reconhecida', date("Y-m-d H:i:s"));
+        Response::json(false, 'Ação não reconhecida', $today);
     }
 }
 
-class Login
-{
+class Login {
     private $sql;
     private $secretKey;
+    private $auth;
 
-    public function __construct($sql, $secretKey)
-    {
+    public function __construct($sql, $secretKey) {
         $this->sql = $sql;
         $this->secretKey = $secretKey;
+        $this->auth = new Authentication($secretKey);
     }
 
-    public function login($response_users)
-    {
+    public function login($response_users) {
         $disable = 1;
         $today = date("Y-m-d H:i:s");
 
@@ -65,7 +64,7 @@ class Login
             $exec->execute();
 
             if ($exec->rowCount() == 1) {
-                $info = $exec->fetch();
+                $info = $exec->fetch(PDO::FETCH_ASSOC);
                 $storedPassword = $info['password'];
 
                 if (password_verify($password, $storedPassword)) {
@@ -85,8 +84,7 @@ class Login
         }
     }
 
-    private function processLogin($info, $login)
-    {
+    private function processLogin($info, $login) {
         $today = date("Y-m-d H:i:s");
 
         if ($info['access'] != 100) {
@@ -128,23 +126,16 @@ class Login
         $message_log = "Usuário $login logado com sucesso";
         Panel::LogAction($info['id'], 'Login Usuário', $message_log, $today);
 
-        Response::send(true, 'Seja bem vindo!', $today);
+        $_SESSION['id'] = $info['id'];
 
-        if (!headers_sent()) {
-            header('Location: ' . INCLUDE_PATH_HOME);
-            exit();
-        } else {
-            echo "Erro: Não foi possível redirecionar, os cabeçalhos já foram enviados.";
-        }
+        Response::json(true, 'Seja bem vindo!', $today);
     }
 
-    private function generateRandomCode($length = 10)
-    {
+    public function generateRandomCode($length = 10) {
         return substr(str_shuffle("0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"), 0, $length);
     }
 
-    private function generateJWT($payload)
-    {
+    public function generateJWT($payload) {
         $header = json_encode(['alg' => 'HS256', 'typ' => 'JWT']);
         $base64UrlHeader = str_replace(['+', '/', '='], ['-', '_', ''], base64_encode($header));
         $base64UrlPayload = str_replace(['+', '/', '='], ['-', '_', ''], base64_encode(json_encode($payload)));
@@ -153,27 +144,18 @@ class Login
         return $base64UrlHeader . "." . $base64UrlPayload . "." . $base64UrlSignature;
     }
 
-    public static function validateJWT($jwt)
-    {
-        // Chave secreta para a validação do JWT
-        $secretKey = isset($GLOBALS['chave_secret']) ? $GLOBALS['chave_secret'] : "";
-
-        // Verificação básica do formato do token
+    public static function validateJWT($jwt, $secretKey) {
         $tokenParts = explode('.', $jwt);
         if (count($tokenParts) !== 3) {
-            return null; // Token inválido
+            return null; 
         }
 
-        // Separação do token em partes: cabeçalho, payload e assinatura
         list($headerBase64, $payloadBase64, $signature) = $tokenParts;
-
-        // Decodificação das partes do token
         $header = json_decode(base64_decode(strtr($headerBase64, '-_', '+/')), true);
         $payload = json_decode(base64_decode(strtr($payloadBase64, '-_', '+/')), true);
 
-        // Verificação se a decodificação foi bem-sucedida
         if (!$header || !$payload) {
-            return null; // Token inválido
+            return null;
         }
 
         $signatureToVerify = hash_hmac('sha256', $headerBase64 . '.' . $payloadBase64, $secretKey, true);
