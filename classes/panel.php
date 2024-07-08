@@ -1,7 +1,7 @@
 <?php
 
-include_once '../controllers/login.php';
-
+require_once __DIR__ . '/../controllers/authUser.php';
+require_once __DIR__ . '/../config/config.php';
 class Panel
 {
 
@@ -35,27 +35,22 @@ class Panel
 
   public static function Logged()
   {
-    $token = isset($_COOKIE['jwt']) ? $_COOKIE['jwt'] : null;
-    if (!$token) {
-      return false;
+    global $chave_secret;
+
+    if (isset($_COOKIE['jwt'])) {
+      $jwt = $_COOKIE['jwt'];
+      error_log('JWT found: ' . $jwt);
+      $payload = Authentication::validateJWT($jwt, $chave_secret);
+      if ($payload !== null) {
+        error_log('JWT validated');
+        return true;
+      } else {
+        error_log('JWT invalid');
+      }
+    } else {
+      error_log('JWT not found');
     }
-
-    $payload = Login::validateJWT($token);
-    if ($payload === null) {
-      return false;
-    }
-
-    $sql = Db::Connection();
-
-    $userId = $payload->data['id'];
-    $stmt = $sql->prepare("SELECT COUNT(*) as count FROM users WHERE id = :id");
-    $stmt->bindValue(':id', $userId, PDO::PARAM_INT);
-    $stmt->execute();
-    $result = $stmt->fetch(PDO::FETCH_ASSOC);
-
-    if ($result['count'] == 0) {
-      return false;
-    }
+    return false;
   }
 
   public static function Alert($type, $message)
@@ -90,7 +85,7 @@ class Panel
 
     try {
       $exec = $sql->prepare("INSERT INTO logs (users_id, action_type, description, date) 
-                            VALUES (:users_id, :action_type, :description, :date");
+                            VALUES (:users_id, :action_type, :description, :date)");
       $exec->bindValue(':users_id', $user_id, PDO::PARAM_INT);
       $exec->bindValue(':action_type', $action, PDO::PARAM_STR);
       $exec->bindValue(':description', $description, PDO::PARAM_STR);

@@ -32,18 +32,21 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 }
 
-class Login {
+class Login
+{
     private $sql;
     private $secretKey;
     private $auth;
 
-    public function __construct($sql, $secretKey) {
+    public function __construct($sql, $secretKey)
+    {
         $this->sql = $sql;
         $this->secretKey = $secretKey;
         $this->auth = new Authentication($secretKey);
     }
 
-    public function login($response_users) {
+    public function login($response_users)
+    {
         $disable = 1;
         $today = date("Y-m-d H:i:s");
 
@@ -84,7 +87,8 @@ class Login {
         }
     }
 
-    private function processLogin($info, $login) {
+    private function processLogin($info, $login)
+    {
         $today = date("Y-m-d H:i:s");
 
         if ($info['access'] != 100) {
@@ -125,17 +129,17 @@ class Login {
 
         $message_log = "Usuário $login logado com sucesso";
         Panel::LogAction($info['id'], 'Login Usuário', $message_log, $today);
-
-        $_SESSION['id'] = $info['id'];
-
+        
         Response::json(true, 'Seja bem vindo!', $today);
     }
 
-    public function generateRandomCode($length = 10) {
+    public function generateRandomCode($length = 10)
+    {
         return substr(str_shuffle("0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"), 0, $length);
     }
 
-    public function generateJWT($payload) {
+    public function generateJWT($payload)
+    {
         $header = json_encode(['alg' => 'HS256', 'typ' => 'JWT']);
         $base64UrlHeader = str_replace(['+', '/', '='], ['-', '_', ''], base64_encode($header));
         $base64UrlPayload = str_replace(['+', '/', '='], ['-', '_', ''], base64_encode(json_encode($payload)));
@@ -144,10 +148,11 @@ class Login {
         return $base64UrlHeader . "." . $base64UrlPayload . "." . $base64UrlSignature;
     }
 
-    public static function validateJWT($jwt, $secretKey) {
+    public static function validateJWT($jwt, $secretKey)
+    {
         $tokenParts = explode('.', $jwt);
         if (count($tokenParts) !== 3) {
-            return null; 
+            return null;
         }
 
         list($headerBase64, $payloadBase64, $signature) = $tokenParts;

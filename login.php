@@ -1,7 +1,8 @@
 <?php
 
 global $title_login;
-global $chave_secret;
+
+include_once '/config/config.php';
 
 ?>
 
@@ -11,9 +12,9 @@ global $chave_secret;
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="css/system.css">
-    <link rel="stylesheet" href="css/login.css" />
-    <link rel="icon" href="<?php echo INCLUDE_PATH; ?>./public/logo/favicon.ico" type="image/x-icon" />
+    <link rel="stylesheet" href="<?php echo INCLUDE_CSS?>system.css">
+    <link rel="stylesheet" href="<?php echo INCLUDE_CSS?>login.css" />
+    <link rel="icon" href="public/logo/favicon.ico" type="image/x-icon" />
     <title><?php echo $title_login; ?></title>
 </head>
 
@@ -80,9 +81,9 @@ global $chave_secret;
             <p class="animation" style="--i:18;">Onde seu negocio toma novos rumos</p>
         </div>
     </div>
-    <script language="JavaScript" type="text/javascript" src="<?php echo INCLUDE_JAVASCRIPT; ?>list_system.js"></script>
-    <script language="JavaScript" type="text/javascript" src="<?php echo INCLUDE_JAVASCRIPT; ?>alert.js"></script>
-    <script language="JavaScript" type="text/javascript" src="<?php echo INCLUDE_JAVASCRIPT; ?>login.js"></script>
+    <script language="JavaScript" type="text/javascript" src="<?php echo INCLUDE_JAVASCRIPT ?>list_system.js"></script>
+    <script language="JavaScript" type="text/javascript" src="<?php echo INCLUDE_JAVASCRIPT ?>alert.js"></script>
+    <script language="JavaScript" type="text/javascript" src="<?php echo INCLUDE_JAVASCRIPT ?>login.js"></script>
 </body>
 
 </html>

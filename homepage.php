@@ -1,44 +1,41 @@
 <?php
 global $title_home;
-include_once 'services/db.php';
-include_once 'classes/panel.php';
-include_once 'classes/controllers.php';
-include_once 'config/config.php';
-// include_once 'controllers/authUser.php';
+include_once __DIR__ . '/services/db.php';
+include_once __DIR__ . '/classes/panel.php';
+include_once __DIR__ . '/classes/controllers.php';
+include_once __DIR__ . '/config/config.php';
 
-$sql = Db::Connection();
+// $sql = Db::Connection();
 
-$checkCode = $sql->prepare("SELECT * FROM validade_system WHERE id_users = ? ORDER BY date_final DESC LIMIT 1");
-$checkCode->execute(array($_SESSION['id']));
-$currentDate = date('Y-m-d H:i:s');
+// $checkCode = $sql->prepare("SELECT * FROM validade_system WHERE id_users = ? ORDER BY date_final DESC LIMIT 1");
+// $checkCode->execute(array($_SESSION['id']));
+// $currentDate = date('Y-m-d H:i:s');
 
-if ($checkCode->rowCount() > 0) {
-    $validityInfo = $checkCode->fetch();
-    if ($currentDate > $validityInfo['date_final']) {
-        Panel::Alert('error', 'Seu código de acesso expirou.');
-        die();
-    }
-}
+// if ($checkCode->rowCount() > 0) {
+//     $validityInfo = $checkCode->fetch();
+//     if ($currentDate > $validityInfo['date_final']) {
+//         Panel::Alert('error', 'Seu código de acesso expirou.');
+//         die();
+//     }
+// }
 
-// $user_id = Authentication::getUserIdFromJWT($_COOKIE['jwt'], $chave_secret);
 ?>
 
-<!DOCTYPE html>
-
+<!DOCTYPE html> 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="<?php echo INCLUDE_PATH; ?>css/system.css">
-    <link rel="stylesheet" href="<?php echo INCLUDE_PATH; ?>css/modalInvoicing.css">
-    <link rel="stylesheet" href="<?php echo INCLUDE_PATH; ?>css/style.css" />
-    <link rel="stylesheet" href="<?php echo INCLUDE_PATH; ?>css/sales.css" />
-    <link rel="stylesheet" href="<?php echo INCLUDE_PATH; ?>css/main.css" />
-    <link rel="stylesheet" href="<?php echo INCLUDE_PATH; ?>css/request.css" />
-    <link rel="stylesheet" href="<?php echo INCLUDE_PATH; ?>css/selectedClients.css" />
-    <link rel="stylesheet" href="<?php echo INCLUDE_PATH; ?>css/modalPortion.css" />
-    <!-- <link rel="stylesheet" href="https://cdn.datatables.net/2.0.7/css/dataTables.dataTables.css" /> -->
+    <link rel="stylesheet" href="css/system.css"/>
+    <link rel="stylesheet" href="css/modalInvoicing.css"/>
+    <link rel="stylesheet" href="css/style.css"/>
+    <link rel="stylesheet" href="css/sales.css"/>
+    <link rel="stylesheet" href="css/main.css"/>
+    <link rel="stylesheet" href="css/request.css"/>
+    <link rel="stylesheet" href="css/selectedClients.css"/>
+    <link rel="stylesheet" href="css/modalPortion.css"/>
+    <link rel="stylesheet" href="https://cdn.datatables.net/2.0.7/css/dataTables.dataTables.css"/>
     <!-- <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous"> -->
-    <link rel="icon" href="<?php echo INCLUDE_PATH; ?>./public/logo/favicon.ico" type="image/x-icon" />
+    <link rel="icon" href="public/logo/favicon.ico" type="image/x-icon"/>
     <title><?php echo $title_home; ?></title>
 </head>
 
@@ -46,45 +43,9 @@ if ($checkCode->rowCount() > 0) {
     <div class="menu">
         <div class="container-menu">
 
-            <!-- <?php
-            // $sql = Db::Connection();
-
-            // if (!empty($user_id)) {
-
-            //     $exec = $sql->prepare("SELECT * FROM boxpdv WHERE id_users = :user_id ORDER BY id DESC LIMIT 1");
-            //     $exec->bindParam(':user_id', $user_id, PDO::PARAM_INT);
-            //     $exec->execute();
-            //     $result = $exec->fetchAll(PDO::FETCH_ASSOC);
-
-            //     if ($result) {
-            //         $boxpdv = $result[0];
-
-            //         if ($boxpdv["status"] == 1) {
-                        ?>
-                        <div class="boxpdv" id="open-boxpdv">
-                            <span>Caixa aberto</span>
-                            <form action="">
-                                <input type="hidden" name="id_box" value="<?php echo base64_encode($boxpdv['id']); ?>">
-                            </form>
-                        </div>
-                    <?php// } //else {
-                        ?>
-                        <div class="boxpdv-close">
-                            <span>Caixa Fechado</span>
-                        </div>
-                    <?php //}
-               // } else {
-                    ?>
-                    <div class="boxpdv-reopen">
-                        <span>Nenhum caixa aberto</span>
-                    </div>
-                <?php// }
-           // }
-            ?> -->
-
             <h2 style="cursor: pointer;" onclick="ToggleRegister()">Cadastros</h2>
             <div id="registers" style="display: none;">
-                <a <?php SelectedMenu('register-users') ?> href="<?php echo INCLUDE_PATH_HOME; ?>/register-users">
+                <a <?php SelectedMenu('register-users') ?> href="<?php echo INCLUDE_PATH; ?>/register-users">
                     Cadastrar Usuários
                 </a>
                 <a <?php SelectedMenu('register-suppliers'); ?> href="<?php echo INCLUDE_PATH; ?>register-suppliers">
@@ -144,7 +105,7 @@ if ($checkCode->rowCount() > 0) {
 
             <h2 style="cursor: pointer" onclick="ToggleCompany()">Minha Empresa</h2>
             <div id="company" class="company" style="display: none;">
-                <a <?php echo VerificationMenu(); ?> <?php SelectedMenu('list-companys'); ?>
+                <a <?php SelectedMenu('list-companys'); ?>
                     href="<?php echo INCLUDE_PATH; ?>list-companys">Empresa</a>
             </div>
 
@@ -296,13 +257,13 @@ if ($checkCode->rowCount() > 0) {
         <div class="message-container" id="message-container"></div>
     </div>
 
-    <script language="JavaScript" type="text/javascript" src="<?php echo INCLUDE_JAVASCRIPT ?>alert.js"></script>
-    <script language="JavaScript" type="text/javascript" src="<?php echo INCLUDE_JAVASCRIPT ?>main.js"></script>
+    <script language="JavaScript" type="text/javascript" src="js/alert.js"></script>
+    <script language="JavaScript" type="text/javascript" src="js/main.js"></script>
     <script language="JavaScript" type="text/javascript"
-        src="<?php echo INCLUDE_JAVASCRIPT ?>register_system.js"></script>
-    <script language="JavaScript" type="text/javascript" src="<?php echo INCLUDE_JAVASCRIPT ?>list_system.js"></script>
-    <script language="JavaScript" type="text/javascript" src="<?php echo INCLUDE_JAVASCRIPT ?>values.js"></script>
-    <script language="JavaScript" type="text/javascript" src="<?php echo INCLUDE_JAVASCRIPT ?>menu.js"></script>
+        src="js/register_system.js"></script>
+    <script language="JavaScript" type="text/javascript" src="js/list_system.js"></script>
+    <script language="JavaScript" type="text/javascript" src="js/values.js"></script>
+    <script language="JavaScript" type="text/javascript" src="js/menu.js"></script>
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
 </body>
 

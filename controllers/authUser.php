@@ -23,16 +23,16 @@ class Authentication {
     }
 
     public static function validateJWT($jwt, $secretKey) {
+        
         // Verificação básica do formato do token
         $tokenParts = explode('.', $jwt);
         if (count($tokenParts) !== 3) {
-            return null; // Token inválido
+            return null; 
         }
 
         // Separação do token em partes: cabeçalho, payload e assinatura
         list($headerBase64, $payloadBase64, $signature) = $tokenParts;
 
-        // Decodificação das partes do token
         $header = json_decode(base64_decode(strtr($headerBase64, '-_', '+/')), true);
         $payload = json_decode(base64_decode(strtr($payloadBase64, '-_', '+/')), true);
 

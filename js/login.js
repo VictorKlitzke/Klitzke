@@ -47,8 +47,8 @@ async function login() {
         const responseBody = await response.json();
 
         if (responseBody.success) {
-            showMessage('Login realizado: ' + FieldsLogin.name, 'success');
-            window.location.href = `${BASE_PATH}`;
+            showMessage('Login realizado por ' + FieldsLogin.name, 'success');
+            window.location.href = `${BASE_PATH_HOME}`;
         } else {
             showMessage('Erro ao fazer login: ' + responseBody.message, 'error');
         }
