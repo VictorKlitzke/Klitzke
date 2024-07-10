@@ -1,41 +1,49 @@
 <?php
 global $title_home;
-include_once __DIR__ . '/services/db.php';
-include_once __DIR__ . '/classes/panel.php';
-include_once __DIR__ . '/classes/controllers.php';
-include_once __DIR__ . '/config/config.php';
 
-// $sql = Db::Connection();
+include_once 'classes/panel.php';
+include_once 'classes/controllers.php';
+include_once 'config/config.php';
+include_once 'services/db.php';
 
-// $checkCode = $sql->prepare("SELECT * FROM validade_system WHERE id_users = ? ORDER BY date_final DESC LIMIT 1");
-// $checkCode->execute(array($_SESSION['id']));
-// $currentDate = date('Y-m-d H:i:s');
+$sql = Db::Connection();
 
-// if ($checkCode->rowCount() > 0) {
-//     $validityInfo = $checkCode->fetch();
-//     if ($currentDate > $validityInfo['date_final']) {
-//         Panel::Alert('error', 'Seu código de acesso expirou.');
-//         die();
-//     }
-// }
+$checkCode = $sql->prepare("SELECT * FROM validade_system WHERE id_users = ? ORDER BY date_final DESC LIMIT 1");
+$checkCode->execute(array($_SESSION['id']));
+$currentDate = date('Y-m-d H:i:s');
+
+if ($checkCode->rowCount() > 0) {
+    $validityInfo = $checkCode->fetch();
+    if ($currentDate > $validityInfo['date_final']) {
+        Panel::Alert('error', 'Seu código de acesso expirou.');
+        die();
+    }
+}
 
 ?>
 
-<!DOCTYPE html> 
+<?php if (isset($_GET['loggout'])) {
+    Panel::Loggout();
+} ?>
+
+<!DOCTYPE html>
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="css/system.css"/>
-    <link rel="stylesheet" href="css/modalInvoicing.css"/>
-    <link rel="stylesheet" href="css/style.css"/>
-    <link rel="stylesheet" href="css/sales.css"/>
-    <link rel="stylesheet" href="css/main.css"/>
-    <link rel="stylesheet" href="css/request.css"/>
-    <link rel="stylesheet" href="css/selectedClients.css"/>
-    <link rel="stylesheet" href="css/modalPortion.css"/>
-    <link rel="stylesheet" href="https://cdn.datatables.net/2.0.7/css/dataTables.dataTables.css"/>
-    <!-- <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous"> -->
-    <link rel="icon" href="public/logo/favicon.ico" type="image/x-icon"/>
+    <link rel="stylesheet" href="<?php echo INCLUDE_PATH_PANEL; ?>../css/system.css">
+    <link rel="stylesheet" href="<?php echo INCLUDE_PATH_PANEL; ?>../css/modalInvoicing.css">
+    <link rel="stylesheet" href="<?php echo INCLUDE_PATH_PANEL; ?>../css/style.css" />
+    <link rel="stylesheet" href="<?php echo INCLUDE_PATH_PANEL; ?>../css/sales.css" />
+    <link rel="stylesheet" href="<?php echo INCLUDE_PATH_PANEL; ?>../css/main.css" />
+    <link rel="stylesheet" href="<?php echo INCLUDE_PATH_PANEL; ?>../css/delivery.css" />
+    <link rel="stylesheet" href="<?php echo INCLUDE_PATH_PANEL; ?>../css/request.css" />
+    <link rel="stylesheet" href="<?php echo INCLUDE_PATH_PANEL; ?>../css/selectedClients.css" />
+    <link rel="stylesheet" href="<?php echo INCLUDE_PATH_PANEL; ?>../css/modalPortion.css" />
+    <link rel="stylesheet" href="<?php echo INCLUDE_PATH_PANEL; ?>../css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/2.0.7/css/dataTables.dataTables.css" />
+    <!--   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">-->
+    <link rel="icon" href="<?php echo INCLUDE_PATH; ?>./public/logo/favicon.ico" type="image/x-icon" />
     <title><?php echo $title_home; ?></title>
 </head>
 
@@ -43,9 +51,46 @@ include_once __DIR__ . '/config/config.php';
     <div class="menu">
         <div class="container-menu">
 
+            <?php
+            $sql = Db::Connection();
+
+            if (!empty($_SESSION['id'])) {
+                $user_id = $_SESSION['id'];
+
+                $exec = $sql->prepare("SELECT * FROM boxpdv WHERE id_users = :user_id ORDER BY id DESC LIMIT 1");
+                $exec->bindParam(':user_id', $user_id, PDO::PARAM_INT);
+                $exec->execute();
+                $result = $exec->fetchAll(PDO::FETCH_ASSOC);
+
+                if ($result) {
+                    $boxpdv = $result[0];
+
+                    if ($boxpdv["status"] == 1) {
+                        ?>
+                        <div class="boxpdv" id="open-boxpdv">
+                            <span>Caixa aberto</span>
+                            <form action="">
+                                <input type="hidden" name="id_box" value="<?php echo base64_encode($boxpdv['id']); ?>">
+                            </form>
+                        </div>
+                    <?php } else {
+                        ?>
+                        <div class="boxpdv-close">
+                            <span>Caixa Fechado</span>
+                        </div>
+                    <?php }
+                } else {
+                    ?>
+                    <div class="boxpdv-reopen">
+                        <span>Nenhum caixa aberto</span>
+                    </div>
+                <?php }
+            }
+            ?>
+
             <h2 style="cursor: pointer;" onclick="ToggleRegister()">Cadastros</h2>
             <div id="registers" style="display: none;">
-                <a <?php SelectedMenu('register-users') ?> href="<?php echo INCLUDE_PATH; ?>/register-users">
+                <a <?php SelectedMenu('register-users') ?> href="<?php echo INCLUDE_PATH; ?>register-users">
                     Cadastrar Usuários
                 </a>
                 <a <?php SelectedMenu('register-suppliers'); ?> href="<?php echo INCLUDE_PATH; ?>register-suppliers">
@@ -105,7 +150,7 @@ include_once __DIR__ . '/config/config.php';
 
             <h2 style="cursor: pointer" onclick="ToggleCompany()">Minha Empresa</h2>
             <div id="company" class="company" style="display: none;">
-                <a <?php SelectedMenu('list-companys'); ?>
+                <a <?php echo VerificationMenu(); ?> <?php SelectedMenu('list-companys'); ?>
                     href="<?php echo INCLUDE_PATH; ?>list-companys">Empresa</a>
             </div>
 
@@ -143,25 +188,25 @@ include_once __DIR__ . '/config/config.php';
                                 d="M240-200h120v-240h240v240h120v-360L480-740 240-560v360Zm-80 80v-480l320-240 320 240v480H520v-240h-80v240H160Zm320-350Z" />
                         </svg></span></a>
 
-                <a onclick="logout()">
+                <a href="<?php echo INCLUDE_PATH; ?>?loggout">
                     <span>
                         <svg xmlns="http://www.w3.org/2000/svg" height="18" viewBox="0 -960 960 960" width="20">
                             <path fill="#fff"
                                 d="M300-640v320l160-160-160-160ZM200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h560q33 0 56.5 23.5T840-760v560q0 33-23.5 56.5T760-120H200Zm440-80h120v-560H640v560Zm-80 0v-560H200v560h360Zm80 0h120-120Z" />
                         </svg>
-                    </span></av>
-                    <span>
-                        <div class="left">
-                            <a <?php if (@$_GET['url'] == 'config-system') { ?> style="background: #323232;" <?php } ?>
-                                href="<?php echo INCLUDE_PATH ?>config-system">
-                                <svg xmlns="http://www.w3.org/2000/svg" height="18" viewBox="0 -960 960 960" width="20"
-                                    fill="#fff">
-                                    <path
-                                        d="m234-480-12-60q-12-5-22.5-10.5T178-564l-58 18-40-68 46-40q-2-13-2-26t2-26l-46-40 40-68 58 18q11-8 21.5-13.5T222-820l12-60h80l12 60q12 5 22.5 10.5T370-796l58-18 40 68-46 40q2 13 2 26t-2 26l46 40-40 68-58-18q-11 8-21.5 13.5T326-540l-12 60h-80Zm40-120q33 0 56.5-23.5T354-680q0-33-23.5-56.5T274-760q-33 0-56.5 23.5T194-680q0 33 23.5 56.5T274-600ZM592-40l-18-84q-17-6-31.5-14.5T514-158l-80 26-56-96 64-56q-2-18-2-36t2-36l-64-56 56-96 80 26q14-11 28.5-19.5T574-516l18-84h112l18 84q17 6 31.5 14.5T782-482l80-26 56 96-64 56q2 18 2 36t-2 36l64 56-56 96-80-26q-14 11-28.5 19.5T722-124l-18 84H592Zm56-160q50 0 85-35t35-85q0-50-35-85t-85-35q-50 0-85 35t-35 85q0 50 35 85t85 35Z" />
-                                </svg>
-                            </a>
-                        </div>
-                    </span>
+                    </span></a>
+                <span>
+                    <div class="left">
+                        <a <?php if (@$_GET['url'] == 'config-system') { ?> style="background: #323232;" <?php } ?>
+                            href="<?php echo INCLUDE_PATH ?>config-system">
+                            <svg xmlns="http://www.w3.org/2000/svg" height="18" viewBox="0 -960 960 960" width="20"
+                                fill="#fff">
+                                <path
+                                    d="m234-480-12-60q-12-5-22.5-10.5T178-564l-58 18-40-68 46-40q-2-13-2-26t2-26l-46-40 40-68 58 18q11-8 21.5-13.5T222-820l12-60h80l12 60q12 5 22.5 10.5T370-796l58-18 40 68-46 40q2 13 2 26t-2 26l46 40-40 68-58-18q-11 8-21.5 13.5T326-540l-12 60h-80Zm40-120q33 0 56.5-23.5T354-680q0-33-23.5-56.5T274-760q-33 0-56.5 23.5T194-680q0 33 23.5 56.5T274-600ZM592-40l-18-84q-17-6-31.5-14.5T514-158l-80 26-56-96 64-56q-2-18-2-36t2-36l-64-56 56-96 80 26q14-11 28.5-19.5T574-516l18-84h112l18 84q17 6 31.5 14.5T782-482l80-26 56 96-64 56q2 18 2 36t-2 36l64 56-56 96-80-26q-14 11-28.5 19.5T722-124l-18 84H592Zm56-160q50 0 85-35t35-85q0-50-35-85t-85-35q-50 0-85 35t-35 85q0 50 35 85t85 35Z" />
+                            </svg>
+                        </a>
+                    </div>
+                </span>
             </div>
             <div class="clear"></div>
         </div>
@@ -257,13 +302,13 @@ include_once __DIR__ . '/config/config.php';
         <div class="message-container" id="message-container"></div>
     </div>
 
-    <script language="JavaScript" type="text/javascript" src="js/alert.js"></script>
-    <script language="JavaScript" type="text/javascript" src="js/main.js"></script>
+    <script language="JavaScript" type="text/javascript" src="<?php echo INCLUDE_JAVASCRIPT; ?>alert.js"></script>
+    <script language="JavaScript" type="text/javascript" src="<?php echo INCLUDE_JAVASCRIPT; ?>main.js"></script>
     <script language="JavaScript" type="text/javascript"
-        src="js/register_system.js"></script>
-    <script language="JavaScript" type="text/javascript" src="js/list_system.js"></script>
-    <script language="JavaScript" type="text/javascript" src="js/values.js"></script>
-    <script language="JavaScript" type="text/javascript" src="js/menu.js"></script>
+        src="<?php echo INCLUDE_JAVASCRIPT; ?>register_system.js"></script>
+    <script language="JavaScript" type="text/javascript" src="<?php echo INCLUDE_JAVASCRIPT; ?>list_system.js"></script>
+    <script language="JavaScript" type="text/javascript" src="<?php echo INCLUDE_JAVASCRIPT; ?>values.js"></script>
+    <script language="JavaScript" type="text/javascript" src="<?php echo INCLUDE_JAVASCRIPT; ?>menu.js"></script>
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
 </body>
 

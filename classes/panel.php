@@ -1,7 +1,5 @@
 <?php
 
-require_once __DIR__ . '/../controllers/authUser.php';
-require_once __DIR__ . '/../config/config.php';
 class Panel
 {
 
@@ -33,24 +31,16 @@ class Panel
       return false;
   }
 
+  public static function Loggout()
+  {
+    setcookie('remember', 'true', time() - 1, '/');
+    session_destroy();
+    header('Location: ' . INCLUDE_PATH);
+  }
+
   public static function Logged()
   {
-    global $chave_secret;
-
-    if (isset($_COOKIE['jwt'])) {
-      $jwt = $_COOKIE['jwt'];
-      error_log('JWT found: ' . $jwt);
-      $payload = Authentication::validateJWT($jwt, $chave_secret);
-      if ($payload !== null) {
-        error_log('JWT validated');
-        return true;
-      } else {
-        error_log('JWT invalid');
-      }
-    } else {
-      error_log('JWT not found');
-    }
-    return false;
+    return isset($_SESSION['login']) && $_SESSION['login'] === true;
   }
 
   public static function Alert($type, $message)

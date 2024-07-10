@@ -128,7 +128,7 @@ async function RegisterClients() {
         try {
 
             let url = `${BASE_CONTROLLERS}registers.php`;
-    
+
             const response = await fetch(url, {
                 method: 'POST',
                 headers: {
@@ -136,15 +136,15 @@ async function RegisterClients() {
                 },
                 body: JSON.stringify(responseClients)
             })
-    
+
             const responseBody = await response.json();
-    
+
             if (responseBody.success) {
                 showMessage("Cliente " + Fields.name + " cadastrado com sucesso!", 'success');
             } else {
                 showMessage("Erro ao fazer cadastro " + Fields.name, 'error');
             }
-    
+
         } catch (error) {
             showMessage('Erro ao fazer requisição' + error, 'error');
         }
@@ -271,7 +271,6 @@ const getFieldsAccount = () => {
     }
 }
 async function RegisterAccount() {
-
     const FieldsAccount = await getFieldsAccount();
 
     if (FieldsAccount.pix == "" || FieldsAccount.city == "" || FieldsAccount.name_holder == "") {
@@ -283,32 +282,37 @@ async function RegisterAccount() {
         pix: FieldsAccount.pix,
         name_holder: FieldsAccount.name_holder,
         city: FieldsAccount.city
-    }
+    };
 
-    try {
+    continueMessage("Deseja realmente cadastrar conta para o PIX?", "Sim", "Não", async function () {
+        try {
+            let url = `${BASE_CONTROLLERS}registers.php`;
 
-        let url = `${BASE_CONTROLLERS}registers.php`;
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(responseAccount)
+            });
 
-        const response = await fetch(url, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(responseAccount)
-        })
+            const textResponse = await response.text(); // Obtenha o texto da resposta
+            console.log(textResponse); // Verifique o conteúdo da resposta
+            const responseBody = JSON.parse(textResponse); // Tente parsear o JSON
 
-        const responseBody = await response.json();
-
-        if (responseBody.success) {
-            showMessage('Conta cadastrada com sucesso', 'success');
-        } else {
-            showMessage('Erro ao cadastrar conta bancaria', 'error');
+            if (responseBody.success) {
+                showMessage('Conta cadastrada com sucesso', 'success');
+            } else {
+                showMessage('Erro ao cadastrar conta bancaria: ' + (responseBody.error || 'Erro desconhecido'), 'error');
+            }
+        } catch (error) {
+            showMessage("Erro ao fazer requisição: " + error, 'error');
         }
-
-    } catch (error) {
-        showMessage("Erro ao fazer requisição" + error, 'error');
-    }
+    }, function () {
+        showMessage('Cadastro cancelado', 'warning');
+    });
 }
+
 
 const getFieldsProducts = () => {
     return {
@@ -445,13 +449,13 @@ async function RegisterForn() {
             console.log(responseBody);
 
             if (responseBody.success) {
-                showMessage('Fornecedor'+ FieldsForn.name_company +'cadastrado com sucesso', 'success');
+                showMessage('Fornecedor ' + FieldsForn.name_company + ' cadastrado com sucesso', 'success');
             } else {
-                showMessage('Erro ao fazer cadastro do fornecedor' + responseBody.error, 'error');
+                showMessage('Erro ao fazer cadastro do fornecedor ' + responseBody.error, 'error');
             }
 
         } catch (error) {
-            showMessage('Erro na requisição' + error, 'error')
+            showMessage('Erro na requisição ' + error, 'error')
         }
     }, function () {
         showMessage('Cadastro de Fornecedor cancelado', 'warning');

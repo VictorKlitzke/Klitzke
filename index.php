@@ -1,12 +1,16 @@
 <?php
 
-include_once 'routes.php'; 
+ob_start();
 
-$path = rtrim($_SERVER['REQUEST_URI'], '/');
+include_once 'config/config.php';
+include_once 'classes/panel.php';
 
-if ($path === '' || $path === '/') {
-    $path = '/Klitzke/';
+if (Panel::Logged()) {
+    include ('homepage.php');
+} else {
+    include ('login.php');
 }
 
-Routes::route($path);
+ob_end_flush();
+
 ?>

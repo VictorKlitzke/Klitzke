@@ -13,10 +13,9 @@ $title_home = 'Klitzke Software - Admin';
 $title_login = 'Klitzke software - login';
 $chave_secret = 'EFEGREWSWREGERGEGBTBBFDGBTGHERTGSFDSGVB';
 
-define('INCLUDE_PATH_PANEL', 'http://localhost:3000/Klitzke/homepage/');
 define('INCLUDE_PATH', 'http://localhost:3000/Klitzke/');
 define('INCLUDE_JAVASCRIPT', 'http://localhost:3000/Klitzke/js/');
-define('INCLUDE_CSS', 'http://localhost:3000/Klitzke/css/');
+define('INCLUDE_PATH_PANEL', INCLUDE_PATH . 'pages/');
 
 define('BASE_DIR_PAINEL', __DIR__ . '/public');
 
@@ -28,13 +27,23 @@ function SelectedMenu($par)
     }
 }
 
-// function VerificationMenu()
-// {
-//     if ($_SESSION['function'] == 'Gerente' || $_SESSION['function'] == 'CEO') {
-//         return;
-//     } else {
-//         echo 'style="display:none;"';
-//     }
-// }
+function VerificationAccess() {
+
+    if ($_SESSION['access'] >= 50) {
+        include_once('./error/error-access.php');
+    } else {
+        echo 'Erro';
+    }
+
+}
+
+function VerificationMenu()
+{
+    if ($_SESSION['function'] == 'Gerente' || $_SESSION['function'] == 'CEO') {
+        return;
+    } else {
+        echo 'style="display:none;"';
+    }
+}
 
 ?>

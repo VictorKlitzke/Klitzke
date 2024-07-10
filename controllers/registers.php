@@ -65,7 +65,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 class Register
 {
-    public static function RegisterUsers($sql, $response_users, $user_id){
+    public static function RegisterUsers($sql, $response_users, $user_id)
+    {
 
         $disable = 1;
         $today = date("Y-m-d H:i:s");
@@ -108,7 +109,7 @@ class Register
             $sql->commit();
 
             $message_log = "Usuário $name cadastrado com sucesso";
-            Panel::LogAction($user_id, 'Cadastrar Usuário', $message_log);
+            Panel::LogAction($user_id, 'Cadastrar Usuário', $message_log, $today);
             Response::send(true, 'Usuário cadastrado com sucesso', $today);
 
         } catch (Exception $e) {
@@ -118,7 +119,8 @@ class Register
 
     }
 
-    public static function RegisterClient($sql, $response_clients, $user_id){
+    public static function RegisterClient($sql, $response_clients, $user_id)
+    {
 
         $today = date("Y-m-d H:i:s");
 
@@ -163,7 +165,7 @@ class Register
             $sql->commit();
 
             $message_log = "Cliente $name cadastrado com sucesso";
-            Panel::LogAction($user_id, 'Cadastrar Cliente', $message_log);
+            Panel::LogAction($user_id, 'Cadastrar Cliente', $message_log, $today);
             Response::send(true, 'Cliente cadastrado com sucesso', $today);
 
         } catch (Exception $e) {
@@ -172,7 +174,8 @@ class Register
         }
     }
 
-    public static function RegisterCompany($sql, $response_company, $user_id){
+    public static function RegisterCompany($sql, $response_company, $user_id)
+    {
 
         $today = date("Y-m-d H:i:s");
 
@@ -222,7 +225,8 @@ class Register
 
     }
 
-    public static function RegisterTableRequest($sql, $response_table, $user_id){
+    public static function RegisterTableRequest($sql, $response_table, $user_id)
+    {
 
         $status = 0;
         $today = date('Y-m-d H:i:s');
@@ -245,7 +249,7 @@ class Register
             $sql->commit();
 
             $message_log = "Mesa $name cadastrado com sucesso";
-            Panel::LogAction($user_id, 'Cadastrar Mesa', $message_log);
+            Panel::LogAction($user_id, 'Cadastrar Mesa', $message_log, $today);
             Response::send(true, 'Mesa cadastrado com sucesso', $today);
 
         } catch (Exception $e) {
@@ -254,8 +258,8 @@ class Register
         }
     }
 
-    public static function RegisterAccount($sql, $response_account, $user_id){
-
+    public static function RegisterAccount($sql, $response_account, $user_id)
+    {
         $today = date('Y-m-d H:i:s');
         $id_company = Controllers::Select('company');
         $company = $id_company['id'];
@@ -266,16 +270,16 @@ class Register
 
         $name_table = "banck_account";
 
-        if (!$name_holder || !$pix || $city) {
+        if (!$name_holder || !$pix || !$city) { 
             Response::json(false, 'Campo invalido', $today);
+            return;
         }
 
         try {
-
-            $sql->BeginTransaction();
+            $sql->beginTransaction();
 
             $exec = $sql->prepare("INSERT INTO $name_table (pix, account_holder_name, city, id_company) 
-                                    VALUES (:pix, :account_holder_name, :city, :id_company)");
+                                   VALUES (:pix, :account_holder_name, :city, :id_company)");
             $exec->bindValue(':pix', $pix, PDO::PARAM_STR);
             $exec->bindValue(':account_holder_name', $name_holder, PDO::PARAM_STR);
             $exec->bindValue(':city', $city, PDO::PARAM_STR);
@@ -285,16 +289,17 @@ class Register
             $sql->commit();
 
             $message_log = "Conta $pix cadastrada com sucesso";
-            Panel::LogAction($user_id, 'Cadastrar Conta', $message_log);
-            Response::send(true, 'Conta cadastrada com sucesso', $today);
+            Panel::LogAction($user_id, 'Cadastrar Conta', $message_log, $today);
 
+            echo json_encode(['success' => true, 'message' => 'Conta cadastrada com sucesso', 'date' => $today]);
         } catch (Exception $e) {
             http_response_code(500);
             echo json_encode(['error' => 'Erro no banco de dados: ' . $e->getMessage(), 'code' => $e->getCode()]);
         }
     }
 
-    public static function RegisterProducts($sql, $response_products, $user_id) {
+    public static function RegisterProducts($sql, $response_products, $user_id)
+    {
 
         $today = date('Y-m-d H:i:s');
 
@@ -320,14 +325,15 @@ class Register
             Panel::LogAction($user_id, 'Cadastrar Produto', $message_log);
             Response::send(true, 'Produto cadastrado com sucesso', $today);
 
-        } catch(Exception $e) {
+        } catch (Exception $e) {
             http_response_code(500);
             echo json_encode(['error' => 'Erro no banco de dados: ' . $e->getMessage(), 'code' => $e->getCode()]);
         }
 
     }
 
-    public static function RegisterForn($sql, $response_forn, $user_id) {
+    public static function RegisterForn($sql, $response_forn, $user_id)
+    {
 
         $today = date('Y-m-d H:i:s');
 
@@ -339,19 +345,19 @@ class Register
         $city = filter_var($response_forn['city'], FILTER_SANITIZE_STRING);
         $state = filter_var($response_forn['state'], FILTER_SANITIZE_STRING);
         $cnpj = filter_var($response_forn['cnpj'], FILTER_SANITIZE_STRING);
-    
+
         if (empty($name_company) || empty($fantasy_name) || empty($email) || empty($phone) || empty($address) || empty($city) || empty($state) || empty($cnpj)) {
             Response::json(false, 'Todos os campos são obrigatórios', $today);
             return;
         }
-    
+
         try {
-    
+
             $sql->beginTransaction();
-    
+
             $exec = $sql->prepare("INSERT INTO suppliers (company, fantasy_name, email, phone, address, city, state, cnpjcpf) 
                                    VALUES (:name_company, :fantasy_name, :email, :phone, :address, :city, :state, :cnpj)");
-    
+
             $exec->bindParam(':name_company', $name_company);
             $exec->bindParam(':fantasy_name', $fantasy_name);
             $exec->bindParam(':email', $email);
@@ -360,13 +366,13 @@ class Register
             $exec->bindParam(':city', $city);
             $exec->bindParam(':state', $state);
             $exec->bindParam(':cnpj', $cnpj);
-    
+
             $exec->execute();
-    
+
             $sql->commit();
 
             $message_log = "Fornecedor $name_company cadastrado com sucesso";
-            Panel::LogAction($user_id, 'Cadastrar Fornecedor', $message_log);
+            Panel::LogAction($user_id, 'Cadastrar Fornecedor', $message_log, $today);
             Response::send(true, 'Fornecedor cadastrado com sucesso', $today);
 
         } catch (Exception $e) {
