@@ -69,59 +69,110 @@ async function RegisterUsers() {
 
 const getFieldsClients = () => {
     return {
-        type: 'clients',
-        name: document.getElementById('name').value,
-        email: document.getElementById('email').value,
-        social_reason: document.getElementById('social_reason').value,
-        cpf: document.getElementById('cpf').value,
-        phone: document.getElementById('phone').value,
-        address: document.getElementById('address').value,
-        city: document.getElementById('city').value,
-        cep: document.getElementById('cep').value,
-        neighborhood: document.getElementById('neighborhood').value,
+        type: {
+            type: 'clients',
+        },
+        values: {
+            name: document.getElementById('name').value,
+            email: document.getElementById('email').value,
+            social_reason: document.getElementById('social_reason').value,
+            cpf: document.getElementById('cpf').value,
+            phone: document.getElementById('phone').value,
+            address: document.getElementById('address').value,
+            city: document.getElementById('city').value,
+            cep: document.getElementById('cep').value,
+            neighborhood: document.getElementById('neighborhood').value,
+        },
+        inputs: {
+            name: document.getElementById('name'),
+            email: document.getElementById('email'),
+            social_reason: document.getElementById('social_reason'),
+            cpf: document.getElementById('cpf'),
+            phone: document.getElementById('phone'),
+            address: document.getElementById('address'),
+            city: document.getElementById('city'),
+            cep: document.getElementById('cep'),
+            neighborhood: document.getElementById('neighborhood'),
+        }
+
     };
 }
 async function RegisterClients() {
 
-    const FieldsClients = await getFieldsClients();
+    const { values, inputs, type } = await getFieldsClients();
 
-    if (FieldsClients.cpf == "" || FieldsClients.name == "" || FieldsClients.social_reason == "") {
+    if (values.cpf == "" || values.name == "" || values.social_reason == "") {
         showMessage('Campos não podem ficar vazios, por favor preecha', 'warning');
+
+        if (values.cpf == "") inputs.cpf.classList.add('error');
+        if (values.name == "") inputs.name.classList.add('error');
+        if (values.social_reason == "") inputs.social_reason.classList.add('error');
+        setTimeout(() => {
+            inputs.cpf.classList.remove('error');
+            inputs.name.classList.remove('error');
+            inputs.social_reason.classList.remove('error');
+        }, 3000);
+
         return;
     }
 
-    if (FieldsClients.cpf < 11) {
+    if (values.cpf < 11) {
         showMessage('CPF não pode ser menor que 11 digitos', 'warning');
-        return;
-    }
 
-    if (FieldsClients.cep < 8) {
+        if (values.cpf < 11) inputs.cpf.classList.add('error');
+        setTimeout(() => {
+            inputs.cpf.classList.remove('error');
+        }, 3000);
+
+        return;
+    } else if (values.cep < 8) {
         showMessage('CEP não pode ser menor que 8 digitos', 'warning');
-        return;
-    }
 
-    if (FieldsClients.phone < 8) {
+        if (values.cep < 8) inputs.cep.classList.add('error');
+        setTimeout(() => {
+            inputs.cep.classList.remove('error');
+        }, 3000);
+
+        return;
+    } else if (values.phone < 8) {
         showMessage('Telefone não pode ser menor que 8 digitos', 'warning');
+
+        if (values.phone < 8) inputs.phone.classList.add('error');
+        setTimeout(() => {
+            inputs.phone.classList.remove('error');
+        }, 3000);
+
         return;
     }
 
-    // if (FieldsClients.cpf != Number || FieldsClients.cep != Number ||
-    //     FieldsClients.phone != Number) {
-    //     showMessage('CPF ou CEP ou Telefone, não pode ser diferentes de numeros', 'warning');
-    //     return;
-    // }
+    if (isNaN(values.cpf) || isNaN(values.cep) || isNaN(values.phone)) {
+        showMessage('CPF, CEP ou Telefone devem conter apenas números', 'warning');
+
+        if (isNaN(values.cpf)) inputs.cpf.classList.add('error');
+        if (isNaN(values.cep)) inputs.cep.classList.add('error');
+        if (isNaN(values.phone)) inputs.phone.classList.add('error');
+
+        setTimeout(() => {
+            inputs.cpf.classList.remove('error');
+            inputs.cep.classList.remove('error');
+            inputs.phone.classList.remove('error');
+        }, 3000);
+
+        return;
+    }
+
 
     let responseClients = {
-        type: FieldsClients.type,
-        name: FieldsClients.name,
-        email: FieldsClients.email,
-        social_reason: FieldsClients.social_reason,
-        cpf: FieldsClients.cpf,
-        phone: FieldsClients.phone,
-        address: FieldsClients.address,
-        city: FieldsClients.city,
-        cep: FieldsClients.cep,
-        neighborhood: FieldsClients.neighborhood,
+        type: type.type,
+        name: values.name,
+        email: values.email,
+        social_reason: values.social_reason,
+        cpf: values.cpf,
+        phone: values.phone,
+        address: values.address,
+        city: values.city,
+        cep: values.cep,
+        neighborhood: values.neighborhood,
     }
 
     continueMessage("Deseja realmente fazer cadastro de cliente?", "Sim", "Não", async function () {
@@ -140,9 +191,9 @@ async function RegisterClients() {
             const responseBody = await response.json();
 
             if (responseBody.success) {
-                showMessage("Cliente " + Fields.name + " cadastrado com sucesso!", 'success');
+                showMessage("Cliente " + values.name + " cadastrado com sucesso!", 'success');
             } else {
-                showMessage("Erro ao fazer cadastro " + Fields.name, 'error');
+                showMessage(responseBody.message || "Erro ao fazer cadastro " + values.name, 'error');
             }
 
         } catch (error) {
@@ -219,22 +270,46 @@ async function RegisterCompany() {
 
 const getFieldsTable = () => {
     return {
-        type: 'table_request',
-        name: document.getElementById("name").value,
-    }
+        type: {
+            type: 'table_request',
+        },
+        values: {
+            name: document.getElementById("name_table").value,
+        },
+        inputs: {
+            name: document.getElementById("name_table"),
+        }
+    };
 }
 async function RegisterTableRequest() {
 
-    const FieldsTable = await getFieldsTable();
+    const { values, inputs, type } = await getFieldsTable();
 
-    if (FieldsTable.name == "") {
-        showMessage('Preencha todos os campos!', 'error');
+    if (values.name == "") {
+        showMessage('Preencha todos os campos!', 'warning');
+
+        if (values.name === "") inputs.name.classList.add('error');
+        setTimeout(() => {
+            inputs.name.classList.remove('error');
+        }, 3000);
+
         return;
     }
 
+    if (values.name != Number && values.name == String) {
+        showMessage('Campo invalido, só aceita numeros', 'warning');
+
+        if (values.name === "") inputs.name.classList.add('error');
+        setTimeout(() => {
+            inputs.name.classList.remove('error');
+        }, 3000);
+
+        return
+    }
+
     let responseFieldsTable = {
-        type: FieldsTable.type,
-        name: FieldsTable.name
+        type: type.type,
+        name: values.name
     }
 
     try {
@@ -253,8 +328,9 @@ async function RegisterTableRequest() {
 
         if (responseBody.success) {
             showMessage('Mesa cadastrada com sucesso', 'success');
+            values.name == "";
         } else {
-            showMessage('Erro ao cadastrar mesa', 'error');
+            showMessage(responseBody.message || 'Erro ao cadastrar mesa', 'error');
         }
 
     } catch (error) {
@@ -264,24 +340,69 @@ async function RegisterTableRequest() {
 
 const getFieldsAccount = () => {
     return {
-        type: 'account',
-        pix: document.getElementById('pix').value,
-        name_holder: document.getElementById('name_holder').value,
-        city: document.getElementById('city').value,
-    }
+        type: {
+            type: 'account',
+        },
+        values: {
+            pix: document.getElementById('pix').value.trim(),
+            name_holder: document.getElementById('name_holder').value.trim(),
+            city: document.getElementById('city').value.trim(),
+        },
+        inputs: {
+            pix: document.getElementById('pix'),
+            name_holder: document.getElementById('name_holder'),
+            city: document.getElementById('city')
+        }
+    };
 }
 async function RegisterAccount() {
-    const FieldsAccount = await getFieldsAccount();
+    const { values, inputs, type } = await getFieldsAccount();
+    const lettersRegex = /^[A-Za-z\s]+$/;
 
-    if (FieldsAccount.pix == "" || FieldsAccount.city == "" || FieldsAccount.name_holder == "") {
+    if (values.pix === "" || values.city === "" || values.name_holder === "") {
         showMessage('Campos vazios, preencha os campos', 'warning');
+
+        if (values.pix === "") inputs.pix.classList.add('error');
+        if (values.city === "") inputs.city.classList.add('error');
+        if (values.name_holder === "") inputs.name_holder.classList.add('error');
+        setTimeout(() => {
+            inputs.pix.classList.remove('error');
+            inputs.city.classList.remove('error');
+            inputs.name_holder.classList.remove('error');
+        }, 3000);
+
+        return;
+    }
+
+    if (values.pix != Number && values.pix == String) {
+        showMessage('Campo invalido, só numeros', 'warning');
+
+        if (values.pix != Number) inputs.pix.classList.add('error');
+        setTimeout(() => {
+            inputs.pix.classList.remove('error');
+        }, 3000);
+
+        return;
+    }
+
+    if (!lettersRegex.test(values.name_holder) || !lettersRegex.test(values.city)) {
+        showMessage('Campos invalidos, não aceita números', 'warning');
+
+        if (!lettersRegex.test(values.name_holder)) inputs.name_holder.classList.add('error');
+        if (!lettersRegex.test(values.city)) inputs.city.classList.add('error');
+        setTimeout(() => {
+            inputs.name_holder.classList.remove('error');
+            inputs.city.classList.remove('error');
+        }, 3000);
+
         return;
     }
 
     let responseAccount = {
-        pix: FieldsAccount.pix,
-        name_holder: FieldsAccount.name_holder,
-        city: FieldsAccount.city
+        type: type.type,
+        pix: values.pix,
+        name_holder: values.name_holder,
+        city: values.city
     };
 
     continueMessage("Deseja realmente cadastrar conta para o PIX?", "Sim", "Não", async function () {
@@ -295,10 +416,8 @@ async function RegisterAccount() {
                 },
                 body: JSON.stringify(responseAccount)
             });
-
-            const textResponse = await response.text(); // Obtenha o texto da resposta
-            console.log(textResponse); // Verifique o conteúdo da resposta
-            const responseBody = JSON.parse(textResponse); // Tente parsear o JSON
+            const textResponse = await response.text();
+            const responseBody = JSON.parse(textResponse);
 
             if (responseBody.success) {
                 showMessage('Conta cadastrada com sucesso', 'success');
@@ -312,7 +431,6 @@ async function RegisterAccount() {
         showMessage('Cadastro cancelado', 'warning');
     });
 }
-
 
 const getFieldsProducts = () => {
     return {

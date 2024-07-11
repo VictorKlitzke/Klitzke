@@ -15,6 +15,7 @@ header("Content-Type: application/json");
 header("Access-Control-Allow-Headers: Content-Type, Authorization");
 
 $user_id = isset($_SESSION['id']) ? $_SESSION['id'] : null;
+$today = date('Y-m-d H:i:s');
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
@@ -45,21 +46,26 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $response_products = $data;
     $response_forn = $data;
 
-    if ($data['type'] == 'users') {
-        Register::RegisterUsers($sql, $response_users, $user_id);
-    } else if ($data['type'] == 'table_request') {
-        Register::RegisterTableRequest($sql, $response_table, $user_id);
-    } else if ($data['type'] == 'account') {
-        Register::RegisterAccount($sql, $response_account, $user_id);
-    } else if ($data['type'] == 'forn') {
-        Register::RegisterForn($sql, $response_forn, $user_id);
-    } else if ($data['type'] == 'clients') {
-        Register::RegisterClient($sql, $response_client, $user_id);
-    } else if ($data['type'] == 'products') {
-
-    } else if ($data['type'] == 'company') {
-        Register::RegisterCompany($sql, $response_company, $user_id);
+    if (isset($data['type'])) {
+        if ($data['type'] == 'users') {
+            Register::RegisterUsers($sql, $response_users, $user_id);
+        } else if ($data['type'] == 'table_request') {
+            Register::RegisterTableRequest($sql, $response_table, $user_id);
+        } else if ($data['type'] == 'account') {
+            Register::RegisterAccount($sql, $response_account, $user_id);
+        } else if ($data['type'] == 'forn') {
+            Register::RegisterForn($sql, $response_forn, $user_id);
+        } else if ($data['type'] == 'clients') {
+            Register::RegisterClient($sql, $response_clients, $user_id);
+        } else if ($data['type'] == 'products') {
+            // Adicione o código correspondente aqui
+        } else if ($data['type'] == 'company') {
+            Register::RegisterCompany($sql, $response_company, $user_id);
+        }
+    } else {
+        Response::json(false, 'Tipo type não encontrado', $today);
     }
+
 
 }
 
@@ -124,15 +130,17 @@ class Register
 
         $today = date("Y-m-d H:i:s");
 
-        $name = filter_var($response_clients['name'], FILTER_SANITIZE_STRING);
-        $email = filter_var($response_clients['email'], FILTER_VALIDATE_EMAIL);
-        $social_reason = filter_var($response_clients['social_reason'], FILTER_SANITIZE_STRING);
-        $cpf = filter_var($response_clients['cpf'], FILTER_SANITIZE_STRING);
-        $phone = filter_var($response_clients['phone'], FILTER_SANITIZE_STRING);
-        $address = filter_var($response_clients['address'], FILTER_SANITIZE_STRING);
-        $city = filter_var($response_clients['city'], FILTER_SANITIZE_STRING);
-        $cep = filter_var($response_clients['cep'], FILTER_VALIDATE_NUMBER);
-        $neighborhood = filter_var($response_clients['neighborhood'], FILTER_SANITIZE_NUMBER_INT);
+        $name_table = 'clients';
+
+        $name = isset($response_clients['name']) ? filter_var($response_clients['name'], FILTER_SANITIZE_STRING) : '';
+        $email = isset($response_clients['email']) ? filter_var($response_clients['email'], FILTER_VALIDATE_EMAIL) : '';
+        $social_reason = isset($response_clients['social_reason']) ? filter_var($response_clients['social_reason'], FILTER_SANITIZE_STRING) : '';
+        $cpf = isset($response_clients['cpf']) ? filter_var($response_clients['cpf'], FILTER_SANITIZE_NUMBER_FLOAT) : '';
+        $phone = isset($response_clients['phone']) ? filter_var($response_clients['phone'], FILTER_SANITIZE_STRING) : '';
+        $address = isset($response_clients['address']) ? filter_var($response_clients['address'], FILTER_SANITIZE_STRING) : '';
+        $city = isset($response_clients['city']) ? filter_var($response_clients['city'], FILTER_SANITIZE_STRING) : '';
+        $cep = isset($response_clients['cep']) ? filter_var($response_clients['cep'], FILTER_VALIDATE_INT) : '';
+        $neighborhood = isset($response_clients['neighborhood']) ? filter_var($response_clients['neighborhood'], FILTER_SANITIZE_STRING) : '';
 
         if ($name == "" || $social_reason == "" || $cpf == "") {
             Response::json(false, 'Campos invalidos', $today);
@@ -140,13 +148,24 @@ class Register
 
         try {
 
+            $check = $sql->prepare("SELECT COUNT(*) FROM $name_table WHERE cpf = :cpf");
+            $check->bindValue(':cpf', $cpf, PDO::PARAM_STR);
+            $check->execute();
+            $exists = $check->fetchColumn();
+
+            if ($exists > 0) {
+                Response::json(false, 'CPF já cadastrado no banco de dados', $today);
+                return;
+            }
+
+
             $sql->BeginTransaction();
 
             $exec = $sql->prepare("
-            INSERT INTO clients 
-            (name, email, social_reason, cpf, phone, address, city, cep, neighborhood, users_id, created_at) 
+            INSERT INTO $name_table 
+            (name, email, social_reason, cpf, phone, address, city, cep, neighborhood) 
             VALUES 
-            (:name, :email, :social_reason, :cpf, :phone, :address, :city, :cep, :neighborhood, :user_id, :created_at)
+            (:name, :email, :social_reason, :cpf, :phone, :address, :city, :cep, :neighborhood)
         ");
             $exec->bindValue(':name', $name, PDO::PARAM_STR);
             $exec->bindValue(':email', $email, PDO::PARAM_STR);
@@ -157,9 +176,6 @@ class Register
             $exec->bindValue(':city', $city, PDO::PARAM_STR);
             $exec->bindValue(':cep', $cep, PDO::PARAM_STR);
             $exec->bindValue(':neighborhood', $neighborhood, PDO::PARAM_STR);
-            $exec->bindValue(':user_id', $user_id, PDO::PARAM_INT);
-            $exec->bindValue(':created_at', $today, PDO::PARAM_STR);
-
             $exec->execute();
 
             $sql->commit();
@@ -239,6 +255,17 @@ class Register
 
         try {
 
+            $check = $sql->prepare("SELECT COUNT(*) FROM $name_table WHERE name = :name");
+            $check->bindValue(':name', $name, PDO::PARAM_STR);
+            $check->execute();
+            $exists = $check->fetchColumn();
+
+            if ($exists > 0) {
+                Response::json(false, 'Número da mesa já cadastrado', $today);
+                return;
+            }
+
+
             $sql->BeginTransaction();
 
             $exec = $sql->prepare("INSERT INTO $name_table (name, status_table) VALUES (:name, :status_table)");
@@ -270,7 +297,7 @@ class Register
 
         $name_table = "banck_account";
 
-        if (!$name_holder || !$pix || !$city) { 
+        if (!$name_holder || !$pix || !$city) {
             Response::json(false, 'Campo invalido', $today);
             return;
         }
