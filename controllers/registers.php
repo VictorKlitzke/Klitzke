@@ -363,6 +363,7 @@ class Register
     {
 
         $today = date('Y-m-d H:i:s');
+        $name_table = 'suppliers';
 
         $name_company = filter_var($response_forn['name_company'], FILTER_SANITIZE_STRING);
         $fantasy_name = filter_var($response_forn['fantasy_name'], FILTER_SANITIZE_STRING);
@@ -380,9 +381,19 @@ class Register
 
         try {
 
+            $check = $sql->prepare("SELECT COUNT(*) FROM $name_table WHERE cnpjcpf = :cnpjcpf");
+            $check->bindValue(':cnpjcpf', $cnpj, PDO::PARAM_STR);
+            $check->execute();
+            $exists = $check->fetchColumn();
+
+            if ($exists > 0) {
+                Response::json(false, 'cnpj já cadastrado no banco de dados', $today);
+                return;
+            }
+
             $sql->beginTransaction();
 
-            $exec = $sql->prepare("INSERT INTO suppliers (company, fantasy_name, email, phone, address, city, state, cnpjcpf) 
+            $exec = $sql->prepare("INSERT INTO $name_table (company, fantasy_name, email, phone, address, city, state, cnpjcpf) 
                                    VALUES (:name_company, :fantasy_name, :email, :phone, :address, :city, :state, :cnpj)");
 
             $exec->bindParam(':name_company', $name_company);

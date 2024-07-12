@@ -1,39 +1,76 @@
 const FieldsUsers = () => {
     return {
-        type: 'users',
-        name: document.getElementById("name").value,
-        email: document.getElementById("email").value,
-        password: document.getElementById("password").value,
-        phone: document.getElementById("phone").value,
-        userFunction: document.getElementById("function").value,
-        commission: document.getElementById("commission").value,
-        targetCommission: document.getElementById("target_commission").value,
-        access: document.getElementById("access").value
+        type: {
+            type: 'users',
+        },
+        values: {
+            name: document.getElementById("name").value,
+            email: document.getElementById("email").value,
+            password: document.getElementById("password").value,
+            phone: document.getElementById("phone").value,
+            userFunction: document.getElementById("function").value,
+            commission: document.getElementById("commission").value,
+            targetCommission: document.getElementById("target_commission").value,
+            access: document.getElementById("access").value
+        },
+        inputs: {
+            name: document.getElementById("name"),
+            email: document.getElementById("email"),
+            password: document.getElementById("password"),
+            phone: document.getElementById("phone"),
+            userFunction: document.getElementById("function"),
+            commission: document.getElementById("commission"),
+            targetCommission: document.getElementById("target_commission"),
+            access: document.getElementById("access")
+        }
     };
 }
 async function RegisterUsers() {
 
-    const Fields = await FieldsUsers();
+    const {values, type, inputs} = await FieldsUsers();
 
-    // if (Fields.name == "" || Fields.password == "" ||
-    //         Fields.email == "" || Fields.phone || 
-    //         Fields.userFunction || Fields.commission == "" ||
-    //         Fields.targetCommission == "") {
+    if (values.name == "" || values.password == "" || values.email == "" || values.phone || values.userFunction || values.access == "") {
+        showMessage('Campos estão vazios, por favor preencha', 'warning',);
 
-    //     window.alert("Algum campo está vazio, por favor preencha o campo");
-    //     return false;
-    // }
+        if (values.name == "") inputs.name.classList.add('error');
+        if (values.password == "") inputs.password.classList.add('error');
+        if (values.email == "") inputs.email.classList.add('error');
+        if (values.userFunction == "") inputs.userFunction.classList.add('error');
+        if (values.phone == "") inputs.phone.classList.add('error');
+        if (values.access == "") inputs.access.classList.add('error');
+        setTimeout(() => {
+            inputs.name.classList.remove('error');
+            inputs.password.classList.remove('error');
+            inputs.email.classList.remove('error');
+            inputs.userFunction.classList.remove('error');
+            inputs.phone.classList.remove('error');
+            inputs.access.classList.remove('error');
+        }, 3000);
+
+        return;
+    }
+
+    if (values.password < 6) {
+        showMessage('Senha tem que ser maior que 6 digitos', 'warning',);
+
+        if (values.password < 6) inputs.password.classList.add('error');
+        setTimeout(() => {
+            inputs.password.classList.remove('error');
+        }, 3000);
+
+        return;
+    }
 
     let responseFields = {
-        type: Fields.type,
-        name: Fields.name,
-        email: Fields.email,
-        password: Fields.password,
-        phone: Fields.phone,
-        userFunction: Fields.userFunction,
-        commission: Fields.commission,
-        targetCommission: Fields.targetCommission,
-        access: Fields.access
+        type: values.type,
+        name: values.name,
+        email: values.email,
+        password: values.password,
+        phone: values.phone,
+        userFunction: values.userFunction,
+        commission: values.commission,
+        targetCommission: values.targetCommission,
+        access: values.access
     }
 
     continueMessage(
@@ -52,7 +89,7 @@ async function RegisterUsers() {
                 const responseBody = await response.json();
 
                 if (responseBody.success) {
-                    showMessage("Usuário " + responseFields.name + " cadastrado com sucesso!", 'success');
+                    showMessage("Usuário " + values.name + " cadastrado com sucesso!", 'success');
                 } else {
                     showMessage("Erro ao fazer cadastro: " + responseBody.message, 'error');
                 }
@@ -506,46 +543,102 @@ async function RegisterProducts() {
 
 const getFieldsForn = () => {
     return {
-        type: 'forn',
-        name_company: document.getElementById('company').value,
-        fantasy_name: document.getElementById('fantasy_name').value,
-        email: document.getElementById('email').value,
-        phone: document.getElementById('phone').value,
-        address: document.getElementById('address').value,
-        city: document.getElementById('city').value,
-        state: document.getElementById('state').value,
-        cnpj: document.getElementById('cnpj').value,
+        type: {
+            type: 'forn'
+        },
+        values: {
+            name_company: document.getElementById('name_company').value,
+            fantasy_name: document.getElementById('fantasy_name').value,
+            email: document.getElementById('email').value,
+            phone: document.getElementById('phone').value,
+            address: document.getElementById('address').value,
+            city: document.getElementById('city').value,
+            state: document.getElementById('state').value,
+            cnpj: document.getElementById('cnpj').value,
+        },
+        inputs: {
+            name_company: document.getElementById('company'),
+            fantasy_name: document.getElementById('fantasy_name'),
+            email: document.getElementById('email'),
+            phone: document.getElementById('phone'),
+            address: document.getElementById('address'),
+            city: document.getElementById('city'),
+            state: document.getElementById('state'),
+            cnpj: document.getElementById('cnpj'),
+        }
     }
 }
 async function RegisterForn() {
 
-    const FieldsForn = await getFieldsForn();
+    const {type, values, inputs} = await getFieldsForn();
 
-    if (FieldsForn.cnpj == "" || FieldsForn.name_company == "" || FieldsForn.fantasy_name == "") {
+    console.log(values.name_company);
+
+    if (values.cnpj == "" || values.name_company == "" || values.fantasy_name == "") {
         showMessage('Campos não podem ficar vazios', 'warning');
+
+        if (values.fantasy_name === "") inputs.fantasy_name.classList.add('error');
+        if (values.name_company === "") inputs.name_company.classList.add('error');
+        if (values.cnpj === "") inputs.cnpj.classList.add('error');
+        setTimeout(() => {
+            inputs.fantasy_name.classList.remove('error');
+            inputs.name_company.classList.remove('error');
+            inputs.cnpj.classList.remove('error');
+        }, 3000);
+
         return;
     }
 
-    if (FieldsForn.cnpj < 14) {
+    if (values.cnpj < 14) {
         showMessage('CNPJ não pode ser menor que 14 numeros', 'warning');
+
+        if (values.cnpj === "") inputs.cnpj.classList.add('error');
+        setTimeout(() => {
+            inputs.cnpj.classList.remove('error');
+        }, 3000);
+
         return;
     }
 
-    if (FieldsForn.phone < 8) {
+    if (values.phone < 8) {
         showMessage('Telefone não pode ser menor que 8 numeros', 'warning');
+
+        if (values.phone === "") inputs.phone.classList.add('error');
+        setTimeout(() => {
+            inputs.phone.classList.remove('error');
+        }, 3000);
+
+        return;
+    }
+
+    let InputCnpj = values.cnpj.replace(/\D/g, "");
+
+    if (isNaN(values.phone) || isNaN(InputCnpj)) {
+        showMessage('Telefone ou CNPJ tem que ser numeros', 'warning');
+
+        if (isNaN(values.phone)) inputs.phone.classList.add('error');
+        if (isNaN(InputCnpj)) inputs.cnpj.classList.add('error');
+        setTimeout(() => {
+            inputs.phone.classList.remove('error');
+            inputs.cnpj.classList.remove('error');
+        }, 3000);
+
         return;
     }
 
     let responseForn = {
-        name_company: FieldsForn.name_company,
-        fantasy_name: FieldsForn.fantasy_name,
-        email: FieldsForn.email,
-        phone: FieldsForn.phone,
-        address: FieldsForn.address,
-        city: FieldsForn.city,
-        state: FieldsForn.state,
-        cnpj: FieldsForn.cnpj,
+        type: type.type,
+        name_company: values.name_company,
+        fantasy_name: values.fantasy_name,
+        email: values.email,
+        phone: values.phone,
+        address: values.address,
+        city: values.city,
+        state: values.state,
+        cnpj: values.cnpj,
     }
+
+    console.log(responseForn);
 
     continueMessage("Deseja continuar com o cadastro?", "Sim", "Não", async function () {
         try {
@@ -567,16 +660,16 @@ async function RegisterForn() {
             console.log(responseBody);
 
             if (responseBody.success) {
-                showMessage('Fornecedor ' + FieldsForn.name_company + ' cadastrado com sucesso', 'success');
+                showMessage('Fornecedor ' + values.name_company + ' cadastrado com sucesso', 'success');
             } else {
-                showMessage('Erro ao fazer cadastro do fornecedor ' + responseBody.error, 'error');
+                showMessage(responseBody.message || 'Erro ao fazer cadastro do fornecedor ' + responseBody.error, 'error');
             }
 
         } catch (error) {
             showMessage('Erro na requisição ' + error, 'error')
         }
     }, function () {
-        showMessage('Cadastro de Fornecedor cancelado', 'warning');
+        showMessage('Cadastro de Fornecedor cancelado', 'error');
     }
     )
 }

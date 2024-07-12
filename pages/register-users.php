@@ -1,42 +1,57 @@
 
 <div class="box-content">
   <h2>Cadastrar Usuario</h2>
-  <form class="form" method="post" enctype="multipart/form-data">
+  <form class="form">
     <div class="content-form">
       <label for="">Nome</label>
-      <input type="text" name="name" id="name">
+      <input type="text" id="name">
+      <span id="name-error" class="error-message">Campo está invalido, Ajuste se possivel.</span>
     </div>
     <div class="content-form">
       <label for="">Email</label>
-      <input type="text" name="email" id="email">
+      <input type="text" id="email">
+      <span id="email-error" class="error-message">Campo está invalido, Ajuste se possivel.</span>
+
     </div>
     <div class="content-form">
       <label for="">Senha</label>
-      <input type="password" name="password" id="password">
+      <input type="password" id="password">
+      <span id="password-error" class="error-message">Campo está invalido, Ajuste se possivel.</span>
+
     </div>
     <div class="content-form">
       <label for="">Função</label>
-      <input type="text" name="function" id="function">
+      <input type="text" id="function">
+      <span id="function-error" class="error-message">Campo está invalido, Ajuste se possivel.</span>
+
     </div>
     <div class="content-form">
       <label for="">Telefone</label>
-      <input type="text" name="phone" id="phone">
+      <input type="text" id="phone">
+      <span id="phone-error" class="error-message">Campo está invalido, Ajuste se possivel.</span>
+
     </div>
     <div class="content-form">
       <label for="">Comissao</label>
-      <input type="number" name="commission" id="commission">
+      <input type="number" id="commission">
+      <span id="commission-error" class="error-message">Campo está invalido, Ajuste se possivel.</span>
+
     </div>
     <div class="content-form">
       <label for="">Commisao por meta</label>
-      <input type="number" name="target_commission" id="target_commission">
+      <input type="number" id="target_commission">
+      <span id="target_commission-error" class="error-message">Campo está invalido, Ajuste se possivel.</span>
+
     </div>
     <div class="content-form">
       <label for="">Nivel de acesso</label>
-      <select name="access" id="access">
+      <select id="access">
           <option value="100">Administrador</option>
           <option value="50">Moderado</option>
           <option value="10">Padrão</option>
       </select>
+      <span id="access-error" class="error-message">Campo está invalido, Ajuste se possivel.</span>
+
     </div>
   </form>
   <button onclick="RegisterUsers()" class="button-registers" type="button">Cadastrar</button>
