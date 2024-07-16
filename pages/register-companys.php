@@ -4,34 +4,42 @@
     <div class="content-form">
       <label for="">Nome</label>
       <input type="text" id="name">
+      <span id="phone-error" class="error-message">Campo está invalido, Ajuste se possivel.</span>
     </div>
     <div class="content-form">
       <label for="">CPNJ</label>
-      <input type="text" id="cnpj" placeholder="00.000.000/0000-00" oninput="formatarCNPJ(this)" maxlength="18" name="cnpj">
+      <input type="text" id="cnpj" placeholder="00.000.000/0000-00" maxlength="14">
+      <span id="cnpj-error" class="error-message">Campo está invalido, Ajuste se possivel.</span>
     </div>
     <div class="content-form">
       <label for="">Inscrição Estadual</label>
       <input type="text" id="state_registration">
+      <span id="state_registration-error" class="error-message">Campo está invalido, Ajuste se possivel.</span>
     </div>
     <div ref="cpf" class="content-form">
       <label for="">Email</label>
       <input type="text" id="email">
+      <span id="email-error" class="error-message">Campo está invalido, Ajuste se possivel.</span>
     </div>
     <div class="content-form">
       <label for="">Contato</label>
       <input type="text" id="phone">
+      <span id="phone-error" class="error-message">Campo está invalido, Ajuste se possivel.</span>
     </div>
     <div class="content-form">
       <label for="">Endereco</label>
       <input type="text" id="address">
+      <span id="address-error" class="error-message">Campo está invalido, Ajuste se possivel.</span>
     </div>
     <div class="content-form">
       <label for="">Cidade</label>
       <input type="text" id="city">
+      <span id="city-error" class="error-message">Campo está invalido, Ajuste se possivel.</span>
     </div>
     <div class="content-form">
       <label for="">Estado</label>
       <input type="text" id="state">
+      <span id="state-error" class="error-message">Campo está invalido, Ajuste se possivel.</span>
     </div>
   </form>
   <button class="button-registers" onclick="RegisterCompany()" type="button">Cadastrar</button>

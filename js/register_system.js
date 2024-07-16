@@ -27,7 +27,7 @@ const FieldsUsers = () => {
 }
 async function RegisterUsers() {
 
-    const {values, type, inputs} = await FieldsUsers();
+    const { values, type, inputs } = await FieldsUsers();
 
     if (values.name == "" || values.password == "" || values.email == "" || values.phone || values.userFunction || values.access == "") {
         showMessage('Campos estão vazios, por favor preencha', 'warning',);
@@ -244,41 +244,99 @@ async function RegisterClients() {
 
 const getFieldsCompany = () => {
     return {
-        type: 'company',
-        name: document.getElementById('name').value,
-        email: document.getElementById('email').value,
-        cnpj: document.getElementById('cnpj').value,
-        state_registration: document.getElementById('state_registration').value,
-        phone: document.getElementById('phone').value,
-        address: document.getElementById('address').value,
-        city: document.getElementById('city').value,
-        state: document.getElementById('state').value,
+        type: {
+            type: 'company',
+        },
+        values: {
+            name: document.getElementById('name').value,
+            email: document.getElementById('email').value,
+            cnpj: document.getElementById('cnpj').value,
+            state_registration: document.getElementById('state_registration').value,
+            phone: document.getElementById('phone').value,
+            address: document.getElementById('address').value,
+            city: document.getElementById('city').value,
+            state: document.getElementById('state').value,
+        },
+        inputs: {
+            name: document.getElementById('name'),
+            email: document.getElementById('email'),
+            cnpj: document.getElementById('cnpj'),
+            state_registration: document.getElementById('state_registration'),
+            phone: document.getElementById('phone'),
+            address: document.getElementById('address'),
+            city: document.getElementById('city'),
+            state: document.getElementById('state'),
+        }
     };
 }
 async function RegisterCompany() {
 
-    const FieldsCompany = await getFieldsCompany();
+    const { values, type, inputs } = await getFieldsCompany();
 
-    if (FieldsCompany.cnpj < 14) {
-        showMessage('CNPJ não pode ser menor que 14 digitos', 'warning');
+    if (values.name == "" || values.state_registration == "" || values.cnpj == "") {
+        showMessage('Campo não podem ser vazios', 'warning');
+
+        if (values.name === "") inputs.name.classList.add('error');
+        if (values.state_registration === "") inputs.state_registration.classList.add('error');
+        if (values.cnpj === "") inputs.cnpj.classList.add('error');
+        setTimeout(() => {
+            inputs.name.classList.remove('error');
+            inputs.state_registration.classList.remove('error');
+            inputs.cnpj.classList.remove('error');
+        }, 3000);
+
         return;
     }
 
-    if (FieldsCompany.cnpj != Number || FieldsCompany.state_registration != Number || FieldsCompany.phone != Number) {
+    if (values.cnpj < 14) {
+        showMessage('CNPJ não pode ser conter menos que 14 digitos', 'warning');
+
+        if (values.cnpj < 14) inputs.cnpj.classList.add('error');
+        setTimeout(() => {
+            inputs.name.classList.remove('error');
+        }, 3000);
+
+        return;
+    }
+
+    if (values.state_registration < 9) {
+        showMessage('Inscrição estadual não pode ser conter menos que 9 digitos', 'warning');
+
+        if (values.state_registration < 9) inputs.state_registration.classList.add('error');
+        setTimeout(() => {
+            inputs.state_registration.classList.remove('error');
+        }, 3000);
+
+        return;
+    }
+
+    let InputCnpj = values.cnpj.replace(/\D/g, "");
+
+    if (isNaN(InputCnpj) || isNaN(values.state_registration) || isNaN(values.phone)) {
         showMessage('CNPJ ou Inscrição estadual ou Telefone, não pode ser diferentes de numeros', 'warning');
+
+        if (isNaN(InputCnpj)) inputs.cnpj.classList.add('error');
+        if (isNaN(values.state_registration)) inputs.state_registration.classList.add('error');
+        if (isNaN(values.phone)) inputs.phone.classList.add('error');
+        setTimeout(() => {
+            inputs.cnpj.classList.remove('error');
+            inputs.state_registration.classList.remove('error');
+            inputs.phone.classList.remove('error');
+        }, 3000);
+
         return;
     }
 
     let responseCompany = {
-        type: FieldsCompany.type,
-        name: FieldsCompany.name,
-        email: FieldsCompany.email,
-        cnpj: FieldsCompany.cnpj,
-        state_registration: FieldsCompany.state_registration,
-        phone: FieldsCompany.phone,
-        address: FieldsCompany.address,
-        city: FieldsCompany.city,
-        state: FieldsCompany.state,
+        type: type.type,
+        name: values.name,
+        email: values.email,
+        cnpj: values.cnpj,
+        state_registration: values.state_registration,
+        phone: values.phone,
+        address: values.address,
+        city: values.city,
+        state: values.state,
     }
 
     try {
@@ -293,12 +351,12 @@ async function RegisterCompany() {
             body: JSON.stringify(responseCompany)
         })
 
-        const responseBody = await response.text();
+        const responseBody = await response.json();
 
         if (responseBody.success) {
-            showMessage("Empresa " + Fields.name + " cadastrado com sucesso!", 'success');
+            showMessage("Empresa " + values.name + " cadastrado com sucesso!", 'success');
         } else {
-            showMessage("Erro ao fazer cadastro " + Fields.name, 'error');
+            showMessage(responseBody.message || "Erro ao fazer cadastro " + values.name, 'error');
         }
     } catch (error) {
         window.alert("Erro ao fazer requisição" + error);
@@ -469,78 +527,6 @@ async function RegisterAccount() {
     });
 }
 
-const getFieldsProducts = () => {
-    return {
-        type: 'products',
-        name: document.getElementById('name').value,
-        quantity: document.getElementById('quantity').value,
-        stock_quantity: document.getElementById('stock_quantity').value,
-        barcode: document.getElementById('barcode').value,
-        value_product: document.getElementById('value_product').value,
-        cost_value: document.getElementById('cost_value').value,
-        reference: document.getElementById('reference').value,
-        model: document.getElementById('model').value,
-        brand: document.getElementById('brand').value,
-        flow: document.getElementById('flow').value,
-        register_date: document.getElementById('register_date').value,
-
-    }
-}
-async function RegisterProducts() {
-
-    const DateActual = new Date();
-
-    FieldsProduct.register_date = DateActual;
-
-    const FieldsProduct = await getFieldsProduct();
-
-    if (FieldsProduct.quantity != Number || FieldsProduct.stock_quantity != Nmber ||
-        FieldsProduct.barcode != Number || FieldsProduct.value_product != Number || FieldsProduct.cost_value != Number
-    ) {
-        showMessage('Quantidade e Quantidade estoque não podem ser diferente de numero', 'warning');
-        return;
-    }
-
-    let responseProduct = {
-        type: FieldsProduct.type,
-        name: FieldsProduct.name,
-        quantity: FieldsProduct.quantity,
-        stock_quantity: FieldsProduct.stock_quantity,
-        barcode: FieldsProduct.barcode,
-        value_product: FieldsProduct.value_product,
-        cost_value: FieldsProduct.cost_value,
-        reference: FieldsProduct.reference,
-        model: FieldsProduct.model,
-        brand: FieldsProduct.brand,
-        flow: FieldsProduct.flow,
-        register_date: FieldsProduct.register_date,
-    }
-
-    try {
-
-        let url = `${BASE_CONTROLLERS}registers.php`;
-
-        const response = await fetch(url, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(responseProduct)
-        })
-
-        const responseBody = await response.json();
-
-        if (responseBody.success) {
-            showMessage('Produto' + FieldsProduct.name + 'cadastrado com sucesso', 'success');
-        } else {
-            showMessage('Erro ao cadastrar produto', 'error');
-        }
-
-    } catch (error) {
-        showMessage("Erro ao fazer requisição" + error, 'error');
-    }
-}
-
 const getFieldsForn = () => {
     return {
         type: {
@@ -570,7 +556,7 @@ const getFieldsForn = () => {
 }
 async function RegisterForn() {
 
-    const {type, values, inputs} = await getFieldsForn();
+    const { type, values, inputs } = await getFieldsForn();
 
     console.log(values.name_company);
 
@@ -638,8 +624,6 @@ async function RegisterForn() {
         cnpj: values.cnpj,
     }
 
-    console.log(responseForn);
-
     continueMessage("Deseja continuar com o cadastro?", "Sim", "Não", async function () {
         try {
 
@@ -653,11 +637,7 @@ async function RegisterForn() {
                 body: JSON.stringify(responseForn)
             });
 
-            console.log(await response.json());
-
             const responseBody = await response.json();
-
-            console.log(responseBody);
 
             if (responseBody.success) {
                 showMessage('Fornecedor ' + values.name_company + ' cadastrado com sucesso', 'success');
@@ -672,4 +652,309 @@ async function RegisterForn() {
         showMessage('Cadastro de Fornecedor cancelado', 'error');
     }
     )
+}
+
+const getFieldsProducts = () => {
+    const flowElement = document.getElementById('flow');
+    const flowFile = flowElement.files.length > 0 ? flowElement.files[0] : null;
+
+    return {
+        type: {
+            type: 'products',
+        },
+        values: {
+            name: document.getElementById('name').value,
+            quantity: document.getElementById('quantity').value,
+            stock_quantity: document.getElementById('stock_quantity').value,
+            barcode: document.getElementById('barcode').value,
+            value_product: document.getElementById('value_product').value,
+            cost_value: document.getElementById('cost_value').value,
+            reference: document.getElementById('reference').value,
+            model: document.getElementById('model').value,
+            brand: document.getElementById('brand').value,
+            size: document.getElementById('size').value,
+            flow: flowFile,
+        },
+        inputs: {
+            name: document.getElementById('name'),
+            quantity: document.getElementById('quantity'),
+            stock_quantity: document.getElementById('stock_quantity'),
+            barcode: document.getElementById('barcode'),
+            value_product: document.getElementById('value_product'),
+            cost_value: document.getElementById('cost_value'),
+            reference: document.getElementById('reference'),
+            model: document.getElementById('model'),
+            brand: document.getElementById('brand'),
+            size: document.getElementById('size'),
+            flow: flowElement,
+        }
+    }
+}
+async function RegisterProducts() {
+    const { type, values, inputs } = await getFieldsProducts();
+    let InputValueProduct = values.value_product.replace(/\D/g, "");
+    let InputValueCost = values.cost_value.replace(/\D/g, "");
+
+    if (values.barcode == "" || values.name == "" || values.reference == "" || values.quantity == ""
+        || values.stock_quantity == "" || values.cost_value == "" || values.value_product == ""
+    ) {
+        showMessage('Quantidade e Quantidade estoque não podem ser diferente de numero', 'warning');
+
+        if (values.barcode === "") inputs.barcode.classList.add('error');
+        if (values.name === "") inputs.name.classList.add('error');
+        if (values.reference === "") inputs.reference.classList.add('error');
+        if (values.quantity === "") inputs.quantity.classList.add('error');
+        if (values.stock_quantity === "") inputs.stock_quantity.classList.add('error');
+        if (values.cost_value === "") inputs.cost_value.classList.add('error');
+        if (values.value_product === "") inputs.value_product.classList.add('error');
+        setTimeout(() => {
+            inputs.barcode.classList.remove('error');
+            inputs.name.classList.remove('error');
+            inputs.reference.classList.remove('error');
+            inputs.quantity.classList.remove('error');
+            inputs.stock_quantity.classList.remove('error');
+            inputs.cost_value.classList.remove('error');
+            inputs.value_product.classList.remove('error');
+        }, 3000);
+
+        return;
+    }
+
+    if (values.cost_value.length > values.value_product.length) {
+        showMessage('Valor de custo não pode ser maior que valor do produto', 'warning');
+
+        if (values.cost_value.length > values.value_product.length) inputs.cost_value.classList.add('error');
+        setTimeout(() => {
+            inputs.cost_value.classList.remove('error');
+        }, 3000);
+
+        return;
+    }
+
+    const quantity = Number(values.quantity);
+    const stock_quantity = Number(values.stock_quantity);
+    const barcode = Number(values.barcode);
+    const cost_value = parseCurrency(InputValueCost);
+    const value_product = parseCurrency(InputValueProduct);
+
+    if (isNaN(quantity) || isNaN(stock_quantity) ||
+        isNaN(barcode) || isNaN(value_product) || isNaN(cost_value)
+    ) {
+        showMessage('Campos não podem ser Strings', 'warning');
+
+        if (isNaN(values.barcode)) inputs.barcode.classList.add('error');
+        if (isNaN(values.quantity)) inputs.quantity.classList.add('error');
+        if (isNaN(values.stock_quantity)) inputs.stock_quantity.classList.add('error');
+        if (isNaN(InputValueCost)) inputs.cost_value.classList.add('error');
+        if (isNaN(InputValueProduct)) inputs.value_product.classList.add('error');
+        setTimeout(() => {
+            inputs.barcode.classList.remove('error');
+            inputs.quantity.classList.remove('error');
+            inputs.stock_quantity.classList.remove('error');
+            inputs.cost_value.classList.remove('error');
+            inputs.value_product.classList.remove('error');
+        }, 3000);
+
+        return;
+    }
+
+    let imageBase64 = "";
+    if (values.flow instanceof File) {
+        const reader = new FileReader();
+        reader.onload = async () => {
+            imageBase64 = reader.result.split(',')[1];
+            await sendProductData(type, values, imageBase64, quantity, stock_quantity, barcode, cost_value, value_product);
+        };
+        reader.onerror = (error) => {
+            showMessage("Erro ao ler o arquivo", 'error');
+        };
+        reader.readAsDataURL(values.flow);
+    } else {
+        await sendProductData(type, values, imageBase64, quantity, stock_quantity, barcode, cost_value, value_product);
+    }
+
+    function parseCurrency(value) {
+        return parseFloat(value.replace(/[^0-9,-]+/g, '').replace(',', '.'));
+    }
+
+    async function sendProductData(type, values, imageBase64, quantity, stock_quantity, barcode, cost_value, value_product) {
+        let responseProduct = {
+            type: type.type,
+            name: values.name,
+            quantity: quantity,
+            stock_quantity: stock_quantity,
+            barcode: barcode,
+            value_product: value_product,
+            cost_value: cost_value,
+            reference: values.reference,
+            model: values.model,
+            brand: values.brand,
+            size: values.size,
+            flow: imageBase64
+        };
+
+        try {
+            let url = `${BASE_CONTROLLERS}registers.php`;
+
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(responseProduct)
+            });
+
+            const responseBody = await response.json();
+
+            if (responseBody.success) {
+                showMessage('Produto ' + values.name + ' cadastrado com sucesso', 'success');
+            } else {
+                showMessage(responseBody.message || 'Erro ao cadastrar produto', 'error');
+            }
+
+        } catch (error) {
+            showMessage("Erro ao fazer requisição: " + error, 'error');
+        }
+    }
+}
+
+const getFieldsBoxPdv = () => {
+    return {
+        type: {
+            type: 'boxpdv',
+        },
+        values: {
+            value: document.getElementById('value').value,
+            observation: document.getElementById('observation').value,
+        },
+        inputs: {
+            value: document.getElementById('value'),
+            observation: document.getElementById('observation'),
+        }
+    }
+}
+async function RegisterBoxPdv() {
+    const { type, values, inputs } = await getFieldsBoxPdv();
+    let InputValueBox = values.value.replace(/\D/g, "");
+
+    if (values.value == "" || values.observation == "") {
+        showMessage('Campos não podem ficar vazios', 'warning');
+
+        if (values.value === "") inputs.value.classList.add('error');
+        if (values.observation === "") inputs.observation.classList.add('error');
+        setTimeout(() => {
+            inputs.value.classList.remove('error');
+            inputs.observation.classList.remove('error');
+        }, 3000);
+
+        return;
+
+    }
+
+    let responseBoxPdv = {
+        type: type.type,
+        value: values.value,
+        observation: values.observation,
+    }
+
+    continueMessage("Deseja realmente abrir o caixa?", "Sim", "Não", async function () {
+
+        try {
+            let url = `${BASE_CONTROLLERS}registers.php`;
+
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(responseBoxPdv)
+            });
+
+            const responseBody = await response.json();
+
+            if (responseBody.success) {
+                showMessage('Caixa aberto no valor de ' + values.value, 'success');
+            } else {
+                showMessage(responseBody.message || 'Erro ao abrir caixa ' + responseBody.error, 'error');
+            }
+
+        } catch (error) {
+            showMessage('Erro na requisição' + error.message, 'error')
+        }
+
+    }, function () {
+        showMessage('Abertura de caixa cancelada', 'warning')
+    })
+}
+
+const getFieldsSangria = () => {
+    return {
+        type: {
+            type: 'sangriapdv',
+        },
+        values: {
+            value: document.getElementById('value').value,
+            observation: document.getElementById('observation').value,
+        },
+        inputs: {
+            value: document.getElementById('value'),
+            observation: document.getElementById('observation'),
+        }
+    }
+}
+
+async function RegisterSangria() {
+    const { type, values, inputs } = await getFieldsSangria();
+    let InputValueSangria = values.value.replace(/\D/g, "");
+
+    if (values.value == ""|| values.observation == "") {
+        showMessage('Campos vazios', 'warning');
+
+        if (values.value === "") inputs.value.classList.add('error');
+        if (values.observation === "") inputs.observation.classList.add('error');
+        setTimeout(() => {
+            inputs.value.classList.remove('error');
+            inputs.observation.classList.remove('error');
+        }, 3000);
+
+        return;
+    }
+
+    let responseSangria = {
+        type: type.type,
+        value: values.value,
+        observation: values.observation,
+    }
+
+    console.log(responseSangria);
+
+    continueMessage("Deseja realmente fazer essa retirada?", "Sim", "Não", async function () {
+
+        try {
+
+            let url = `${BASE_CONTROLLERS}registers.php`;
+
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(responseSangria)
+            });
+
+            const responseBody = await response.json();
+
+            if (responseBody.success) {
+                showMessage('Retirada realizada no valor de ' + values.value, 'success');
+            } else {
+                showMessage(responseBody.message || 'Erro ao fazer retirada de valor ' + responseBody.error, 'error');
+            }
+
+        } catch (error) {
+            showMessage('Erro na requisição' + error.message, 'error');
+        }
+
+    }, function () {
+        showMessage('Retirada de caixa cancelada', 'warning');
+    })
 }

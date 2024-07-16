@@ -45,6 +45,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $response_clients = $data;
     $response_products = $data;
     $response_forn = $data;
+    $response_boxpdv = $data;
+    $response_sangria = $data;
 
     if (isset($data['type'])) {
         if ($data['type'] == 'users') {
@@ -58,15 +60,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         } else if ($data['type'] == 'clients') {
             Register::RegisterClient($sql, $response_clients, $user_id);
         } else if ($data['type'] == 'products') {
-            // Adicione o código correspondente aqui
+            Register::RegisterProducts($sql, $response_products, $user_id);
         } else if ($data['type'] == 'company') {
             Register::RegisterCompany($sql, $response_company, $user_id);
+        } else if ($data['type'] == 'boxpdv') {
+            Register::RegisterBoxPdv($sql, $response_boxpdv, $user_id);
+        } else if ($data['type'] == 'sangriapdv') {
+            Register::RegisterSangria($sql, $response_sangria, $user_id);
         }
     } else {
         Response::json(false, 'Tipo type não encontrado', $today);
     }
-
-
 }
 
 class Register
@@ -194,47 +198,47 @@ class Register
     {
 
         $today = date("Y-m-d H:i:s");
+        $name_table = 'company';
 
-        $name = filter_var($response_company['name'], FILTER_SANITIZE_STRING);
+        $name = filter_var($response_company['name'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
         $email = filter_var($response_company['email'], FILTER_VALIDATE_EMAIL);
-        $social_reason = filter_var($response_company['social_reason'], FILTER_SANITIZE_STRING);
         $cnpj = filter_var($response_company['cnpj'], FILTER_SANITIZE_STRING);
-        $state_registration = filter_var($response_company['state_registration'], FILTER_SANITIZE_STRING);
-        $address = filter_var($response_company['address'], FILTER_SANITIZE_STRING);
-        $city = filter_var($response_company['city'], FILTER_SANITIZE_STRING);
+        $state_registration = filter_var($response_company['state_registration'], FILTER_SANITIZE_NUMBER_INT);
+        $address = filter_var($response_company['address'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+        $city = filter_var($response_company['city'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
         $phone = filter_var($response_company['phone'], FILTER_SANITIZE_NUMBER_INT);
+        $state = filter_var($response_company['state'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+
 
         try {
 
             $sql->BeginTransaction();
 
             $exec = $sql->prepare("
-            INSERT INTO companies 
-            (name, email, social_reason, cnpj, state_registration, address, city, phone, users_id, created_at) 
+            INSERT INTO $name_table 
+            (name, email, cnpj, state_registration, address, city, phone, state) 
             VALUES 
-            (:name, :email, :social_reason, :cnpj, :state_registration, :address, :city, :phone, :user_id, :created_at)
+            (:name, :email, :cnpj, :state_registration, :address, :city, :phone, :state)
         ");
             $exec->bindValue(':name', $name, PDO::PARAM_STR);
             $exec->bindValue(':email', $email, PDO::PARAM_STR);
-            $exec->bindValue(':social_reason', $social_reason, PDO::PARAM_STR);
             $exec->bindValue(':cnpj', $cnpj, PDO::PARAM_STR);
             $exec->bindValue(':state_registration', $state_registration, PDO::PARAM_STR);
             $exec->bindValue(':address', $address, PDO::PARAM_STR);
             $exec->bindValue(':city', $city, PDO::PARAM_STR);
             $exec->bindValue(':phone', $phone, PDO::PARAM_STR);
-            $exec->bindValue(':user_id', $user_id, PDO::PARAM_INT);
-            $exec->bindValue(':created_at', $today, PDO::PARAM_STR);
-
+            $exec->bindValue(':state', $state, PDO::PARAM_STR);
             $exec->execute();
 
             $sql->commit();
 
             $message_log = "Empresa $name cadastrada com sucesso";
-            Panel::LogAction($user_id, 'Cadastrar Empresa', $message_log);
+            Panel::LogAction($user_id, 'Cadastrar Empresa', $message_log, $today);
             Response::send(true, 'Empresa cadastrada com sucesso', $today);
 
 
         } catch (Exception $e) {
+            $sql->rollBack();
             http_response_code(500);
             echo json_encode(['error' => 'Erro no banco de dados: ' . $e->getMessage(), 'code' => $e->getCode()]);
         }
@@ -327,8 +331,8 @@ class Register
 
     public static function RegisterProducts($sql, $response_products, $user_id)
     {
-
         $today = date('Y-m-d H:i:s');
+        $show_on_page = 0;
 
         $name = filter_var($response_products['name'], FILTER_SANITIZE_STRING);
         $quantity = filter_var($response_products['quantity'], FILTER_SANITIZE_STRING);
@@ -339,24 +343,62 @@ class Register
         $reference = filter_var($response_products['reference'], FILTER_SANITIZE_STRING);
         $model = filter_var($response_products['model'], FILTER_SANITIZE_STRING);
         $brand = filter_var($response_products['brand'], FILTER_SANITIZE_STRING);
-        $flow = filter_var($response_products['flow'], FILTER_SANITIZE_STRING);
-        $register_date = filter_var($response_products['register_date'], FILTER_SANITIZE_STRING);
+        $size = filter_var($response_products['size'], FILTER_SANITIZE_NUMBER_INT);
+
+        if (!$name || !$quantity || !$value_product || !$cost_value || !$stock_quantity) {
+            Response::json(false, 'Campos Invalidos', $today);
+        }
+
+        $flow = $response_products['flow'];
 
         try {
-
             $sql->BeginTransaction();
+
+            $validate = new self;
+            if (!$validate->ValidateImg($flow)) {
+                Response::json(false, 'Formato da imagem incompativel o esperado é PNG ou JPEG/JPG.', $today);
+            }
+
+            $stmt = $sql->prepare("INSERT INTO products (name, quantity, stock_quantity, barcode, value_product, cost_value, reference, model, brand, flow, show_on_page, size) 
+                               VALUES (:name, :quantity, :stock_quantity, :barcode, :value_product, :cost_value, :reference, :model, :brand, :flow, :show_on_page, :size)");
+
+            $stmt->bindParam(':name', $name);
+            $stmt->bindParam(':quantity', $quantity);
+            $stmt->bindParam(':stock_quantity', $stock_quantity);
+            $stmt->bindParam(':barcode', $barcode);
+            $stmt->bindParam(':value_product', $value_product);
+            $stmt->bindParam(':cost_value', $cost_value);
+            $stmt->bindParam(':reference', $reference);
+            $stmt->bindParam(':model', $model);
+            $stmt->bindParam(':brand', $brand);
+            $stmt->bindParam(':flow', $flow);
+            $stmt->bindParam(':show_on_page', $show_on_page);
+            $stmt->bindParam(':size', $size);
+            $stmt->execute();
 
             $sql->commit();
 
             $message_log = "Produto $name cadastrado com sucesso";
-            Panel::LogAction($user_id, 'Cadastrar Produto', $message_log);
+            Panel::LogAction($user_id, 'Cadastrar Produto', $message_log, $today);
             Response::send(true, 'Produto cadastrado com sucesso', $today);
 
         } catch (Exception $e) {
+            $sql->rollback();
             http_response_code(500);
             echo json_encode(['error' => 'Erro no banco de dados: ' . $e->getMessage(), 'code' => $e->getCode()]);
         }
+    }
+    private function ValidateImg($flow)
+    {
 
+        $allowedMimeTypes = ['image/png', 'image/jpeg', 'image/jpg'];
+        $imageData = base64_decode($flow);
+        $tempFilePath = tempnam(sys_get_temp_dir(), 'temp_image_');
+        file_put_contents($tempFilePath, $imageData);
+        $finfo = new finfo(FILEINFO_MIME_TYPE);
+        $mime_type = $finfo->file($tempFilePath);
+        unlink($tempFilePath);
+        return in_array($mime_type, $allowedMimeTypes);
     }
 
     public static function RegisterForn($sql, $response_forn, $user_id)
@@ -417,6 +459,107 @@ class Register
             http_response_code(500);
             echo json_encode(['error' => 'Erro no banco de dados: ' . $e->getMessage(), 'code' => $e->getCode()]);
         }
+    }
+
+    public static function RegisterBoxPdv($sql, $response_boxpdv, $user_id)
+    {
+
+        $today = date('Y-m-d H:i:s');
+        $status = 1;
+
+        $value = filter_var($response_boxpdv['value'], FILTER_SANITIZE_STRING);
+        $observation = filter_var($response_boxpdv['observation'], FILTER_SANITIZE_STRING);
+
+        if (!$value || !$observation) {
+            Response::json(false, 'Campos estão inválidos', $today);
+        }
+
+        try {
+            $sql->BeginTransaction();
+
+            $exec = $sql->prepare("SELECT COUNT(*) FROM boxpdv WHERE id_users = :user_id AND status = :status");
+            $exec->bindParam(':user_id', $user_id, PDO::PARAM_INT);
+            $exec->bindParam(':status', $status, PDO::PARAM_INT);
+            $exec->execute();
+            $exist = $exec->fetchColumn();
+
+            if ($exist > 0) {
+                Response::json(false, 'Já existe caixa aberto com esse usuário', $today);
+            }
+
+
+            $stmt = $sql->prepare("INSERT INTO boxpdv (id_users, value, observation, status, open_date) 
+                                   VALUES (:user_id, :value, :observation, :status, :open_date)");
+            $stmt->bindParam(':user_id', $user_id, PDO::PARAM_INT);
+            $stmt->bindParam(':value', $value);
+            $stmt->bindParam(':observation', $observation);
+            $stmt->bindParam(':status', $status, PDO::PARAM_INT);
+            $stmt->bindParam(':open_date', $today);
+            $stmt->execute();
+            $sql->commit();
+
+            $_SESSION['value'] = $value;
+            $_SESSION['open_date'] = $today;
+
+            $message_log = "Caixa $ aberto com sucesso";
+            Panel::LogAction($user_id, 'Abertura de caixa', $message_log, $today);
+            Response::send(true, 'Caixa aberto com sucesso', $today);
+
+        } catch (Exception $e) {
+            http_response_code(500);
+            echo json_encode(['error' => 'Erro no banco de dados: ' . $e->getMessage(), 'code' => $e->getCode()]);
+        }
+
+    }
+
+    public static function RegisterSangria($sql, $response_sangria, $user_id) {
+
+        $today = date('Y-m-d H:i:s');
+        $status = 1;
+
+        $value = str_replace('R$', '', $response_sangria['value']);
+        $value = floatval($value);
+        $observation = filter_var($response_sangria['observation'], FILTER_SANITIZE_STRING);
+
+        if ($value == "" || $observation == "") {
+            Response::json(false, 'Campos estão inválidos', $today);
+        }
+
+        try {
+            $sql->BeginTransaction();
+
+            $exec = $sql->prepare("SELECT id, value FROM boxpdv WHERE status = :status");
+            $exec->bindParam(':status', $status, PDO::PARAM_INT);
+            $exec->execute();
+            $id_boxpdv = $exec->fetch(PDO::FETCH_ASSOC); 
+
+            if (!$id_boxpdv['id']) {
+                Response::json(false, 'Nenhuma caixa aberta encontrada', $today);
+            }
+
+            if ($value > $id_boxpdv['value']) {
+                Response::json(false, 'Valor da retirada não pode ser mair que valor do caixa', $today);
+            }
+    
+            $stmt = $sql->prepare("INSERT INTO sangria_boxpdv (id_users, id_boxpdv, value, observation, withdrawa_date) 
+                                   VALUES (:user_id, :id_boxpdv, :value, :observation, :withdrawa_date)");
+            $stmt->bindParam(':user_id', $user_id, PDO::PARAM_INT);
+            $stmt->bindParam(':id_boxpdv', $id_boxpdv['id'], PDO::PARAM_INT);
+            $stmt->bindParam(':value', $value);
+            $stmt->bindParam(':observation', $observation);
+            $stmt->bindParam(':withdrawa_date', $today);
+            $stmt->execute();
+            $sql->commit();    
+
+            $message_log = "Retirada realizada com sucesso no valor de $value";
+            Panel::LogAction($user_id, 'Retirada do Caixa', $message_log, $today);
+            Response::send(true, 'Retirada realizada com sucesso', $today);
+
+        } catch (Exception $e) {
+            http_response_code(500);
+            echo json_encode(['error' => 'Erro no banco de dados: ' . $e->getMessage(), 'code' => $e->getCode()]);
+        }
+
     }
 }
 

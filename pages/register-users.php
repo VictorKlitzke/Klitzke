@@ -11,13 +11,11 @@
       <label for="">Email</label>
       <input type="text" id="email">
       <span id="email-error" class="error-message">Campo está invalido, Ajuste se possivel.</span>
-
     </div>
     <div class="content-form">
       <label for="">Senha</label>
       <input type="password" id="password">
       <span id="password-error" class="error-message">Campo está invalido, Ajuste se possivel.</span>
-
     </div>
     <div class="content-form">
       <label for="">Função</label>
@@ -29,19 +27,16 @@
       <label for="">Telefone</label>
       <input type="text" id="phone">
       <span id="phone-error" class="error-message">Campo está invalido, Ajuste se possivel.</span>
-
     </div>
     <div class="content-form">
       <label for="">Comissao</label>
       <input type="number" id="commission">
       <span id="commission-error" class="error-message">Campo está invalido, Ajuste se possivel.</span>
-
     </div>
     <div class="content-form">
       <label for="">Commisao por meta</label>
       <input type="number" id="target_commission">
       <span id="target_commission-error" class="error-message">Campo está invalido, Ajuste se possivel.</span>
-
     </div>
     <div class="content-form">
       <label for="">Nivel de acesso</label>
@@ -51,7 +46,6 @@
           <option value="10">Padrão</option>
       </select>
       <span id="access-error" class="error-message">Campo está invalido, Ajuste se possivel.</span>
-
     </div>
   </form>
   <button onclick="RegisterUsers()" class="button-registers" type="button">Cadastrar</button>

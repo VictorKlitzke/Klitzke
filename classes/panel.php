@@ -3,34 +3,6 @@
 class Panel
 {
 
-  public static function ValidadeImg($img)
-  {
-    if (
-      $img['type'] == 'image/jpeg' ||
-      $img['type'] == 'imagem/jpg' ||
-      $img['type'] == 'imagem/png'
-    ) {
-
-      $tam = intval($img['size'] / 1024);
-      if ($tam < 300)
-        return true;
-      else
-        return false;
-    } else {
-      return false;
-    }
-  }
-
-  public static function UploadsImg($file)
-  {
-    $fileFormat = explode('.', $file['name']);
-    $imageName = uniqid() . '.' . $fileFormat[count($fileFormat) - 1];
-    if (move_uploaded_file($file['tmp_name'], BASE_DIR_PAINEL . '/upload/' . $imageName))
-      return $imageName;
-    else
-      return false;
-  }
-
   public static function Loggout()
   {
     setcookie('remember', 'true', time() - 1, '/');
