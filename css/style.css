@@ -291,51 +291,6 @@ header {
     margin: 0 auto;
 }
 
-
-/* BOX ALERT */
-
-.alert {
-    padding: 10px 0;
-    cursor: default;
-    float: left;
-    position: fixed;
-    border: 1px solid #1b1b1b;
-    border-radius: 4px;
-    top: 50%;
-    left: 50%;
-    width: 50%;
-    transform: translate(-50%, -50%);
-}
-
-.alert::before {
-    content: "";
-    animation: time 3s forwards;
-}
-
-.alert-sucess {
-    background: #a5d6a7;
-    font-size: 20px;
-    text-align: center;
-    align-items: center;
-    color: #131313;
-}
-
-.alert-error {
-    background: #f75353;
-    font-size: 20px;
-    text-align: center;
-    align-items: center;
-    color: #ccc;
-}
-
-.alert-warning {
-    background: #def753;
-    font-size: 20px;
-    text-align: center;
-    align-items: center;
-    color: #000000;
-}
-
 @keyframes slidein {
     0% {
         transform: translateX(200px);
@@ -792,4 +747,17 @@ table tr {
     color: black;
     text-decoration: none;
     cursor: pointer;
+}
+
+.error {
+    border: 1px solid red;
+}
+
+.error-message {
+    color: red;
+    display: none;
+}
+
+.error + .error-message {
+    display: block;
 }

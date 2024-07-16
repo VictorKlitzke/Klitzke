@@ -20,25 +20,25 @@ $boxpdv = Controllers::SelectBoxPdv('boxpdv', ($currentPage - 1) * $porPage, $po
 <div class="box-content">
   <div class="filter-container">
     <div class="filter-content">
-    <h2 style="color: #000">Filtros</h2>
-    <div class="filter-form">
-      <form method="post">
-        <select name="user_filter" id="user_filter">
+      <h2 style="color: #000">Filtros</h2>
+      <div class="filter-form">
+        <form method="post">
+          <select name="user_filter" id="user_filter">
 
-          <?php
+            <?php
 
-          $users = Controllers::SelectAll('users');
+            $users = Controllers::SelectAll('users');
 
-          foreach ($users as $user) {
-            echo '<option value="' . $user['id'] . '">' . $user['name'] . '</option>';
-          }
+            foreach ($users as $user) {
+              echo '<option value="' . $user['id'] . '">' . $user['name'] . '</option>';
+            }
 
-          ?>
+            ?>
 
-        </select>
-        <button class="filter" type="submit">Filtrar</button>
-      </form>
-    </div>
+          </select>
+          <button class="filter" type="submit">Filtrar</button>
+        </form>
+      </div>
     </div>
   </div>
   <div class="list">
@@ -51,7 +51,6 @@ $boxpdv = Controllers::SelectBoxPdv('boxpdv', ($currentPage - 1) * $porPage, $po
           <td>Observação</td>
           <td>Data abertura</td>
           <td>Retirada</td>
-          <td>Empresa</td>
         </tr>
       </thead>
 
@@ -64,18 +63,26 @@ $boxpdv = Controllers::SelectBoxPdv('boxpdv', ($currentPage - 1) * $porPage, $po
             <td><?php echo htmlspecialchars($value['users']); ?></td>
             <td><?php echo htmlspecialchars($value['value']); ?></td>
             <td><?php echo htmlspecialchars($value['observation']); ?></td>
-            <td><?php echo htmlspecialchars($value['open_date']); ?></td>
+            <td>
+              <p><?php echo htmlspecialchars($value['open_date']); ?></p>
+            </td>
             <td><?php echo htmlspecialchars($value['Withdrawal']); ?></td>
-            <td><?php echo htmlspecialchars($value['company']); ?></td>
 
             <td style="display: flex; justify-content: center; gap: 10px; margin: 6px; padding: 6px;">
-              <div>
-                <a class="btn-edit"
-                  href="<?php echo INCLUDE_PATH ?>boxpdv-sangria?id=<?php echo base64_encode($value['id']); ?>">Sagria</a>
-              </div>
+              <?php if ($value['status'] == 1) { ?>
+                <div>
+                  <a class="btn-edit"
+                    href="<?php echo INCLUDE_PATH ?>boxpdv-sangria?id=<?php echo base64_encode($value['id']); ?>">Sagria</a>
+                </div>
+              <?php } else { ?>
+                <div>
+                  <a class="btn-reopen">Fecho</a>
+                </div>
+              <?php } ?>
 
               <div>
-                <a actionBtn="delete" class="btn-delete" href="<?php echo INCLUDE_PATH ?>list-boxpdv?delete=<?php echo $value['id']; ?>">Deletar</a>
+                <a actionBtn="delete" class="btn-delete"
+                  href="<?php echo INCLUDE_PATH ?>list-boxpdv?delete=<?php echo $value['id']; ?>">Deletar</a>
               </div>
             </td>
           </tr>

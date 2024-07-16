@@ -1,157 +1,74 @@
-<?php
-
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
-
-$status_product = 'Em estoque';
-
-$user_id = isset($_SESSION['id']) ? $_SESSION['id'] : null;
-
-if (isset($_POST['action'])) {
-
-    $multiply = Controllers::Select('config_multiply_product');
-
-    $name = $_POST['name'];
-    $quantity = $_POST['quantity'];
-    $barcode = $_POST['barcode'];
-
-    $cost_value = $_POST['cost_value'];
-    $cost_value = str_replace(',', '.', preg_replace("/[^0-9,.]/", "", $cost_value));
-    $cost_value = floatval($cost_value);
-
-    $default = $cost_value * $multiply['multiply'];
-
-    $model = $_POST['model'];
-    $brand = $_POST['brand'];
-    $reference = $_POST['reference'];
-    $stock_quantity = $_POST['stock_quantity'];
-    $register_date = $_POST['register_date'];
-    $id_users = $user_id;
-    $flow = $_FILES['flow'];
-    $status_product = $_POST['status_product'];
-
-    $name_img = Panel::UploadsImg($flow);
-
-    if ($name == '' || $cost_value == '') {
-        Panel::Alert('attention', 'Os campos não podem ficar vázios!');
-    } else {
-        $verification = Db::Connection()->prepare("SELECT * FROM `products` WHERE name = ? AND id_users = ?");
-        $verification->execute([$_POST['name'], $user_id]);
-
-        if ($verification->rowCount() > 0) {
-            $updateQuery = Db::Connection()->prepare("UPDATE `products` SET stock_quantity = stock_quantity + ?, status_product = 'Em estoque' WHERE name = ? AND id_users = ?");
-            $updateQuery->execute([$_POST['stock_quantity'], $_POST['status_product'], $_POST['name'], $user_id]);
-            Panel::Alert('sucess', 'O cadastro do produto ' . $name . ' foi realizado com sucesso!');
-        } else {
-            $arr = [
-                'name' => $name,
-                'quantity' => $quantity,
-                'barcode' => $barcode,
-                'value_product' => $default,
-                'cost_value' => $cost_value,
-                'model' => $model,
-                'brand' => $brand,
-                'reference' => $reference,
-                'stock_quantity' => $stock_quantity,
-                'register_date' => $register_date,
-                'id_users' => $id_users,
-                'flow' => $name_img,
-                'status_product' => 'Em estoque',
-                'name_table' => 'products'
-            ];
-            Controllers::Insert($arr);
-            Panel::Alert('sucess', 'O cadastro do produto ' . $name . ' foi realizado com sucesso!');
-        }
-    }
-}
-
-?>
-
-
 <div class="box-content">
     <h2>Controle de produtos</h2>
-    <form class="form" method="post" enctype="multipart/form-data">
+    <form class="form">
         <div class="content-form">
             <label for="">Nome Produto</label>
-            <input type="text" name="name">
+            <input type="text" id="name">
+            <span id="name-error" class="error-message">Campo está invalido, Ajuste se possivel.</span>
         </div>
         <div class="content-form">
             <label for="">Quantidade</label>
-            <input type="text" name="quantity">
+            <input type="text" id="quantity">
+            <span id="quantity-error" class="error-message">Campo está invalido, Ajuste se possivel.</span>
         </div>
         <div class="content-form">
             <label for="">Quantidade no estoque</label>
-            <input type="text" name="stock_quantity">
+            <input type="text" id="stock_quantity">
+            <span id="stock_quantity-error" class="error-message">Campo está invalido, Ajuste se possivel.</span>
         </div>
         <div class="content-form">
             <label for="">Código de Barras</label>
-            <input type="text" name="barcode">
+            <input type="text" id="barcode">
+            <span id="barcode-error" class="error-message">Campo está invalido, Ajuste se possivel.</span>
         </div>
         <div ref="cpf" class="content-form">
             <label for="">Preço</label>
-            <input type="text" name="value_product" id="value" oninput="formmaterReal(this)" placeholder="R$ 0,00">
+            <input type="text" id="value_product" id="value" oninput="formmaterReal(this)" placeholder="R$ 0,00">
+            <span id="value_product-error" class="error-message">Campo está invalido, Ajuste se possivel.</span>
         </div>
         <div class="content-form">
             <label for="">Valor de custo</label>
-            <input type="text" name="cost_value" id="value" oninput="formmaterReal(this)" placeholder="R$ 0,00">
+            <input type="text" id="cost_value" id="value" oninput="formmaterReal(this)" placeholder="R$ 0,00">
+            <span id="cost_value-error" class="error-message">Campo está invalido, Ajuste se possivel.</span>
         </div>
         <div class="content-form">
             <label for="">Referencia</label>
-            <input type="text" name="reference">
+            <input type="text" id="reference">
+            <span id="reference-error" class="error-message">Campo está invalido, Ajuste se possivel.</span>
         </div>
         <div class="content-form">
             <label for="">Modelo</label>
-            <input type="text" name="model">
+            <input type="text" id="model">
+            <span id="model-error" class="error-message">Campo está invalido, Ajuste se possivel.</span>
         </div>
         <div class="content-form">
             <label for="">Marca</label>
-            <input type="text" name="brand">
+            <input type="text" id="brand">
+            <span id="brand-error" class="error-message">Campo está invalido, Ajuste se possivel.</span>
+        </div>
+        <div class="content-form">
+            <label for="">Tamanho</label>
+            <select id="size">
+                <?php
+                $id_size = Controllers::SizeClothes('clothes_size');
+
+                foreach ($id_size as $key => $value) {
+                    ?>
+                    <option <?php if ($value['id'] == @$_POST['id_size'])
+                        echo 'selected'; ?>value="<?php echo $value['id'] ?>"><?php echo $value['size']; ?></option>
+                <?php } ?>
+            </select>
+            <span id="size-error" class="error-message">Campo está invalido, Ajuste se possivel.</span>
         </div>
         <div class="content-form">
             <label for="">Imagem do Produto</label>
-            <input type="file" name="flow">
-        </div>
-        <div class="content-form">
-            <label for="">Data de registro</label>
-            <input type="date" name="register_date">
-        </div>
-        <div class="content-form">
-            <input type="hidden" name="id_users" />
-            <input type="hidden" name="status_product" />
-            <input type="hidden" name="name_table" value="products" />
-            <input type="submit" name="action" value="Cadastrar">
+            <input type="file" id="flow">
+            <span id="flow-error" class="error-message">Campo está invalido, Ajuste se possivel.</span>
         </div>
     </form>
+    <button class="button-registers" onclick="RegisterProducts()" type="button">Cadastrar</button>
 </div>
 
 <script src="<?php echo INCLUDE_PATH_PANEL; ?>../js/values.js"></script>
 
-<script>
-<!-- Adicione este trecho de código dentro do bloco <script> -->
-document.addEventListener('DOMContentLoaded', function () {
-    var form = document.querySelector('.form');
-
-    form.addEventListener('change', function (event) {
-        if (event.target.name === 'cost_value') {
-            updateCalculatedPrice();
-        }
-    });
-
-    function formatCurrency(value) {
-        return 'R$ ' + value.toFixed(2).replace('.', ',');
-    }
-
-    function updateCalculatedPrice() {
-        var costInput = form.elements['cost_value'];
-        var priceInput = form.elements['value_product'];
-        var costValue = parseFloat(costInput.value.replace(/[^0-9,.]/g, '').replace(',', '.')) || 0;
-        var multiply = <?php echo json_encode($multiply); ?>; 
-        var calculatedPrice = costValue * multiply;
-
-        priceInput.value = formatCurrency(calculatedPrice);
-    }
-
-    updateCalculatedPrice();
-});
-
-</script>
+</>

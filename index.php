@@ -1,15 +1,16 @@
 <?php
 
-  ob_start();
+ob_start();
 
-  include_once 'config/config.php'; include_once 'classes/panel.php';
+include_once 'config/config.php';
+include_once 'classes/panel.php';
 
-  if(Panel::Logged()){
-		include('home.php');
-	}else{
-		include('login.php');
-	}
+if (Panel::Logged()) {
+    include ('homepage.php');
+} else {
+    include ('login.php');
+}
 
-  ob_end_flush();
+ob_end_flush();
 
 ?>

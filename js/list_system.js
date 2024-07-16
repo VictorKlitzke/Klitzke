@@ -1,12 +1,14 @@
 const BASE_URL = "http://localhost:3000/Klitzke/ajax/";
 const BASE_CLASS = "http://localhost:3000/Klitzke/classes/";
+const BASE_CONTROLLERS = "http://localhost:3000/Klitzke/controllers/";
+const BASE_PATH_HOME = "http://localhost:3000/Klitzke/";
 
 async function InativarInvo(button) {
 
     const id_request_inativar = button.getAttribute('data-id');
 
     if (!id_request_inativar) {
-        window.alert("ID indentificado");
+        showMessage('ID indentificado', 'warning');
         return;
     }
 
@@ -15,14 +17,14 @@ async function InativarInvo(button) {
     if (continueInativar) {
         try {
 
-            let url = "http://localhost/Klitzke/ajax/inativar_request.php";
+            let url = `${BASE_URL}inativar_request.php`;
 
             const response = await fetch(url, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({id_inativar: id_request_inativar})
+                body: JSON.stringify({ id_inativar: id_request_inativar })
             })
 
             const responseText = await response.text();
@@ -31,19 +33,19 @@ async function InativarInvo(button) {
             try {
                 result = JSON.parse(responseText);
             } catch (e) {
-                window.alert("Erro inesperado ao processar a inativação do pedido. Entre em contato com o suporte.");
+                showMessage('Erro inesperado ao processar a inativação do pedido. Entre em contato com o suporte.', 'error');
                 return;
             }
 
             if (result.success) {
-                window.alert("Pedido inativado com suceesso");
+                showMessage('Pedido inativado com suceesso', 'success');
                 window.location.reload();
             } else {
-                window.alert("Erro ao inativar pedido: " + result.message);
+                showMessage('Erro ao inativar pedido: ' + result.message, 'error');
             }
 
         } catch (error) {
-            window.alert(" Erro ao fazer requisiçao, entre em contato com o suporte! " + error);
+            showMessage('Erro ao fazer requisiçao, entre em contato com o suporte! ' + error, 'error');
         }
     }
 }
@@ -69,7 +71,7 @@ async function ShowOnPage(button) {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({id_product: id_product_page})
+                body: JSON.stringify({ id_product: id_product_page })
             })
 
             const responseText = response.text();
@@ -99,44 +101,44 @@ async function CancelSales(button) {
     const id_sales_cancel = button.getAttribute('data-id');;
 
     if (!id_sales_cancel) {
-        window.alert("ID da venda nao identificado");
+        showMessage('ID da venda nao identificado', 'warning');
         return;
     }
 
     const constinueCancel = confirm("Deseja realmente cancelar essa venda?");
 
     if (constinueCancel) {
-       try {
-           let url = `${BASE_URL}cancel_sales.php`;
+        try {
+            let url = `${BASE_URL}cancel_sales.php`;
 
-           const response = await fetch(url,{
-               method: 'POST',
-               headers: {
-                   'Content-Type': 'application/json',
-               },
-               body: JSON.stringify({id_sales_cancel: id_sales_cancel})
-           })
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ id_sales_cancel: id_sales_cancel })
+            })
 
-           const responseText = await response.text();
-           let result;
+            const responseText = await response.text();
+            let result;
 
-           try {
-               result = JSON.parse(responseText)
-           } catch (error) {
-               window.alert("Erro interno, entre em contato com o suporte" + error)
-           }
+            try {
+                result = JSON.parse(responseText)
+            } catch (error) {
+                showMessage('Erro interno, entre em contato com o suporte' + error, 'error')
+            }
 
-           if (result.success) {
-               window.alert("Venda cancelada com sucesso!");
-               window.location.reload();
-           } else {
-               window.alert("Erro ao tentar cancelar a venda" + result.getMessage());
-           }
+            if (result.success) {
+                showMessage('Venda cancelada com sucesso!', 'success');
+                window.location.reload();
+            } else {
+                showMessage('Erro ao tentar cancelar a venda' + result.getMessage(), 'error');
+            }
 
-       } catch (error) {
-           window.alert("Erro interno, entre em contato com o suporte" + error)
-           return;
-       }
+        } catch (error) {
+            showMessage('Erro interno, entre em contato com o suporte' + error, 'error')
+            return;
+        }
     }
 }
 
@@ -155,12 +157,12 @@ async function ReopenSales(button) {
         try {
             let url = `${BASE_URL}reopen_sales.php`;
 
-            const response = await fetch(url,{
+            const response = await fetch(url, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({id_sales_reopen: id_sales_reopen})
+                body: JSON.stringify({ id_sales_reopen: id_sales_reopen })
             })
 
             const responseText = await response.text();
@@ -203,10 +205,10 @@ async function PrintOut(button) {
 
             const response = await fetch(url, {
                 method: 'POST',
-                    headers: {
+                headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({id_print_out: id_print_out})
+                body: JSON.stringify({ id_print_out: id_print_out })
             })
 
             const result = await response.json();
@@ -387,7 +389,7 @@ async function InativarUsers(button) {
     const id_users_inativar = button.getAttribute('data-id')
 
     if (!id_users_inativar) {
-        window.alert("Usuário não foi encontrado!");
+        showMessage('Usuário não foi encontrado!', 'warning');
     }
 
     const continueInativar = confirm("Deseja continuar com a instivação do usuário?")
@@ -402,20 +404,60 @@ async function InativarUsers(button) {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({id_users_inativar: id_users_inativar})
+                body: JSON.stringify({ id_users_inativar: id_users_inativar })
             })
 
             const responseBody = await response.json();
 
             if (responseBody.success) {
-                window.alert("Usuário com ID " + id_users_inativar + " inativado com sucesso!");
+                window.location.reload();
+                showMessage('Usuário com ID ' + id_users_inativar + ' inativado com sucesso!', 'success');
             } else {
-                window.alert(responseBody.message);
+                showMessage(responseBody.message, 'error');
             }
 
         } catch (error) {
-            window.alert("Erro ao fazer requisição!" + error);
+            showMessage('Erro ao fazer requisição!' + error, 'error');
         }
+    }
+}
+
+async function DeleteUsers(button) {
+    const id_user_delete = button.getAttribute('data-id');
+
+    if (!id_user_delete) {
+        showMessage('ID do usuário inválido', 'warning');
+        return;
+    }
+
+    const continueDelete = confirm('Deseja realmente deletar usuário');
+
+    if (continueDelete) {
+
+        try {
+
+            let url = `${BASE_CONTROLLERS}deletes.php`;
+
+            const response = await fetch(url, {
+                method: 'DELETE',
+                headers: {
+                    'content-type': 'application/json',
+                },
+                body: JSON.stringify({id_user_delete: id_user_delete})
+            })
+
+            const responseBody = await response.json();
+
+            if (responseBody.success) {
+                showMessage('Usuário deletado com sucesso', 'success');
+            } else {
+                showMessage('Erro ao deletar usuário', 'error');
+            }
+
+        } catch (error) {
+            showMessage('Error interno no servidor, contante o suporte', 'error');
+        }
+
     }
 }
 

@@ -3,7 +3,7 @@ const browserSync = require('browser-sync').create();
 
 function serve() {
     browserSync.init({
-        proxy: "http://localhost/Klitzke",
+        proxy: "http://localhost:33/Klitzke/",
         notify: false
     });
 

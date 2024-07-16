@@ -1,93 +1,48 @@
-<?php
-
-if (isset($_POST['action'])) {
-  $name_company = $_POST['name'];
-  $cnpj = $_POST['cnpj'];
-  $state_registration = $_POST['state_registration'];
-  $email = $_POST['email'];
-  $phone = $_POST['phone'];
-  $address = $_POST['address'];
-  $city = $_POST['city'];
-  $state = $_POST['state'];
-  if ($name_company == '' || $state_registration == '' || $phone == '' || $cnpj == '') {
-    Panel::Alert('attention', 'Os campos não podem ficar vázios!');
-  } else {
-    $verification = Db::Connection()->prepare("SELECT * FROM `company` WHERE name = ? AND cnpj = ? AND state_registration = ? AND email = ?
-                                                      AND phone = ? AND address = ? AND city = ? AND state = ?");
-    $verification->execute(
-      array(
-        $name_company = $_POST['name'],
-        $_POST['cnpj'],
-        $_POST['state_registration'],
-        $_POST['email'],
-        $_POST['phone'],
-        $_POST['address'],
-        $_POST['city'],
-        $_POST['state']
-      )
-    );
-    if ($verification->rowCount() == 0) {
-      $arr = [
-         'name' => $name_company,
-        'cnpj' => $cnpj,
-        'state_registration' => $state_registration,
-        'email' => $email,
-        'phone' => $phone,
-        'address' => $address,
-        'city' => $city,
-        'state' => $state,
-        'name_table' => 'company'
-      ];
-      Controllers::Insert($arr);
-      Panel::Alert('sucess', 'O cadastro da empresa ' . $name_company . ' foi realizado com sucesso!');
-        $_SESSION['name_company'] = $name_company;
-    } else {
-      Panel::Alert('error', 'Já existe uma empresa com este nome!');
-    }
-  }
-}
-?>
-
 <div class="box-content">
   <h2>Cadastrar Empresa</h2>
-  <form class="form" method="post" enctype="multipart/form-data">
+  <form class="form">
     <div class="content-form">
       <label for="">Nome</label>
-      <input type="text" name="name">
+      <input type="text" id="name">
+      <span id="phone-error" class="error-message">Campo está invalido, Ajuste se possivel.</span>
     </div>
     <div class="content-form">
       <label for="">CPNJ</label>
-      <input type="text" id="cnpj" placeholder="00.000.000/0000-00" oninput="formatarCNPJ(this)" maxlength="18" name="cnpj">
+      <input type="text" id="cnpj" placeholder="00.000.000/0000-00" maxlength="14">
+      <span id="cnpj-error" class="error-message">Campo está invalido, Ajuste se possivel.</span>
     </div>
     <div class="content-form">
       <label for="">Inscrição Estadual</label>
-      <input type="text" name="state_registration">
+      <input type="text" id="state_registration">
+      <span id="state_registration-error" class="error-message">Campo está invalido, Ajuste se possivel.</span>
     </div>
     <div ref="cpf" class="content-form">
       <label for="">Email</label>
-      <input type="text" name="email">
+      <input type="text" id="email">
+      <span id="email-error" class="error-message">Campo está invalido, Ajuste se possivel.</span>
     </div>
     <div class="content-form">
       <label for="">Contato</label>
-      <input type="text" name="phone">
+      <input type="text" id="phone">
+      <span id="phone-error" class="error-message">Campo está invalido, Ajuste se possivel.</span>
     </div>
     <div class="content-form">
       <label for="">Endereco</label>
-      <input type="text" name="address">
+      <input type="text" id="address">
+      <span id="address-error" class="error-message">Campo está invalido, Ajuste se possivel.</span>
     </div>
     <div class="content-form">
       <label for="">Cidade</label>
-      <input type="text" name="city">
+      <input type="text" id="city">
+      <span id="city-error" class="error-message">Campo está invalido, Ajuste se possivel.</span>
     </div>
     <div class="content-form">
       <label for="">Estado</label>
-      <input type="text" name="state">
-    </div>
-    <div class="content-form">
-      <input type="hidden" name="name_table" value="company" />
-      <input type="submit" name="action" value="Cadastrar">
+      <input type="text" id="state">
+      <span id="state-error" class="error-message">Campo está invalido, Ajuste se possivel.</span>
     </div>
   </form>
+  <button class="button-registers" onclick="RegisterCompany()" type="button">Cadastrar</button>
 </div>
 
 <script>

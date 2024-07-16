@@ -1,13 +1,12 @@
 <?php
-
 global $title_login;
 global $chave_secret;
 include_once './services/db.php';
 include_once './classes/panel.php';
 
-$disable = 1;
-
-function generateRandomCode($length = 10) {
+$today = date("Y-m-d H:i:s");
+function generateRandomCode($length = 10)
+{
     return substr(str_shuffle("0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"), 0, $length);
 }
 
@@ -16,10 +15,8 @@ if (isset($_POST['action'])) {
     $userProvidedPassword = $_POST['password'];
 
     $sql = Db::Connection();
-    $exec = $sql->prepare("SELECT * FROM `users` WHERE name = :login AND disable = :disable");
-    $exec->bindValue(':disable', $disable, PDO::PARAM_INT);
-    $exec->bindValue(':login', $login, PDO::PARAM_STR);
-    $exec->execute();
+    $exec = $sql->prepare("SELECT * FROM `users` WHERE name = ?");
+    $exec->execute(array($login));
 
     if ($exec->rowCount() == 1) {
         $info = $exec->fetch();
@@ -27,14 +24,13 @@ if (isset($_POST['action'])) {
         if (password_verify($userProvidedPassword, $storedPassword)) {
 
             if ($info['access'] != 100) {
-
-                $random_code = generateRandomCode(10) . date('Ymd');
+                $randomCode = generateRandomCode(10) . date('Ymd');
                 $dateStart = date('Y-m-d H:i:s');
                 $dateFinal = date('Y-m-d H:i:s', strtotime($dateStart . ' + 15 days'));
 
-                $insertCode = $sql->prepare("INSERT INTO validade_system (code, date_start, date_final, id_users)
-                                         VALUES(:code, :date_start, :date_final, :id_users)");
-                $insertCode->bindValue(':code', $random_code, PDO::PARAM_STR);
+                $insertCode = $sql->prepare("INSERT INTO validade_system (code, date_start, date_final, id_users) 
+                                             VALUES(:code, :date_start, :date_final, :id_users)");
+                $insertCode->bindValue(':code', $randomCode, PDO::PARAM_STR);
                 $insertCode->bindValue(':date_start', $dateStart, PDO::PARAM_STR);
                 $insertCode->bindValue(':date_final', $dateFinal, PDO::PARAM_STR);
                 $insertCode->bindValue(':id_users', $info['id'], PDO::PARAM_INT);
@@ -42,37 +38,42 @@ if (isset($_POST['action'])) {
 
             }
 
-            $secretKey = $chave_secret;
-            $issuedAt = time();
-            $expirationTime = $issuedAt + 3600;
-            $payload = [
-                'iat' => $issuedAt,
-                'exp' => $expirationTime,
-                'data' => [
-                    'id' => $info['id'],
-                    'name' => $login,
-                ]
-            ];
-
-            $jwt = base64_encode(json_encode($payload)) . '.' . base64_encode(hash_hmac('sha256', json_encode($payload), $secretKey, true));
-
-            setcookie('jwt', $jwt, $expirationTime, '/', '', false, true);
-
-            $_SESSION['login'] = true;
-            $_SESSION['name'] = $login;
-            $_SESSION['id'] = $info['id'];
-            $_SESSION['phone'] = $info['phone'];
-            $_SESSION['function'] = $info['function'];
-            $_SESSION['commission'] = $info['commission'];
-            $_SESSION['target_commission'] = $info['target_commission'];
-            $_SESSION['access'] = $info['access'];
-            $_SESSION['random_code'] = $random_code;
-
-            header('Location: ' . INCLUDE_PATH);
-            die();
-        } else {
-            Panel::Alert('error', 'Credenciais inválidas. Ocorreu um erro ao fazer login.');
         }
+
+        $secretKey = $chave_secret;
+        $issuedAt = time();
+        $expirationTime = $issuedAt + 3600;
+        $payload = [
+            'iat' => $issuedAt,
+            'exp' => $expirationTime,
+            'data' => [
+                'id' => $info['id'],
+                'name' => $login,
+            ]
+        ];
+
+        $jwt = base64_encode(json_encode($payload)) . '.' . base64_encode(hash_hmac('sha256', json_encode($payload), $secretKey, true));
+
+        setcookie('jwt', $jwt, $expirationTime, '/', '', false, true);
+
+        $_SESSION['login'] = true;
+        $_SESSION['name'] = $login;
+        $_SESSION['id'] = $info['id'];
+        $_SESSION['phone'] = $info['phone'];
+        $_SESSION['function'] = $info['function'];
+        $_SESSION['commission'] = $info['commission'];
+        $_SESSION['target_commission'] = $info['target_commission'];
+        $_SESSION['access'] = $info['access'];
+        $_SESSION['random_code'] = $randomCode;
+        $_SESSION['access'] = $info['access'];
+
+        $message_log = "Usuário $name logado com sucesso";
+        Panel::LogAction($info['id'], 'Login Usuário', $message_log, $today);
+
+        header('Location: ' . INCLUDE_PATH);
+        die();
+    } else {
+        Panel::Alert('error', 'Credenciais inválidas. Ocorreu um erro ao fazer login.');
     }
 }
 ?>
@@ -89,68 +90,68 @@ if (isset($_POST['action'])) {
 </head>
 
 <body>
-<div class="wrapper">
-    <span class="bg-animate"></span>
-    <span class="bg-animate2"></span>
+    <div class="wrapper">
+        <span class="bg-animate"></span>
+        <span class="bg-animate2"></span>
 
-    <div class="form-box login">
-        <h2 class="animation" style="--i:0;">Login</h2>
-        <form action="#" method="POST">
-            <div class="input-box animation" style="--i:1;">
-                <input type="text" name="name" required />
-                <label>Usuario</label>
-                <i class='bx bxs-user'></i>
-            </div>
-            <div class="input-box animation" style="--i:2;">
-                <input type="password" name="password" required />
-                <label>Senha</label>
-                <i class='bx bxs-lock-alt'></i>
-            </div>
-            <div>
-                <button type="submit" name="action" class="btn animation" style="--i:3;">Login</button>
-                <div class="logreg-link animation" style="--i:4;">
-                    <p>Não tem uma Conta ?<a href="#" class="register-link">Registrar-me</a></p>
+        <div class="form-box login">
+            <h2 class="animation" style="--i:0;">Login</h2>
+            <form action="#" method="POST">
+                <div class="input-box animation" style="--i:1;">
+                    <input type="text" name="name" required />
+                    <label>Usuario</label>
+                    <i class='bx bxs-user'></i>
                 </div>
-            </div>
-        </form>
-    </div>
-    <div class="info-text login">
-        <h2 class="animation" style="--i:0;">Bem vindo de volta !</h2>
-        <p class="animation" style="--i:1;">Onde seu negocio toma novos rumos</p>
-    </div>
-    <div class="form-box register">
-        <h2 class="animation" style="--i:17;">Registrar-me</h2>
-        <form action="#" method="POST">
-            <div class="input-box animation" style="--i:18;">
-                <input type="text" name="name" required />
-                <label>Usuario</label>
-                <i class='bx bxs-user'></i>
-            </div>
-            <div class="input-box animation" style="--i:19;">
-                <input type="text" name="name" required />
-                <label>Email</label>
-                <i class='bx bxs-envelope'></i>
-            </div>
-            <div class="input-box animation" style="--i:20;">
-                <input type="password" name="password" required />
-                <label>Senha</label>
-                <i class='bx bxs-lock-alt'></i>
-            </div>
-            <div>
-                <button type="submit" name="action" class="btn animation" style="--i:21;">Registrar</button>
-                <div class="logreg-link animation" style="--i:22;">
-                    <p>Já tem uma Conta ?<a href="#" class="login-link">Entrar</a></p>
+                <div class="input-box animation" style="--i:2;">
+                    <input type="password" name="password" required />
+                    <label>Senha</label>
+                    <i class='bx bxs-lock-alt'></i>
                 </div>
-            </div>
-        </form>
+                <div>
+                    <button type="submit" name="action" class="btn animation" style="--i:3;">Login</button>
+                    <div class="logreg-link animation" style="--i:4;">
+                        <p>Não tem uma Conta ?<a href="#" class="register-link">Registrar-me</a></p>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="info-text login">
+            <h2 class="animation" style="--i:0;">Bem vindo de volta !</h2>
+            <p class="animation" style="--i:1;">Onde seu negocio toma novos rumos</p>
+        </div>
+        <div class="form-box register">
+            <h2 class="animation" style="--i:17;">Registrar-me</h2>
+            <form action="#" method="POST">
+                <div class="input-box animation" style="--i:18;">
+                    <input type="text" name="name" required />
+                    <label>Usuario</label>
+                    <i class='bx bxs-user'></i>
+                </div>
+                <div class="input-box animation" style="--i:19;">
+                    <input type="text" name="name" required />
+                    <label>Email</label>
+                    <i class='bx bxs-envelope'></i>
+                </div>
+                <div class="input-box animation" style="--i:20;">
+                    <input type="password" name="password" required />
+                    <label>Senha</label>
+                    <i class='bx bxs-lock-alt'></i>
+                </div>
+                <div>
+                    <button type="submit" name="action" class="btn animation" style="--i:21;">Registrar</button>
+                    <div class="logreg-link animation" style="--i:22;">
+                        <p>Já tem uma Conta ?<a href="#" class="login-link">Entrar</a></p>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="info-text register">
+            <h2 class="animation" style="--i:17;">Bem vindo de volta !</h2>
+            <p class="animation" style="--i:18;">Onde seu negocio toma novos rumos</p>
+        </div>
     </div>
-    <div class="info-text register">
-        <h2 class="animation" style="--i:17;">Bem vindo de volta !</h2>
-        <p class="animation" style="--i:18;">Onde seu negocio toma novos rumos</p>
-    </div>
-</div>
 
-<script src="<?php echo INCLUDE_PATH ?>js/login.js"></script>
+    <script src="<?php echo INCLUDE_PATH ?>js/login.js"></script>
 </body>
 
 </html>
