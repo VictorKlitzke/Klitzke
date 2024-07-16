@@ -958,3 +958,64 @@ async function RegisterSangria() {
         showMessage('Retirada de caixa cancelada', 'warning');
     })
 }
+
+const getFieldsMultiply = () => {
+    return {
+        type: {
+            type: 'multiply',
+        },
+        values: {
+            multiply: document.getElementById('multiply').value,
+        },
+        inputs: {
+            multiply: document.getElementById('multiply')
+        }
+    }
+}
+
+async function RegisterMultiply() {
+    const { type, values, inputs } = await getFieldsMultiply();
+
+
+    if (values.multiply == "") {
+        showMessage('Campo vazio', 'warning')
+
+        return;
+    }
+
+    let responseMultiply = {
+        type: type.type,
+        multiply: values.multiply
+    }
+
+    continueMessage("Deseja relamente cadastrar um multiplicador?", "Sim", "Não", async function () {
+
+        try {
+
+            let url = `${BASE_CONTROLLERS}registers.php`;
+
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(responseMultiply)
+            });
+
+            const responseBody = await response.json();
+
+            if (responseBody.success) {
+                showMessage('Multiplicador cadatrado na quantidade de ' + values.multiply, 'success');
+            } else {
+                showMessage(responseBody.message || 'Erro ao cadastrar multiplicador ' + responseBody.error, 'error');
+            }
+
+        } catch (error) {
+            showMessage('Erro na requisição' + error.message, 'error')
+        }
+
+    }, function () {
+        showMessage('Registro cancelado', 'warning')
+    })
+
+}
