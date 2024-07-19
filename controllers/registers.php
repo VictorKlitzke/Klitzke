@@ -47,6 +47,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $response_forn = $data;
     $response_boxpdv = $data;
     $response_sangria = $data;
+    $response_multiply = $data;
 
     if (isset($data['type'])) {
         if ($data['type'] == 'users') {
@@ -67,6 +68,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             Register::RegisterBoxPdv($sql, $response_boxpdv, $user_id);
         } else if ($data['type'] == 'sangriapdv') {
             Register::RegisterSangria($sql, $response_sangria, $user_id);
+        } else if ($data['type'] == 'multiply') {
+            Register::RegisterMultiply($sql, $response_multiply, $user_id);
         }
     } else {
         Response::json(false, 'Tipo type não encontrado', $today);
@@ -556,6 +559,34 @@ class Register
             Response::send(true, 'Retirada realizada com sucesso', $today);
 
         } catch (Exception $e) {
+            http_response_code(500);
+            echo json_encode(['error' => 'Erro no banco de dados: ' . $e->getMessage(), 'code' => $e->getCode()]);
+        }
+
+    }
+
+    public static function RegisterMultiply($sql, $response_multiply, $user_id){
+
+        $today = date('Y-m-d H:i:s');
+        $status = 1;
+        $name = filter_var($response_multiply['multiply'], FILTER_SANITIZE_STRING);
+        $name_table = "config_multiply_product";
+
+        if (!$name) {
+            Response::json(false, 'Campo invalido', $today);
+        }
+        try {
+
+            $sql->BeginTransaction();
+
+            $exec = $sql->prepare("INSERT INTO $name_table (multiply, status) VALUES(:multiply, :status)");
+            $exec->bindValue(':multiply', $name, PDO::PARAM_STR);
+            $exec->bindValue(':status', $status, PDO::PARAM_INT);
+            $exec->execute();
+
+            $sql->commit();
+
+        } catch(Exception $e){
             http_response_code(500);
             echo json_encode(['error' => 'Erro no banco de dados: ' . $e->getMessage(), 'code' => $e->getCode()]);
         }

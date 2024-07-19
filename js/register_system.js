@@ -980,6 +980,12 @@ async function RegisterMultiply() {
     if (values.multiply == "") {
         showMessage('Campo vazio', 'warning')
 
+        if (values.multiply === "") inputs.multiply.classList.add('error');
+        setTimeout(() => {
+            inputs.value.multiply.remove('error');
+        }, 3000);
+
+
         return;
     }
 
