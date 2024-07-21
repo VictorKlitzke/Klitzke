@@ -1,11 +1,4 @@
 <?php
-
-if (isset($_GET['delete'])) {
-  $del = intval($_GET['delete']);
-  Controllers::Delete('users', $del);
-  header('Location: ' . INCLUDE_PATH . 'list-users');
-}
-
 $currentPage = isset($_GET['page']) ? (int) ($_GET['page']) : 1;
 $porPage = 20;
 
@@ -65,8 +58,8 @@ $users = Controllers::SelectAll('users', ($currentPage - 1) * $porPage, $porPage
             </div>
 
             <div>
-              <a actionBtn="delete" class="btn-delete"
-                href="<?php echo INCLUDE_PATH ?>list-users?delete=<?php echo $value['id']; ?>">Deletar</a>
+              <a class="btn-delete" onclick="DeleteUsers(this)" data-id="<?php echo base64_encode($value['id']); ?>"
+                >Deletar</a>
             </div>
 
           </td>

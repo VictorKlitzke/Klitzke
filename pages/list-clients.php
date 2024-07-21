@@ -1,11 +1,5 @@
 <?php
 
-if (isset($_GET['delete'])) {
-	$del = intval($_GET['delete']);
-	Controllers::Delete('clients', $del);
-	header('Location: ' . INCLUDE_PATH . 'list-clients');
-}
-
 $currentPage = isset($_GET['page']) ? (int)($_GET['page']) : 1;
 $porPage = 20;
 
@@ -45,7 +39,7 @@ $clients = Controllers::SelectAll('clients', ($currentPage - 1) * $porPage, $por
 						<td><?php echo htmlspecialchars($value['phone']); ?></td>
 						<td><?php echo htmlspecialchars($value['cep']); ?></td>
 						<td><?php echo htmlspecialchars($value['city']); ?></td>
-						<td><?php echo htmlspecialchars($value['address']); ?></td>
+						<td><p><?php echo htmlspecialchars($value['address']); ?></p></td>
 						<td><?php echo htmlspecialchars($value['cpf']); ?></td>
 						<td><?php echo htmlspecialchars($value['neighborhood']); ?></td>
 
@@ -57,7 +51,7 @@ $clients = Controllers::SelectAll('clients', ($currentPage - 1) * $porPage, $por
 								<a class="btn-disable" href="<?php echo INCLUDE_PATH ?>">Desativar</a>
 							</div>
 							<div>
-								<a actionBtn="delete" class="btn-delete" href="<?php echo INCLUDE_PATH ?>list-clients?delete=<?php echo base64_encode($value['id']); ?>">Deletar</a>
+								<a class="btn-delete" onclick="DeleteClients(this)" data-id="<?php echo base64_encode($value['id']); ?>">Deletar</a>
 							</div>
 						</td>
 					</tr>
