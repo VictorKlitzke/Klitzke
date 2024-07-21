@@ -194,56 +194,6 @@ class Controllers
         return $exec->fetchAll();
 
     }
-    public static function Insert($arr)
-    {
-        $db = Db::Connection();
-
-        $true = true;
-        $name_table = $arr['name_table'];
-        $query = "INSERT INTO `$name_table` (";
-        $columns = $db->query("SHOW COLUMNS FROM `$name_table`")->fetchAll(PDO::FETCH_COLUMN);
-        foreach ($columns as $column) {
-            if (!array_key_exists($column, $arr)) {
-                $arr[$column] = null;
-            }
-        }
-        foreach ($arr as $key => $value) {
-            $name = $key;
-            if ($name == 'action' || $name == 'name_table')
-                continue;
-            if ($value == '') {
-                $true = true;
-                break;
-            } else {
-                $query .= "`$name`,";
-            }
-        }
-        $query = substr($query, 0, -1);
-        $query .= ") VALUES (";
-
-        foreach ($arr as $key => $value) {
-            $name = $key;
-            if ($name == 'action' || $name == 'name_table')
-                continue;
-            if ($value == '') {
-                $true = true;
-                break;
-            } else {
-                $query .= "?,";
-                $param[] = $value;
-            }
-        }
-        $query = substr($query, 0, -1);
-
-        $query .= ")";
-
-        if ($true == true) {
-            $sql = $db->prepare($query);
-            $sql->execute($param);
-        }
-
-        return $true;
-    }
     public static function Update($arr, $single = false)
     {
         $true = true;

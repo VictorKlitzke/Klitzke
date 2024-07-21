@@ -569,10 +569,10 @@ class Register
 
         $today = date('Y-m-d H:i:s');
         $status = 1;
-        $name = filter_var($response_multiply['multiply'], FILTER_SANITIZE_STRING);
+        $multiply = filter_var($response_multiply['multiply'], FILTER_SANITIZE_STRING);
         $name_table = "config_multiply_product";
 
-        if (!$name) {
+        if (!$multiply) {
             Response::json(false, 'Campo invalido', $today);
         }
         try {
@@ -580,11 +580,15 @@ class Register
             $sql->BeginTransaction();
 
             $exec = $sql->prepare("INSERT INTO $name_table (multiply, status) VALUES(:multiply, :status)");
-            $exec->bindValue(':multiply', $name, PDO::PARAM_STR);
+            $exec->bindValue(':multiply', $multiply, PDO::PARAM_STR);
             $exec->bindValue(':status', $status, PDO::PARAM_INT);
             $exec->execute();
 
             $sql->commit();
+
+            $message_log = "Esse produto vai ser multiplicado por $multiply cadastrado com sucesso";
+            Panel::LogAction($user_id, 'Cadastrar Multiplicador', $message_log, $today);
+            Response::send(true, 'Multiplicador cadastrado com sucesso', $today);
 
         } catch(Exception $e){
             http_response_code(500);

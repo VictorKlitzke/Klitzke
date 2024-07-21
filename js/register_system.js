@@ -29,7 +29,9 @@ async function RegisterUsers() {
 
     const { values, type, inputs } = await FieldsUsers();
 
-    if (values.name == "" || values.password == "" || values.email == "" || values.phone || values.userFunction || values.access == "") {
+    console.log(values);
+
+    if (values.name == "" || values.password == "" || values.email == "" || values.phone || values.userFunction) {
         showMessage('Campos estão vazios, por favor preencha', 'warning',);
 
         if (values.name == "") inputs.name.classList.add('error');
@@ -37,14 +39,12 @@ async function RegisterUsers() {
         if (values.email == "") inputs.email.classList.add('error');
         if (values.userFunction == "") inputs.userFunction.classList.add('error');
         if (values.phone == "") inputs.phone.classList.add('error');
-        if (values.access == "") inputs.access.classList.add('error');
         setTimeout(() => {
             inputs.name.classList.remove('error');
             inputs.password.classList.remove('error');
             inputs.email.classList.remove('error');
             inputs.userFunction.classList.remove('error');
             inputs.phone.classList.remove('error');
-            inputs.access.classList.remove('error');
         }, 3000);
 
         return;
@@ -62,7 +62,7 @@ async function RegisterUsers() {
     }
 
     let responseFields = {
-        type: values.type,
+        type: type.type,
         name: values.name,
         email: values.email,
         password: values.password,
@@ -72,6 +72,8 @@ async function RegisterUsers() {
         targetCommission: values.targetCommission,
         access: values.access
     }
+
+    console.log(responseFields);
 
     continueMessage(
         "Deseja realmente cadastrar esse usuário?", "Sim", "Não", async function () {
@@ -902,7 +904,6 @@ const getFieldsSangria = () => {
         }
     }
 }
-
 async function RegisterSangria() {
     const { type, values, inputs } = await getFieldsSangria();
     let InputValueSangria = values.value.replace(/\D/g, "");
@@ -972,7 +973,6 @@ const getFieldsMultiply = () => {
         }
     }
 }
-
 async function RegisterMultiply() {
     const { type, values, inputs } = await getFieldsMultiply();
 
@@ -993,6 +993,8 @@ async function RegisterMultiply() {
         type: type.type,
         multiply: values.multiply
     }
+
+    console.log(responseMultiply);
 
     continueMessage("Deseja relamente cadastrar um multiplicador?", "Sim", "Não", async function () {
 

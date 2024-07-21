@@ -306,6 +306,8 @@ if ($checkCode->rowCount() > 0) {
     <script language="JavaScript" type="text/javascript" src="<?php echo INCLUDE_JAVASCRIPT; ?>main.js"></script>
     <script language="JavaScript" type="text/javascript"
         src="<?php echo INCLUDE_JAVASCRIPT; ?>register_system.js"></script>
+    <script language="JavaScript" type="text/javascript"
+        src="<?php echo INCLUDE_JAVASCRIPT; ?>delete_system.js"></script>
     <script language="JavaScript" type="text/javascript" src="<?php echo INCLUDE_JAVASCRIPT; ?>list_system.js"></script>
     <script language="JavaScript" type="text/javascript" src="<?php echo INCLUDE_JAVASCRIPT; ?>values.js"></script>
     <script language="JavaScript" type="text/javascript" src="<?php echo INCLUDE_JAVASCRIPT; ?>menu.js"></script>
