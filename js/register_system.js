@@ -29,10 +29,8 @@ async function RegisterUsers() {
 
     const { values, type, inputs } = await FieldsUsers();
 
-    console.log(values);
-
-    if (values.name == "" || values.password == "" || values.email == "" || values.phone || values.userFunction) {
-        showMessage('Campos estão vazios, por favor preencha', 'warning',);
+    if (values.name == "" || values.password == "" || values.email == "" || values.phone == "" || values.userFunction == "") {
+        showMessage('Preencha todos os campos!', 'warning',);
 
         if (values.name == "") inputs.name.classList.add('error');
         if (values.password == "") inputs.password.classList.add('error');
@@ -45,6 +43,18 @@ async function RegisterUsers() {
             inputs.email.classList.remove('error');
             inputs.userFunction.classList.remove('error');
             inputs.phone.classList.remove('error');
+        }, 3000);
+
+        return;
+    }
+
+    if (isNaN(values.targetCommission) || isNaN(values.commission)){
+        showMessage('Campos só aceita numeros', 'warning',);
+
+        if (!isNaN(values.targetCommission)) inputs.targetCommission.classList.add('error');
+        if (!isNaN(values.commission)) inputs.commission.classList.add('error');
+        setTimeout(() => {
+            inputs.commission.classList.remove('error');
         }, 3000);
 
         return;
@@ -72,8 +82,6 @@ async function RegisterUsers() {
         targetCommission: values.targetCommission,
         access: values.access
     }
-
-    console.log(responseFields);
 
     continueMessage(
         "Deseja realmente cadastrar esse usuário?", "Sim", "Não", async function () {
@@ -837,7 +845,6 @@ const getFieldsBoxPdv = () => {
 }
 async function RegisterBoxPdv() {
     const { type, values, inputs } = await getFieldsBoxPdv();
-    let InputValueBox = values.value.replace(/\D/g, "");
 
     if (values.value == "" || values.observation == "") {
         showMessage('Campos não podem ficar vazios', 'warning');
@@ -853,11 +860,20 @@ async function RegisterBoxPdv() {
 
     }
 
+    function parseCurrency(value) {
+        value = value.replace(/[^0-9,.]/g, '');
+        value = value.replace(',', '.');
+        return parseFloat(value);
+    }
+    const valueBoxPdv = parseCurrency(values.value);
+
     let responseBoxPdv = {
         type: type.type,
-        value: values.value,
+        value: valueBoxPdv,
         observation: values.observation,
     }
+
+    console.log(responseBoxPdv);
 
     continueMessage("Deseja realmente abrir o caixa?", "Sim", "Não", async function () {
 
@@ -876,6 +892,11 @@ async function RegisterBoxPdv() {
 
             if (responseBody.success) {
                 showMessage('Caixa aberto no valor de ' + values.value, 'success');
+                
+                setTimeout(() => {
+                    location.reload();
+                }, 2000);
+
             } else {
                 showMessage(responseBody.message || 'Erro ao abrir caixa ' + responseBody.error, 'error');
             }

@@ -131,7 +131,6 @@ class Register
         }
 
     }
-
     public static function RegisterClient($sql, $response_clients, $user_id)
     {
 
@@ -504,7 +503,7 @@ class Register
             $_SESSION['value'] = $value;
             $_SESSION['open_date'] = $today;
 
-            $message_log = "Caixa $ aberto com sucesso";
+            $message_log = "Caixa $value aberto com sucesso";
             Panel::LogAction($user_id, 'Abertura de caixa', $message_log, $today);
             Response::send(true, 'Caixa aberto com sucesso', $today);
 
