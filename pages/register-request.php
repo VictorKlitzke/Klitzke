@@ -1,11 +1,5 @@
 <?php
 
-if (isset($_GET["delete"])) {
-    $del = intval($_GET["delete"]);
-    Controllers::Delete("request", $del);
-    header("Location: " . INCLUDE_PATH . "register-request");
-}
-
 $currentPage = isset($_GET["page"]) ? (int) $_GET["page"] : 1;
 $porPage = 20;
 

@@ -1,11 +1,5 @@
 <?php
 
-if (isset($_GET['delete'])) {
-    $del = intval($_GET['delete']);
-    Controllers::Delete('products', $del);
-    header('Location: ' . INCLUDE_PATH . 'list-products');
-}
-
 $currentPage = isset($_GET['page']) ? (int)($_GET['page']) : 1;
 $porPage = 100;
 
@@ -50,12 +44,6 @@ $products = Controllers::SelectAll('products', ($currentPage - 1) * $porPage, $p
                     <td><?php echo htmlspecialchars($value['model']); ?></td>
 
                     <td style="display: flex; justify-content: center; gap: 10px; margin: 6px; padding: 6px;">
-                        <!-- <div>
-                            <a class="btn-edit" href="<?php //echo INCLUDE_PATH ?>edit-products?id=<?php //echo base64_encode($value['id']); ?>">Editar</a>
-                        </div> -->
-                        <div>
-                            <a actionBtn="delete" class="btn-delete" href="<?php echo INCLUDE_PATH ?>list-products?delete=<?php echo $value['id']; ?>">Deletar</a>
-                        </div>
                         <div>
                             <a onclick="ShowOnPage(this)" data-id="<?php echo $value['id']; ?>" class="btn-edit"> Mostrar na pagina </a>
                         </div>

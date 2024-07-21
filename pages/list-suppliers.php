@@ -1,11 +1,5 @@
 <?php
 
-if (isset($_GET['delete'])) {
-  $del = intval($_GET['delete']);
-  Controllers::Delete('suppliers', $del);
-  header('Location: ' . INCLUDE_PATH . 'list-suppliers');
-}
-
 $currentPage = isset($_GET['page']) ? (int)($_GET['page']) : 1;
 $porPage = 20;
 
@@ -52,7 +46,7 @@ $suppliers = Controllers::SelectAll('suppliers', ($currentPage - 1) * $porPage, 
                 <a class="btn-edit" href="<?php echo INCLUDE_PATH; ?>edit-suppliers?id=<?php echo base64_encode($value['id']); ?>">Editar</a>
               </div>
               <div>
-                <a actionBtn="delete" class="btn-delete" href="<?php echo INCLUDE_PATH; ?>list-suppliers?delete=<?php echo $value['id']; ?>">Deletar</a>
+                <a class="btn-delete" onclick="DeleteForn(this)" data-id="<?php echo base64_encode($value['id']); ?>">Deletar</a>
               </div>
             </td>
           </tr>

@@ -1,12 +1,6 @@
 <?php
 
-if (isset($_GET['delete'])) {
-	$del = intval($_GET['delete']);
-	Controllers::Delete('company', $del);
-	header('Location: ' . INCLUDE_PATH . 'list-company');
-}
-
-$currentPage = isset($_GET['page']) ? (int)($_GET['page']) : 1;
+$currentPage = isset($_GET['page']) ? (int) ($_GET['page']) : 1;
 $porPage = 20;
 
 $company = Controllers::SelectAll('company', ($currentPage - 1) * $porPage, $porPage);
@@ -45,18 +39,16 @@ $company = Controllers::SelectAll('company', ($currentPage - 1) * $porPage, $por
 						<td><?php echo htmlspecialchars($value['email']); ?></td>
 						<td><?php echo htmlspecialchars($value['phone']); ?></td>
 						<td><?php echo htmlspecialchars($value['city']); ?></td>
-						<td><?php echo htmlspecialchars($value['address']); ?></td>					
+						<td><?php echo htmlspecialchars($value['address']); ?></td>
 						<td><?php echo htmlspecialchars($value['state']); ?></td>
 
 						<td style="display: flex; justify-content: center; gap: 10px; margin: 6px; padding: 6px;">
 							<div>
-								<a class="btn-edit" href="<?php echo INCLUDE_PATH ?>edit-companys?id=<?php echo base64_encode($value['id']); ?>">Editar</a>
+								<a class="btn-edit"
+									href="<?php echo INCLUDE_PATH ?>edit-companys?id=<?php echo base64_encode($value['id']); ?>">Editar</a>
 							</div>
 							<div>
 								<a class="btn-disable" href="<?php echo INCLUDE_PATH ?>">Desativar</a>
-							</div>
-							<div>
-								<a actionBtn="delete" class="btn-delete" href="<?php echo INCLUDE_PATH ?>list-companys?delete=<?php echo $value['id']; ?>">Deletar</a>
 							</div>
 						</td>
 					</tr>

@@ -1,13 +1,6 @@
 <?php
 
 $user_id = isset($_SESSION['id']) ? $_SESSION['id'] : null;
-
-if (isset($_GET['delete'])) {
-  $del = intval($_GET['delete']);
-  Controllers::delete('boxpdv', $del);
-  header('Location: ' . INCLUDE_PATH . 'list-boxpdv');
-}
-
 $user_filter = isset($_POST['user_filter']) ? intval($_POST['user_filter']) : $user_id;
 
 $currentPage = isset($_GET['page']) ? (int) ($_GET['page']) : 1;
@@ -79,11 +72,6 @@ $boxpdv = Controllers::SelectBoxPdv('boxpdv', ($currentPage - 1) * $porPage, $po
                   <a class="btn-reopen">Fecho</a>
                 </div>
               <?php } ?>
-
-              <div>
-                <a actionBtn="delete" class="btn-delete"
-                  href="<?php echo INCLUDE_PATH ?>list-boxpdv?delete=<?php echo $value['id']; ?>">Deletar</a>
-              </div>
             </td>
           </tr>
         </tbody>

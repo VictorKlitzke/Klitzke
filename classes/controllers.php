@@ -228,16 +228,5 @@ class Controllers
         }
         return $true;
     }
-    public static function Delete($table_name, $id = false)
-    {
-        $sql = Db::Connection();
-
-        if ($id == false) {
-            $exec = $sql->prepare("DELETE FROM `$table_name`");
-        } else {
-            $exec = $sql->prepare("DELETE FROM `$table_name` WHERE id = '$id'");
-        }
-        $exec->execute();
-    }
 
 }
