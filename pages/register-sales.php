@@ -52,7 +52,7 @@
                 onclick="AddSelectProducts(<?php echo $key; ?>, '<?php echo $value['id'] ?>', '<?php echo $value['name'] ?>', '<?php echo $value['stock_quantity'] ?>', '<?php echo $value['value_product'] ?>')">
                 <div class="info-products">
                     <div class="img-product">
-                        <img src="<?php echo INCLUDE_PATH; ?>config/public/upload/<?php echo $value['flow']; ?>" alt="">
+                        <img src="" alt="">
                     </div>
                     <h2 class="sales-h2">
                         <?php echo $value['name'] ?>
