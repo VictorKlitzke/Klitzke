@@ -27,52 +27,56 @@ function AddSelectProducts(index, id, name, stock_quantity, value) {
 
     for (let i = 0; i < selectedProducts.length; i++) {
         if (selectedProducts[i].id === id) {
-            let number = selectedProducts[i].stock_quantity;
-            number++;
+            let number = selectedProducts[i].stock_quantity + 1;
 
-            if (validateStock(stock_quantity, number)) {
-                selectedProducts[i].stock_quantity = number;
-                let productQuantityCell = document.getElementById("product-quantity-" + id);
-                if (productQuantityCell) {
-                    productQuantityCell.textContent = number;
+            validateStock(stock_quantity, number, function(isValid) {
+                if (isValid) {
+                    selectedProducts[i].stock_quantity = number;
+                    let productQuantityCell = document.getElementById("product-quantity-" + id);
+                    if (productQuantityCell) {
+                        productQuantityCell.textContent = number;
+                    }
+                    updateProductQuantity(id, number);
+                    calculateTotal();
                 }
-            }
-
-            updateProductQuantity(id, number);
+            });
 
             productAlreadyExists = true;
+            break; 
         }
     }
 
     if (!productAlreadyExists) {
-        let newProduct = {
-            id: id,
-            name: name,
-            stock_quantity: 1,
-            value: parseFloat(value.replace(',', '.'))
-        };
+        validateStock(stock_quantity, 1, function(isValid) {
+            if (isValid) {
+                let newProduct = {
+                    id: id,
+                    name: name,
+                    stock_quantity: 1,
+                    value: parseFloat(value.replace(',', '.'))
+                };
 
-        validateStock(stock_quantity, 1);
-        selectedProducts.push(newProduct);
+                selectedProducts.push(newProduct);
 
-        let newRow = trProduct.insertRow();
-        newRow.id = "row-" + id;
-        newRow.innerHTML = "<td id='product-id'>" + id + "</td>" +
-            "<td id='product-name'>" + name + "</td>" +
-            "<td id='product-quantity-" + id + "'>" + 1 + "</td>" +
-            "<td id='product-value' class='content-form'>" +
-            "<input type='text' id='value" + id + "' value='" + value + "' />" +
-            "</td>" +
-            "<td style='margin: 6px; padding: 6px;'>" +
-            "<div>" +
-            "<div>" +
-            "<button onclick='removeProduct(" + id + ")' id='button-delete-" + id + "' class='btn-delete' type='button'>Deletar</button>" +
-            "<button onclick='editProductValue(" + id + ")' class='btn-edit' style='margin-left: 5px;' type='button'>Editar Valor</button>" +
-            "</div>" +
-            "</div>" +
-            "</td>";
+                let newRow = trProduct.insertRow();
+                newRow.id = "row-" + id;
+                newRow.innerHTML = "<td id='product-id'>" + id + "</td>" +
+                    "<td id='product-name'>" + name + "</td>" +
+                    "<td id='product-quantity-" + id + "'>" + 1 + "</td>" +
+                    "<td id='product-value' class='content-form'>" +
+                    "<input type='text' id='value" + id + "' value='" + value + "' />" +
+                    "</td>" +
+                    "<td style='margin: 6px; padding: 6px;'>" +
+                    "<div>" +
+                    "<button onclick='removeProduct(" + id + ")' id='button-delete-" + id + "' class='btn-delete' type='button'>Deletar</button>" +
+                    "<button onclick='editProductValue(" + id + ")' class='btn-edit' style='margin-left: 5px;' type='button'>Editar Valor</button>" +
+                    "</div>" +
+                    "</td>";
+
+                calculateTotal();
+            }
+        });
     }
-    calculateTotal();
 }
 
 function editProductValue(id) {
@@ -432,20 +436,18 @@ function updateProductQuantity(id, stock_quantity) {
     }
 }
 
-function validateStock(stock_quantity, qnt) {
-
-    if (qnt > stock_quantity) {
-
-        const continueValidate = confirm("Você não possui estoque suficiente, Deseja continuar?")
-        if (!continueValidate) {
-            return false;
-        }
-
+function validateStock(stock_quantity, qnt, callback) {
+    if (stock_quantity < qnt) {
+        continueMessage("Você não possui estoque suficiente. Deseja continuar?", "Sim", "Não", function () {
+            callback(true); 
+        }, function () {
+            showMessage('Operação cancelada', 'warning');
+            callback(false);
+        });
     } else {
-        return false
+        callback(true);
     }
 }
-
 async function closeModalPortion() {
     const portionSalesModal = document.getElementById('portion-sales');
     const overlayModalPortion = document.getElementById('overlay-portion');
