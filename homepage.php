@@ -159,9 +159,9 @@ if ($checkCode->rowCount() > 0) {
                 <a href="<?php echo INCLUDE_PATH; ?>list-product-delivery"> Pedidos delivery </a>
             </div>
 
-            <h2 style="cursor: pointer;" onclick="ToggleNoteFiscal()">Nota Fiscal</h2>
+            <h2 style="cursor: pointer;" onclick="ToggleNoteFiscal()">Suprimentos</h2>
             <div id="fiscal" style="display: none;">
-                <a href="<?php echo INCLUDE_PATH; ?>search-xml"> Buscar XML </a>
+                <a href="<?php echo INCLUDE_PATH; ?>shopping-request"> Solicitação de Compras </a>
             </div>
 
             <h2 style="cursor: pointer;" onclick="ToggleReport()">Relatórios</h2>
