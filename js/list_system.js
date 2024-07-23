@@ -3,6 +3,9 @@ const BASE_CLASS = "http://localhost:3000/Klitzke/classes/";
 const BASE_CONTROLLERS = "http://localhost:3000/Klitzke/controllers/";
 const BASE_PATH_HOME = "http://localhost:3000/Klitzke/";
 
+const selectedProducts = [];
+window.onload = ListProducts();
+
 async function InativarInvo(button) {
 
     const id_request_inativar = button.getAttribute('data-id');
@@ -420,4 +423,123 @@ async function InativarUsers(button) {
             showMessage('Erro ao fazer requisição!' + error, 'error');
         }
     }
+}
+
+async function GoRequest(){
+    const goRequest = document.getElementById('go-request');
+
+    if (goRequest.style.display === 'none') {
+        goRequest.style.display = 'block'
+    }
+}
+async function ListProducts() {
+    try {
+        let url = `${BASE_CONTROLLERS}lists.php`;
+
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+            const products = data.products;
+
+            if (!Array.isArray(products)) {
+                throw new Error('Products is not an array');
+            }
+
+            const productList = document.getElementById('table-product').querySelector('tbody');
+
+            productList.innerHTML = '';
+
+            products.forEach(product => {
+                const row = document.createElement('tr');
+
+                const nameCell = document.createElement('td');
+                nameCell.textContent = product.name;
+                row.appendChild(nameCell);
+
+                const stockCell = document.createElement('td');
+                stockCell.textContent = product.stock_quantity;
+                row.appendChild(stockCell);
+
+                const valueCell = document.createElement('td');
+                valueCell.textContent = product.value_product;
+                row.appendChild(valueCell);
+
+                const statusCell = document.createElement('td');
+                statusCell.textContent = product.status_product;
+                row.appendChild(statusCell);
+
+                const buttonCell = document.createElement('td');
+                buttonCell.style.display = 'flex';
+                buttonCell.style.justifyContent = 'center';
+
+                const buttonRequest = document.createElement('button');
+                buttonRequest.className = 'button';
+                buttonRequest.textContent = 'Solicitar';
+                buttonRequest.onclick = () => handleSolicitarClick(product);
+                buttonCell.appendChild(buttonRequest);
+
+                row.appendChild(buttonCell);
+                productList.appendChild(row);
+            });
+        } else {
+            showMessage('Erro ao listar produtos', 'error');
+        }
+
+    } catch (error) {
+        showMessage('Erro ao fazer requisição: ' + error.message, 'error');
+    }
+}
+function handleSolicitarClick(product) {
+    const existingProduct = selectedProducts.find(p => p.id === product.id);
+    if (existingProduct) {
+        existingProduct.quantity++;
+    } else {
+        product.quantity = 1;
+        selectedProducts.push(product);
+    }
+    updateSelectedProductsTable();
+}
+function updateSelectedProductsTable() {
+    const selectedProductsList = document.getElementById('selected-products-list');
+    selectedProductsList.innerHTML = ''; 
+
+    selectedProducts.forEach(product => {
+        const row = document.createElement('tr');
+
+        const nameCell = document.createElement('td');
+        nameCell.textContent = product.name;
+        row.appendChild(nameCell);
+
+        const quantityCell = document.createElement('td');
+        quantityCell.textContent = product.quantity;
+        row.appendChild(quantityCell);
+
+        const actionCell = document.createElement('td');
+        actionCell.style.display = 'flex';
+        actionCell.style.justifyContent = 'center';
+
+        const buttonRemove = document.createElement('button');
+        buttonRemove.className = 'button';
+        buttonRemove.style.backgroundColor = 'red';
+        buttonRemove.textContent = 'Remover';
+        buttonRemove.onclick = () => handleRemoveClick(product);
+        actionCell.appendChild(buttonRemove);
+
+        row.appendChild(actionCell);
+        selectedProductsList.appendChild(row);
+    });
+}
+function handleRemoveClick(product) {
+    const index = selectedProducts.findIndex(p => p.id === product.id);
+    if (index > -1) {
+        selectedProducts.splice(index, 1);
+    }
+    updateSelectedProductsTable();
 }
