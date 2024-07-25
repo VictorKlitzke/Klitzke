@@ -42,7 +42,7 @@ if ($checkCode->rowCount() > 0) {
     <link rel="stylesheet" href="<?php echo INCLUDE_PATH_PANEL; ?>../css/modalPortion.css" />
     <link rel="stylesheet" href="<?php echo INCLUDE_PATH_PANEL; ?>../css/font-awesome.min.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/2.0.7/css/dataTables.dataTables.css" />
-    <!--   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">-->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <link rel="icon" href="<?php echo INCLUDE_PATH; ?>./public/logo/favicon.ico" type="image/x-icon" />
     <title><?php echo $title_home; ?></title>
 </head>
@@ -67,7 +67,7 @@ if ($checkCode->rowCount() > 0) {
 
                     if ($boxpdv["status"] == 1) {
                         ?>
-                        <div class="boxpdv" id="open-boxpdv">
+                        <div class="d-grid btn-lg mb-3 btn btn-outline-success" id="open-boxpdv">
                             <span>Caixa aberto</span>
                             <form action="">
                                 <input type="hidden" name="id_box" value="<?php echo base64_encode($boxpdv['id']); ?>">
@@ -75,13 +75,13 @@ if ($checkCode->rowCount() > 0) {
                         </div>
                     <?php } else {
                         ?>
-                        <div class="boxpdv-close">
+                        <div class="d-grid btn-lg mb-3 btn btn-outline-danger">
                             <span>Caixa Fechado</span>
                         </div>
                     <?php }
                 } else {
                     ?>
-                    <div class="boxpdv-reopen">
+                    <div class="d-grid btn btn-outline-info btn-lg mb-3">
                         <span>Nenhum caixa aberto</span>
                     </div>
                 <?php }
