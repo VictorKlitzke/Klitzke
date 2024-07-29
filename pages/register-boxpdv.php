@@ -1,18 +1,20 @@
 <div class="box-content">
-    <h2>Abrir caixa</h2>
-    <form class="form">
-        <div class="content-form">
-            <label for="">Valor</label>
-            <input type="text" id="value" oninput="formmaterReal(this)" placeholder="R$ 0,00">
+    <h2 class="text-white mb-4">Abrir caixa</h2>
+    <div class="row g-3">
+        <div class="col-md-6">
+            <label class="text-white form-label">Valor</label>
+            <input class="form-control" type="text" id="value" oninput="formmaterReal(this)" placeholder="R$ 0,00">
             <span id="value-error" class="error-message">Campo está invalido, Ajuste se possivel.</span>
         </div>
-        <div class="content-form">
-            <label for="">Observação</label>
-            <input type="text" id="observation">
+        <div class="col-md-6">
+            <label class="text-white form-label">Observação</label>
+            <input class="form-control" type="text" id="observation" placeholder="Observação">
             <span id="observation-error" class="error-message">Campo está invalido, Ajuste se possivel.</span>
         </div>
-    </form>
-    <button class="button-registers" onclick="RegisterBoxPdv()" type="button">Abrir Caixa</button>
+        <div class="col-12">
+            <button class="btn btn-primary" onclick="RegisterBoxPdv()" type="button">Abrir Caixa</button>
+        </div>
+    </div>
 </div>
 
 <script src="<?php echo INCLUDE_PATH_PANEL; ?>../js/values.js"></script>

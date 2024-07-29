@@ -1,86 +1,59 @@
 <?php
-$currentPage = isset($_GET['page']) ? (int) ($_GET['page']) : 1;
-$porPage = 20;
 
 $users = Controllers::SelectAll('users', ($currentPage - 1) * $porPage, $porPage);
 
 ?>
 
 <div class="box-content">
-  <h2>Lista de Usuários</h2>
-  <div class="list">
-    <table>
-      <tr>
-        <td>Usuário</td>
-        <td>Email</td>
-        <td>Contato</td>
-        <td>Função</td>
-        <td>Comissão</td>
-        <td>
-          <p>Comissão por venda</p>
-        </td>
-      </tr>
+  <h2 class="text-white mb-4">Lista de Usuários</h2>
+  <div class="row">
+    <div class="col">
+      <div class="table-responsive" style="max-height: 400px; overflow-y: auto; overflow-x: auto;">
+        <table class="table table-dark table-hover">
+          <thead>
+            <tr style="white-space: nowrap;">
+              <th scope="col">Usuário</th>
+              <th scope="col">Email</th>
+              <th scope="col">Contato</th>
+              <th scope="col">Função</th>
+              <th scope="col">Comissão</th>
+              <th scope="col">Comissão por venda</th>
+              <th scope="col">Ações</th>
+            </tr>
+          </thead>
+          <tbody>
+            <?php foreach ($users as $key => $value) { ?>
+              <tr style="white-space: nowrap;" class="<?php echo $value['disable'] != 1 ? 'table-danger' : ''; ?>">
+                <th><?php echo htmlspecialchars($value['name']); ?></th>
+                <th><?php echo htmlspecialchars($value['email']); ?></th>
+                <th><?php echo htmlspecialchars($value['phone']); ?></th>
+                <th><?php echo htmlspecialchars($value['function']); ?></th>
+                <th><?php echo htmlspecialchars($value['commission']); ?> %</th>
+                <th><?php echo htmlspecialchars($value['target_commission']); ?> %</th>
+                <th class="gap-2">
 
-      <?php
+                  <a class="btn btn-info"
+                    href="<?php echo INCLUDE_PATH ?>edit-users?id=<?php echo base64_encode($value['id']); ?>">Editar
+                  </a>
 
-      foreach ($users as $key => $value) {
+                  <?php if ($value['disable'] == 1) { ?>
+                    <button onclick="InativarUsers(this)" type="button" data-id="<?php echo $value['id']; ?>"
+                      class="btn btn-warning">Desativar
+                    </button>
+                  <?php } else { ?>
+                    <button class="btn btn-secondary" disabled>Desativado</button>
+                  <?php } ?>
 
-        ?>
+                  <button class="btn btn-danger" onclick="DeleteUsers(this)"
+                    data-id="<?php echo base64_encode($value['id']); ?>">Deletar
+                  </button>
 
-        <tr>
-          <td>
-            <p><?php echo htmlspecialchars($value['name']); ?></p>
-          </td>
-          <td><?php echo htmlspecialchars($value['email']); ?></td>
-          <td><?php echo htmlspecialchars($value['phone']); ?></td>
-          <td><?php echo htmlspecialchars($value['function']); ?></td>
-          <td> <?php echo htmlspecialchars($value['commission']); ?> %</td>
-          <td><?php echo htmlspecialchars($value['target_commission']); ?> % </td>
-
-          <td style="display: flex; justify-content: center; gap: 10px; margin: 6px; padding: 6px;">
-            <div>
-              <a class="btn-edit"
-                href="<?php echo INCLUDE_PATH ?>edit-users?id=<?php echo base64_encode($value['id']); ?>">Editar</a>
-            </div>
-
-            <div>
-              <?php if ($value['disable'] == 1){ ?>
-              <button onclick="InativarUsers(this)" type="button" data-id="<?php echo $value['id']; ?>"
-                class="btn-disable">
-                Desativar
-              </button>
-              <?php } else { ?>
-                <button
-                class="btn-reopen">
-                Desativado
-              </button>
-              <?php } ?>
-            </div>
-
-            <div>
-              <a class="btn-delete" onclick="DeleteUsers(this)" data-id="<?php echo base64_encode($value['id']); ?>"
-                >Deletar</a>
-            </div>
-
-          </td>
-        </tr>
-
-      <?php } ?>
-
-    </table>
+                </th>
+              </tr>
+            <?php } ?>
+          </tbody>
+        </table>
+      </div>
+    </div>
   </div>
-</div>
-
-<div class="page">
-  <?php
-  $totalPage = ceil(count(Controllers::selectAll('users')) / $porPage);
-
-  for ($i = 1; $i <= $totalPage; $i++) {
-    if ($i == $currentPage)
-      echo '<a class="page-selected" href="' . INCLUDE_PATH . 'list-users?page=' . $i . '">' . $i . '</a>';
-    else
-      echo '<a href="' . INCLUDE_PATH . 'list-users?page=' . $i . '">' . $i . '</a>';
-  }
-
-  ?>
-</div>
+  </div>

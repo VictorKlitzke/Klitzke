@@ -1,72 +1,69 @@
 <div class="box-content">
-  <h2>Cadastrar Fornecedor</h2>
-  <form class="form">
-    <div class="content-form">
-      <label for="">Fornecedor</label>
-      <input type="text" id="name_company">
+  <h2 class="text-white mb-4">Cadastrar Fornecedor</h2>
+  <div class="row g-3">
+    <div class="col-md-6">
+      <label class="form-label text-white">Fornecedor</label>
+      <input class="form-control" type="text" id="name_company" placeholder="Fornecedor">
       <span id="company-error" class="error-message">Campo está invalido, Ajuste se possivel.</span>
     </div>
-    <div class="content-form">
-      <label for="">Nome Fantasia</label>
-      <input type="text" id="fantasy_name">
+    <div class="col-md-6">
+      <label class="form-label text-white">Nome Fantasia</label>
+      <input class="form-control" type="text" id="fantasy_name" placeholder="Nome Fantasia">
       <span id="fantasy_name-error" class="error-message">Campo está invalido, Ajuste se possivel.</span>
     </div>
-    <div class="content-form">
-      <label for="">Email</label>
-      <input type="email" id="email">
+    <div class="col-md-6">
+      <label class="form-label text-white">Email</label>
+      <input class="form-control" type="email" id="email" placeholder="Email">
       <span id="email-error" class="error-message">Campo está invalido, Ajuste se possivel.</span>
-
     </div>
-    <div class="content-form">
-      <label for="">Telefone</label>
-      <input type="number" id="phone">
+    <div class="col-md-6">
+      <label class="form-label text-white">Telefone</label>
+      <input class="form-control text-dark" type="text" id="phone" placeholder="Telefone" />
       <span id="phone-error" class="error-message">Campo está invalido, Ajuste se possivel.</span>
-
     </div>
-    <div class="content-form">
-      <label for="">Endereco</label>
-      <input type="text" id="address">
+    <div class="col-md-6">
+      <label class="form-label text-white">Endereco</label>
+      <input class="form-control" type="text" id="address" placeholder="Endereço">
       <span id="address-error" class="error-message">Campo está invalido, Ajuste se possivel.</span>
-
     </div>
-    <div class="content-form">
-      <label for="">Cidade</label>
-      <input type="text" id="city">
+    <div class="col-md-6">
+      <label class="form-label text-white">Cidade</label>
+      <input class="form-control" type="text" id="city" placeholder="Cidade">
       <span id="city-error" class="error-message">Campo está invalido, Ajuste se possivel.</span>
-
     </div>
-    <div class="content-form">
-      <label for="">Estado</label>
-      <input type="text" id="state">
+    <div class="col-md-6">
+      <label class="form-label text-white">Estado</label>
+      <input class="form-control" type="text" id="state" placeholder="Estado">
       <span id="state-error" class="error-message">Campo está invalido, Ajuste se possivel.</span>
-
     </div>
-    <div class="content-form">
-      <label for="">CNPJ</label>
-      <input type="text" id="cnpj" placeholder="00.000.000/0000-00" maxlength="14">
+    <div class="col-md-6">
+      <label class="form-label text-white">CNPJ</label>
+      <input class="form-control text-dark" type="text" id="cnpj" placeholder="00.000.000/0000-00" maxlength="14">
       <span id="cnpj-error" class="error-message">Campo está invalido, Ajuste se possivel.</span>
-
     </div>
-  </form>
-  <button class="button-registers" onclick="RegisterForn()" type="button">Cadastrar</button>
+    <div class="col-12">
+      <button class="btn btn-primary" onclick="RegisterForn()" type="button">Cadastrar</button>
+    </div>
+  </div>
 </div>
 
+
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        var form = document.querySelector('.form');
+  document.addEventListener('DOMContentLoaded', function () {
+    var form = document.querySelector('.form');
 
-        form.addEventListener('keydown', function (event) {
-            if (event.key === 'Enter') {
-                event.preventDefault(); 
+    form.addEventListener('keydown', function (event) {
+      if (event.key === 'Enter') {
+        event.preventDefault();
 
-                var currentInput = event.target;
-                var formElements = form.elements;
-                var currentIndex = Array.from(formElements).indexOf(currentInput);
+        var currentInput = event.target;
+        var formElements = form.elements;
+        var currentIndex = Array.from(formElements).indexOf(currentInput);
 
-                if (currentIndex < formElements.length - 1) {
-                    formElements[currentIndex + 1].focus();
-                }
-            }
-        });
+        if (currentIndex < formElements.length - 1) {
+          formElements[currentIndex + 1].focus();
+        }
+      }
     });
+  });
 </script>

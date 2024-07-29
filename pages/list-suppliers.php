@@ -1,73 +1,61 @@
 <?php
 
-$currentPage = isset($_GET['page']) ? (int)($_GET['page']) : 1;
-$porPage = 20;
-
 $suppliers = Controllers::SelectAll('suppliers', ($currentPage - 1) * $porPage, $porPage);
 
 ?>
 
 <div class="box-content">
-  <h2>Lista de Fornecedores</h2>
-  <div class="list">
-    <table>
-      <thead>
-        <tr>
-          <td>Fornecedor</td>
-          <td>Nome Fantasia</td>
-          <td>Email</td>
-          <td>Contato</td>
-          <td>Endereço</td>
-          <td>Cidade</td>
-          <td>Estado</td>
-          <td>CNPJ</td>
-        </tr>
-      </thead>
+  <h2 class="text-white mb-4">Lista de Fornecedores</h2>
+  <div class="row">
+    <div class="com">
+      <div class="table-responsive" style="max-height: 400px; overflow-y: auto; overflow-x: auto;">
+        <table class="table table-dark table-hover">
+          <thead>
+            <tr style="white-space: nowrap;">
+              <th scope="col">Fornecedor</th>
+              <th scope="col">Nome Fantasia</th>
+              <th scope="col">Email</th>
+              <th scope="col">Contato</th>
+              <th scope="col">Endereço</th>
+              <th scope="col">Cidade</th>
+              <th scope="col">Estado</th>
+              <th scope="col">CNPJ</th>
+              <th scope="col">Ações</th>
+            </tr>
+          </thead>
 
-      <?php
+          <?php
 
-      foreach ($suppliers as $key => $value) {
+          foreach ($suppliers as $key => $value) {
 
-      ?>
+            ?>
 
-        <tbody>
-          <tr>
-            <td><?php echo htmlspecialchars($value['company']); ?></td>
-            <td><?php echo htmlspecialchars($value['fantasy_name']); ?></td>
-            <td><?php echo htmlspecialchars($value['email']); ?></td>
-            <td><?php echo htmlspecialchars($value['phone']); ?></td>
-            <td><?php echo htmlspecialchars($value['address']); ?></td>
-            <td><?php echo htmlspecialchars($value['city']); ?></td>
-            <td><?php echo htmlspecialchars($value['state']); ?></td>
-            <td><?php echo htmlspecialchars($value['cnpjcpf']); ?></td>
+            <tbody>
+              <tr style="white-space: nowrap;">
+                <th><?php echo htmlspecialchars($value['company']); ?></th>
+                <th><?php echo htmlspecialchars($value['fantasy_name']); ?></th>
+                <th><?php echo htmlspecialchars($value['email']); ?></th>
+                <th><?php echo htmlspecialchars($value['phone']); ?></th>
+                <th><?php echo htmlspecialchars($value['address']); ?></th>
+                <th><?php echo htmlspecialchars($value['city']); ?></th>
+                <th><?php echo htmlspecialchars($value['state']); ?></th>
+                <th><?php echo htmlspecialchars($value['cnpjcpf']); ?></th>
 
-            <td style="display: flex; justify-content: center; gap: 10px; margin: 6px; padding: 6px;">
-              <div>
-                <a class="btn-edit" href="<?php echo INCLUDE_PATH; ?>edit-suppliers?id=<?php echo base64_encode($value['id']); ?>">Editar</a>
-              </div>
-              <div>
-                <a class="btn-delete" onclick="DeleteForn(this)" data-id="<?php echo base64_encode($value['id']); ?>">Deletar</a>
-              </div>
-            </td>
-          </tr>
-        </tbody>
-        
-      <?php } ?>
+                <th class="gap-2">
+                    <a class="btn btn-info"
+                      href="<?php echo INCLUDE_PATH; ?>edit-suppliers?id=<?php echo base64_encode($value['id']); ?>">Editar</a>
 
-    </table>
+                    <button class="btn btn-danger" onclick="DeleteForn(this)"
+                      data-id="<?php echo base64_encode($value['id']); ?>">Deletar</button>
+                </th>
+              </tr>
+            </tbody>
+
+          <?php } ?>
+
+        </table>
+      </div>
+    </div>
   </div>
 </div>
-
-<div class="page">
-  <?php
-  $totalPage = ceil(count(Controllers::selectAll('suppliers')) / $porPage);
-
-  for ($i = 1; $i <= $totalPage; $i++) {
-    if ($i == $currentPage)
-      echo '<a class="page-selected" href="' . INCLUDE_PATH . 'list-suppliers?page=' . $i . '">' . $i . '</a>';
-    else
-      echo '<a href="' . INCLUDE_PATH . 'list-suppliers?page=' . $i . '">' . $i . '</a>';
-  }
-
-  ?>
 </div>

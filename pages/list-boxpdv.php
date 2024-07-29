@@ -34,49 +34,48 @@ $boxpdv = Controllers::SelectBoxPdv('boxpdv', ($currentPage - 1) * $porPage, $po
       </div>
     </div>
   </div>
-  <div class="list">
-    <h2>Lista de Caixas</h2>
-    <table>
-      <thead>
-        <tr>
-          <td>Usuario</td>
-          <td>Valor</td>
-          <td>Observação</td>
-          <td>Data abertura</td>
-          <td>Retirada</td>
-        </tr>
-      </thead>
+  <h2 class="text-white mb-4">Lista de Caixas</h2>
+  <div class="row">
+    <div class="col">
+      <div class="table-responsive" style="max-height: 400px; overflow-y: auto; overflow-x: auto;">
+        <table class="table table-dark table-hover">
+          <thead>
+            <tr>
+              <th>Usuario</th>
+              <th>Valor</th>
+              <th>Observação</th>
+              <th>Data abertura</th>
+              <th>Retirada</th>
+              <th>Ações</th>
+            </tr>
+          </thead>
 
-      <?php
-      foreach ($boxpdv as $key => $value) {
-        ?>
+          <?php
+          foreach ($boxpdv as $key => $value) {
+            ?>
 
-        <tbody>
-          <tr>
-            <td><?php echo htmlspecialchars($value['users']); ?></td>
-            <td><?php echo htmlspecialchars($value['value']); ?></td>
-            <td><?php echo htmlspecialchars($value['observation']); ?></td>
-            <td>
-              <p><?php echo htmlspecialchars($value['open_date']); ?></p>
-            </td>
-            <td><?php echo htmlspecialchars($value['Withdrawal']); ?></td>
+            <tbody>
+              <tr>
+                <th><?php echo htmlspecialchars($value['users']); ?></th>
+                <th><?php echo htmlspecialchars($value['value']); ?></th>
+                <th><?php echo htmlspecialchars($value['observation']); ?></th>
+                <th><?php echo htmlspecialchars($value['open_date']); ?></th>
+                <th><?php echo htmlspecialchars($value['Withdrawal']); ?></th>
 
-            <td style="display: flex; justify-content: center; gap: 10px; margin: 6px; padding: 6px;">
-              <?php if ($value['status'] == 1) { ?>
-                <div>
-                  <a class="btn-edit"
-                    href="<?php echo INCLUDE_PATH ?>boxpdv-sangria?id=<?php echo base64_encode($value['id']); ?>">Sagria</a>
-                </div>
-              <?php } else { ?>
-                <div>
-                  <a class="btn-reopen">Fecho</a>
-                </div>
-              <?php } ?>
-            </td>
-          </tr>
-        </tbody>
-      <?php } ?>
-    </table>
+                <th class="gap-2">
+                  <?php if ($value['status'] == 1) { ?>
+                    <a class="btn btn-info"
+                      href="<?php echo INCLUDE_PATH ?>boxpdv-sangria?id=<?php echo base64_encode($value['id']); ?>">Sagria</a>
+                  <?php } else { ?>
+                    <button class="btn btn-secondary">Fecho</button>
+                  <?php } ?>
+                </th>
+              </tr>
+            </tbody>
+          <?php } ?>
+        </table>
+      </div>
+    </div>
   </div>
 </div>
 

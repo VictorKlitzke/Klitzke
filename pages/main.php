@@ -61,45 +61,40 @@ $count_sales = Controllers::SelectAll('sales');
 
 ?>
 
-<div class="center">
-  <div class="box-content">
-    <h1 style="display: flex; justify-content: start;">
-      Ola,
-      <?php echo $_SESSION['name']; ?>
-    </h1>
-    <p style="color: #ccc; padding-top: 10px;">
-      Aqui esta tudo que aconteceu hoje!
-    </p>
+<div class="row">
+  <div class="col">
+    <div class="box-content">
+      <h1 style="display: flex; justify-content: start; color: #ccc">
+        Ola,
+        <?php echo $_SESSION['name']; ?>
+      </h1>
+      <p style="color: #ccc; padding-top: 10px;">
+        Aqui esta tudo que aconteceu hoje!
+      </p>
+    </div>
   </div>
 </div>
 
-<div class="center">
-  <div class="dashboard">
+<div class="row">
+  <div class="col-sm-6 mb-3">
     <div class="card">
       <h2>Produtos em Estoque</h2>
       <h2>
         <?php echo $result['stock_quantity']; ?>
       </h2>
     </div>
+  </div>
 
+  <div class="col-sm-6">
     <div class="card">
       <h2>Clientes</h2>
       <h2>
-        <h2>
-          <?php echo count($count_clients); ?>
-        </h2>
+        <?php echo count($count_clients); ?>
       </h2>
     </div>
+  </div>
 
-    <div class="card">
-      <h2>Usuarios</h2>
-      <h2>
-        <h2>
-          <?php echo count($count_users); ?>
-        </h2>
-      </h2>
-    </div>
-
+  <div class="col-sm-6">
     <div class="card">
       <h2>Vendas</h2>
       <h2>
@@ -107,16 +102,17 @@ $count_sales = Controllers::SelectAll('sales');
       </h2>
     </div>
 
+  </div>
+
+  <div class="col-sm-6">
     <div class="card">
       <h2>Produto + Vendido</h2>
-      <h2>
-        <?php echo $result_prod['name_product']; ?>
-      </h2>
+      <h2><?php echo $result_prod['name_product']; ?></h2>
     </div>
-    <div class="clear"></div>
   </div>
-</div>
 
+</div>
+<br>
 <?php
 
 $sql = Db::Connection();
@@ -127,71 +123,47 @@ $status_product = $products->fetchAll();
 
 ?>
 
-<div class="center">
-  <div class="box-content">
-    <h2>Produtos negativados</h2>
-    <div class="list">
-      <table>
+<div class="row">
+  <div class="col">
+    <div class="box-content">
+      <h2 class="text-white mb-4">Produtos Negativados</h2>
+      <table class="table table-dark">
         <thead>
           <tr>
-            <td>Nome</td>
-            <td>Quantidade</td>
-            <td>Status</td>
+            <th scope="col">Nome</th>
+            <th scope="col">Quantidade</th>
+            <th scope="col">Status</th>
           </tr>
         </thead>
-
-        <?php
-
-        foreach ($status_product as $row => $value) {
-
-          ?>
-
-          <tbody>
+        <tbody>
+          <?php
+          foreach ($status_product as $row => $value) {
+            ?>
             <tr>
-              <td>
-                <?php echo $value['product']; ?>
-              </td>
-              <td>
-                <?php echo $value['product_stock_quantity']; ?>
-              </td>
-              <td>
-                <?php echo $value['status_product']; ?>
-              </td>
+              <th scope="row"><?php echo $value['product']; ?></th>
+              <td><?php echo $value['product_stock_quantity']; ?></td>
+              <td><?php echo $value['status_product']; ?></td>
             </tr>
-          </tbody>
-
-        <?php } ?>
-
+          <?php } ?>
+        </tbody>
       </table>
     </div>
   </div>
 </div>
 
-<div class="center">
-  <div class="box-content">
-    <div class="list">
-      <h2>Lista das 10 ultimas vendas</h2>
-      <table>
+<div class="row">
+  <div class="col">
+    <div class="box-content">
+      <h2 class="text-white mb-4">Lista das 10 ultimas vendas</h2>
+      <table class="table table-dark">
         <thead>
-
-          <td>#</td>
-          <td>Usuario</td>
-          <p>
-            <td>Cliente</td>
-          </p>
-          <td>
-            <p>Forma de Pagamento</p>
-          </td>
-          <p>
-            <td>Status Venda</td>
-          </p>
-          <p>
-            <td>Valor Total</td>
-          </p>
-          <p>
-            <td>Data</td>
-          </p>
-
+          <th scope="col">#</th>
+          <th scope="col">Usuario</th>
+          <th scope="col">Cliente</th>
+          <th scope="col">Forma de Pagamento</th>
+          <th scope="col">Status Venda</th>
+          <th scope="col">Valor Total</th>
+          <th scope="col">Data</th>
         </thead>
 
         <?php
@@ -203,16 +175,8 @@ $status_product = $products->fetchAll();
           <tbody>
 
             <tr>
-              <p>
-                <td>
-                  <?php echo htmlspecialchars($value['id']); ?>
-                </td>
-              </p>
-              <p>
-                <td>
-                  <?php echo htmlspecialchars($value['users']); ?>
-                </td>
-              </p>
+              <th scope="row"><?php echo htmlspecialchars($value['id']); ?></th>
+              <th> <?php echo htmlspecialchars($value['users']); ?></th>
 
               <?php if (htmlspecialchars($value['clients']) == null) {
                 echo '<td><p>' . 'Cliente consumidor final' . '</p></td>';
@@ -220,51 +184,40 @@ $status_product = $products->fetchAll();
                 echo '<td><p>' . htmlspecialchars($value['clients']) . '</p></td>';
               }
               ?>
-              <td>
-                <?php echo htmlspecialchars($value['form_payment']); ?>
-              </td>
-              <td>
-                <?php echo htmlspecialchars($value['status_sales']); ?>
-              </td>
-              <td>
-                <?php echo htmlspecialchars($value['total_value']); ?>
-              </td>
-              <td>
-                <p>
-                  <?php echo htmlspecialchars($value['date_sales']); ?>
-                </p>
-              </td>
+              <th><?php echo htmlspecialchars($value['form_payment']); ?></th>
+              <th><?php echo htmlspecialchars($value['status_sales']); ?></th>
+              <th><?php echo htmlspecialchars($value['total_value']); ?></th>
+              <th><?php echo htmlspecialchars($value['date_sales']); ?></th>
 
-              <td style="display: flex; justify-content: center; gap: 10px; margin: 6px; padding: 6px;">
+              <th style="display: flex; justify-content: center; gap: 10px; margin: 6px; padding: 6px;">
                 <?php
 
                 if ($value['status'] == 2) {
 
                   ?>
 
-                    <div>
-                        <button onclick="ReopenSales(this)"
-                                type="button" data-id="<?php echo $value['id'] ?>" class="btn-reopen">Reabrir venda
-                        </button>
-                    </div>
+                  <div>
+                    <button onclick="ReopenSales(this)" type="button" data-id="<?php echo $value['id'] ?>"
+                      class="btn-reopen">Reabrir venda
+                    </button>
+                  </div>
 
                 <?php } else { ?>
 
-                    <div>
-                        <button onclick="CancelSales(this)" data-id="<?php echo $value['id']; ?>"
-                                type="button" class="btn-cancel">Cancelar venda
-                        </button>
-                    </div>
+                  <div>
+                    <button onclick="CancelSales(this)" data-id="<?php echo $value['id']; ?>" type="button"
+                      class="btn-cancel">Cancelar venda
+                    </button>
+                  </div>
 
                 <?php } ?>
 
-                  <div>
-                      <button onclick="Details(this)" data-id="<?php echo $value['id']; ?>" type="button" class="btn-details">
-                          <p>Mais detalhes</p>
-                      </button>
-                  </div>
-
-              </td>
+                <div>
+                  <button onclick="Details(this)" data-id="<?php echo $value['id']; ?>" type="button" class="btn-details">
+                    <p>Mais detalhes</p>
+                  </button>
+                </div>
+              </th>
             </tr>
           </tbody>
 
@@ -276,24 +229,24 @@ $status_product = $products->fetchAll();
 </div>
 
 <div class="overlay-details" id="overlay-details">
-    <div id="modal-print" class="modal">
-        <div class="modal-content-details" id="modal-content-details">
-            <span class="close-details" onclick="CloseModalInfo()" id="close-details">&times;</span>
-            <h1>Venda ID: <span id="saleId"></span></h1>
-            <table id="modalTable" border="1">
-                <thead>
-                <tr>
-                    <th>Cliente</th>
-                    <th>Status</th>
-                    <th>Produto</th>
-                    <th>Quantidade</th>
-                    <th>Valor</th>
-                    <th>Forma de pagamento</th>
-                    <th>Usuario</th>
-                </tr>
-                </thead>
-                <tbody></tbody>
-            </table>
-        </div>
+  <div id="modal-print" class="modal">
+    <div class="modal-content-details" id="modal-content-details">
+      <span class="close-details" onclick="CloseModalInfo()" id="close-details">&times;</span>
+      <h1>Venda ID: <span id="saleId"></span></h1>
+      <table id="modalTable" border="1">
+        <thead>
+          <tr>
+            <th>Cliente</th>
+            <th>Status</th>
+            <th>Produto</th>
+            <th>Quantidade</th>
+            <th>Valor</th>
+            <th>Forma de pagamento</th>
+            <th>Usuario</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
     </div>
+  </div>
 </div>
