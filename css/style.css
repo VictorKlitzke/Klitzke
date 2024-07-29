@@ -17,10 +17,6 @@
     z-index: 999;
 }
 
-body {
-    background: #dae2cb;
-}
-
 h2 {
     color: #ccc;
     cursor: default;
@@ -34,10 +30,6 @@ h4 {
 
 #button-standard {
     font-size: 14px;
-}
-
-.menu-active {
-    border-bottom: 1px solid #ccc;
 }
 
 .w100 {
@@ -121,11 +113,6 @@ h4 {
 
 /*MENU DO SISTEMA HORIZONTAL*/
 
-.center {
-    padding: 0 2%;
-    margin: 0 auto;
-}
-
 header {
     position: relative;
     left: 250px;
@@ -155,26 +142,6 @@ header {
     color: #ccc;
 }
 
-.name-user {
-    position: absolute;
-    display: flex;
-    bottom: 0;
-    margin: 4px 0;
-}
-
-.name-user h3 {
-    color: #ccc;
-    font-size: 16px;
-    padding-left: 4px;
-}
-
-.name-user h5 {
-    color: #ccc;
-    font-size: 16px;
-    padding-left: 4px;
-}
-
-
 /*PAGINAS DO SISTEMAS*/
 
 .box-content {
@@ -186,15 +153,6 @@ header {
 }
 
 /* TUDO DO SISTEMA */
-
-.clear {
-    clear: both;
-}
-
-.center {
-    padding: 0 1%;
-    margin: 0 auto;
-}
 
 @keyframes slidein {
     0% {
@@ -217,28 +175,6 @@ header {
         width: 100%;
     }
 }
-
-/* PAGES DO SISTEMA */
-
-.page {
-    margin: 20px 0;
-    text-align: center;
-}
-
-.page a {
-    display: inline-block;
-    font-size: 18px;
-    border: 1px solid #1b1b1b;
-    padding: 3px 4px;
-    color: #ccc;
-    margin: 0 8px;
-    text-align: center;
-}
-
-.page a.page-selected {
-    background: #191919;
-}
-
 
 /* BOXPDV */
 
