@@ -322,7 +322,6 @@ async function DetailsOrder(button) {
 
     const id_pedido_details = button.getAttribute('data-id');
     const ModalOpenDetails = document.getElementById('modal-print-request');
-    const overlayDetailsrequest = document.getElementById('overlay-details-request');
 
     if (!id_pedido_details) {
         window.alert("ID do pedido nao encontrado!");
@@ -365,7 +364,6 @@ async function DetailsOrder(button) {
             });
 
             ModalOpenDetails.style.display = 'block';
-            overlayDetailsrequest.style.display = 'block';
         } else {
             window.alert('Erro ao buscar itens da venda: ' + result.error);
         }
