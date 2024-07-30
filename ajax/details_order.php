@@ -37,52 +37,52 @@ if ($request) {
     ]);
 }
 
-function detailsPedido($id_pedido_details, $sql) {
-        try {
+function detailsPedido($id_pedido_details, $sql)
+{
+    try {
 
-            $sql->beginTransaction();
+        $sql->beginTransaction();
 
-            $exec = $sql->prepare("SELECT 
-                                    r.id id,
-                                    t.name comanda,
-                                    p.id, 
-                                    p.name, 
-                                    ri.quantity, 
-                                    ri.price_request,
-                                    u.name users,
-                                    fp.name form_payment,
-                                    rp.value_payment pagamento_por_forma,
-                                    case 
-                                        when r.status = 3 then 'FATURADO'
-                                        when r.status = 2 then 'INATIVADA'
-                                        else 'ERRO'
-                                    end status_request,
-                                    r.total_request
-                                FROM products p 
-                                    inner join request_items ri on ri.id_products = p.id 
-                                    inner join request r on r.id = ri.id_request
-                                    inner join users u on u.id = r.id_users_request
-                                    inner join table_requests t on  t.id = r.id_table
-                                    inner join request_payments rp on rp.id_request = ri.id_request 
-                                    inner join form_payment fp on fp.id = rp.id_payment_method
+        $exec = $sql->prepare("select 
+                                r.id Codigo,
+                                tb.name comanda,
+                                p.name, 
+                                ri.quantity, 
+                                ri.price_request,
+                                u.`name` users,
+                                rp.value_payment pagamento_por_forma,
+                                case 
+                                when r.status = 3 then 'FATURADO'
+                                when r.status = 2 then 'INATIVADA'
+                                else 'ERRO'
+                            end status_request,
+                            r.total_request
+                            from 
+                                `request_items` ri
+                                inner join `products` p on p.id = ri.`id_products`
+                                inner join `request` r on r.`id` = ri.`id_request`
+                                inner join `table_requests` tb on tb.`id` = r.`id_table`
+                                inner join `request_payments` rp on rp.`id_request` = ri.`id_request` 
+                                left join users u on u.id = r.id_users_request
+                                inner join form_payment fp on fp.id = rp.id_payment_method
                                 WHERE ri.id_request = :id_pedido_details");
 
-            $exec->bindValue(':id_pedido_details', $id_pedido_details, PDO::PARAM_INT);
-            $exec->execute();
-            $items = $exec->fetchAll(PDO::FETCH_ASSOC);
+        $exec->bindValue(':id_pedido_details', $id_pedido_details, PDO::PARAM_INT);
+        $exec->execute();
+        $items = $exec->fetchAll(PDO::FETCH_ASSOC);
 
-            echo json_encode([
-                'success' => true,
-                'items' => $items
-            ]);
+        echo json_encode([
+            'success' => true,
+            'items' => $items
+        ]);
 
-            $sql->commit();
+        $sql->commit();
 
-        } catch (Exception $e) {
-            $sql->rollBack();
-            http_response_code(500);
-            echo json_encode(['error' => 'Erro no banco de dados: ' . $e->getMessage(), 'code' => $e->getCode()]);
-        }
+    } catch (Exception $e) {
+        $sql->rollBack();
+        http_response_code(500);
+        echo json_encode(['error' => 'Erro no banco de dados: ' . $e->getMessage(), 'code' => $e->getCode()]);
+    }
 }
 
 ?>

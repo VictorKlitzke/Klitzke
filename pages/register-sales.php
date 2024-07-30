@@ -6,7 +6,7 @@
         </svg>
         <h7>Vendas</h7>
     </div>
-    
+
     <div class="search-product right">
         <form method="post">
             <input type="text" id="product_search" name="product_search" placeholder="Buscar produtos">
@@ -28,7 +28,7 @@
         </form>
     </div>
 
-    <div class="register-sales w100 left">
+    <div class="register-sales w100">
 
         <?php
 
@@ -48,21 +48,20 @@
 
             ?>
 
-            <div id="start-sales" class="start-sales"
-                onclick="AddSelectProducts(<?php echo $key; ?>, '<?php echo $value['id'] ?>', '<?php echo $value['name'] ?>', '<?php echo $value['stock_quantity'] ?>', '<?php echo $value['value_product'] ?>')">
-                <div class="info-products">
-                    <div class="img-product">
-                        <img src="" alt="">
+            <div class="container">
+                <div class="row" id="start-sales"
+                    onclick="AddSelectProducts(<?php echo $key; ?>, '<?php echo $value['id'] ?>', '<?php echo $value['name'] ?>', '<?php echo $value['stock_quantity'] ?>', '<?php echo $value['value_product'] ?>')">
+                    <div class="col-sm-16">
+                        <div class="card border-light mb-3 h-100" style="min-height: 200px; min-width: 200px;">
+                            <div class="card-header"><?php echo $value['name'] ?></div>
+                            <div class="card-body">
+                                <h5 class="card-title"><?php echo $value['name'] ?></h5>
+                                <p class="card-text"><?php echo $value['value_product'] ?></p>
+                            </div>
+                        </div>
                     </div>
-                    <h2 class="sales-h2">
-                        <?php echo $value['name'] ?>
-                    </h2>
-                    <p class="sales-p">R$
-                        <?php echo $value['value_product'] ?>
-                    </p>
                 </div>
             </div>
-
         <?php } ?>
 
     </div>
@@ -72,7 +71,7 @@
             <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24" fill="#fff">
                 <path d="M382-240 154-468l57-57 171 171 367-367 57 57-424 424Z" />
             </svg>
-            <h2>Selecionados</h2>
+            <h2 class="text-white">Selecionados</h2>
         </div>
 
         <?php
@@ -81,65 +80,64 @@
 
         ?>
 
-        <div class="info-select">
-            <input type="hidden" name="product-id[]" value="<?php echo base64_encode($selects['id']); ?>" />
-            <input type="hidden" name="product-name[]" value="<?php echo base64_encode($selects['name']); ?>">
-            <input type="hidden" name="product-quantity[]"
-                value="<?php echo base64_encode($selects['stock_quantity']); ?>">
-            <table id="product-result">
-                <thead>
-                    <tr>
-                        <td>#</td>
-                        <td>Produto</td>
-                        <td>Quantidade</td>
-                        <td>Preço</td>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                    </tr>
-                </tbody>
-            </table>
+        <div class="row">
+            <div class="col">
+                <div class="table-responsive" style="max-height: 400px; overflow-y: auto; overflow-x: auto;">
+                    <input type="hidden" name="product-id[]" value="<?php echo base64_encode($selects['id']); ?>" />
+                    <input type="hidden" name="product-name[]" value="<?php echo base64_encode($selects['name']); ?>">
+                    <input type="hidden" name="product-quantity[]"
+                        value="<?php echo base64_encode($selects['stock_quantity']); ?>">
+                    <table id="product-result" class="table table-dark table-hover">
+                        <thead style="white-space: nowrap;">
+                            <tr>
+                                <th scope="col">#</th>
+                                <th scope="col">Produto</th>
+                                <th scope="col">Quantidade</th>
+                                <th scope="col">Preço</th>
+                                <th scope="col">Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
     </div>
 
     <div class="payment-method right">
-        <div class="info-sales">
-            <h1>Total</h1>
-            <h3 id="totalAmount">R$ 0.00</h3>
-            <div class="name-h4">
-                <svg fill="#fff" xmlns="http://www.w3.org/2000/svg" height="20" viewBox="0 -960 960 960" width="20">
-                    <path
-                        d="M560-440q-50 0-85-35t-35-85q0-50 35-85t85-35q50 0 85 35t35 85q0 50-35 85t-85 35ZM280-320q-33 0-56.5-23.5T200-400v-320q0-33 23.5-56.5T280-800h560q33 0 56.5 23.5T920-720v320q0 33-23.5 56.5T840-320H280Zm80-80h400q0-33 23.5-56.5T840-480v-160q-33 0-56.5-23.5T760-720H360q0 33-23.5 56.5T280-640v160q33 0 56.5 23.5T360-400Zm440 240H120q-33 0-56.5-23.5T40-240v-440h80v440h680v80ZM280-400v-320 320Z" />
-                </svg>
-                <p>
-                <h4>Forma de Pagamento</h4>
-                </p>
+        <div class="row w-100">
+            <div class="col-sm-6 mb-3">
+                <div class="card" style="height: 100%;">
+                    <div class="card-body">
+                        <h1>Total</h1>
+                        <h3 id="totalAmount">R$ 0.00</h3>
+                    </div>
+                </div>
             </div>
-
-            <div class="form-sales">
-                <select id="id_payment_method" name="id_payment_method">
-
-                    <?php
-
-                    $form_paygament = Controllers::SelectAll("form_payment");
-
-
-                    foreach ($form_paygament as $key => $value) {
-
-                        ?>
-
-                        <option <?php if ($value['id'] == @$_POST['id_payment_method'])
-                            echo 'selected'; ?>value="<?php echo $value['id'] ?>">
-                            <?php echo $value['name']; ?>
-                        </option>
-
-                    <?php } ?>
-
-                </select>
-                <input type="hidden" name="id_payment_method" value="<?php $value['id']; ?>">
-                <div onclick="finalizeSale()" id="finish-sales" class="finish-button">
-                    <button id="finish-sales" type="submit" class="finish-sales">Finalizar Venda</button>
+            <div class="col-sm-6">
+                <div class="card style="height: 100%;"">
+                    <div class="card-body">
+                        <h4>Forma de Pagamento</h4>
+                        <select id="id_payment_method" name="id_payment_method" class="form-control">
+                            <?php
+                            $form_paygament = Controllers::SelectAll("form_payment");
+                            foreach ($form_paygament as $key => $value) {
+                                ?>
+                                <option <?php if ($value['id'] == @$_POST['id_payment_method'])
+                                    echo 'selected'; ?>
+                                    value="<?php echo $value['id'] ?>">
+                                    <?php echo $value['name']; ?>
+                                </option>
+                            <?php } ?>
+                        </select>
+                        <input type="hidden" name="id_payment_method" value="<?php echo $value['id']; ?>">
+                            <button onclick="finalizeSale()" id="finish-sales" type="submit" class="btn btn-success mt-4 w-100">Finalizar
+                                Venda
+                            </button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -161,56 +159,56 @@
                     <input type="text" id="clientSelectedSales" name="clientSelectedSales"
                         placeholder="Buscar Clientes" />
                 </form>
-                        <table>
-                            <thead>
-                                <tr>
-                                    <td>#</td>
-                                    <td>Cliente</td>
-                                    <td>Contato</td>
-                                    <td>Email</td>
-                                    <td>CPF</td>
-                                </tr>
-                            </thead>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Cliente</th>
+                            <th>Contato</th>
+                            <th>Email</th>
+                            <th>CPF</th>
+                        </tr>
+                    </thead>
 
-                            <?php
-                            $clientSelectedSales = Controllers::SelectAll("clients");
+                    <?php
+                    $clientSelectedSales = Controllers::SelectAll("clients");
 
-                            if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['clientSelectedSales'])) {
-                                $searchclient = $_POST['clientSelectedSales'];
-                                $filteredClient = array_filter($clientSelectedSales, function ($clientSelectedSales) use ($searchclient) {
-                                    return stripos($clientSelectedSales['name'], $searchclient) !== false and stripos($clientSelectedSales['id'], $searchclient) !== false;
-                                });
-                                $salesclient = !empty($filteredClient) ? $filteredClient : $clientSelectedSales;
-                            } else {
-                                $salesclient = $clientSelectedSales;
-                            }
+                    if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['clientSelectedSales'])) {
+                        $searchclient = $_POST['clientSelectedSales'];
+                        $filteredClient = array_filter($clientSelectedSales, function ($clientSelectedSales) use ($searchclient) {
+                            return stripos($clientSelectedSales['name'], $searchclient) !== false and stripos($clientSelectedSales['id'], $searchclient) !== false;
+                        });
+                        $salesclient = !empty($filteredClient) ? $filteredClient : $clientSelectedSales;
+                    } else {
+                        $salesclient = $clientSelectedSales;
+                    }
 
-                            foreach ($salesclient as $key => $value) {
+                    foreach ($salesclient as $key => $value) {
 
-                                ?>
+                        ?>
 
-                                <tbody>
-                                    <tr class="tbody-selected">
-                                        <td>
-                                            <?php echo $value['id'] ?>
-                                        </td>
-                                        <td>
-                                            <?php echo $value['name'] ?>
-                                        </td>
-                                        <td>
-                                            <?php echo $value['phone'] ?>
-                                        </td>
-                                        <td>
-                                            <?php echo $value['email'] ?>
-                                        </td>
-                                        <td>
-                                            <?php echo $value['cpf'] ?>
-                                        </td>
-                                    </tr>
-                                </tbody>
+                        <tbody>
+                            <tr class="tbody-selected">
+                                <th>
+                                    <?php echo $value['id'] ?>
+                                </th>
+                                <th>
+                                    <?php echo $value['name'] ?>
+                                </th>
+                                <th>
+                                    <?php echo $value['phone'] ?>
+                                </th>
+                                <th>
+                                    <?php echo $value['email'] ?>
+                                </th>
+                                <th>
+                                    <?php echo $value['cpf'] ?>
+                                </th>
+                            </tr>
+                        </tbody>
 
-                            <?php } ?>
-                        </table>
+                    <?php } ?>
+                </table>
             </div>
         </div>
     </div>
@@ -248,15 +246,15 @@
 
 <div class="overlay-portion" id="overlay-portion">
     <div class="portion-sales" id="portion-sales">
-       <div class="nav-portion">
-        <h2 class="h2-portion">Adicionar parcelas</h2>
-            <svg id="close-portion" onclick="closeModalPortion()" fill="#fff" xmlns="http://www.w3.org/2000/svg" height="24px"
-                viewBox="0 0 24 24" width="24px">
+        <div class="nav-portion">
+            <h2 class="h2-portion">Adicionar parcelas</h2>
+            <svg id="close-portion" onclick="closeModalPortion()" fill="#fff" xmlns="http://www.w3.org/2000/svg"
+                height="24px" viewBox="0 0 24 24" width="24px">
                 <path d="M0 0h24v24H0z" fill="none" />
                 <path
                     d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" />
             </svg>
-       </div>
+        </div>
         <div class="form-portion-sales">
             <form class="form" method="post">
                 <div class="content-form">
@@ -271,16 +269,17 @@
             <div class="box-content">
                 <table id="portion-value">
                     <thead>
-                        <td>#</td>
-                        <td>Parcelas</td>
-                        <td>Valor das parcelas</td>
+                        <th>#</th>
+                        <th>Parcelas</th>
+                        <th>Valor das parcelas</th>
                     </thead>
                     <tbody id="desc-portion">
                     </tbody>
                 </table>
             </div>
         </div>
-        <button onclick="finalizeSalePortion()" id="finish-portion" class="finish-portion left" type="submit">Finalizar venda</button>
+        <button onclick="finalizeSalePortion()" id="finish-portion" class="finish-portion left" type="submit">Finalizar
+            venda</button>
         <p id="total-portion-sales" class="p-portion right">R$ 0.00</p>
     </div>
 </div>

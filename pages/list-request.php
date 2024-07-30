@@ -73,15 +73,17 @@ $request = Controllers::SelectRequest('request');
 </div>
 
 <div class="modal" id="modal-print-request">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-fullscreen">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" i>Venda <span id="requestID"></span></h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button type="button" class="btn-close" onclick="CloseModalInfoRequest()" id="close-details-request"></button>
             </div>
             <div class="modal-title" id="modal-content-details-request">
-                <table id="modalTable-request" border="1">
-                    <thead style="white-space: nowrap;">
+               <div class="modal-body">
+                <div class="table-responsive">
+                <table class="table table-bordered table-hover" id="modalTable-request" border="1">
+                    <thead class="table-dark" style="white-space: nowrap;">
                         <tr>
                             <th>Comanda</th>
                             <th>Produto</th>
@@ -96,6 +98,8 @@ $request = Controllers::SelectRequest('request');
                     </thead>
                     <tbody></tbody>
                 </table>
+                </div>
+               </div>
             </div>
         </div>
     </div>
