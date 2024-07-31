@@ -66,7 +66,7 @@
 
     </div>
 
-    <div class="table-sales w70 left">
+    <div class="table-sales w60 left">
         <div class="names">
             <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24" fill="#fff">
                 <path d="M382-240 154-468l57-57 171 171 367-367 57 57-424 424Z" />
@@ -108,17 +108,17 @@
     </div>
 
     <div class="payment-method right">
-        <div class="row w-100">
-            <div class="col-sm-6 mb-3">
-                <div class="card" style="height: 100%;">
+        <div class="row">
+            <div class="col">
+                <div class="card h-100">
                     <div class="card-body">
                         <h1>Total</h1>
                         <h3 id="totalAmount">R$ 0.00</h3>
                     </div>
                 </div>
             </div>
-            <div class="col-sm-6">
-                <div class="card style="height: 100%;"">
+            <div class="col">
+                <div class="card">
                     <div class="card-body">
                         <h4>Forma de Pagamento</h4>
                         <select id="id_payment_method" name="id_payment_method" class="form-control">
@@ -134,9 +134,10 @@
                             <?php } ?>
                         </select>
                         <input type="hidden" name="id_payment_method" value="<?php echo $value['id']; ?>">
-                            <button onclick="finalizeSale()" id="finish-sales" type="submit" class="btn btn-success mt-4 w-100">Finalizar
-                                Venda
-                            </button>
+                        <button onclick="finalizeSale()" id="finish-sales" type="submit"
+                            class="btn btn-success mt-4 w-100">Finalizar
+                            Venda
+                        </button>
                     </div>
                 </div>
             </div>
@@ -145,80 +146,70 @@
 
     <div class="overlay" id="overlay">
         <div class="client-search-sales" id="client-search-sales">
-            <div class="search-client-sales">
-                <div class="search-client">
-                    <h2>Buscar Clientes</h2>
-                    <svg id="close-search-client" fill="#fff" xmlns="http://www.w3.org/2000/svg" height="24px"
-                        viewBox="0 0 24 24" width="24px">
-                        <path d="M0 0h24v24H0z" fill="none" />
-                        <path
-                            d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" />
-                    </svg>
-                </div>
-                <form class="form-sales-search right" method="post" id="sales-search-form">
-                    <input type="text" id="clientSelectedSales" name="clientSelectedSales"
-                        placeholder="Buscar Clientes" />
+            <div class="card-header d-flex justify-content-between align-items-center m-2">
+                <h2 class="text-white">Buscar Clientes</h2>
+                <svg id="close-search-client" fill="#fff" xmlns="http://www.w3.org/2000/svg" height="24px"
+                    viewBox="0 0 24 24" width="24px" onclick="closeClientSearch()">
+                    <path d="M0 0h24v24H0z" fill="none" />
+                    <path
+                        d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" />
+                </svg>
+            </div>
+            <div class="card-body m-2">
+                <form class="" method="post" id="sales-search-form">
+                    <div class="input-group mb-3">
+                        <input type="text" class="form-control" id="clientSelectedSales" name="clientSelectedSales"
+                            placeholder="Buscar Clientes" />
+                    </div>
                 </form>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>#</th>
-                            <th>Cliente</th>
-                            <th>Contato</th>
-                            <th>Email</th>
-                            <th>CPF</th>
-                        </tr>
-                    </thead>
-
-                    <?php
-                    $clientSelectedSales = Controllers::SelectAll("clients");
-
-                    if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['clientSelectedSales'])) {
-                        $searchclient = $_POST['clientSelectedSales'];
-                        $filteredClient = array_filter($clientSelectedSales, function ($clientSelectedSales) use ($searchclient) {
-                            return stripos($clientSelectedSales['name'], $searchclient) !== false and stripos($clientSelectedSales['id'], $searchclient) !== false;
-                        });
-                        $salesclient = !empty($filteredClient) ? $filteredClient : $clientSelectedSales;
-                    } else {
-                        $salesclient = $clientSelectedSales;
-                    }
-
-                    foreach ($salesclient as $key => $value) {
-
-                        ?>
-
-                        <tbody>
-                            <tr class="tbody-selected">
-                                <th>
-                                    <?php echo $value['id'] ?>
-                                </th>
-                                <th>
-                                    <?php echo $value['name'] ?>
-                                </th>
-                                <th>
-                                    <?php echo $value['phone'] ?>
-                                </th>
-                                <th>
-                                    <?php echo $value['email'] ?>
-                                </th>
-                                <th>
-                                    <?php echo $value['cpf'] ?>
-                                </th>
+                <div class="table-responsive m-2">
+                    <table class="table table-hover table-dark">
+                        <thead style="white-space: nowrap;">
+                            <tr>
+                                <th>#</th>
+                                <th>Cliente</th>
+                                <th>Contato</th>
+                                <th>Email</th>
+                                <th>CPF</th>
                             </tr>
-                        </tbody>
+                        </thead>
+                        <tbody>
+                            <?php
+                            $clientSelectedSales = Controllers::SelectAll("clients");
 
-                    <?php } ?>
-                </table>
+                            if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['clientSelectedSales'])) {
+                                $searchclient = $_POST['clientSelectedSales'];
+                                $filteredClient = array_filter($clientSelectedSales, function ($clientSelectedSales) use ($searchclient) {
+                                    return stripos($clientSelectedSales['name'], $searchclient) !== false and stripos($clientSelectedSales['id'], $searchclient) !== false;
+                                });
+                                $salesclient = !empty($filteredClient) ? $filteredClient : $clientSelectedSales;
+                            } else {
+                                $salesclient = $clientSelectedSales;
+                            }
+
+                            foreach ($salesclient as $key => $value) {
+                                ?>
+                                <tr class="tbody-selected">
+                                    <th><?php echo $value['id'] ?></th>
+                                    <th><?php echo $value['name'] ?></th>
+                                    <th><?php echo $value['phone'] ?></th>
+                                    <th><?php echo $value['email'] ?></th>
+                                    <th><?php echo $value['cpf'] ?></th>
+                                </tr>
+                            <?php } ?>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>
 
     <div class="client-page-selected left w100">
-        <div class="names">
+        <div class="d-flex align-items-center">
             <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24" fill="#fff">
                 <path d="M382-240 154-468l57-57 171 171 367-367 57 57-424 424Z" />
             </svg>
-            <h2>Cliente Selecionado</h2>
+            <h2 class="text-white">Cliente Selecionado</h2>
         </div>
         <?php
 
@@ -226,28 +217,14 @@
 
             ?>
         <input type="hidden" id="sales_id_client" name="sales_id_client" value="<?php echo $client_id['id']; ?>">
-        <div class="w100">
-            <p>
-            <h3 id="sales-page">Nenhum Cliente Selecionado</h3>
-            </p>
-        </div>
+        <h3 class="text-white table-number" id="sales-page">Nenhum Cliente Selecionado</h3>
     </div>
 </form>
 
-<div id="error-container"
-    style="color: black; display: none; background: #f75353; display: none; align-items: center; justify-content: center; padding: 20px; top: 50%; left: 50%; width: 100%;">
-    <span id="error-message"></span>
-</div>
-
-<div id="success-container"
-    style="color: black; display: none; background: green; display: none; align-items: center; justify-content: center; padding: 20px; top: 50%; left: 50%; width: 100%;">
-    <span id="success-message"></span>
-</div>
-
 <div class="overlay-portion" id="overlay-portion">
     <div class="portion-sales" id="portion-sales">
-        <div class="nav-portion">
-            <h2 class="h2-portion">Adicionar parcelas</h2>
+        <div class="d-flex justify-content-between align-items-center p-3 border-bottom">
+            <h2 class="text-white m-0">Adicionar parcelas</h2>
             <svg id="close-portion" onclick="closeModalPortion()" fill="#fff" xmlns="http://www.w3.org/2000/svg"
                 height="24px" viewBox="0 0 24 24" width="24px">
                 <path d="M0 0h24v24H0z" fill="none" />
@@ -255,32 +232,40 @@
                     d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" />
             </svg>
         </div>
-        <div class="form-portion-sales">
+        <div class="p-3">
             <form class="form" method="post">
-                <div class="content-form">
-                    <input type="text" name="portion-total" id="portion-total" placeholder="Parcelas">
+                <div class="mb-3">
+                    <input type="text" class="form-control" name="portion-total" id="portion-total"
+                        placeholder="Parcelas">
+                </div>
+                <div class="d-grid gap-2 d-flex">
+                    <button id="button-portion" class="btn btn-primary" type="button">Salvar</button>
                 </div>
             </form>
-            <div class="content-form">
-                <button id="button-portion" class="button-portion right" type="button">Salvar</button>
+        </div>
+        <div class="p-3">
+            <div class="row">
+                <div class="col">
+                    <div class="table-responsive" style="max-height: 400px; overflow-y: auto; overflow-x: auto;">
+                        <table class="table table-dark table-hover">
+                            <thead style="white-space: nowrap;"">
+                                <tr>
+                                    <th>#</th>
+                                    <th>Parcelas</th>
+                                    <th>Valor das parcelas</th>
+                                </tr>
+                            </thead>
+                    <tbody id="desc-portion"></tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
         </div>
-        <div class="list-table">
-            <div class="box-content">
-                <table id="portion-value">
-                    <thead>
-                        <th>#</th>
-                        <th>Parcelas</th>
-                        <th>Valor das parcelas</th>
-                    </thead>
-                    <tbody id="desc-portion">
-                    </tbody>
-                </table>
-            </div>
+        <div class="d-flex justify-content-between align-items-center p-3 border-top">
+            <button onclick="finalizeSalePortion()" id="finish-portion" class="btn btn-success" type="submit">Finalizar
+                venda</button>
+            <p id="total-portion-sales" class="text-white fw-bold m-0">R$ 0.00</p>
         </div>
-        <button onclick="finalizeSalePortion()" id="finish-portion" class="finish-portion left" type="submit">Finalizar
-            venda</button>
-        <p id="total-portion-sales" class="p-portion right">R$ 0.00</p>
     </div>
 </div>
 

@@ -67,7 +67,7 @@ if ($checkCode->rowCount() > 0) {
 
                     if ($boxpdv["status"] == 1) {
                         ?>
-                        <div class="d-grid btn-lg mb-3 btn btn-outline-success" id="open-boxpdv">
+                        <div class="d-grid btn-lg mb-3 btn btn-success" id="open-boxpdv">
                             <span>Caixa aberto</span>
                             <form action="">
                                 <input type="hidden" name="id_box" value="<?php echo base64_encode($boxpdv['id']); ?>">
@@ -75,13 +75,13 @@ if ($checkCode->rowCount() > 0) {
                         </div>
                     <?php } else {
                         ?>
-                        <div class="d-grid btn-lg mb-3 btn btn-outline-danger">
+                        <div class="d-grid btn-lg mb-3 btn btn-danger">
                             <span>Caixa Fechado</span>
                         </div>
                     <?php }
                 } else {
                     ?>
-                    <div class="d-grid btn btn-outline-info btn-lg mb-3">
+                    <div class="d-grid btn btn--info btn-lg mb-3">
                         <span>Nenhum caixa aberto</span>
                     </div>
                 <?php }

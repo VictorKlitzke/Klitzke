@@ -401,10 +401,10 @@ document.addEventListener("DOMContentLoaded", function () {
     let tableRows = document.querySelectorAll(".tbody-selected");
     tableRows.forEach(function (row) {
         row.addEventListener("dblclick", function () {
-            let clientName = row.querySelector("td:nth-child(2)").textContent;
+            let clientName = row.querySelector("th:nth-child(2)").textContent;
             let salesPageElement = document.getElementById("sales-page");
 
-            selectedClientId = row.querySelector("td:first-child").textContent;
+            selectedClientId = row.querySelector("th:first-child").textContent;
 
             if (salesPageElement) {
                 let clientSearch = document.getElementById('client-search-sales');

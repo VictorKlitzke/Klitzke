@@ -9,26 +9,13 @@
     z-index: 999;
 }
 
-.h2-portion {
-    padding-left: 10px;
-    color: #ccc;
-}
-
-.p-portion {
-    color: #ccc;
-    background: #323232;
-    padding: 4px;
-    margin: 4px;
-    border-radius: 6px;
-}
-
 .portion-sales {
     display: block;
     height: 50%;
     padding: 10px;
     float: left;
     position: fixed;
-    background: #202020;
+    background: #212529;
     border: 1px solid #ccc;
     border-radius: 4px;
     top: 50%;
@@ -36,55 +23,4 @@
     width: 50%;
     transform: translate(-50%, -50%);
     overflow-y: auto;
-}
-
-.finish-portion {
-    padding: 8px;
-    border-radius: 4px;
-    margin: 4px;
-    font-size: 12px;
-    background: #1b1b1b;
-    border: 1px solid #323232;
-    color: #ccc;
-    font-weight: bold;
-    cursor: pointer;
-    width: 30%;
-    transition: background 0.3s, color 0.3s;
-}
-
-.finish-portion:hover {
-    background: #323232;
-}
-
-.button-portion {
-    font-size: 16px;
-    font-weight: normal;
-    color: #ccc;
-    outline: none !important;
-    height: 30px;
-    border-radius: 4px;
-    background: #323232 !important;
-    border: 1px solid #1b1b1b;
-    padding: 4px;
-    cursor: pointer;
-}
-
-.button-portion:hover {
-    background: #1b1b1b;
-}
-
-.form-portion-sales {
-    border: 1px solid #1b1b1b;
-    padding: 10px;
-    margin: 10px;
-    display: flex;
-}
-
-.list-table {
-    margin: 10px;
-}
-
-.nav-portion {
-    display: flex;
-    justify-content: space-between;
 }

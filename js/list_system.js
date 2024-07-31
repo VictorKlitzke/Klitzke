@@ -1,4 +1,4 @@
-const BASE_URL = "http://localhost:3000/Klitzke/ajax/";
+const BASE_URL = "http://localhost:33/Klitzke/ajax/";
 const BASE_CLASS = "http://localhost:3000/Klitzke/classes/";
 const BASE_CONTROLLERS = "http://localhost:3000/Klitzke/controllers/";
 const BASE_PATH_HOME = "http://localhost:3000/Klitzke/";
@@ -493,6 +493,7 @@ async function ListProducts() {
         showMessage('Erro ao fazer requisição: ' + error.message, 'error');
     }
 }
+
 function handleSolicitarClick(product) {
     const existingProduct = selectedProducts.find(p => p.id === product.id);
     if (existingProduct) {
@@ -503,6 +504,7 @@ function handleSolicitarClick(product) {
     }
     updateSelectedProductsTable();
 }
+
 function updateSelectedProductsTable() {
     const selectedProductsList = document.getElementById('selected-products-list');
     selectedProductsList.innerHTML = ''; 
@@ -533,6 +535,7 @@ function updateSelectedProductsTable() {
         selectedProductsList.appendChild(row);
     });
 }
+
 function handleRemoveClick(product) {
     const index = selectedProducts.findIndex(p => p.id === product.id);
     if (index > -1) {
