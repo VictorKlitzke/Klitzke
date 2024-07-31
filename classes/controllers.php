@@ -7,13 +7,12 @@ $sql = Db::Connection();
 class Controllers
 {
 
-    public static function SelectRequest($name_table, $start = null, $end = null)
+    public static function SelectRequest($name_table)
     {
         $sql = Db::Connection();
 
         $query = "SELECT 
                     R.*,
-                    U.name AS NAME_USER,
                     CASE 
                         WHEN R.status = 1 THEN 'EM ATENDIMENTO'
                         WHEN R.status = 2 THEN 'INATIVADA'
@@ -21,13 +20,8 @@ class Controllers
                         WHEN R.status = 4 THEN 'AGRUPADOS'
                     END AS STATUS_REQUEST
                 FROM 
-                    $name_table R
-                    INNER JOIN users U ON U.id = R.id_users_request
-                ORDER BY R.id ASC";
-
-        if ($start !== null && $end !== null) {
-            $query .= " LIMIT $start, $end";
-        }
+                    `request` R
+                     ORDER BY r.`id` ASC";
 
         $exec = $sql->prepare($query);
         $exec->execute();

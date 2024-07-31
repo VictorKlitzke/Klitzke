@@ -64,12 +64,12 @@ function AddSelectProducts(index, id, name, stock_quantity, value) {
                     "<td id='product-name'>" + name + "</td>" +
                     "<td id='product-quantity-" + id + "'>" + 1 + "</td>" +
                     "<td id='product-value' class='content-form'>" +
-                    "<input type='text' id='value" + id + "' value='" + value + "' />" +
+                    "<input type='text' class='form-control' id='value" + id + "' value='" + value + "' />" +
                     "</td>" +
                     "<td style='margin: 6px; padding: 6px;'>" +
                     "<div>" +
-                    "<button onclick='removeProduct(" + id + ")' id='button-delete-" + id + "' class='btn-delete' type='button'>Deletar</button>" +
-                    "<button onclick='editProductValue(" + id + ")' class='btn-edit' style='margin-left: 5px;' type='button'>Editar Valor</button>" +
+                    "<button onclick='removeProduct(" + id + ")' id='button-delete-" + id + "' class='btn btn-danger' type='button'>Deletar</button>" +
+                    "<button onclick='editProductValue(" + id + ")' class='btn btn-info' style='margin-left: 5px;' type='button'>Editar Valor</button>" +
                     "</div>" +
                     "</td>";
 
@@ -401,10 +401,10 @@ document.addEventListener("DOMContentLoaded", function () {
     let tableRows = document.querySelectorAll(".tbody-selected");
     tableRows.forEach(function (row) {
         row.addEventListener("dblclick", function () {
-            let clientName = row.querySelector("td:nth-child(2)").textContent;
+            let clientName = row.querySelector("th:nth-child(2)").textContent;
             let salesPageElement = document.getElementById("sales-page");
 
-            selectedClientId = row.querySelector("td:first-child").textContent;
+            selectedClientId = row.querySelector("th:first-child").textContent;
 
             if (salesPageElement) {
                 let clientSearch = document.getElementById('client-search-sales');

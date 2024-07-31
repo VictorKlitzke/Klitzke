@@ -12,33 +12,17 @@
 .client-search-sales {
   display: none;
   overflow-x: auto;
-  height: 50%;
+  height: 45%;
   padding: 10px 0;
   float: left;
   position: fixed;
-  background: #202020;
+  background: #212529;
   border: 1px solid #fff;
   border-radius: 4px;
   top: 50%;
   left: 50%;
   width: 50%;
   transform: translate(-50%, -50%);
-}
-
-.form-sales-search {
-  padding-right: 12px;
-  margin-top: 1px;
-}
-
-.search-client-sales {
-  padding: 6px;
-  margin: 6px;
-}
-
-.search-client {
-  display: flex;
-  justify-content: space-between;
-  padding-bottom: 12px;
 }
 
 #close-search-client {
@@ -50,53 +34,12 @@
   cursor: pointer;
 }
 
-.button-sales-search,
-.selected-client-sales {
-  font-size: 14px;
-  font-weight: normal;
-  color: #ccc;
-  outline: none !important;
-  border-radius: 4px;
-  text-align: center;
-  background: #323232 !important;
-  border: 1px solid #1b1b1b;
-  padding: 4px;
-  cursor: pointer;
-}
-
-.button-sales-search:hover {
-  background: #202020;
-}
-
 .client-page-selected {
   border-radius: 4px;
   padding: 6px;
   height: 90px;
-  background: #202020;
+  background: #212529;
   border: 1px solid #1b1b1b;
   align-items: start;
   margin-top: 12px;
-}
-
-#sales-page {
-  font-size: 16px;
-  font-style: italic;
-  color: #ccc;
-  cursor: default;
-}
-
-.edit-value {
-  display: none;
-  overflow-x: auto;
-  height: 50%;
-  padding: 10px 0;
-  float: left;
-  position: fixed;
-  background: #202020;
-  border: 1px solid #fff;
-  border-radius: 4px;
-  top: 50%;
-  left: 50%;
-  width: 50%;
-  transform: translate(-50%, -50%);
 }

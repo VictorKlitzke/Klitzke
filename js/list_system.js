@@ -1,4 +1,4 @@
-const BASE_URL = "http://localhost:3000/Klitzke/ajax/";
+const BASE_URL = "http://localhost:33/Klitzke/ajax/";
 const BASE_CLASS = "http://localhost:3000/Klitzke/classes/";
 const BASE_CONTROLLERS = "http://localhost:3000/Klitzke/controllers/";
 const BASE_PATH_HOME = "http://localhost:3000/Klitzke/";
@@ -322,7 +322,6 @@ async function DetailsOrder(button) {
 
     const id_pedido_details = button.getAttribute('data-id');
     const ModalOpenDetails = document.getElementById('modal-print-request');
-    const overlayDetailsrequest = document.getElementById('overlay-details-request');
 
     if (!id_pedido_details) {
         window.alert("ID do pedido nao encontrado!");
@@ -350,10 +349,11 @@ async function DetailsOrder(button) {
 
             requestIdElement.textContent = id_pedido_details;
             modalTableBodyRequest.innerHTML = '';
-
+            console.log(items);
             items.forEach(item => {
                 let row = modalTableBodyRequest.insertRow();
                 row.insertCell(0).textContent = item.comanda;
+                console.log(item.name);
                 row.insertCell(1).textContent = item.name;
                 row.insertCell(2).textContent = item.quantity;
                 row.insertCell(3).textContent = item.price_request;
@@ -365,7 +365,6 @@ async function DetailsOrder(button) {
             });
 
             ModalOpenDetails.style.display = 'block';
-            overlayDetailsrequest.style.display = 'block';
         } else {
             window.alert('Erro ao buscar itens da venda: ' + result.error);
         }
@@ -377,11 +376,9 @@ async function DetailsOrder(button) {
 
 async function CloseModalInfoRequest() {
 
-    const overlayDetails = document.getElementById('overlay-details-request');
     const modalDetails = document.getElementById('modal-print-request');
 
-    if ((overlayDetails.style.display === 'block' && modalDetails.style.display === 'block')) {
-        overlayDetails.style.display = 'none';
+    if ((modalDetails.style.display === 'block')) {
         modalDetails.style.display = 'none';
     }
 
@@ -496,6 +493,7 @@ async function ListProducts() {
         showMessage('Erro ao fazer requisição: ' + error.message, 'error');
     }
 }
+
 function handleSolicitarClick(product) {
     const existingProduct = selectedProducts.find(p => p.id === product.id);
     if (existingProduct) {
@@ -506,6 +504,7 @@ function handleSolicitarClick(product) {
     }
     updateSelectedProductsTable();
 }
+
 function updateSelectedProductsTable() {
     const selectedProductsList = document.getElementById('selected-products-list');
     selectedProductsList.innerHTML = ''; 
@@ -536,6 +535,7 @@ function updateSelectedProductsTable() {
         selectedProductsList.appendChild(row);
     });
 }
+
 function handleRemoveClick(product) {
     const index = selectedProducts.findIndex(p => p.id === product.id);
     if (index > -1) {

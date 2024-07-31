@@ -7,29 +7,12 @@
     font-weight: 300;
 }
 
-.overlay-container {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.63);
-    z-index: 999;
-}
-
-h2 {
-    color: #ccc;
-    cursor: default;
-}
-
-h4 {
-    float: left;
-    cursor: default;
-    color: #ccc;
-}
-
 #button-standard {
     font-size: 14px;
+}
+
+.menu-active {
+    border-bottom: 1px solid #ccc;
 }
 
 .w100 {
@@ -113,6 +96,11 @@ h4 {
 
 /*MENU DO SISTEMA HORIZONTAL*/
 
+.center {
+    padding: 0 2%;
+    margin: 0 auto;
+}
+
 header {
     position: relative;
     left: 250px;
@@ -135,24 +123,20 @@ header {
     font-size: 16px;
 }
 
-.menu-btn {
-    float: left;
-    cursor: pointer;
-    font-size: 16px;
-    color: #ccc;
-}
-
 /*PAGINAS DO SISTEMAS*/
 
 .box-content {
     background: #212529;
-    border-radius: 4px;
-    border: 1px solid #1b1b1b;
+    border-radius: 24px;
     padding: 30px;
     margin-bottom: 25px;
 }
 
 /* TUDO DO SISTEMA */
+
+.clear {
+    clear: both;
+}
 
 @keyframes slidein {
     0% {
