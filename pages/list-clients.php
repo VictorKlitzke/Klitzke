@@ -1,9 +1,6 @@
 <?php
 
-$currentPage = isset($_GET['page']) ? (int) ($_GET['page']) : 1;
-$porPage = 20;
-
-$clients = Controllers::SelectAll('clients', ($currentPage - 1) * $porPage, $porPage);
+$clients = Controllers::SelectAll('clients');
 
 ?>
 
@@ -54,18 +51,4 @@ $clients = Controllers::SelectAll('clients', ($currentPage - 1) * $porPage, $por
 			</div>
 		</div>
 	</div>
-</div>
-
-<div class="page">
-	<?php
-	$totalPage = ceil(count(Controllers::selectAll('clients')) / $porPage);
-
-	for ($i = 1; $i <= $totalPage; $i++) {
-		if ($i == $currentPage)
-			echo '<a class="page-selected" href="' . INCLUDE_PATH . 'list-clients?page=' . $i . '">' . $i . '</a>';
-		else
-			echo '<a href="' . INCLUDE_PATH . 'list-clients?page=' . $i . '">' . $i . '</a>';
-	}
-
-	?>
 </div>

@@ -60,43 +60,43 @@ if (isset($_POST['action'])) {
 ?>
 
 <div class="box-content">
-  <h2>Editar Empresa</h2>
-  <form class="form" method="post" enctype="multipart/form-data">
-    <div class="form-group">
-      <label>Nome</label>
-      <input type="text" name="name" value="<?php echo $update['name']; ?>" />
+  <h2 class="text-white mt-4">Editar Empresa</h2>
+  <div class="row g-3" method="post" enctype="multipart/form-data">
+    <div class="col-sm-6">
+      <label class="text-white">Nome</label>
+      <input type="text" class="form-control" name="name" value="<?php echo $update['name']; ?>" />
     </div>
-    <div class="form-group">
-      <label>CNPJ</label>
-      <input type="text" name="cnpj" value="<?php echo $update['cnpj']; ?>" />
+    <div class="col-sm-6">
+      <label class="text-white">CNPJ</label>
+      <input type="text" class="form-control" name="cnpj" value="<?php echo $update['cnpj']; ?>" />
     </div>
-    <div class="form-group">
-      <label>Contato</label>
-      <input type="text" name="phone" value="<?php echo $update['phone']; ?>" />
+    <div class="col-sm-6">
+      <label class="text-white">Contato</label>
+      <input type="text" class="form-control" name="phone" value="<?php echo $update['phone']; ?>" />
     </div>
-    <div class="form-group">
-      <label>Inscrição Estadual</label>
-      <input type="text" name="state_registration" value="<?php echo $update['state_registration']; ?>" />
+    <div class="col-sm-6">
+      <label class="text-white">Inscrição Estadual</label>
+      <input type="text" class="form-control" name="state_registration" value="<?php echo $update['state_registration']; ?>" />
     </div>
-    <div class="form-group">
-      <label>Email</label>
-      <input type="text" name="email" value="<?php echo $update['email']; ?>" />
+    <div class="col-sm-6">
+      <label class="text-white">Email</label>
+      <input type="text" class="form-control" name="email" value="<?php echo $update['email']; ?>" />
     </div>
-    <div class="form-group">
-      <label>Endereço</label>
-      <input type="text" name="address" value="<?php echo $update['address']; ?>" />
+    <div class="col-sm-6">
+      <label class="text-white">Endereço</label>
+      <input type="text" class="form-control" name="address" value="<?php echo $update['address']; ?>" />
     </div>
-    <div class="form-group">
-      <label>Estado</label>
-      <input type="text" name="state" value="<?php echo $update['state']; ?>" />
+    <div class="col-12">
+      <label class="text-white">Estado</label>
+      <input type="text" class="form-control" name="state" value="<?php echo $update['state']; ?>" />
     </div>
-    <div class="form-group">
+    <div class="col-sm-6">
       <input type="hidden" name="id" value="<?php echo $id; ?>">
       <input type="hidden" name="name_table" value="company">
     </div>
-    <div class="form-group">
-      <input type="submit" name="action" value="Editar Empresa">
+    <div class="col-12">
+      <input type="submit" class="btn btn-primary" name="action" value="Editar Empresa">
     </div>
-  </form>
+  </div>
 
 </div>

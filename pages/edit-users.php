@@ -52,46 +52,46 @@ if (isset($_POST['action'])) {
 ?>
 
 <div class="box-content">
-  <h2>Editar Usuário</h2>
-  <form class="form" method="post" enctype="multipart/form-data">
-    <div class="form-group">
-      <label>Nome</label>
-      <input type="text" name="name" value="<?php echo $update['name']; ?>" />
+  <h2 class="text-white mt-4">Editar Usuário</h2>
+  <div class="row g-3" method="post" enctype="multipart/form-data">
+    <div class="col-sm-6">
+      <label class="text-white">Nome</label>
+      <input type="text" class="form-control" name="name" value="<?php echo $update['name']; ?>" />
     </div>
-    <div class="form-group">
-      <label>Email</label>
-      <input type="text" name="email" value="<?php echo $update['email']; ?>" />
+    <div class="col-sm-6">
+      <label class="text-white">Email</label>
+      <input type="text" class="form-control" name="email" value="<?php echo $update['email']; ?>" />
     </div>
-    <div class="form-group">
-      <label>Senha</label>
-      <input type="password" name="password" value="">
+    <div class="col-sm-6">
+      <label class="text-white">Senha</label>
+      <input type="password" class="form-control" name="password" value="">
     </div>
-    <div class="form-group">
-      <label>Login</label>
-      <input type="text" name="login" value="<?php echo $update['login']; ?>" />
+    <div class="col-sm-6">
+      <label class="text-white">Login</label>
+      <input type="text" class="form-control" name="login" value="<?php echo $update['login']; ?>" />
     </div>
-    <div class="form-group">
-      <label>Contato</label>
-      <input type="text" name="phone" value="<?php echo $update['phone']; ?>" />
+    <div class="col-sm-6">
+      <label class="text-white">Contato</label>
+      <input type="text" name="phone" class="form-control" value="<?php echo $update['phone']; ?>" />
     </div>
-    <div class="form-group">
-      <label>Função</label>
-      <input type="text" name="function" value="<?php echo $update['function']; ?>" />
+    <div class="col-sm-6">
+      <label class="text-white">Função</label>
+      <input type="text" name="function" class="form-control" value="<?php echo $update['function']; ?>" />
     </div>
-    <div class="form-group">
-      <label>Comissão</label>
-      <input type="text" name="commission" value="<?php echo $update['commission']; ?>" />
+    <div class="col-sm-6">
+      <label class="text-white">Comissão</label>
+      <input type="text" name="commission" class="form-control" value="<?php echo $update['commission']; ?>" />
     </div>
-    <div class="form-group">
-      <label>Comissão por venda</label>
-      <input type="text" name="target_commission" value="<?php echo $update['target_commission']; ?>" />
+    <div class="col-sm-6">
+      <label class="text-white">Comissão por venda</label>
+      <input type="text" name="target_commission" class="form-control" value="<?php echo $update['target_commission']; ?>" />
     </div>
-    <div class="form-group">
+    <div class="col-sm-6">
       <input type="hidden" name="id" value="<?php echo $id; ?>">
       <input type="hidden" name="name_table" value="users">
     </div>
-    <div class="form-group">
-      <input type="submit" name="action" value="Editar Usuário">
+    <div class="col-12">
+      <input class="btn btn-primary" type="submit" name="action" value="Editar Usuário">
     </div>
-  </form>
+  </div>
 </div>
