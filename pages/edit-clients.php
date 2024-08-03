@@ -64,50 +64,50 @@ if (isset($_POST['action'])) {
 ?>
 
 <div class="box-content">
-  <h2>Editar Cliente</h2>
-  <form class="form" method="post" enctype="multipart/form-data">
-    <div class="form-group">
+  <h2 class="text-white mt-4">Editar Cliente</h2>
+  <div class="row g-3" method="post" enctype="multipart/form-data">
+    <div class="col-sm-6">
       <label>Nome</label>
-      <input type="text" name="name" value="<?php echo $update['name']; ?>" />
+      <input type="text" class="form-control" name="name" value="<?php echo $update['name']; ?>" />
     </div>
-    <div class="form-group">
+    <div class="col-sm-6">
       <label>CPF</label>
-      <input type="text" name="cpf" value="<?php echo $update['cpf']; ?>" />
+      <input type="text" class="form-control" name="cpf" value="<?php echo $update['cpf']; ?>" />
     </div>
-    <div class="form-group">
+    <div class="col-sm-6">
       <label>Nome fantasia</label>
-      <input type="text" name="social_reason" value="<?php echo $update['social_reason']; ?>">
+      <input type="text" class="form-control" name="social_reason" value="<?php echo $update['social_reason']; ?>">
     </div>
-    <div class="form-group">
+    <div class="col-sm-6">
       <label>Email</label>
-      <input type="text" name="email" value="<?php echo $update['email']; ?>" />
+      <input type="text" class="form-control" name="email" value="<?php echo $update['email']; ?>" />
     </div>
-    <div class="form-group">
+    <div class="col-sm-6">
       <label>Contato</label>
-      <input type="text" name="phone" value="<?php echo $update['phone']; ?>" />
+      <input type="text" class="form-control" name="phone" value="<?php echo $update['phone']; ?>" />
     </div>
-    <div class="form-group">
+    <div class="col-sm-6">
       <label>CEP</label>
-      <input type="text" name="cep" value="<?php echo $update['cep']; ?>" />
+      <input type="text" class="form-control" name="cep" value="<?php echo $update['cep']; ?>" />
     </div>
-    <div class="form-group">
+    <div class="col-sm-6">
       <label>Cidade</label>
-      <input type="text" name="city" value="<?php echo $update['city']; ?>" />
+      <input type="text" class="form-control" name="city" value="<?php echo $update['city']; ?>" />
     </div>
-    <div class="form-group">
+    <div class="col-sm-6">
       <label>Endereço</label>
-      <input type="text" name="address" value="<?php echo $update['address']; ?>" />
+      <input type="text" class="form-control" name="address" value="<?php echo $update['address']; ?>" />
     </div>
-    <div class="form-group">
+    <div class="col-sm-12">
       <label>Bairro</label>
-      <input type="text" name="neighborhood" value="<?php echo $update['neighborhood']; ?>" />
+      <input type="text" class="form-control" name="neighborhood" value="<?php echo $update['neighborhood']; ?>" />
     </div>
-    <div class="form-group">
+    <div class="col-sm-6">
       <input type="hidden" name="id" value="<?php echo $id; ?>">
       <input type="hidden" name="name_table" value="clients">
     </div>
-    <div class="form-group">
-      <input type="submit" name="action" value="Editar Cliente">
+    <div class="col-12">
+      <input type="submit" class="btn btn-primary" name="action" value="Editar Cliente">
     </div>
-  </form>
+  </div>
 </div>

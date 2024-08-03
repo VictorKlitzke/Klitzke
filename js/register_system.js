@@ -48,13 +48,16 @@ async function RegisterUsers() {
         return;
     }
 
-    if (isNaN(values.targetCommission) || isNaN(values.commission)){
+    if (isNaN(values.targetCommission) || isNaN(values.commission) || isNaN(values.phone)){
         showMessage('Campos só aceita numeros', 'warning',);
 
         if (!isNaN(values.targetCommission)) inputs.targetCommission.classList.add('error');
         if (!isNaN(values.commission)) inputs.commission.classList.add('error');
+        if (!isNaN(values.phone)) inputs.phone.classList.add('error');
         setTimeout(() => {
             inputs.commission.classList.remove('error');
+            inputs.commission.targetCommission.remove('error');
+            inputs.commission.phone.remove('error');
         }, 3000);
 
         return;

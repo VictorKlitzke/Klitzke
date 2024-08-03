@@ -1,74 +1,59 @@
 <?php
 
-$currentPage = isset($_GET['page']) ? (int) ($_GET['page']) : 1;
-$porPage = 20;
-
-$company = Controllers::SelectAll('company', ($currentPage - 1) * $porPage, $porPage);
+$company = Controllers::SelectAll('company');
 
 ?>
 
 <div class="box-content">
-	<h2>Suas Empresas</h2>
+	<h2 class="text-white mt-4">Suas Empresas</h2>
 	<div class="list">
-		<table>
-			<thead>
-				<tr>
-					<td>Cliente</td>
-					<td>CNPJ</td>
-					<td>Escrição Estadual</td>
-					<td>Email</td>
-					<td>Contato</td>
-					<td>Cidade</td>
-					<td>Endereço</td>
-					<td>Estado</td>
-					<td>Ações</td>
-				</tr>
-			</thead>
+		<div class="col">
+			<div class="table-responsive" style="max-height: 400px; overflow-y: auto; overflow-x: auto;">
+				<table class="table table-dark table-hover">
+					<thead style="white-space: nowrap;">
+						<tr>
+							<th escope="col">Cliente</th>
+							<th escope="col">CNPJ</th>
+							<th escope="col">Escrição Estadual</th>
+							<th escope="col">Email</th>
+							<th escope="col">Contato</th>
+							<th escope="col">Cidade</th>
+							<th escope="col">Endereço</th>
+							<th escope="col">Estado</th>
+							<th escope="col">Ações</th>
+						</tr>
+					</thead>
 
-			<?php
+					<?php
 
-			foreach ($company as $key => $value) {
+					foreach ($company as $key => $value) {
 
-			?>
+						?>
 
-				<tbody>
-					<tr>
-						<td><?php echo htmlspecialchars($value['name']); ?></td>
-						<td><?php echo htmlspecialchars($value['cnpj']); ?></td>
-						<td><?php echo htmlspecialchars($value['state_registration']); ?></td>
-						<td><?php echo htmlspecialchars($value['email']); ?></td>
-						<td><?php echo htmlspecialchars($value['phone']); ?></td>
-						<td><?php echo htmlspecialchars($value['city']); ?></td>
-						<td><?php echo htmlspecialchars($value['address']); ?></td>
-						<td><?php echo htmlspecialchars($value['state']); ?></td>
+						<tbody style="white-space: nowrap;">
+							<tr>
+								<th><?php echo htmlspecialchars($value['name']); ?></th>
+								<th><?php echo htmlspecialchars($value['cnpj']); ?></th>
+								<th><?php echo htmlspecialchars($value['state_registration']); ?></th>
+								<th><?php echo htmlspecialchars($value['email']); ?></th>
+								<th><?php echo htmlspecialchars($value['phone']); ?></th>
+								<th><?php echo htmlspecialchars($value['city']); ?></th>
+								<th><?php echo htmlspecialchars($value['address']); ?></th>
+								<th><?php echo htmlspecialchars($value['state']); ?></th>
 
-						<td style="display: flex; justify-content: center; gap: 10px; margin: 6px; padding: 6px;">
-							<div>
-								<a class="btn-edit"
-									href="<?php echo INCLUDE_PATH ?>edit-companys?id=<?php echo base64_encode($value['id']); ?>">Editar</a>
-							</div>
-							<div>
-								<a class="btn-disable" href="<?php echo INCLUDE_PATH ?>">Desativar</a>
-							</div>
-						</td>
-					</tr>
-				</tbody>
-			<?php } ?>
+								<th>
 
-		</table>
+									<a class="btn btn-info"
+										href="<?php echo INCLUDE_PATH ?>edit-companys?id=<?php echo base64_encode($value['id']); ?>">Editar</a>
+
+									<a class="btn btn-light" href="<?php echo INCLUDE_PATH ?>">Desativar</a>
+								</th>
+							</tr>
+						</tbody>
+					<?php } ?>
+
+				</table>
+			</div>
+		</div>
 	</div>
-</div>
-
-<div class="page">
-	<?php
-	$totalPage = ceil(count(Controllers::selectAll('company')) / $porPage);
-
-	for ($i = 1; $i <= $totalPage; $i++) {
-		if ($i == $currentPage)
-			echo '<a class="page-selected" href="' . INCLUDE_PATH . 'list-company?page=' . $i . '">' . $i . '</a>';
-		else
-			echo '<a href="' . INCLUDE_PATH . 'list-company?page=' . $i . '">' . $i . '</a>';
-	}
-
-	?>
 </div>

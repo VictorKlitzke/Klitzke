@@ -62,46 +62,46 @@ if (isset($_POST['action'])) {
 ?>
 
 <div class="box-content">
-  <h2>Editar Fornecedor</h2>
-  <form class="form" method="post" enctype="multipart/form-data">
-    <div class="form-group">
-      <label>Fornecedor</label>
-      <input type="text" name="company" value="<?php echo $update['company']; ?>" />
+  <h2 class="text-white mt-4">Editar Fornecedor</h2>
+  <div class="row g-3" method="post" enctype="multipart/form-data">
+    <div class="col-sm-6">
+      <label class="text-white">Fornecedor</label>
+      <input type="text" class="form-control" name="company" value="<?php echo $update['company']; ?>" />
     </div>
-    <div class="form-group">
-      <label>cnpjcpf</label>
-      <input type="text" name="cnpjcpf" value="<?php echo $update['cnpjcpf']; ?>" />
+    <div class="col-sm-6">
+      <label class="text-white">cnpjcpf</label>
+      <input type="text" class="form-control" name="cnpjcpf" value="<?php echo $update['cnpjcpf']; ?>" />
     </div>
-    <div class="form-group">
-      <label>Nome fantasia</label>
-      <input type="text" name="fantasy_name" value="<?php echo $update['fantasy_name']; ?>">
+    <div class="col-sm-6">
+      <label class="text-white">Nome fantasia</label>
+      <input type="text" class="form-control" name="fantasy_name" value="<?php echo $update['fantasy_name']; ?>">
     </div>
-    <div class="form-group">
-      <label>Email</label>
-      <input type="text" name="email" value="<?php echo $update['email']; ?>" />
+    <div class="col-sm-6">
+      <label class="text-white">Email</label>
+      <input type="text" class="form-control" name="email" value="<?php echo $update['email']; ?>" />
     </div>
-    <div class="form-group">
-      <label>Contato</label>
-      <input type="text" name="phone" value="<?php echo $update['phone']; ?>" />
+    <div class="col-sm-6">
+      <label class="text-white">Contato</label>
+      <input type="text" class="form-control" name="phone" value="<?php echo $update['phone']; ?>" />
     </div>
-    <div class="form-group">
-      <label>Cidade</label>
-      <input type="text" name="city" value="<?php echo $update['city']; ?>" />
+    <div class="col-sm-6">
+      <label class="text-white">Cidade</label>
+      <input type="text" class="form-control" name="city" value="<?php echo $update['city']; ?>" />
     </div>
-    <div class="form-group">
-      <label>Endereço</label>
-      <input type="text" name="address" value="<?php echo $update['address']; ?>" />
+    <div class="col-sm-6">
+      <label class="text-white">Endereço</label>
+      <input type="text" class="form-control" name="address" value="<?php echo $update['address']; ?>" />
     </div>
-    <div class="form-group">
-      <label>Estado</label>
-      <input type="text" name="state" value="<?php echo $update['state']; ?>" />
+    <div class="col-sm-6">
+      <label class="text-white">Estado</label>
+      <input type="text" class="form-control" name="state" value="<?php echo $update['state']; ?>" />
     </div>
-    <div class="form-group">
+    <div class="col-sm-6">
       <input type="hidden" name="id" value="<?php echo $id; ?>">
       <input type="hidden" name="name_table" value="suppliers">
     </div>
-    <div class="form-group">
-      <input type="submit" name="action" value="Editar Cliente">
+    <div class="col-12">
+      <input type="submit" class="btn btn-primary" name="action" value="Editar Cliente">
     </div>
-  </form>
+  </div>
 </div>
