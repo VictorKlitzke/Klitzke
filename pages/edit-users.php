@@ -15,6 +15,7 @@
   <div class="row g-3">
     <div class="col-sm-6">
       <label class="text-white">Nome</label>
+      <input type="hidden" id="id_user" value="<?php echo base64_encode($update['id']); ?>" />
       <input type="text" class="form-control" id="name" value="<?php echo $update['name']; ?>" />
       <span id="error" class="error-message">Campo está invalido, Ajuste se possivel.</span>
     </div>
@@ -25,7 +26,7 @@
     </div>
     <div class="col-sm-6">
       <label class="text-white">Login</label>
-      <input type="text" class="form-control" id="login" value="<?php echo $update['login']; ?>" />
+      <input type="text" class="form-control" id="login" value="<?php echo $update['name']; ?>" />
       <span id="error" class="error-message">Campo está invalido, Ajuste se possivel.</span>
     </div>
     <div class="col-sm-6">

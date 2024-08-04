@@ -5,7 +5,7 @@ class Panel
 
   public static function Loggout()
   {
-    setcookie('remember', 'true', time() - 1, '/');
+    setcookie('remember', 'false', time() - 1, '/');
     session_destroy();
     header('Location: ' . INCLUDE_PATH);
   }

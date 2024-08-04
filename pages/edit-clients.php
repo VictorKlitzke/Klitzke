@@ -10,104 +10,57 @@ if (isset($_GET['id'])) {
 
 ?>
 
-<?php
-
-if (isset($_POST['action'])) {
-
-  $name = $_POST['name'];
-  $email = $_POST['email'];
-  $social_reason = $_POST['social_reason'];
-  $phone = $_POST['phone'];
-  $cep = $_POST['cep'];
-  $city = $_POST['city'];
-  $address = $_POST['address'];
-  $cpf = $_POST['cpf'];
-  $neighborhood = $_POST['neighborhood'];
-
-  $verification = Db::Connection()->prepare("SELECT * FROM `clients` WHERE name = ? AND email = ? AND social_reason = ? 
-                                            AND phone = ? AND cep = ? AND city = ? AND address = ? AND cpf = ? AND neighborhood = ? AND id != ?");
-  $verification->execute(
-    array(
-      $_POST['name'],
-      $_POST['email'],
-      $_POST['social_reason'],
-      $_POST['phone'],
-      $_POST['cep'],
-      $_POST['city'],
-      $_POST['address'],
-      $_POST['cpf'],
-      $_POST['neighborhood'],
-      $id
-    )
-  );
-  if ($verification->rowCount() == 0) {
-    $arr = [
-      'name' => $name,
-      'email' => $email,
-      'social_reason' => $social_reason,
-      'phone' => $phone,
-      'cep' => $cep,
-      'city' => $city,
-      'address' => $address,
-      'cpf' => $cpf,
-      'neighborhood' => $neighborhood,
-      'id' => $id,
-      'name_table' => 'clients'
-    ];
-    Controllers::Update($arr);
-    header('Location: ' . INCLUDE_PATH . 'list-clients');
-  } else {
-    Panel::alert('error', 'Não foi possível alterar o cliente');
-  }
-}
-
-?>
-
 <div class="box-content">
   <h2 class="text-white mt-4">Editar Cliente</h2>
-  <div class="row g-3" method="post" enctype="multipart/form-data">
+  <div class="row g-3">
     <div class="col-sm-6">
-      <label>Nome</label>
-      <input type="text" class="form-control" name="name" value="<?php echo $update['name']; ?>" />
+      <label class="text-white">Nome</label>
+      <input type="hidden" id="id_client" value="<?php echo base64_encode($update['id']); ?>" />
+      <input type="text" class="form-control" id="name" value="<?php echo $update['name']; ?>" />
+      <span id="error" class="error-message">Campo está invalido, Ajuste se possivel.</span>
     </div>
     <div class="col-sm-6">
-      <label>CPF</label>
-      <input type="text" class="form-control" name="cpf" value="<?php echo $update['cpf']; ?>" />
+      <label class="text-white">CPF</label>
+      <input type="text" class="form-control" id="cpf" value="<?php echo $update['cpf']; ?>" />
+      <span id="error" class="error-message">Campo está invalido, Ajuste se possivel.</span>
     </div>
     <div class="col-sm-6">
-      <label>Nome fantasia</label>
-      <input type="text" class="form-control" name="social_reason" value="<?php echo $update['social_reason']; ?>">
+      <label class="text-white">Nome fantasia</label>
+      <input type="text" class="form-control" id="social_reason" value="<?php echo $update['social_reason']; ?>">
+      <span id="error" class="error-message">Campo está invalido, Ajuste se possivel.</span>
     </div>
     <div class="col-sm-6">
-      <label>Email</label>
-      <input type="text" class="form-control" name="email" value="<?php echo $update['email']; ?>" />
+      <label class="text-white">Email</label>
+      <input type="text" class="form-control" id="email" value="<?php echo $update['email']; ?>" />
+      <span id="error" class="error-message">Campo está invalido, Ajuste se possivel.</span>
     </div>
     <div class="col-sm-6">
-      <label>Contato</label>
-      <input type="text" class="form-control" name="phone" value="<?php echo $update['phone']; ?>" />
+      <label class="text-white">Contato</label>
+      <input type="text" class="form-control" id="phone" value="<?php echo $update['phone']; ?>" />
+      <span id="error" class="error-message">Campo está invalido, Ajuste se possivel.</span>
     </div>
     <div class="col-sm-6">
-      <label>CEP</label>
-      <input type="text" class="form-control" name="cep" value="<?php echo $update['cep']; ?>" />
+      <label class="text-white">CEP</label>
+      <input type="text" class="form-control" id="cep" value="<?php echo $update['cep']; ?>" />
+      <span id="error" class="error-message">Campo está invalido, Ajuste se possivel.</span>
     </div>
     <div class="col-sm-6">
-      <label>Cidade</label>
-      <input type="text" class="form-control" name="city" value="<?php echo $update['city']; ?>" />
+      <label class="text-white">Cidade</label>
+      <input type="text" class="form-control" id="city" value="<?php echo $update['city']; ?>" />
+      <span id="error" class="error-message">Campo está invalido, Ajuste se possivel.</span>
     </div>
     <div class="col-sm-6">
-      <label>Endereço</label>
-      <input type="text" class="form-control" name="address" value="<?php echo $update['address']; ?>" />
+      <label class="text-white">Endereço</label>
+      <input type="text" class="form-control" id="address" value="<?php echo $update['address']; ?>" />
+      <span id="error" class="error-message">Campo está invalido, Ajuste se possivel.</span>
     </div>
     <div class="col-sm-12">
-      <label>Bairro</label>
-      <input type="text" class="form-control" name="neighborhood" value="<?php echo $update['neighborhood']; ?>" />
-    </div>
-    <div class="col-sm-6">
-      <input type="hidden" name="id" value="<?php echo $id; ?>">
-      <input type="hidden" name="name_table" value="clients">
+      <label class="text-white">Bairro</label>
+      <input type="text" class="form-control" id="neighborhood" value="<?php echo $update['neighborhood']; ?>" />
+      <span id="error" class="error-message">Campo está invalido, Ajuste se possivel.</span>
     </div>
     <div class="col-12">
-      <input type="submit" class="btn btn-primary" name="action" value="Editar Cliente">
+      <button type="button" class="btn btn-primary" onclick="EditClients()">Editar Cliente</button>
     </div>
   </div>
 </div>
