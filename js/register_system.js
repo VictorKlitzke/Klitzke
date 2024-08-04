@@ -571,8 +571,6 @@ async function RegisterForn() {
 
     const { type, values, inputs } = await getFieldsForn();
 
-    console.log(values.name_company);
-
     if (values.cnpj == "" || values.name_company == "" || values.fantasy_name == "") {
         showMessage('Campos não podem ficar vazios', 'warning');
 
