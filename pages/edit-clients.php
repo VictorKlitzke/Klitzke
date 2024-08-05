@@ -4,7 +4,6 @@ if (isset($_GET['id'])) {
   $id = (int) base64_decode($_GET['id']);
   $update = Controllers::Select('clients', 'id=?', array($id));
 } else {
-  Panel::alert('error', 'Você precisa passar o parametro ID.');
   die();
 }
 

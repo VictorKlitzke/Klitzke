@@ -11,10 +11,6 @@
     font-size: 14px;
 }
 
-.menu-active {
-    border-bottom: 1px solid #ccc;
-}
-
 .w100 {
     width: 100%;
 }
@@ -45,83 +41,11 @@
 
 /*MENU DO SISTEMA VERTICAL*/
 
-.menu {
-    overflow-x: hidden;
-    overflow-y: auto;
-    height: 100%;
-    padding: 10px 0;
-    position: fixed;
-    left: 0;
-    top: 0;
-    background: #212529;
-    float: left;
-    width: 250px;
-}
-
-.menu-wrapper {
-    width: 250px;
-}
-
-.container-menu {
-    margin-top: 50px;
-}
-
-.container-menu a {
-    display: block;
-    padding: 8px;
-    font-weight: 300;
-    font-size: 16px;
-    text-decoration: none;
-    color: #ccc;
-}
-
-.container-menu a:hover {
-    background: #141414;
-}
-
-.container-menu h2 {
-    text-align: left;
-    font-weight: normal;
-    font-size: 17px;
-    color: #ccc;
-    padding: 8px;
-}
-
 .content {
-    width: calc(100% - 250px);
-    position: relative;
-    left: 250px;
     padding: 2%;
 }
 
 /*MENU DO SISTEMA HORIZONTAL*/
-
-.center {
-    padding: 0 2%;
-    margin: 0 auto;
-}
-
-header {
-    position: relative;
-    left: 250px;
-    background: #202020;
-    padding: 15px 0;
-    width: calc(100% - 250px);
-}
-
-.loggout {
-    position: relative;
-}
-
-.loggout a {
-    padding: 15px;
-    color: #ccc;
-    font-size: 16px;
-}
-
-.loggout a>span {
-    font-size: 16px;
-}
 
 /*PAGINAS DO SISTEMAS*/
 
@@ -133,10 +57,6 @@ header {
 }
 
 /* TUDO DO SISTEMA */
-
-.clear {
-    clear: both;
-}
 
 @keyframes slidein {
     0% {
@@ -192,42 +112,17 @@ header {
     cursor: default;
 }
 
-.boxpdv-reopen {
-    color: #ccc;
-    background: rgb(173, 91, 150);
-    padding: 6px;
-    margin: 6px;
-    font-size: 18px;
-    text-align: center;
-    cursor: default;
-}
-
-.finish-box {
-    padding-left: 12px;
-    padding: 10px;
-    border-radius: 4px;
-    font-size: 14px;
-    font-weight: 300;
-    background: #1b1b1b;
-    border: 1px solid #323232;
-    color: #ccc;
-    cursor: pointer;
-    width: 100%;
-    transition: background 0.3s, color 0.3s;
-}
-
 .close-boxpdv {
     display: none;
-    height: 75%;
     padding: 20px;
     float: left;
     position: fixed;
-    background: #202020;
+    background: #212529;
     border: 1px solid #fff;
     border-radius: 4px;
     top: 50%;
     left: 50%;
-    width: 60%;
+    width: 40%;
     transform: translate(-50%, -50%);
 }
 

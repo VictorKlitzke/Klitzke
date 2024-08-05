@@ -4,7 +4,6 @@ if (isset($_GET['id'])) {
   $id = (int) base64_decode($_GET['id']);
   $update = Controllers::Select('suppliers', 'id=?', array($id));
 } else {
-  Panel::alert('error', 'Você precisa passar o parametro ID.');
   die();
 }
 
@@ -25,7 +24,7 @@ if (isset($_GET['id'])) {
     </div>
     <div class="col-sm-6">
       <label class="text-white">Nome fantasia</label>
-      <input type="text" class="form-control" id="fantasy_name" value="<?php echo $update['fantasy_id']; ?>">
+      <input type="text" class="form-control" id="fantasy_name" value="<?php echo $update['fantasy_name']; ?>">
       <span id="error" class="error-message">Campo está invalido, Ajuste se possivel.</span>
     </div>
     <div class="col-sm-6">

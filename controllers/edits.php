@@ -227,9 +227,8 @@ class Edit
     public static function UpdateSupplier($sql, $response_forn, $user_id)
     {
         $today = date('Y-m-d H:i:s');
-        $name_table = 'suppliers';
 
-        $id_forn = filter_var($response_forn['id_forn'], FILTER_VALIDATE_INT);
+        $id_forn = filter_var(base64_decode($response_forn['id_forn']), FILTER_VALIDATE_INT);
         $name_company = filter_var($response_forn['name_company'], FILTER_SANITIZE_STRING);
         $fantasy_name = filter_var($response_forn['fantasy_name'], FILTER_SANITIZE_STRING);
         $email = filter_var($response_forn['email'], FILTER_VALIDATE_EMAIL);
@@ -247,7 +246,7 @@ class Edit
         try {
             $sql->beginTransaction();
     
-            $exec = $sql->prepare("UPDATE $name_table SET 
+            $exec = $sql->prepare("UPDATE suppliers SET 
                 company = :name_company, 
                 fantasy_name = :fantasy_name, 
                 email = :email, 
