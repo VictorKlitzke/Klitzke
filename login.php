@@ -72,8 +72,6 @@ if (isset($_POST['action'])) {
 
         header('Location: ' . INCLUDE_PATH);
         die();
-    } else {
-        Panel::Alert('error', 'Credenciais inválidas. Ocorreu um erro ao fazer login.');
     }
 }
 ?>

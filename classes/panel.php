@@ -15,17 +15,6 @@ class Panel
     return isset($_SESSION['login']) && $_SESSION['login'] === true;
   }
 
-  public static function Alert($type, $message)
-  {
-    if ($type == 'sucess') {
-      echo '<div id="alert" class="alert alert-sucess"> ' . $message . '</div>';
-    } else if ($type == 'error') {
-      echo '<div id="alert" class="alert alert-error">' . $message . '</div>';
-    } else if ($type == 'attention') {
-      echo '<div id="alert" class="alert alert-warning">' . $message . '</div>';
-    }
-  }
-
   public static function LoadPage()
   {
     if (isset($_GET["url"])) {

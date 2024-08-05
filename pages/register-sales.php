@@ -108,7 +108,7 @@
     </div>
 
     <div class="payment-method right">
-        <div class="row">
+        <div class="row col-12">
             <div class="col">
                 <div class="card h-100">
                     <div class="card-body">

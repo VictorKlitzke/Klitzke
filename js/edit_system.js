@@ -73,8 +73,6 @@ async function EditUsers() {
         target_commission: values.target_commission
     }
 
-    console.log(responseEditUsers);
-
     continueMessage("Deseja continuar com a edição?", "Sim", "Não", async function () {
         try {
 
@@ -89,8 +87,6 @@ async function EditUsers() {
             });
 
             const responseBody = await response.json();
-
-            console.log(responseBody);
 
             if (responseBody.success) {
                 showMessage("Usuário " + values.name + " editado com sucesso!", 'success');
@@ -213,8 +209,6 @@ async function EditClients() {
         cep: values.cep,
         neighborhood: values.neighborhood,
     }
-
-    console.log(responseEditClient);
 
     continueMessage("Deseja continuar com a edição?", "Sim", "Não", async function () {
         try {
