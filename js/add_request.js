@@ -1,4 +1,3 @@
-// const dotenv = require("dotenv");
 let selectedRequest = [];
 let tableSelected = [];
 let SelectedInvos = [];
@@ -39,7 +38,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
 		try {
 
-			const response = await fetch("http://localhost/Klitzke/ajax/search_table_request.php", {
+			const response = await fetch(`${BASE_SEARCH}searchs.php`, {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/x-www-form-urlencoded'
@@ -61,15 +60,15 @@ document.addEventListener('DOMContentLoaded', function () {
 
 	productSRequestearch.addEventListener('input', async function () {
 
-		let searchQuery = productSRequestearch.value;
+		let search_query_request = productSRequestearch.value;
 
 		try {
-			const response = await fetch('http://localhost/Klitzke/ajax/search_request.php', {
+			const response = await fetch(`${BASE_SEARCH}searchs.php`, {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/x-www-form-urlencoded'
 				},
-				body: 'searchQuery=' + encodeURIComponent(searchQuery)
+				body: 'search_query_request=' + encodeURIComponent(search_query_request)
 			});
 
 			if (response.ok) {
@@ -881,7 +880,7 @@ async function CloseInvo() {
 
 /**/
 
-document.querySelector('.button-request').addEventListener('click', updatePedido, calculateTotal());
+document.getElementById('button-request').addEventListener('click', updatePedido, calculateTotal());
 // document.querySelector('.invoice-request').addEventListener('click', generetorRequest);
 // document.querySelector('.button-order').addEventListener('click', AddProductOrder());
 document.getElementById('add-card-item').addEventListener('click', addItemCard);
