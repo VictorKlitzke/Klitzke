@@ -244,10 +244,8 @@ async function PrintOut(button) {
 async function Details(button) {
 
     const id_detals = button.getAttribute('data-id');
-    const overlayDetails = document.getElementById('overlay-details');
     const modalDetails = document.getElementById('modal-print');
 
-    overlayDetails.style.display = 'block';
     modalDetails.style.display = 'block';
 
     if (!id_detals) {
@@ -289,8 +287,6 @@ async function Details(button) {
                 row.insertCell(5).textContent = item.form_payment;
                 row.insertCell(6).textContent = item.users;
             });
-
-            overlayDetails.style.display = 'block';
             modalDetails.style.display = 'block';
         } else {
             window.alert('Erro ao buscar itens da venda: ' + result.error);
@@ -303,11 +299,9 @@ async function Details(button) {
 
 async function CloseModalInfo() {
 
-    const overlayDetails = document.getElementById('overlay-details');
     const modalDetails = document.getElementById('modal-print');
 
-    if ((overlayDetails.style.display === 'block' && modalDetails.style.display === 'block')) {
-        overlayDetails.style.display = 'none';
+    if ((modalDetails.style.display === 'block')) {
         modalDetails.style.display = 'none';
     }
 
