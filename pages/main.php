@@ -127,103 +127,103 @@ $status_product = $products->fetchAll();
   <div class="col">
     <div class="box-content">
       <h2 class="text-white mb-4">Produtos Negativados</h2>
-      <table class="table table-dark">
-        <thead>
-          <tr>
-            <th scope="col">Nome</th>
-            <th scope="col">Quantidade</th>
-            <th scope="col">Status</th>
-          </tr>
-        </thead>
-        <tbody>
-          <?php
-          foreach ($status_product as $row => $value) {
-            ?>
+      <div class="table-responsive">
+        <table class="table table-dark table-hover">
+          <thead>
             <tr>
-              <th scope="row"><?php echo $value['product']; ?></th>
-              <td><?php echo $value['product_stock_quantity']; ?></td>
-              <td><?php echo $value['status_product']; ?></td>
+              <th scope="col">Nome</th>
+              <th scope="col">Quantidade</th>
+              <th scope="col">Status</th>
             </tr>
-          <?php } ?>
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            <?php
+            foreach ($status_product as $row => $value) {
+              ?>
+              <tr>
+                <th scope="row"><?php echo $value['product']; ?></th>
+                <td><?php echo $value['product_stock_quantity']; ?></td>
+                <td><?php echo $value['status_product']; ?></td>
+              </tr>
+            <?php } ?>
+          </tbody>
+        </table>
+      </div>
     </div>
   </div>
 </div>
 
 <div class="row">
   <div class="col">
-    <div class="box-content">
+    <div class="box-content" style="max-height: 700px;">
       <h2 class="text-white mb-4">Lista das 10 ultimas vendas</h2>
-      <table class="table table-dark">
-        <thead>
-          <th scope="col">#</th>
-          <th scope="col">Usuario</th>
-          <th scope="col">Cliente</th>
-          <th scope="col">Forma de Pagamento</th>
-          <th scope="col">Status Venda</th>
-          <th scope="col">Valor Total</th>
-          <th scope="col">Data</th>
-        </thead>
+      <div class="table-responsive" style="max-height: 700px; overflow-y: auto; overflow-x: auto;">
+        <table class="table table-dark table-hover">
+          <thead style="white-space: nowrap;">
+            <th scope="col">#</th>
+            <th scope="col">Usuario</th>
+            <th scope="col">Cliente</th>
+            <th scope="col">Forma de Pagamento</th>
+            <th scope="col">Status Venda</th>
+            <th scope="col">Valor Total</th>
+            <th scope="col">Data</th>
+            <th scope="col">Ações</th>
+          </thead>
 
-        <?php
+          <?php
 
-        foreach ($result_sales as $key => $value) {
+          foreach ($result_sales as $key => $value) {
 
-          ?>
+            ?>
 
-          <tbody>
+            <tbody style="white-space: nowrap;">
 
-            <tr>
-              <th scope="row"><?php echo htmlspecialchars($value['id']); ?></th>
-              <th> <?php echo htmlspecialchars($value['users']); ?></th>
+              <tr>
+                <th scope="row"><?php echo htmlspecialchars($value['id']); ?></th>
+                <th> <?php echo htmlspecialchars($value['users']); ?></th>
 
-              <?php if (htmlspecialchars($value['clients']) == null) {
-                echo '<td><p>' . 'Cliente consumidor final' . '</p></td>';
-              } else {
-                echo '<td><p>' . htmlspecialchars($value['clients']) . '</p></td>';
-              }
-              ?>
-              <th><?php echo htmlspecialchars($value['form_payment']); ?></th>
-              <th><?php echo htmlspecialchars($value['status_sales']); ?></th>
-              <th><?php echo htmlspecialchars($value['total_value']); ?></th>
-              <th><?php echo htmlspecialchars($value['date_sales']); ?></th>
+                <?php if (htmlspecialchars($value['clients']) == null) {
+                  echo '<td><p>' . 'Cliente consumidor final' . '</p></td>';
+                } else {
+                  echo '<td><p>' . htmlspecialchars($value['clients']) . '</p></td>';
+                }
+                ?>
+                <th><?php echo htmlspecialchars($value['form_payment']); ?></th>
+                <th><?php echo htmlspecialchars($value['status_sales']); ?></th>
+                <th><?php echo htmlspecialchars($value['total_value']); ?></th>
+                <th><?php echo htmlspecialchars($value['date_sales']); ?></th>
 
-              <th style="display: flex; justify-content: center; gap: 10px; margin: 6px; padding: 6px;">
-                <?php
+                <th>
+                  <?php
 
-                if ($value['status'] == 2) {
+                  if ($value['status'] == 2) {
 
-                  ?>
+                    ?>
 
-                  <div>
                     <button onclick="ReopenSales(this)" type="button" data-id="<?php echo $value['id'] ?>"
-                      class="btn-reopen">Reabrir venda
+                      class="btn btn-info">Reabrir venda
                     </button>
-                  </div>
 
-                <?php } else { ?>
+                  <?php } else { ?>
 
-                  <div>
                     <button onclick="CancelSales(this)" data-id="<?php echo $value['id']; ?>" type="button"
-                      class="btn-cancel">Cancelar venda
+                      class="btn btn-danger">Cancelar venda
                     </button>
-                  </div>
 
-                <?php } ?>
+                  <?php } ?>
 
-                <div>
-                  <button onclick="Details(this)" data-id="<?php echo $value['id']; ?>" type="button" class="btn-details">
-                    <p>Mais detalhes</p>
+                  <button onclick="Details(this)" data-id="<?php echo $value['id']; ?>" type="button"
+                    class="btn btn-primary">
+                    Mais detalhes
                   </button>
-                </div>
-              </th>
-            </tr>
-          </tbody>
+                </th>
+              </tr>
+            </tbody>
 
-        <?php } ?>
+          <?php } ?>
 
-      </table>
+        </table>
+      </div>
     </div>
   </div>
 </div>

@@ -55,7 +55,7 @@
             </div>
         </div>
         <!-- Segundo Card -->
-        <div class="card bg-dark text-white ms-3 flex-fill">
+        <div id="card-request-finallize" class="card bg-dark text-white ms-3 flex-fill">
             <div class="card-body">
                 <div class="request-list">
                     <h2>Itens do pedido</h2>
@@ -67,18 +67,19 @@
                         <table class="table table-dark table-striped-columns">
                             <thead>
                                 <tr>
-                                    <td>#</td>
-                                    <td>Nome</td>
-                                    <td>
+                                    <th>#</th>
+                                    <th>Nome</th>
+                                    <th>
                                         <p>Qtd.</p>
-                                    </td>
-                                    <td>
+                                    </th>
+                                    <th>
                                         <p>Valor</p>
-                                    </td>
-                                    <td>Comanda</td>
+                                    </th>
+                                    <th>Comanda</th>
+                                    <th>Ações</th>
                                 </tr>
                             </thead>
-                            <tbody class="tbody-request">
+                            <tbody id="tbody-request">
                                 <tr>
                                     <!-- Conteúdo -->
                                 </tr>

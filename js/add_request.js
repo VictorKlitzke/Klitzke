@@ -5,7 +5,7 @@ let SelectedFatPed = [];
 let ButtonSelected = [];
 
 let addButtonCard = document.getElementById('add-card-item');
-let sourceTable = document.querySelector('.card-request-finallize .tbody-request');
+let sourceTable = document.getElementById('tbody-request');
 let destinationTable = document.querySelector('destination-table');
 let existingCardOrder = document.getElementById('card-order');
 
@@ -36,6 +36,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
 		let searchQueryTable = SearchTable.value;
 
+		console.log(searchQueryTable);
+
 		try {
 
 			const response = await fetch(`${BASE_SEARCH}searchs.php`, {
@@ -47,14 +49,15 @@ document.addEventListener('DOMContentLoaded', function () {
 			})
 
 			if (response.status === 200) {
-				const responseData = await response.text();
-				searchResultTable.innerHTML = responseData;
+				const responseDataTable = await response.text();
+				searchResultTable.innerHTML = responseDataTable;
+				console.log(responseDataTable);
 			} else {
-				window.alert("Erro na busca" + response.status);
+				showMessage('Erro na busca' + response.status, 'error');
 			}
 
 		} catch (error) {
-			window.alert("Erro ao buscar comanda. Por favor contante o suporte" + error);
+			showMessage("Erro ao buscar comanda. Por favor contante o suporte" + error, 'error');
 		};
 	});
 
@@ -71,15 +74,16 @@ document.addEventListener('DOMContentLoaded', function () {
 				body: 'search_query_request=' + encodeURIComponent(search_query_request)
 			});
 
-			if (response.ok) {
+			if (response.status == 200) {
 				const responseData = await response.text();
 				productResult.innerHTML = responseData;
+				console.log(responseData);
 			} else {
-				window.alert('Erro na requisição: ' + response.status);
+				showMessage('Erro na requisição: ' + response.status, 'error');
 			}
 
 		} catch (error) {
-			console.error('Erro ao realizar requisição:', error);
+			showMessage('Erro ao realizar requisição:' + error, 'error');
 		}
 	});
 
@@ -174,7 +178,7 @@ function updatePedido() {
 
 	if (!isNaN(requestValue) && requestID && requestQuantity && requestName) {
 
-		var table = document.querySelector('.tbody-request');
+		var table = document.getElementById('tbody-request');
 		var existingRow = findExistingRow(requestID);
 
 		if (numberTableRequest === '') {
@@ -250,7 +254,7 @@ function updatePedido() {
 }
 
 function findExistingRow(requestID) {
-	var table = document.querySelector('.tbody-request');
+	var table = document.getElementById('tbody-request');
 	var rows = table.getElementsByTagName('tr');
 
 	for (var i = 0; i < rows.length; i++) {
@@ -312,6 +316,8 @@ async function deleteSelectedRow(row, quantityCell) {
 /* CODIGO PARA ADICONAR ITENS NO CARD */
 
 async function addItemCard() {
+
+	console.log(sourceTable);
 
 	const numberIdTable = document.getElementById('number-table');
 	const rowstableProducts = document.getElementById('command-cell');

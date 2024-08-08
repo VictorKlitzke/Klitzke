@@ -62,6 +62,7 @@ $sales = Controllers::SelectSales('sales', ($currentPage - 1) * $porPage, $porPa
                             <th scope="col">Status Venda</th>
                             <th scope="col">Valor Total</th>
                             <th scope="col">Data</th>
+                            <th scope="col">Ações</th>
 
                         </tr>
                     </thead>
@@ -93,22 +94,22 @@ $sales = Controllers::SelectSales('sales', ($currentPage - 1) * $porPage, $porPa
                                     if ($value['status'] == 2) {
                                         ?>
                                             <button onclick="ReopenSales(this)" type="button"
-                                                data-id="<?php echo $value['id'] ?>" class="btn-reopen">Reabrir venda
+                                                data-id="<?php echo $value['id'] ?>" class="btn btn-info">Reabrir venda
                                             </button>
 
                                     <?php } else { ?>
                                             <button onclick="CancelSales(this)" data-id="<?php echo $value['id']; ?>"
-                                                type="button" class="btn-cancel">Cancelar venda
+                                                type="button" class="btn btn-danger">Cancelar venda
                                             </button>
 
                                     <?php } ?>
                                         <button onclick="PrintOut(this)" data-id="<?php echo $value['id']; ?>" type="button"
-                                            class="btn-delete">Imprimir
+                                            class="btn btn-primary">Imprimir
                                         </button>
 
                                         <button onclick="Details(this)" data-id="<?php echo $value['id']; ?>" type="button"
-                                            class="btn-details">
-                                            <p>Mais detalhes</p>
+                                            class="btn btn-light">
+                                            Mais detalhes
                                         </button>
 
                                 </th>
@@ -123,25 +124,34 @@ $sales = Controllers::SelectSales('sales', ($currentPage - 1) * $porPage, $porPa
     </div>
 </div>
 
-<div class="overlay-details" id="overlay-details">
-    <div id="modal-print" class="modal">
-        <div class="modal-content-details" id="modal-content-details">
-            <span class="close-details" onclick="CloseModalInfo()" id="close-details">&times;</span>
-            <h1>Venda ID: <span id="saleId"></span></h1>
-            <table id="modalTable" border="1">
-                <thead>
-                    <tr>
-                        <th>Cliente</th>
-                        <th>Status</th>
-                        <th>Produto</th>
-                        <th>Quantidade</th>
-                        <th>Valor</th>
-                        <th>Forma de pagamento</th>
-                        <th>Usuario</th>
-                    </tr>
-                </thead>
-                <tbody></tbody>
-            </table>
+
+<div id="modal-print" class="modal">
+    <div class="modal-dialog modal-fullscreen">
+        <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title">Venda ID: <span id="saleId"></span></h5>
+            <button class="btn-close" onclick="CloseModalInfo()" id="close-details"></button>
+        </div>
+        <div class="modal-title">
+            <div class="modal-body">
+                <div class="table-responsive">
+                <table class="table table-bordered table-hover" id="modalTable" border="1">
+                    <thead class="table-dark" style="white-space: nowrap;">
+                        <tr>
+                            <th>Cliente</th>
+                            <th>Status</th>
+                            <th>Produto</th>
+                            <th>Quantidade</th>
+                            <th>Valor</th>
+                            <th>Forma de pagamento</th>
+                            <th>Usuario</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+                </div>
+            </div>
+        </div>
         </div>
     </div>
 </div>
