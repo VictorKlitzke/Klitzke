@@ -338,11 +338,9 @@ async function DetailsOrder(button) {
 
             requestIdElement.textContent = id_pedido_details;
             modalTableBodyRequest.innerHTML = '';
-            console.log(items);
             items.forEach(item => {
                 let row = modalTableBodyRequest.insertRow();
                 row.insertCell(0).textContent = item.comanda;
-                console.log(item.name);
                 row.insertCell(1).textContent = item.name;
                 row.insertCell(2).textContent = item.quantity;
                 row.insertCell(3).textContent = item.price_request;

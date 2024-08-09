@@ -49,7 +49,8 @@
                         <input class="form-control" type="text" id="product-value" name="product-value">
                     </div>
                     <div class="col-12">
-                        <button id="button-request" type="button" class="btn btn-primary w-100">Adicionar pedido</button>
+                        <button id="button-request" type="button" class="btn btn-primary w-100">Adicionar
+                            pedido</button>
                     </div>
                 </div>
             </div>
@@ -93,27 +94,31 @@
     </div>
 
     <div class="overlay-invo" id="overlay-invo">
-        <div class="modal-invo" id="modal-invo">
-            <div class="navbar-invo">
-                <h2>Fechar pedido</h2>
-                <svg id="modal-invo-close" style="cursor: pointer;" fill="#fff" xmlns="http://www.w3.org/2000/svg"
-                    height="24px" viewBox="0 0 24 24" width="24px">
-                    <path d="M0 0h24v24H0z" fill="none" />
-                    <path
-                        d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" />
-                </svg>
-            </div>
-            <div class="modal-content">
-                <div id="orderDetails"></div>
-                <div class="button-forms-invo">
-                    <?php
-                    $forms_payments = Controllers::SelectAllFormPayment("form_payment");
-                    foreach ($forms_payments as $key => $value) {
-                        ?>
-                        <button type="button" class="Invo-forms"
-                            data-payment-id="<?php echo $value['id']; ?>"><?php echo $value['forms_payment']; ?></button>
-                    <?php } ?>
-                    <button onclick="CloseInvo()" class="right Invo-Fat" id="Invo-Fat" type="button">Faturar</button>
+        <div class="modal" id="modal-invo">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header bg-primary text-white">
+                        <h2 class="modal-title">Fechar pedido</h2>
+                        <button id="modal-invo-close" type="button" class="btn-close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div id="orderDetails"></div>
+                    </div>
+                    <div class="modal-footer">
+                        <div class="btn-group" role="group" aria-label="Formas de pagamento">
+                            <?php
+                            $forms_payments = Controllers::SelectAllFormPayment("form_payment");
+                            foreach ($forms_payments as $key => $value) {
+                                ?>
+                                <button type="button" class="btn btn-custom Invo-forms"
+                                    data-payment-id="<?php echo $value['id']; ?>">
+                                    <?php echo $value['forms_payment']; ?>
+                                </button>
+                            <?php } ?>
+                        </div>
+                        <button onclick="CloseInvo()" class="btn btn-success" id="Invo-Fat"
+                            type="button">Faturar</button>
+                    </div>
                 </div>
             </div>
         </div>
