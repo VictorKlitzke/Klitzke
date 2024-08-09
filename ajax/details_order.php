@@ -45,7 +45,7 @@ function detailsPedido($id_pedido_details, $sql)
 
         $exec = $sql->prepare("select 
                                 r.id Codigo,
-                                tb.name comanda,
+                                tb.number comanda,
                                 p.name, 
                                 ri.quantity, 
                                 ri.price_request,

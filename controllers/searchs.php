@@ -12,16 +12,23 @@ header("Access-Control-Allow-Methods: POST, GET, OPTIONS");
 header("Access-Control-Allow-Headers: Content-Type, Authorization");
 header("Content-Type: application/json");
 
+if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+    exit(0);
+}
+
 $search_query = isset($_POST['searchQueryTable']) ? $_POST['searchQueryTable'] : '';
 $search_query_request = isset($_POST['search_query_request']) ? $_POST['search_query_request'] : '';
 
 $sql = Db::Connection();
-if (isset($search_query_request)) {
-    Searchs::searchRequest($search_query_request, $sql);
-} 
-if (isset($search_query)) {
+
+if (!empty($search_query)) {
     Searchs::searchTable($search_query, $sql);
 }
+
+if (!empty($search_query_request)) {
+    Searchs::searchRequest($search_query_request, $sql);
+}
+
 class Searchs
 {
 
@@ -47,7 +54,6 @@ class Searchs
 
     public static function searchRequest($search_query_request, $sql)
     {
-
         try {
             $exec = $sql->prepare("SELECT id, name, stock_quantity, value_product FROM products 
                                    WHERE name LIKE :search_query_request 
@@ -73,6 +79,7 @@ class Searchs
             echo '<li>Erro na execução da consulta: ' . $e->getMessage() . '</li>';
         }
     }
+
 }
 
 ?>

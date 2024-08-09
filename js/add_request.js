@@ -36,8 +36,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
 		let searchQueryTable = SearchTable.value;
 
-		console.log(searchQueryTable);
-
 		try {
 
 			const response = await fetch(`${BASE_SEARCH}searchs.php`, {
@@ -51,7 +49,6 @@ document.addEventListener('DOMContentLoaded', function () {
 			if (response.status === 200) {
 				const responseDataTable = await response.text();
 				searchResultTable.innerHTML = responseDataTable;
-				console.log(responseDataTable);
 			} else {
 				showMessage('Erro na busca' + response.status, 'error');
 			}
@@ -77,7 +74,6 @@ document.addEventListener('DOMContentLoaded', function () {
 			if (response.status == 200) {
 				const responseData = await response.text();
 				productResult.innerHTML = responseData;
-				console.log(responseData);
 			} else {
 				showMessage('Erro na requisição: ' + response.status, 'error');
 			}
@@ -317,8 +313,6 @@ async function deleteSelectedRow(row, quantityCell) {
 
 async function addItemCard() {
 
-	console.log(sourceTable);
-
 	const numberIdTable = document.getElementById('number-table');
 	const rowstableProducts = document.getElementById('command-cell');
 
@@ -369,6 +363,7 @@ async function addItemCard() {
 
 		if (cells.length < 4) {
 			console.warn('A linha não contém células suficientes:', row);
+			console.clear()
 			return;
 		}
 
@@ -436,33 +431,36 @@ function createNewCard(commandId) {
 	newCard.dataset.commandId = commandId;
 
 	newCard.innerHTML = `
-		<div class="card-order left" id="card-order">
-			<div class="card-list">
-				<h2>Itens na comanda ${commandId}</h2>
-			</div>
-			<div class="row-table-request">
-				<table>
-					<thead>
-						<tr>
-							<td>#</td>
-							<td>Nome</td>
-							<td>Qtd.</td>
-							<td>Valor</td>
-						</tr>
-					</thead>
-					<tbody class="destination-table" id="destination-table">
-					</tbody>
-				</table>
-			</div>
-			<div class="card-footer right">
-				<button type="button" id="invoice-request-${commandId}" class="invoice-request">Gerar Pedido</button>
-			</div>
-			<h2 class="left total-card" id="totalizador-card${commandId}">R$ 0.00</h2>
-		</div>
+		<div class="card" id="card-order">
+    <div class="card-header bg-primary text-white">
+        <h4 class="mb-0">Itens na comanda ${commandId}</h4>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover">
+                <thead class="thead-dark">
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Nome</th>
+                        <th scope="col">Qtd.</th>
+                        <th scope="col">Valor</th>
+                    </tr>
+                </thead>
+                <tbody class="destination-table" id="destination-table">
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="card-footer d-flex justify-content-between align-items-center">
+        <h5 class="total-card mb-0" id="totalizador-card${commandId}">R$ 0.00</h5>
+        <button type="button" id="invoice-request-${commandId}" class="btn btn-success invoice-request">Gerar Pedido</button>
+    </div>
+</div>
+
     `;
 
 	const invoiceButton = newCard.querySelector(`#invoice-request-${commandId}`);
-	invoiceButton.addEventListener('click', function() {
+	invoiceButton.addEventListener('click', function () {
 		ModalFaturamento(commandId);
 	});
 
@@ -721,8 +719,8 @@ function fieldsTotalForms(button) {
 	newInput.classList.add('input-total-card');
 	newInput.dataset.paymentId = buttonId;
 	newInput.innerHTML = `
-		<div style="display: flex; align-items: center; text-align: right">
-			<strong>${button.textContent}</strong><input id="payment-final-fat-${buttonId}" type="text" placeholder="Valor a ser pago"/>
+		<div>
+			<strong>${button.textContent}</strong><input class="form-control text-black" id="payment-final-fat-${buttonId}" type="text" placeholder="Valor a ser pago"/>
 		</div>
 		<br/>
 	`;
@@ -749,9 +747,9 @@ function ModalFaturamento(commandId) {
         <span>Status: Em Atendimento</span>
         <br/>
         <br/>
-        <div style="display: flex; align-items: center;">
-        	<strong>Total</strong><input id="total-card-final" type="text" value="${totalcardValue}"/>
-		</div>
+        <div>
+        	<strong>Total</strong><input class="form-control text-black" id="total-card-final" type="text" value="${totalcardValue}"/>
+				</div>
         <br>
     `;
 	orderDetails.appendChild(itemElement);
@@ -769,8 +767,6 @@ function ModalFaturamento(commandId) {
 				buttonText: button.textContent
 			}
 			ButtonSelected.push(buttonPed);
-
-			console.log(buttonPed)
 		});
 		button.addEventListener("dblclick", function () {
 			const paymentId = button.dataset.paymentId;
@@ -786,12 +782,12 @@ function ModalFaturamento(commandId) {
 		});
 	});
 
-	document.getElementById('modal-invo-close').onclick = function() {
+	document.getElementById('modal-invo-close').onclick = function () {
 		OpenModalInvoicing.style.display = 'none';
 		overlayModalInvoicing.style.display = 'none';
 	};
 
-	window.onclick = function(event) {
+	window.onclick = function (event) {
 		if (event.target == overlayModalInvoicing) {
 			OpenModalInvoicing.style.display = 'none';
 			overlayModalInvoicing.style.display = 'none';
@@ -829,13 +825,29 @@ async function CloseInvo() {
 		};
 	}).filter(item => item.paymentValue !== '');
 
-	if (paymentFormsValor == null || paymentFormsValor == '' ) {
-		window.alert("Nenhum valor nas formas de pagemento");
+	let firstPagament = paymentFormsValor[0];
+	let FormValuesPagament = firstPagament.paymentValue;
+
+	if (isNaN(FormValuesPagament)) {
+		showMessage('Proibido letras, por favor insira numeros', 'warning');
+		return;
+	}
+
+	if (paymentFormsValor == null || paymentFormsValor == '') {
+		showMessage('Nenhum valor nas formas de pagemento', 'warning');
 		return;
 	}
 
 	if (totalCardFinal == '') {
-		window.alert("Total esta vazio!");
+		showMessage('Total esta vazio!', 'warning');
+		return;
+	}
+
+
+	console.log(FormValuesPagament < totalCardFinal);
+
+	if (FormValuesPagament < totalCardFinal) {
+		showMessage('Valores menores que o total', 'warning');
 		return;
 	}
 
@@ -846,7 +858,7 @@ async function CloseInvo() {
 	}
 
 	if (responseInvo.SelectedFatPed == null) {
-		window.alert("Erro ao buscar itens de pedido para faturamento!")
+		showMessage('Erro ao buscar itens de pedido para faturamento!', 'warning');
 		return;
 	}
 
@@ -866,20 +878,20 @@ async function CloseInvo() {
 		try {
 			responseDataInvo = JSON.parse(responseText);
 		} catch (error) {
-			window.alert("Erro inesperado ao processar a faturamento de pedido. Entre em contato com o suporte.");
+			showMessage('Erro inesperado ao processar a faturamento de pedido. Entre em contato com o suporte.', 'error');
 			return;
 		}
 
 		if (responseDataInvo && responseDataInvo.success) {
-			window.alert('Pedido finalizada com sucesso!');
+			showMessage('Pedido finalizada com sucesso!', 'success');
 			cardOrderFat.style.display = 'none';
 			OpenModalInvoicing.style.display = 'none';
 			overlayModalInvoicing.style.display = 'none';
 		} else {
-			window.alert("Erro ao faturar pedido, por favor entre em contato com o suporte")
+			showMessage('Erro ao faturar pedido, por favor entre em contato com o suporte', 'error');
 		}
 	} catch (error) {
-		window.alert("Erro ao faturar Pedido" + error);
+		showMessage('Erro ao faturar Pedido' + error, 'error');
 	}
 
 }
