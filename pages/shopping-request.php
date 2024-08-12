@@ -1,39 +1,77 @@
 <div class="box-content">
-    <div style="display: flex; justify-content: space-between;">
-        <h2>Lista de Produtos Negativados</h2>
-        <button onclick="GoRequest()">Iniciar Solicitação</button>
+    <div class="d-flex justify-content-between">
+        <h2 class="text-white">Lista de Produtos Negativados</h2>
+        <button class="btn btn-primary" onclick="GoRequest()">Iniciar Solicitação</button>
     </div>
-    <div class="list">
-        <table id="table-product" border="4">
-            <thead>
-                <tr>
-                    <th>Produto</th>
-                    <th>Quantidade em estoque</th>
-                    <th>Valor do Produto</th>
-                    <th>Status</th>
-                    <th>Ação</th>
-                </tr>
-            </thead>
-            <tbody id="product-list">
-            </tbody>
-        </table>
+    <div class="row mt-4">
+        <div class="col">
+            <div class="table-responsive" style="max-height: 400px; overflow-y: auto; overflow-x: auto;">
+                <table class="table table-dark table-hover" id="table-product">
+                    <thead>
+                        <tr style="white-space: nowrap;">
+                            <th scope="col">Produto</th>
+                            <th scope="col">Quantidade em estoque</th>
+                            <th scope="col">Valor do Produto</th>
+                            <th scope="col">Status</th>
+                            <th scope="col">Ação</th>
+                        </tr>
+                    </thead>
+                    <tbody id="product-list">
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
 </div>
 
 <div class="box-content" id="go-request" style="display: none;">
-    <h2>Solicitar Compra</h2>
-    <div class="list">
-        <table border="4">
-            <thead>
-                <tr>
-                    <th>Produto</th>
-                    <th>Quantidade a Mandar</th>
-                    <th>Ação</th>
-                </tr>
-            </thead>
-            <tbody id="selected-products-list">
-            </tbody>
-        </table>
-        <button class="right">Enviar Solicitação</button>
+    <h2 class="text-white">Solicitar Compra</h2>
+    <div class="row">
+        <div class="col">
+            <div class="table-responsive" style="max-height: 400px; overflow-y: auto; overflow-x: auto;">
+                <table class="table table-dark table-hover">
+                    <thead>
+                        <tr style="white-space: nowrap;">
+                            <th scope="col">Produto</th>
+                            <th scope="col">Quantidade a Mandar</th>
+                            <th scope="col">Ação</th>
+                        </tr>
+                    </thead>
+                    <tbody id="selected-products-list">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <button id="send-request-products" onclick="SendRequestProductSol()" class="btn btn-info">Enviar
+            Solicitação</button>
+    </div>
+</div>
+
+<div id="modal-forn" class="modal" tabindex="-1" aria-labelledby="selectSupplierLabel" aria-hidden="true">
+    <div class="modal-dialog modal-fullscreen">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title" id="selectSupplierLabel">Selecionar Fornecedor</h5>
+                <button type="button" class="btn-close text-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="table-responsive">
+                    <table class="table table-dark table-hover" id="table-forn" border="1">
+                        <thead>
+                            <tr style="white-space: nowrap;">
+                                <th scope="col">Selecionar</th>
+                                <th scope="col">Fornecedor</th>
+                            </tr>
+                        </thead>
+                        <tbody id="forn-list">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-primary" id="confirmSupplierSelection">Confirmar Seleção</button>
+            </div>
+        </div>
     </div>
 </div>

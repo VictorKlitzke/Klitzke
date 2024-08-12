@@ -178,7 +178,7 @@ function updatePedido() {
 		var existingRow = findExistingRow(requestID);
 
 		if (numberTableRequest === '') {
-			window.alert("Comanda nao foi selecionada");
+			showMessage('Comanda nao foi selecionada', 'warning');
 			return true;
 		}
 
@@ -244,7 +244,7 @@ function updatePedido() {
 		document.getElementById('product-request-search').value = "";
 
 	} else {
-		alert("Preencha todos os campos corretamente antes de adicionar o pedido.");
+		showMessage('Preencha todos os campos corretamente antes de adicionar o pedido.', 'warning');
 	}
 	calculateTotal();
 }
@@ -282,6 +282,7 @@ function selectRow(row) {
 		row.style.color = '#000';
 	} else {
 		console.error("Botão de exclusão não encontrado.");
+		console.clear();
 	}
 }
 
@@ -321,12 +322,12 @@ async function addItemCard() {
 	let existingRow = null;
 
 	if (rowstableProducts == '' || rowstableProducts == null) {
-		window.alert('Itens do pedido não encontrados, itens pedidos vazio');
+		showMessage('Itens do pedido não encontrados, itens pedidos vazio', 'warning');
 		return false;
 	}
 
 	if (!sourceTable || sourceTable.innerHTML.trim() === '') {
-		window.alert('Itens do pedido não encontrados, entre em contato com o suporte!');
+		showMessage('Itens do pedido não encontrados, entre em contato com o suporte!', 'warning');
 		return;
 	}
 
@@ -334,11 +335,10 @@ async function addItemCard() {
 
 	const currentCommandId = numberIdTable.value.trim();
 	if (!currentCommandId) {
-		window.alert('Número da comanda não pode ser vazio.');
+		showMessage('Número da comanda não pode ser vazio.', 'warning');
 		return;
 	}
 
-	// Verifica se já existe um card com o currentCommandId
 	document.querySelectorAll('.card-order').forEach(card => {
 		if (card.dataset.commandId === currentCommandId) {
 			existingCardOrder = card;
@@ -354,7 +354,7 @@ async function addItemCard() {
 
 	const destinationTable = existingCardOrder.querySelector('.destination-table');
 	if (!destinationTable) {
-		window.alert('Elemento .destination-table não encontrado no card, entre em contato com o suporte!');
+		showMessage('Elemento .destination-table não encontrado no card, entre em contato com o suporte!', 'warning');
 		return;
 	}
 
@@ -467,11 +467,9 @@ function createNewCard(commandId) {
 	return newCard;
 }
 
-/***/
-
 function requestValidateStock(stock_quantity, currentQuantity) {
 	if (stock_quantity > currentQuantity) {
-		window.alert('Estoque insuficiente para adicionar mais deste produto.');
+		showMessage('Estoque insuficiente para adicionar mais deste produto.', 'warning');
 		return false;
 	}
 	return true;
@@ -516,15 +514,13 @@ function calculateTotal() {
 
 }
 
-/* CODIGO DE AGRUPAMENTO DE COMANDAS */
-
 async function addGathersArray(index, id, table_request, total_request) {
 
 	const ResulttableGathers = document.getElementById('table-gathers-selected');
 	let ExistingRowOrder = document.getElementById("row-" + id);
 
 	if (ExistingRowOrder) {
-		window.alert("Comanda ja selecionada");
+		showMessage('Comanda ja selecionada', 'warning');
 		return;
 	}
 
@@ -627,7 +623,7 @@ async function GathersTables() {
 	let valueTotalizadorOrderGathres = 0;
 
 	if (valueGathersTotal === 0) {
-		window.alert("Valor total zerado, por favror contante o suporte")
+		showMessage('Valor total zerado, por favror contante o suporte', 'warning')
 		return false;
 	} else {
 		valueTotalizadorOrderGathres = parseFloat(valueGathersTotal.replace(/R\$\s/g, ''));
@@ -639,7 +635,7 @@ async function GathersTables() {
 	}
 
 	if (tableSelected.length === 0) {
-		window.alert("Nenhuma comanda selecionada")
+		showMessage('Nenhuma comanda selecionada', 'warning')
 	} else {
 		try {
 
@@ -654,50 +650,22 @@ async function GathersTables() {
 			const responseTablesBody = await RequestTables.text();
 
 			if (responseTablesBody.startsWith('<')) {
-				console.error('Erro ao enviar dados para o PHP:', responseTablesBody);
+				showMessage('Erro ao enviar dados para o PHP:' + responseTablesBody, 'error');
 				return;
 			}
 
 			const responseTables = JSON.parse(responseTablesBody);
 
 			if (responseTables && responseTables.success) {
-				window.alert('Comandas ajuntada com sucesso');
+				showMessage('Comandas ajuntada com sucesso', 'success');
 			} else {
-				console.error('Erro ao tentar agrupar comandas:', responseTables ? responseTables.error : 'Resposta vazia');
+				showMessage('Erro ao tentar agrupar comandas:' + responseTables ? responseTables.error : 'Resposta vazia', 'error');
 			}
 		} catch (error) {
-			console.error('Erro ao enviar dados para o PHP:', error);
+			showMessage('Erro ao enviar dados para o PHP:' + error, 'error');
 		}
 	}
 }
-
-/***/
-
-/* CARDS DE MENSAGENS */
-
-function showErrorMessageRequest(message) {
-	const errorContainerRequest = document.getElementById('erro-global-h2');
-	const errorMessageElementRequest = document.getElementById('erro-global-h2');
-	errorMessageElementRequest.textContent = message;
-	errorContainerRequest.style.display = 'flex';
-	setTimeout(() => {
-		errorMessageElementRequest.textContent = '';
-		errorContainerRequest.style.display = 'none';
-	}, 3000);
-}
-
-function showSuccessMessageRequest(message) {
-	const successContainerRequest = document.querySelector('sucess-global');
-	const successMessageElementRequest = document.getElementById('sucess-global-h2');
-	successMessageElementRequest.textContent = message;
-	successContainerRequest.style.display = 'flex';
-	setTimeout(() => {
-		successMessageElementRequest.textContent = '';
-		successContainerRequest.style.display = 'none';
-	}, 3000);
-}
-
-/***/
 
 /* CARD DE FATURAMENTO */
 
@@ -813,7 +781,7 @@ async function CloseInvo() {
 	let PedFat = SelectedFatPed.filter(item => item.currentCommandId === commandId);
 
 	if (!commandId) {
-		window.alert("Erro: Numero da comanda não encontrada!");
+		showMessage('Numero da comanda não encontrada!', 'warning');
 		return;
 	}
 
@@ -895,8 +863,6 @@ async function CloseInvo() {
 	}
 
 }
-
-/**/
 
 document.getElementById('button-request').addEventListener('click', updatePedido, calculateTotal());
 // document.querySelector('.invoice-request').addEventListener('click', generetorRequest);

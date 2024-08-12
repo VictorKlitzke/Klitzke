@@ -191,6 +191,14 @@ if ($checkCode->rowCount() > 0) {
                                         href="<?php echo INCLUDE_PATH; ?>list-companys">Empresa</a></li>
                             </ul>
                         </li>
+                        <li class="nav-item dropdown">
+                            <a style="color: #fff !important; font-size: 1.3rem" class="nav-link dropdown-toggle"
+                            role="button" data-bs-toggle="dropdown" aria-expanded="false" onclick="ToggleNoteFiscal()">Suprimentos</a>
+                            <ul class="dropdown-menu dropdown-menu-dark">
+                                <li><a class="dropdown-item" <?php SelectedMenu('list-companys'); ?>
+                                href="<?php echo INCLUDE_PATH; ?>shopping-request"> Solicitação de Compras </a></li>
+                            </ul>
+                        </li>
                     </ul>
                 </div>
             </div>
@@ -201,12 +209,7 @@ if ($checkCode->rowCount() > 0) {
             <div id="delivery" style="display: none;">
                 <a class="dropdown-item" href="<?php echo INCLUDE_PATH; ?>list-product-delivery"> Pedidos delivery </a>
             </div> -->
-
-    <!-- <h2 style="cursor: pointer;" onclick="ToggleNoteFiscal()">Suprimentos</h2>
-            <div id="fiscal" style="display: none;">
-                <a class="dropdown-item" href="<?php echo INCLUDE_PATH; ?>shopping-request"> Solicitação de Compras </a>
-            </div>
-
+    <!--
             <a onclick="ToggleReport()">Relatórios</a>
             <div id="report">
                 <a class="dropdown-item" <?php SelectedMenu('reports') ?> href="<?php echo INCLUDE_PATH; ?>reports">Relatórios diversos</a>
@@ -305,18 +308,15 @@ if ($checkCode->rowCount() > 0) {
         <div class="message-container" id="message-container"></div>
     </div>
 
+    <script language="JavaScript" type="text/javascript" src="<?php echo INCLUDE_JAVASCRIPT; ?>const_globais.js"></script>
     <script language="JavaScript" type="text/javascript" src="<?php echo INCLUDE_JAVASCRIPT; ?>alert.js"></script>
     <script language="JavaScript" type="text/javascript" src="<?php echo INCLUDE_JAVASCRIPT; ?>main.js"></script>
-    <script language="JavaScript" type="text/javascript"
-        src="<?php echo INCLUDE_JAVASCRIPT; ?>register_system.js"></script>
-    <script language="JavaScript" type="text/javascript"
-        src="<?php echo INCLUDE_JAVASCRIPT; ?>delete_system.js"></script>
+    <script language="JavaScript" type="text/javascript" src="<?php echo INCLUDE_JAVASCRIPT; ?>register_system.js"></script>
+    <script language="JavaScript" type="text/javascript" src="<?php echo INCLUDE_JAVASCRIPT; ?>delete_system.js"></script>
     <script language="JavaScript" type="text/javascript" src="<?php echo INCLUDE_JAVASCRIPT; ?>edit_system.js"></script>
-    <script language="JavaScript" type="text/javascript" src="<?php echo INCLUDE_JAVASCRIPT; ?>list_system.js"></script>
     <script language="JavaScript" type="text/javascript" src="<?php echo INCLUDE_JAVASCRIPT; ?>values.js"></script>
     <script language="JavaScript" type="text/javascript" src="<?php echo INCLUDE_JAVASCRIPT; ?>menu.js"></script>
-    <script language="JavaScript" type="text/javascript"
-        src="<?php echo INCLUDE_JAVASCRIPT; ?>const_globais.js"></script>
+    <script language="JavaScript" type="text/javascript" src="<?php echo INCLUDE_JAVASCRIPT; ?>list_system.js"></script>
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
