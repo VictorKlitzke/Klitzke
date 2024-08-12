@@ -103,6 +103,11 @@ async function RegisterUsers() {
 
                 if (responseBody.success) {
                     showMessage("Usuário " + values.name + " cadastrado com sucesso!", 'success');
+
+                    setTimeout(() => {
+                        location.reload();
+                    }, 2000);
+
                 } else {
                     showMessage("Erro ao fazer cadastro: " + responseBody.message, 'error');
                 }
@@ -242,6 +247,11 @@ async function RegisterClients() {
 
             if (responseBody.success) {
                 showMessage("Cliente " + values.name + " cadastrado com sucesso!", 'success');
+
+                setTimeout(() => {
+                    location.reload();
+                }, 2000);
+
             } else {
                 showMessage(responseBody.message || "Erro ao fazer cadastro " + values.name, 'error');
             }
@@ -368,6 +378,11 @@ async function RegisterCompany() {
 
         if (responseBody.success) {
             showMessage("Empresa " + values.name + " cadastrado com sucesso!", 'success');
+
+            setTimeout(() => {
+                location.reload();
+            }, 2000);
+
         } else {
             showMessage(responseBody.message || "Erro ao fazer cadastro " + values.name, 'error');
         }
@@ -436,7 +451,11 @@ async function RegisterTableRequest() {
 
         if (responseBody.success) {
             showMessage('Mesa cadastrada com sucesso', 'success');
-            values.name == "";
+
+            setTimeout(() => {
+                location.reload();
+            }, 2000);
+
         } else {
             showMessage(responseBody.message || 'Erro ao cadastrar mesa', 'error');
         }
@@ -529,6 +548,11 @@ async function RegisterAccount() {
 
             if (responseBody.success) {
                 showMessage('Conta cadastrada com sucesso', 'success');
+
+                setTimeout(() => {
+                    location.reload();
+                }, 2000);
+
             } else {
                 showMessage('Erro ao cadastrar conta bancaria: ' + (responseBody.error || 'Erro desconhecido'), 'error');
             }
@@ -652,6 +676,11 @@ async function RegisterForn() {
 
             if (responseBody.success) {
                 showMessage('Fornecedor ' + values.name_company + ' cadastrado com sucesso', 'success');
+
+                setTimeout(() => {
+                    location.reload();
+                }, 2000);
+
             } else {
                 showMessage(responseBody.message || 'Erro ao fazer cadastro do fornecedor ' + responseBody.error, 'error');
             }
@@ -819,6 +848,11 @@ async function RegisterProducts() {
 
             if (responseBody.success) {
                 showMessage('Produto ' + values.name + ' cadastrado com sucesso', 'success');
+
+                setTimeout(() => {
+                    location.reload();
+                }, 2000);
+
             } else {
                 showMessage(responseBody.message || 'Erro ao cadastrar produto', 'error');
             }
@@ -949,8 +983,6 @@ async function RegisterSangria() {
         observation: values.observation,
     }
 
-    console.log(responseSangria);
-
     continueMessage("Deseja realmente fazer essa retirada?", "Sim", "Não", async function () {
 
         try {
@@ -969,6 +1001,11 @@ async function RegisterSangria() {
 
             if (responseBody.success) {
                 showMessage('Retirada realizada no valor de ' + values.value, 'success');
+
+                setTimeout(() => {
+                    location.reload();
+                }, 2000);
+
             } else {
                 showMessage(responseBody.message || 'Erro ao fazer retirada de valor ' + responseBody.error, 'error');
             }
@@ -1036,6 +1073,11 @@ async function RegisterMultiply() {
 
             if (responseBody.success) {
                 showMessage('Multiplicador cadatrado na quantidade de ' + values.multiply, 'success');
+
+                setTimeout(() => {
+                    location.reload();
+                }, 2000);
+
             } else {
                 showMessage(responseBody.message || 'Erro ao cadastrar multiplicador ' + responseBody.error, 'error');
             }

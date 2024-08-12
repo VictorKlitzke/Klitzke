@@ -1,5 +1,13 @@
-const selectedProducts = [];
+let selectedProducts = [];
+let SendSelectedProduct = [];
+
+const goRequest = document.getElementById('go-request');
+const selectedProductsList = document.getElementById('selected-products-list');
+const SendRequestProduct = document.getElementById('send-request-products');
+const ModalForn = document.getElementById('modal-forn');
+
 window.onload = ListProducts();
+window.onload = ListForn();
 
 async function InativarInvo(button) {
 
@@ -221,9 +229,9 @@ async function PrintOut(button) {
 
                 items.forEach(item => {
                     printWindow.document.write('<tr>');
-                    printWindow.document.write('<td>' + item.name + '</td>');
-                    printWindow.document.write('<td>' + item.amount + '</td>');
-                    printWindow.document.write('<td>' + item.price_sales + '</td>');
+                    printWindow.document.write('<th>' + item.name + '</th>');
+                    printWindow.document.write('<th>' + item.amount + '</th>');
+                    printWindow.document.write('<th>' + item.price_sales + '</th>');
                     printWindow.document.write('</tr>');
                 });
 
@@ -409,13 +417,53 @@ async function InativarUsers(button) {
     }
 }
 
-async function GoRequest(){
-    const goRequest = document.getElementById('go-request');
+async function ListForn() {
+    try {
+        let url = `${BASE_CONTROLLERS}lists.php`;
 
-    if (goRequest.style.display === 'none') {
-        goRequest.style.display = 'block'
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify( { type: 'listforn' } )
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+            const forn = data.forn;
+            const fornList = document.getElementById('forn-list');
+
+            fornList.innerHTML = '';
+
+            forn.forEach(f => {
+                const row = document.createElement('tr');
+
+                const selectCell = document.createElement('th');
+                const checkbox = document.createElement('input');
+                checkbox.type = 'checkbox';
+                checkbox.className = 'form-check-input';
+                checkbox.value = f.company;
+                checkbox.dataset.id = f.id;
+                selectCell.appendChild(checkbox);
+                row.appendChild(selectCell);
+
+                const nameCell = document.createElement('th');
+                nameCell.textContent = f.company;
+                row.appendChild(nameCell);
+
+                fornList.appendChild(row);
+            });
+        } else {
+            showMessage('Erro ao listar fornecedores', 'error');
+        }
+
+    } catch (error) {
+        showMessage('Erro ao fazer requisição: ' + error.message, 'error');
     }
 }
+
 async function ListProducts() {
     try {
         let url = `${BASE_CONTROLLERS}lists.php`;
@@ -424,7 +472,8 @@ async function ListProducts() {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-            }
+            },
+            body: JSON.stringify({ type: 'listproduct' })
         });
 
         const data = await response.json();
@@ -443,28 +492,27 @@ async function ListProducts() {
             products.forEach(product => {
                 const row = document.createElement('tr');
 
-                const nameCell = document.createElement('td');
+                const nameCell = document.createElement('th');
                 nameCell.textContent = product.name;
                 row.appendChild(nameCell);
 
-                const stockCell = document.createElement('td');
+                const stockCell = document.createElement('th');
                 stockCell.textContent = product.stock_quantity;
                 row.appendChild(stockCell);
 
-                const valueCell = document.createElement('td');
+                const valueCell = document.createElement('th');
                 valueCell.textContent = product.value_product;
                 row.appendChild(valueCell);
 
-                const statusCell = document.createElement('td');
+                const statusCell = document.createElement('th');
                 statusCell.textContent = product.status_product;
                 row.appendChild(statusCell);
 
-                const buttonCell = document.createElement('td');
-                buttonCell.style.display = 'flex';
+                const buttonCell = document.createElement('th');
                 buttonCell.style.justifyContent = 'center';
 
                 const buttonRequest = document.createElement('button');
-                buttonRequest.className = 'button';
+                buttonRequest.className = 'btn btn-success';
                 buttonRequest.textContent = 'Solicitar';
                 buttonRequest.onclick = () => handleSolicitarClick(product);
                 buttonCell.appendChild(buttonRequest);
@@ -480,53 +528,122 @@ async function ListProducts() {
         showMessage('Erro ao fazer requisição: ' + error.message, 'error');
     }
 }
-
-function handleSolicitarClick(product) {
-    const existingProduct = selectedProducts.find(p => p.id === product.id);
-    if (existingProduct) {
-        existingProduct.quantity++;
-    } else {
-        product.quantity = 1;
-        selectedProducts.push(product);
+async function GoRequest() {
+    if (goRequest.style.display === 'none') {
+        goRequest.style.display = 'block'
     }
-    updateSelectedProductsTable();
 }
-
+function handleSolicitarClick(product) {
+    const existingProduct = selectedProducts.find(p => p.name === product.name);
+    if (goRequest.style.display === 'block') {
+        if (existingProduct) {
+            existingProduct.quantity++;
+        } else {
+            product.quantity = 1;
+            selectedProducts.push(product);
+        }
+        updateSelectedProductsTable();
+    } else {
+        showMessage('Modal não foi ativado, Clicar no botão Iniciar Solicitação', 'warning');
+    }
+}
 function updateSelectedProductsTable() {
-    const selectedProductsList = document.getElementById('selected-products-list');
-    selectedProductsList.innerHTML = ''; 
+
+    selectedProductsList.innerHTML = '';
 
     selectedProducts.forEach(product => {
         const row = document.createElement('tr');
+        row.id = `product-row-${product.name}`;
 
-        const nameCell = document.createElement('td');
+        const nameCell = document.createElement('th');
         nameCell.textContent = product.name;
         row.appendChild(nameCell);
 
-        const quantityCell = document.createElement('td');
+        const quantityCell = document.createElement('th');
         quantityCell.textContent = product.quantity;
         row.appendChild(quantityCell);
 
-        const actionCell = document.createElement('td');
-        actionCell.style.display = 'flex';
-        actionCell.style.justifyContent = 'center';
+        const actionCell = document.createElement('th');
 
         const buttonRemove = document.createElement('button');
-        buttonRemove.className = 'button';
-        buttonRemove.style.backgroundColor = 'red';
+        buttonRemove.className = 'btn btn-danger';
         buttonRemove.textContent = 'Remover';
         buttonRemove.onclick = () => handleRemoveClick(product);
         actionCell.appendChild(buttonRemove);
 
         row.appendChild(actionCell);
         selectedProductsList.appendChild(row);
-    });
-}
 
+        const existingProduct = SendSelectedProduct.find(p => p.name === product.name);
+        if (existingProduct) {
+            existingProduct.quantity = product.quantity;
+        } else {
+            SendSelectedProduct.push({
+                type: 'RequestPurchase',
+                name: product.name,
+                quantity: product.quantity,
+            });
+        }
+    });
+
+}
 function handleRemoveClick(product) {
-    const index = selectedProducts.findIndex(p => p.id === product.id);
-    if (index > -1) {
+    const index = selectedProducts.findIndex(p => p.name === product.name);
+    const rowToDelete = document.getElementById(`product-row-${product.name}`);
+    const number = product.quantity - 1;
+
+    if (number >= 1) {
+        product.quantity = number;
+        selectedProducts[index] = product;
+    } else if (number <= 0) {
+        if (rowToDelete) {
+            rowToDelete.remove();
+        }
         selectedProducts.splice(index, 1);
     }
     updateSelectedProductsTable();
+}
+async function SendRequestProductSol() {
+
+    ModalForn.style.display = 'block';
+
+    // if (!SendRequestProduct) {
+    //     showMessage('Erro ao selecionar produtos', 'warning')
+    // }
+
+    // let = responseSend = {
+    //     SendSelectedProduct: SendSelectedProduct
+    // }
+
+    // console.log(responseSend);
+
+    // continueMessage("Deseja realmente realizar essa solicitação?", "Sim", "Não", async function() {
+
+    //     try {
+
+    //         let url = `${BASE_CONTROLLERS}registers.php`;
+
+    //                 const response = await fetch(url, {
+    //                     method: 'POST',
+    //                     headers: {
+    //                         'Content-Type': 'application/json'
+    //                     },
+    //                     body: JSON.stringify(responseSend)
+    //                 });
+
+    //                 const responseBody = await response.json();
+
+    //                 if (responseBody.success) {
+    //                     showMessage('Solicitação enviada com sucesso para o fornecedor', 'success')
+    //                 } else {
+    //                     showMessage('Erro ao fazer solicitação' || responseBody.message, 'error')
+    //                 }
+
+    //     } catch (error) {
+    //         showMessage('Erro na requisição' + error, 'error')
+    //     }
+
+    // }, function() {
+    //     showMessage('Operação cancelada', 'warning')
+    // })
 }
