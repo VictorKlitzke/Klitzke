@@ -48,7 +48,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $response_boxpdv = $data;
     $response_sangria = $data;
     $response_multiply = $data;
-    $response_send = $data;
+    $response_whatsaap = $data;
+    $response_email = $data;
 
     if (isset($data['type'])) {
         if ($data['type'] == 'users') {
@@ -72,7 +73,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         } else if ($data['type'] == 'multiply') {
             Register::RegisterMultiply($sql, $response_multiply, $user_id);
         } else if ($data['type'] == '') {
-            Register::SendRequestProduct($sql, $response_send, $user_id);
+            Register::SendRequestWhatsApp($sql, $response_send, $user_id);
         }
     } else {
         Response::json(false, 'Tipo type não encontrado', $today);
@@ -82,14 +83,31 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 class Register
 {
 
-    public static function SendRequestProduct($sql, $response_send, $user_id) {
+    public static function SendRequestWhatsApp($sql, $response_whatsaap, $user_id) {
 
         $today = date("Y-m-d H:i:s");
 
         try {
 
 
-            $message_log = "Solicitação enviada para o fornecedor";
+            $message_log = "Solicitação enviada para o fornecedor via Whatsapp";
+            Panel::LogAction($user_id, 'Cadastrar Usuário', $message_log, $today);
+            Response::send(true, 'Solicitação enviada para o fornecedor', $today);
+
+        } catch (Exception $e) {
+            http_response_code(500);
+            echo json_encode(['error' => 'Erro no banco de dados: ' . $e->getMessage(), 'code' => $e->getCode()]);
+        }
+    }
+
+    public static function SendRequestEmail($sql, $response_email, $user_id) {
+
+        $today = date("Y-m-d H:i:s");
+
+        try {
+
+
+            $message_log = "Solicitação enviada para o fornecedor via e-mail";
             Panel::LogAction($user_id, 'Cadastrar Usuário', $message_log, $today);
             Response::send(true, 'Solicitação enviada para o fornecedor', $today);
 
