@@ -72,7 +72,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             Register::RegisterSangria($sql, $response_sangria, $user_id);
         } else if ($data['type'] == 'multiply') {
             Register::RegisterMultiply($sql, $response_multiply, $user_id);
-        } else if ($data['type'] == '') {
+        } else if ($data['type'] == 'RequestPurchase') {
             Register::SendRequestWhatsApp($sql, $response_send, $user_id);
         }
     } else {

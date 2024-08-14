@@ -9,6 +9,7 @@
                 <table class="table table-dark table-hover" id="table-product">
                     <thead>
                         <tr style="white-space: nowrap;">
+                            <th scope="col">#</th>
                             <th scope="col">Produto</th>
                             <th scope="col">Quantidade em estoque</th>
                             <th scope="col">Valor do Produto</th>
@@ -64,6 +65,7 @@
                                         <thead>
                                             <tr style="white-space: nowrap;">
                                                 <th id="selected-forn" scope="col">Selecionar</th>
+                                                <th scope="col">#</th>
                                                 <th scope="col">Fornecedor</th>
                                             </tr>
                                         </thead>

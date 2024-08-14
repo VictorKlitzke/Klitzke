@@ -1,3 +1,4 @@
+
 window.onload = ListProducts();
 window.onload = ListForn();
 
@@ -436,10 +437,14 @@ async function ListForn() {
                 const checkbox = document.createElement('input');
                 checkbox.type = 'checkbox';
                 checkbox.className = 'form-check-input';
-                checkbox.value = f.company;
-                checkbox.dataset.id = f.id;
+                checkbox.value = f.id;
+                checkbox.dataset.id = f.company;
                 selectCell.appendChild(checkbox);
                 row.appendChild(selectCell);
+
+                const idCell = document.createElement('th');
+                idCell.textContent = f.id;
+                row.appendChild(idCell);
 
                 const nameCell = document.createElement('th');
                 nameCell.textContent = f.company;
@@ -483,6 +488,10 @@ async function ListProducts() {
 
             products.forEach(product => {
                 const row = document.createElement('tr');
+
+                const idCell = document.createElement('th');
+                idCell.textContent = product.id;
+                row.appendChild(idCell);
 
                 const nameCell = document.createElement('th');
                 nameCell.textContent = product.name;

@@ -1,5 +1,6 @@
 let selectedProducts = [];
 let SendSelectedProduct = [];
+let selectedForn = [];
 
 const OverlayModal = document.getElementById('overlay-forn');
 const goRequest = document.getElementById('go-request');
@@ -62,6 +63,7 @@ function updateSelectedProductsTable() {
       } else {
           SendSelectedProduct.push({
               type: 'RequestPurchase',
+              id: product.id,
               name: product.name,
               quantity: product.quantity,
           });
@@ -94,14 +96,23 @@ async function Selectedforns() {
 
 async function SendRequestWhatsApp() {
 
-  console.log(SelectedForn.textContent);
+    document.querySelectorAll('#forn-list input[type="checkbox"]:checked').forEach(checkbox => {
+        selectedForn.push(
+          checkbox.value);
+    });
+
+    if (selectedForn.length === 0) {
+        showMessage('Nenhum fornecedor selecionado', 'warning');
+        return;
+    }
 
   if (!SendRequestProduct) {
       showMessage('Erro ao selecionar produtos', 'warning')
   }
 
   let = responseSend = {
-      SendSelectedProduct: SendSelectedProduct
+      SendSelectedProduct: SendSelectedProduct,
+      selectedForn: selectedForn
   }
 
   console.log(responseSend);

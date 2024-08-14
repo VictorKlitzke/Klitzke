@@ -33,7 +33,7 @@ class lists {
 
         try {
 
-            $exec = $sql->prepare("select name,stock_quantity,value_product,status_product from `products` where status_product = 'negativado'");
+            $exec = $sql->prepare("select id,name,stock_quantity,value_product,status_product from `products` where status_product = 'negativado'");
             $exec->execute();
             $products = $exec->fetchAll(PDO::FETCH_ASSOC);
             echo json_encode([
