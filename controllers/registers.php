@@ -48,7 +48,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $response_boxpdv = $data;
     $response_sangria = $data;
     $response_multiply = $data;
-    $response_whatsaap = $data;
+    $response_whatsapp = $data;
     $response_email = $data;
 
     if (isset($data['type'])) {
@@ -73,7 +73,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         } else if ($data['type'] == 'multiply') {
             Register::RegisterMultiply($sql, $response_multiply, $user_id);
         } else if ($data['type'] == 'RequestPurchase') {
-            Register::SendRequestWhatsApp($sql, $response_send, $user_id);
+            Register::SendRequestWhatsApp($sql, $response_whatsapp, $user_id);
+        } else if ($data['type'] == 'RequestEmail') {
+            Register::SendRequestEmail($sql, $response_email, $user_id);
         }
     } else {
         Response::json(false, 'Tipo type não encontrado', $today);
@@ -83,16 +85,50 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 class Register
 {
 
-    public static function SendRequestWhatsApp($sql, $response_whatsaap, $user_id) {
+    public static function SendRequestWhatsApp($sql, $response_whatsapp, $user_id)
+    {
 
         $today = date("Y-m-d H:i:s");
+        $status = 2;
+        $message = 'Enviar Solicitação via whatsapp!';
 
         try {
 
+            foreach ($response_whatsapp['selectedForn'] as $forn_id) {
+                foreach ($response_whatsapp['SendSelectedProduct'] as $product) {
 
-            $message_log = "Solicitação enviada para o fornecedor via Whatsapp";
-            Panel::LogAction($user_id, 'Cadastrar Usuário', $message_log, $today);
-            Response::send(true, 'Solicitação enviada para o fornecedor', $today);
+                    $exec = $sql->prepare("
+                            INSERT INTO request_buy_product (
+                                forn_id, 
+                                product_id, 
+                                quantity, 
+                                date_request, 
+                                status, 
+                                message
+                            ) VALUES (
+                                :forn_id, 
+                                :product_id, 
+                                :quantity, 
+                                :date_request, 
+                                :status, 
+                                :message
+                            )
+                        ");
+
+                    $exec->bindParam(':forn_id', $forn_id);
+                    $exec->bindParam(':product_id', $product['id']);
+                    $exec->bindParam(':quantity', $product['quantity']);
+                    $exec->bindParam(':date_request', $today);
+                    $exec->bindParam(':status', $status);
+                    $exec->bindParam(':message', $message);
+                    $exec->execute();
+
+                }
+            }
+
+            $message_log = "Solicitação cadastrada via Whatsapp";
+            Panel::LogAction($user_id, 'Solicitação cadastrada via Whatsapp', $message_log, $today);
+            Response::send(true, 'Solicitação cadastrada via Whatsapp', $today);
 
         } catch (Exception $e) {
             http_response_code(500);
@@ -100,16 +136,49 @@ class Register
         }
     }
 
-    public static function SendRequestEmail($sql, $response_email, $user_id) {
-
-        $today = date("Y-m-d H:i:s");
+    public static function SendRequestEmail($sql, $response_email, $user_id)
+    {
+        $today = date('Y-m-d H:i:s');
+        $status = 3;
+        $message = 'Enviar solicitação via email';
 
         try {
 
+            foreach ($response_email['selectedForn'] as $forn_id) {
+                foreach ($response_email['SendSelectedProduct'] as $product) {
 
-            $message_log = "Solicitação enviada para o fornecedor via e-mail";
-            Panel::LogAction($user_id, 'Cadastrar Usuário', $message_log, $today);
-            Response::send(true, 'Solicitação enviada para o fornecedor', $today);
+                    $exec = $sql->prepare("
+                        INSERT INTO request_buy_product (
+                            forn_id, 
+                            product_id, 
+                            quantity, 
+                            date_request, 
+                            status, 
+                            message
+                        ) VALUES (
+                            :forn_id, 
+                            :product_id, 
+                            :quantity, 
+                            :date_request, 
+                            :status, 
+                            :message
+                        )
+                    ");
+
+                    $exec->bindParam(':forn_id', $forn_id);
+                    $exec->bindParam(':product_id', $product['id']);
+                    $exec->bindParam(':quantity', $product['quantity']);
+                    $exec->bindParam(':date_request', $today);
+                    $exec->bindParam(':status', $status);
+                    $exec->bindParam(':message', $message);
+                    $exec->execute();
+
+                }
+            }
+
+            $message_log = "Solicitação cadastrada via e-mail";
+            Panel::LogAction($user_id, 'Solicitação cadastrada via e-mail', $message_log, $today);
+            Response::send(true, 'Solicitação cadastrada via e-mail', $today);
 
         } catch (Exception $e) {
             http_response_code(500);
@@ -401,22 +470,22 @@ class Register
                 Response::json(false, 'Formato da imagem incompativel o esperado é PNG ou JPEG/JPG.', $today);
             }
 
-            $stmt = $sql->prepare("INSERT INTO products (name, quantity, stock_quantity, barcode, value_product, cost_value, reference, model, brand, flow, show_on_page, size) 
+            $exec = $sql->prepare("INSERT INTO products (name, quantity, stock_quantity, barcode, value_product, cost_value, reference, model, brand, flow, show_on_page, size) 
                                VALUES (:name, :quantity, :stock_quantity, :barcode, :value_product, :cost_value, :reference, :model, :brand, :flow, :show_on_page, :size)");
 
-            $stmt->bindParam(':name', $name);
-            $stmt->bindParam(':quantity', $quantity);
-            $stmt->bindParam(':stock_quantity', $stock_quantity);
-            $stmt->bindParam(':barcode', $barcode);
-            $stmt->bindParam(':value_product', $value_product);
-            $stmt->bindParam(':cost_value', $cost_value);
-            $stmt->bindParam(':reference', $reference);
-            $stmt->bindParam(':model', $model);
-            $stmt->bindParam(':brand', $brand);
-            $stmt->bindParam(':flow', $flow);
-            $stmt->bindParam(':show_on_page', $show_on_page);
-            $stmt->bindParam(':size', $size);
-            $stmt->execute();
+            $exec->bindParam(':name', $name);
+            $exec->bindParam(':quantity', $quantity);
+            $exec->bindParam(':stock_quantity', $stock_quantity);
+            $exec->bindParam(':barcode', $barcode);
+            $exec->bindParam(':value_product', $value_product);
+            $exec->bindParam(':cost_value', $cost_value);
+            $exec->bindParam(':reference', $reference);
+            $exec->bindParam(':model', $model);
+            $exec->bindParam(':brand', $brand);
+            $exec->bindParam(':flow', $flow);
+            $exec->bindParam(':show_on_page', $show_on_page);
+            $exec->bindParam(':size', $size);
+            $exec->execute();
 
             $sql->commit();
 
@@ -531,14 +600,14 @@ class Register
             }
 
 
-            $stmt = $sql->prepare("INSERT INTO boxpdv (id_users, value, observation, status, open_date) 
+            $exec = $sql->prepare("INSERT INTO boxpdv (id_users, value, observation, status, open_date) 
                                    VALUES (:user_id, :value, :observation, :status, :open_date)");
-            $stmt->bindParam(':user_id', $user_id, PDO::PARAM_INT);
-            $stmt->bindParam(':value', $value);
-            $stmt->bindParam(':observation', $observation);
-            $stmt->bindParam(':status', $status, PDO::PARAM_INT);
-            $stmt->bindParam(':open_date', $today);
-            $stmt->execute();
+            $exec->bindParam(':user_id', $user_id, PDO::PARAM_INT);
+            $exec->bindParam(':value', $value);
+            $exec->bindParam(':observation', $observation);
+            $exec->bindParam(':status', $status, PDO::PARAM_INT);
+            $exec->bindParam(':open_date', $today);
+            $exec->execute();
             $sql->commit();
 
             $_SESSION['value'] = $value;
@@ -555,7 +624,8 @@ class Register
 
     }
 
-    public static function RegisterSangria($sql, $response_sangria, $user_id) {
+    public static function RegisterSangria($sql, $response_sangria, $user_id)
+    {
 
         $today = date('Y-m-d H:i:s');
         $status = 1;
@@ -574,7 +644,7 @@ class Register
             $exec = $sql->prepare("SELECT id, value FROM boxpdv WHERE status = :status");
             $exec->bindParam(':status', $status, PDO::PARAM_INT);
             $exec->execute();
-            $id_boxpdv = $exec->fetch(PDO::FETCH_ASSOC); 
+            $id_boxpdv = $exec->fetch(PDO::FETCH_ASSOC);
 
             if (!$id_boxpdv['id']) {
                 Response::json(false, 'Nenhuma caixa aberta encontrada', $today);
@@ -583,16 +653,16 @@ class Register
             if ($value > $id_boxpdv['value']) {
                 Response::json(false, 'Valor da retirada não pode ser mair que valor do caixa', $today);
             }
-    
-            $stmt = $sql->prepare("INSERT INTO sangria_boxpdv (id_users, id_boxpdv, value, observation, withdrawa_date) 
+
+            $exec = $sql->prepare("INSERT INTO sangria_boxpdv (id_users, id_boxpdv, value, observation, withdrawa_date) 
                                    VALUES (:user_id, :id_boxpdv, :value, :observation, :withdrawa_date)");
-            $stmt->bindParam(':user_id', $user_id, PDO::PARAM_INT);
-            $stmt->bindParam(':id_boxpdv', $id_boxpdv['id'], PDO::PARAM_INT);
-            $stmt->bindParam(':value', $value);
-            $stmt->bindParam(':observation', $observation);
-            $stmt->bindParam(':withdrawa_date', $today);
-            $stmt->execute();
-            $sql->commit();    
+            $exec->bindParam(':user_id', $user_id, PDO::PARAM_INT);
+            $exec->bindParam(':id_boxpdv', $id_boxpdv['id'], PDO::PARAM_INT);
+            $exec->bindParam(':value', $value);
+            $exec->bindParam(':observation', $observation);
+            $exec->bindParam(':withdrawa_date', $today);
+            $exec->execute();
+            $sql->commit();
 
             $message_log = "Retirada realizada com sucesso no valor de $value";
             Panel::LogAction($user_id, 'Retirada do Caixa', $message_log, $today);
@@ -605,7 +675,8 @@ class Register
 
     }
 
-    public static function RegisterMultiply($sql, $response_multiply, $user_id){
+    public static function RegisterMultiply($sql, $response_multiply, $user_id)
+    {
 
         $today = date('Y-m-d H:i:s');
         $status = 1;
@@ -630,7 +701,7 @@ class Register
             Panel::LogAction($user_id, 'Cadastrar Multiplicador', $message_log, $today);
             Response::send(true, 'Multiplicador cadastrado com sucesso', $today);
 
-        } catch(Exception $e){
+        } catch (Exception $e) {
             http_response_code(500);
             echo json_encode(['error' => 'Erro no banco de dados: ' . $e->getMessage(), 'code' => $e->getCode()]);
         }
