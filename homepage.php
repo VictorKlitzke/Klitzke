@@ -195,8 +195,12 @@ if ($checkCode->rowCount() > 0) {
                             <a style="color: #fff !important; font-size: 1.3rem" class="nav-link dropdown-toggle"
                             role="button" data-bs-toggle="dropdown" aria-expanded="false" onclick="ToggleNoteFiscal()">Suprimentos</a>
                             <ul class="dropdown-menu dropdown-menu-dark">
-                                <li><a class="dropdown-item" <?php SelectedMenu('list-companys'); ?>
+                                <li><a class="dropdown-item" <?php SelectedMenu('shopping-request'); ?>
                                 href="<?php echo INCLUDE_PATH; ?>shopping-request"> Solicitação de Compras </a></li>
+                                <li><a class="dropdown-item" <?php SelectedMenu('list-purchase-request'); ?>
+                                href="<?php echo INCLUDE_PATH; ?>list-purchase-request"> Lista das Solicitações de Compras </a></li>
+                                <li><a class="dropdown-item" <?php SelectedMenu('list-purchase-request'); ?>
+                                href="<?php echo INCLUDE_PATH; ?>list-purchase-request"> Variação de valores por fornecedores </a></li>
                             </ul>
                         </li>
                     </ul>

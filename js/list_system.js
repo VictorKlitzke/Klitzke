@@ -461,6 +461,34 @@ async function ListForn() {
     }
 }
 
+async function ListBuyRequest() {
+    try {
+
+        let url = `${BASE_CONTROLLERS}lists.php`;
+
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify( { type: 'listbuyrequest' } )
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+            const buyrequest = data.buyrequest;
+
+            const BuyrequestList = document.getElementById('table-buy-request');
+
+            fornList.innerHTML = '';
+        }
+
+    } catch (error) {
+        showMessage('Erro ao fazer requisição: ' + error.message, 'error');
+    }
+}
+
 async function ListProducts() {
     try {
         let url = `${BASE_CONTROLLERS}lists.php`;
