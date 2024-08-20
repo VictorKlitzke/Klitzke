@@ -112,7 +112,6 @@ class Edit
         }
 
     }
-
     public static function UpdateClient($sql, $response_clients, $user_id)
     {
         $today = date("Y-m-d H:i:s");

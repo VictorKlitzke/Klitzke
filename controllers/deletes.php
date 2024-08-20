@@ -109,7 +109,6 @@ class Deletes
         }
 
     }
-
     public static function DeleteForn($today, $sql, $id_forn_delete, $user_id)
     {
 
