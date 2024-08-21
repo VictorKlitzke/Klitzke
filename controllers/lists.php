@@ -25,11 +25,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         Lists::ListProducts($sql);
     } else if ($type === 'listforn') {
         Lists::ListForn($sql);
+    } else if ($type === 'listbuyrequest') {
+        Lists::ListBuyRequest($sql);
     }
 }
 
-class lists {
-    public static function ListProducts($sql) {
+class lists
+{
+    public static function ListProducts($sql)
+    {
 
         try {
 
@@ -46,7 +50,8 @@ class lists {
             echo json_encode(['error' => 'Erro no banco de dados: ' . $e->getMessage(), 'code' => $e->getCode()]);
         }
     }
-    public static function ListForn($sql) {
+    public static function ListForn($sql)
+    {
 
         try {
 
@@ -56,6 +61,41 @@ class lists {
             echo json_encode([
                 'success' => true,
                 'forn' => $products
+            ]);
+
+        } catch (Exception $e) {
+            http_response_code(500);
+            echo json_encode(['error' => 'Erro no banco de dados: ' . $e->getMessage(), 'code' => $e->getCode()]);
+        }
+    }
+    public static function ListBuyRequest($sql)
+    {
+        $searchTerm = isset($_POST['search']) ? isset($_POST['search']) : '';
+        $searchTerm = '%'.$searchTerm.'%';
+        try {
+
+            $exec = $sql->prepare("select 
+                                        rbp.id,
+                                        p.`name` product,
+                                        su.`company` company,
+                                        rbp.quantity,
+                                        rbp.`message`,
+                                        rbp.`date_request`
+                                    from 
+                                        `request_buy_product` rbp
+                                        join `suppliers` su on su.id = rbp.`forn_id`
+                                        join `products` p on p.id = rbp.`product_id`
+                                    where 
+                                    p.`name` like :search_term OR 
+                                    su.`company` like :search_term ");
+
+            $param = $searchTerm;
+            $exec->bindParam(':search_term', $param, PDO::PARAM_STR);
+            $exec->execute();
+            $buyrequest = $exec->fetch(PDO::FETCH_ASSOC);
+            echo json_encode([
+                'success' => true,
+                'buyrequest' => $buyrequest,
             ]);
 
         } catch (Exception $e) {
