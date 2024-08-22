@@ -466,37 +466,37 @@ async function ListForn() {
 
 FieldFormBuyRequest.addEventListener('input', async function () {
     const searchTerm = FieldFormBuyRequest.value.trim();
-    console.log(searchTerm);
     await ListBuyRequest(searchTerm);
 });
 
-async function ListBuyRequest(searchTerm = '') {
+async function ListBuyRequest(searchTerm) {
     try {
         let url = `${BASE_CONTROLLERS}lists.php`;
 
         const response = await fetch(url, {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json',
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ type: 'listbuyrequest', search: searchTerm })
+            body: JSON.stringify({ type: 
+                'listbuyrequest', 
+                'search=': encodeURIComponent(searchTerm) })
         });
 
-        console.log(searchTerm);
+        if (!response.ok) {
+            throw new Error('Erro na resposta da rede');
+        }
 
         const data = await response.json();
-
-        console.log(data);
 
         if (data.success) {
             const buyrequest = data.buyrequest;
             const BuyrequestList = document.getElementById('table-buy-request').querySelector('tbody');
 
             if (!Array.isArray(buyrequest)) {
-                throw new Error('buyrequest is not an array');
+                throw new Error('buyrequest não é um array');
             }
-
-            BuyrequestList.innerHTML = '';
 
             buyrequest.forEach(b => {
                 const row = document.createElement('tr');

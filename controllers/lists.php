@@ -70,39 +70,45 @@ class lists
     }
     public static function ListBuyRequest($sql)
     {
-        $searchTerm = isset($_POST['search']) ? isset($_POST['search']) : '';
-        $searchTerm = '%'.$searchTerm.'%';
+        $searchTerm = isset($_POST['search']) ? $_POST['search'] : '';
+
         try {
+            $query = "SELECT 
+                    rbp.id,
+                    p.`name` AS product,
+                    su.`company` AS company,
+                    rbp.quantity,
+                    rbp.`message`,
+                    rbp.`date_request`
+                  FROM 
+                    `request_buy_product` rbp
+                    JOIN `suppliers` su ON su.id = rbp.`forn_id`
+                    JOIN `products` p ON p.id = rbp.`product_id`";
 
-            $exec = $sql->prepare("select 
-                                        rbp.id,
-                                        p.`name` product,
-                                        su.`company` company,
-                                        rbp.quantity,
-                                        rbp.`message`,
-                                        rbp.`date_request`
-                                    from 
-                                        `request_buy_product` rbp
-                                        join `suppliers` su on su.id = rbp.`forn_id`
-                                        join `products` p on p.id = rbp.`product_id`
-                                    where 
-                                    p.`name` like :search_term OR 
-                                    su.`company` like :search_term ");
+            if (!empty($searchTerm)) {
+                $query .= " WHERE p.`name` LIKE :search_term OR su.`company` LIKE :search_term";
+            }
 
-            $param = $searchTerm;
-            $exec->bindParam(':search_term', $param, PDO::PARAM_STR);
+            $exec = $sql->prepare($query);
+
+            if (!empty($searchTerm)) {
+                $exec->bindValue(':search_term', '%' . $searchTerm . '%', PDO::PARAM_STR);
+            }
+
             $exec->execute();
-            $buyrequest = $exec->fetch(PDO::FETCH_ASSOC);
+            $buyrequest = $exec->fetchAll(PDO::FETCH_ASSOC);
+
             echo json_encode([
                 'success' => true,
                 'buyrequest' => $buyrequest,
             ]);
 
-        } catch (Exception $e) {
+        } catch (PDOException $e) {
             http_response_code(500);
             echo json_encode(['error' => 'Erro no banco de dados: ' . $e->getMessage(), 'code' => $e->getCode()]);
         }
     }
+
 }
 
 ?>
