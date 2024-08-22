@@ -25,11 +25,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         Lists::ListProducts($sql);
     } else if ($type === 'listforn') {
         Lists::ListForn($sql);
+    } else if ($type === 'listbuyrequest') {
+        Lists::ListBuyRequest($sql);
     }
 }
 
-class lists {
-    public static function ListProducts($sql) {
+class lists
+{
+    public static function ListProducts($sql)
+    {
 
         try {
 
@@ -46,7 +50,8 @@ class lists {
             echo json_encode(['error' => 'Erro no banco de dados: ' . $e->getMessage(), 'code' => $e->getCode()]);
         }
     }
-    public static function ListForn($sql) {
+    public static function ListForn($sql)
+    {
 
         try {
 
@@ -63,6 +68,47 @@ class lists {
             echo json_encode(['error' => 'Erro no banco de dados: ' . $e->getMessage(), 'code' => $e->getCode()]);
         }
     }
+    public static function ListBuyRequest($sql)
+    {
+        $searchTerm = isset($_POST['search']) ? $_POST['search'] : '';
+
+        try {
+            $query = "SELECT 
+                    rbp.id,
+                    p.`name` AS product,
+                    su.`company` AS company,
+                    rbp.quantity,
+                    rbp.`message`,
+                    rbp.`date_request`
+                  FROM 
+                    `request_buy_product` rbp
+                    JOIN `suppliers` su ON su.id = rbp.`forn_id`
+                    JOIN `products` p ON p.id = rbp.`product_id`";
+
+            if (!empty($searchTerm)) {
+                $query .= " WHERE p.`name` LIKE :search_term OR su.`company` LIKE :search_term";
+            }
+
+            $exec = $sql->prepare($query);
+
+            if (!empty($searchTerm)) {
+                $exec->bindValue(':search_term', '%' . $searchTerm . '%', PDO::PARAM_STR);
+            }
+
+            $exec->execute();
+            $buyrequest = $exec->fetchAll(PDO::FETCH_ASSOC);
+
+            echo json_encode([
+                'success' => true,
+                'buyrequest' => $buyrequest,
+            ]);
+
+        } catch (PDOException $e) {
+            http_response_code(500);
+            echo json_encode(['error' => 'Erro no banco de dados: ' . $e->getMessage(), 'code' => $e->getCode()]);
+        }
+    }
+
 }
 
 ?>

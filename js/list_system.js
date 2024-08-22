@@ -1,6 +1,9 @@
+const ButtonSearchBuyRequest = document.getElementById('button-search');
+const FieldFormBuyRequest = document.getElementById('input-buy-request');
 
 window.onload = ListProducts();
 window.onload = ListForn();
+window.onload = ListBuyRequest();
 
 async function InativarInvo(button) {
 
@@ -419,7 +422,7 @@ async function ListForn() {
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify( { type: 'listforn' } )
+            body: JSON.stringify({ type: 'listforn' })
         });
 
         const data = await response.json();
@@ -461,33 +464,77 @@ async function ListForn() {
     }
 }
 
-async function ListBuyRequest() {
-    try {
+FieldFormBuyRequest.addEventListener('input', async function () {
+    const searchTerm = FieldFormBuyRequest.value.trim();
+    await ListBuyRequest(searchTerm);
+});
 
+async function ListBuyRequest(searchTerm) {
+    try {
         let url = `${BASE_CONTROLLERS}lists.php`;
 
         const response = await fetch(url, {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json',
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'Content-Type': 'application/json'
             },
-            body: JSON.stringify( { type: 'listbuyrequest' } )
+            body: JSON.stringify({ type: 
+                'listbuyrequest', 
+                'search=': encodeURIComponent(searchTerm) })
         });
+
+        if (!response.ok) {
+            throw new Error('Erro na resposta da rede');
+        }
 
         const data = await response.json();
 
         if (data.success) {
             const buyrequest = data.buyrequest;
+            const BuyrequestList = document.getElementById('table-buy-request').querySelector('tbody');
 
-            const BuyrequestList = document.getElementById('table-buy-request');
+            if (!Array.isArray(buyrequest)) {
+                throw new Error('buyrequest não é um array');
+            }
 
-            fornList.innerHTML = '';
+            buyrequest.forEach(b => {
+                const row = document.createElement('tr');
+
+                const idCell = document.createElement('th');
+                idCell.textContent = b.id;
+                row.appendChild(idCell);
+
+                const ProductCell = document.createElement('th');
+                ProductCell.textContent = b.product;
+                row.appendChild(ProductCell);
+
+                const CompanyCell = document.createElement('th');
+                CompanyCell.textContent = b.company;
+                row.appendChild(CompanyCell);
+
+                const QuantityCell = document.createElement('th');
+                QuantityCell.textContent = b.quantity;
+                row.appendChild(QuantityCell);
+
+                const MessageCell = document.createElement('th');
+                MessageCell.textContent = b.message;
+                row.appendChild(MessageCell);
+
+                const DateRequestCell = document.createElement('th');
+                DateRequestCell.textContent = b.date_request;
+                row.appendChild(DateRequestCell);
+
+                BuyrequestList.appendChild(row);
+            });
+        } else {
+            showMessage('Erro ao listar solicitações', 'error');
         }
-
     } catch (error) {
         showMessage('Erro ao fazer requisição: ' + error.message, 'error');
     }
 }
+
 
 async function ListProducts() {
     try {
