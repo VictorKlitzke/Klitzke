@@ -50,6 +50,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $response_multiply = $data;
     $response_whatsapp = $data;
     $response_email = $data;
+    $response_variation = $data;
 
     if (isset($data['type'])) {
         if ($data['type'] == 'users') {
@@ -76,6 +77,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             Register::SendRequestWhatsApp($sql, $response_whatsapp, $user_id);
         } else if ($data['type'] == 'RequestEmail') {
             Register::SendRequestEmail($sql, $response_email, $user_id);
+        } else if ($data['type'] == 'variation') {
+            Register::SendAddVariationValues($sql, $response_variation, $user_id);
         }
     } else {
         Response::json(false, 'Tipo type não encontrado', $today);
@@ -85,6 +88,46 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 class Register
 {
 
+    public static function SendAddVariationValues($sql, $response_variation, $user_id)
+    {
+
+        $today = date("Y-m-d H:i:s");
+
+        try {
+
+            $sql->BeginTransaction();
+
+            foreach ($response_variation['AddVariation'] as $variation) {
+
+                var_dump($variation['idBuyRequest']);
+
+                $exec = $sql->prepare("
+                    INSERT INTO variation_values (
+                        id_buy_request, 
+                        `values`
+                    ) VALUES (
+                        :id_buy_request, 
+                        :values
+                    )
+                ");
+
+                $exec->bindParam(':id_buy_request', $variation['idBuyRequest']);
+                $exec->bindParam(':values', $variation['value']);
+                $exec->execute();
+
+            }
+
+            $sql->commit();
+
+            $message_log = "Variação de valores cadastrada com sucesso";
+            Panel::LogAction($user_id, 'Variação de valores cadastrada com sucesso', $message_log, $today);
+            Response::send(true, 'Variação de valores cadastrada com sucesso', $today);
+
+        } catch (Exception $e) {
+            http_response_code(500);
+            echo json_encode(['error' => 'Erro no banco de dados: ' . $e->getMessage(), 'code' => $e->getCode()]);
+        }
+    }
     public static function SendRequestWhatsApp($sql, $response_whatsapp, $user_id)
     {
 

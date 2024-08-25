@@ -26,7 +26,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } else if ($type === 'listforn') {
         Lists::ListForn($sql);
     } else if ($type === 'listbuyrequest') {
-        Lists::ListBuyRequest($sql);
+        Lists::ListBuyRequest($sql, $input);
+    } else if ($type === 'listvariationvalues') {
+        lists::ListVariationValues($sql, $input);
     }
 }
 
@@ -68,9 +70,9 @@ class lists
             echo json_encode(['error' => 'Erro no banco de dados: ' . $e->getMessage(), 'code' => $e->getCode()]);
         }
     }
-    public static function ListBuyRequest($sql)
+    public static function ListBuyRequest($sql, $input)
     {
-        $searchTerm = isset($_POST['search']) ? $_POST['search'] : '';
+        $searchTerm = isset($input['searchTerm']) ? $input['searchTerm'] : null;
 
         try {
             $query = "SELECT 
@@ -106,6 +108,44 @@ class lists
         } catch (PDOException $e) {
             http_response_code(500);
             echo json_encode(['error' => 'Erro no banco de dados: ' . $e->getMessage(), 'code' => $e->getCode()]);
+        }
+    }
+    public static function ListVariationValues($sql, $input)
+    {
+
+        $searchTermVariation = isset($input['searchTermVariation']) ? $input['searchTermVariation'] : null;
+
+        try {
+            $query = "SELECT 
+                            rbp.id,
+                            p.name AS product,
+                            su.company AS company,
+                            rbp.quantity
+                          FROM 
+                            request_buy_product rbp
+                          JOIN 
+                            suppliers su ON su.id = rbp.forn_id
+                          JOIN 
+                            products p ON p.id = rbp.product_id";
+
+            if (!empty($searchTermVariation)) {
+                $query .= " WHERE p.name LIKE :search_term OR su.company LIKE :search_term";
+            }
+
+            $stmt = $sql->prepare($query);
+
+            if (!empty($searchTermVariation)) {
+                $stmt->bindValue(':search_term', '%' . $searchTermVariation . '%', PDO::PARAM_STR);
+            }
+
+            $stmt->execute();
+            $variationvalues = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+            echo json_encode(['success' => true, 'variationvalues' => $variationvalues]);
+
+        } catch (PDOException $e) {
+            http_response_code(500);
+            echo json_encode(['success' => false, 'message' => 'Erro no banco de dados: ' . $e->getMessage()]);
         }
     }
 
