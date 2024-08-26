@@ -83,31 +83,30 @@ document.addEventListener('DOMContentLoaded', function () {
 		}
 	});
 
-	function updateTotal(totalAddRequest) {
-		let calculateRequest = document.getElementById('product-value-total');
+	function updateTotal(total) {
+		const calculateRequest = document.getElementById('product-value-total');
 
 		if (calculateRequest) {
-			calculateRequest.textContent = 'R$ ' + totalAddRequest.toFixed(2);
+			calculateRequest.textContent = 'R$ ' + total.toFixed(2);
 		}
 	}
 
-	function calculateRequestAdd() {
-		let totalAddRequest = 0;
+	function calculateTotalForRequests() {
+		let total = 0;
 
 		selectedRequestList.forEach(requestProduct => {
-			let stockQuantity = requestProduct.productSRequesttock_quantity;
-			let valueProduct = parseFloat(value_product.value) || 0;
+			const stockQuantity = parseFloat(requestProduct.productSRequesttock_quantity) || 0;
+			const valueProduct = parseFloat(requestProduct.value_product) || 0;
 
-			totalAddRequest += stockQuantity * valueProduct;
+			total += stockQuantity * valueProduct;
 		});
 
-		let calculateRequest = document.getElementById('product-value-total');
-		if (calculateRequest) {
-			calculateRequest.textContent = 'R$ ' + totalAddRequest.toFixed(2);
-		}
+		return total;
+	}
 
+	function calculateRequestAdd() {
+		const totalAddRequest = calculateTotalForRequests();
 		updateTotal(totalAddRequest);
-
 		return totalAddRequest.toFixed(2);
 	}
 
@@ -204,7 +203,7 @@ function updatePedido() {
 			Command.textContent = numberTableRequest;
 
 			Quantity.classList.add('quantity-cell');
-			Quantity.id = 'quantity-cell';
+			Quantity.id = 'quantity-cell-';
 			Value.classList.add('value-cell');
 			Value.id = 'value-cell';
 			Command.id = 'command-cell';
@@ -476,7 +475,6 @@ function requestValidateStock(stock_quantity, currentQuantity) {
 }
 
 function updateTotalAmountRequest(totalRequest) {
-
 	let totalElementOrderRequestRequest = document.getElementById('totalizador-request');
 
 	if (totalElementOrderRequestRequest) {
@@ -485,34 +483,34 @@ function updateTotalAmountRequest(totalRequest) {
 }
 
 function calculateTotal() {
-
 	let totalRequest = 0;
 
 	selectedRequest.forEach(requestProducts => {
+		let quantityElement = document.getElementById('quantity-cell-' + requestProducts.id);
+		let valueElement = document.getElementById('value-cell-' + requestProducts.id);
 
-		let quantityElementOrderRequest = document.querySelector('.quantity-cell');
-		let valueElementOrderRequest = document.querySelector('.value-cell');
+		if (quantityElement && valueElement) {
+			let quantityText = quantityElement.textContent.trim();
+			let valueText = valueElement.textContent.trim();
 
-		if (quantityElementOrderRequest && valueElementOrderRequest) {
-			let quantityElementOrderTotalRequest = parseInt(quantityElementOrderRequest.textContent) || 0;
-			let valueRequest = parseFloat(valueElementOrderRequest.textContent) || 0;
+			console.log('Texto de quantidade:', quantityText);
+			console.log('Texto de valor:', valueText);
 
-			totalRequest += quantityElementOrderTotalRequest * valueRequest;
+			let quantityValue = parseInt(quantityText, 10) || 0;
+			let valueAmount = parseFloat(valueText.replace(',', '.')) || 0;
+
+			totalRequest += quantityValue * valueAmount;
 		} else {
 			console.error('Elementos não encontrados para o produto ID:', requestProducts.id);
 		}
-	});
 
-	let totalElementOrderRequestRequest = document.getElementById('totalizador-request');
-	if (totalElementOrderRequestRequest) {
-		totalElementOrderRequestRequest.textContent = 'R$ ' + totalRequest.toFixed(2);
-	}
+	});
 
 	updateTotalAmountRequest(totalRequest);
 
 	return totalRequest.toFixed(2);
-
 }
+
 
 async function addGathersArray(index, id, table_request, total_request) {
 
