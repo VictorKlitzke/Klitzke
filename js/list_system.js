@@ -608,7 +608,7 @@ async function AddVariationValues() {
         const idBuyRequest = idCell.textContent.trim();
         const value = valueInput.value.trim();
 
-        if (value) {
+        if (value && !AddVariation[idBuyRequest]) {
             AddVariation[idBuyRequest] = value;
         }
     })
@@ -625,10 +625,8 @@ async function AddVariationValues() {
 
     let ResponseVariation = {
         type: 'variation',
-        formattedAddVariation: formattedAddVariation
+        AddVariation: formattedAddVariation
     }
-
-    console.log(ResponseVariation);
 
     try {
 
@@ -642,18 +640,43 @@ async function AddVariationValues() {
             body: JSON.stringify(ResponseVariation)
         })
 
-        const data = await response.json();
+        const text = await response.text();
+        const data = JSON.parse(text);
 
         if (data.success) {
             showMessage('Valores salvos com sucesso!', 'success');
+            updateTableWithNewValues(data.new_values_variation);
         } else {
             showMessage('Erro ao salvar valores: ' + data.message, 'error');
         }
-
     } catch (error) {
         showMessage('Erro ao fazer requisição: ' + error, 'error');
     }
 }
+function updateTableWithNewValues(new_values_variation) {
+    setTimeout(() => {
+        new_values_variation.forEach(variation => {
+            const row = Array.from(document.querySelectorAll('#table-variation-values tbody tr'))
+                .find(row => row.querySelector('.id-variation-values').textContent.trim() === variation.idBuyRequest);
+            if (row) {
+                const inputCell = row.querySelector('.input-variation-values');
+                console.log('Input encontrado:', inputCell);
+
+                if (inputCell) {
+                    const valueSpan = document.createElement('span');
+                    valueSpan.className = 'input-variation-values';
+                    valueSpan.textContent = variation.value;
+                    inputCell.parentNode.replaceChild(valueSpan, inputCell);
+                } else {
+                    showMessage('Input não encontrado na linha:' + row, 'warning');
+                }
+            } else {
+                showMessage('Linha não encontrada para idBuyRequest:' + variation.idBuyRequest, 'warning');
+            }
+        });
+    }, 100); 
+}
+
 async function ListProducts() {
     try {
         let url = `${BASE_CONTROLLERS}lists.php`;
@@ -727,7 +750,6 @@ FieldFormBuyRequest.addEventListener('input', async function () {
     const searchTerm = FieldFormBuyRequest.value.trim();
     await ListBuyRequest(searchTerm);
 });
-
 FieldFormVariationValues.addEventListener('input', async function () {
     const searchTermVariation = FieldFormVariationValues.value.trim();
     await ListVariationValues(searchTermVariation);

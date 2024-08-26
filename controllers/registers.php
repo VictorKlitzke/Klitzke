@@ -92,6 +92,7 @@ class Register
     {
 
         $today = date("Y-m-d H:i:s");
+        $new_values_variation = [];
 
         try {
 
@@ -99,9 +100,12 @@ class Register
 
             foreach ($response_variation['AddVariation'] as $variation) {
 
-                var_dump($variation['idBuyRequest']);
+                $check_id = $sql->prepare("SELECT COUNT(*) FROM variation_values WHERE id_buy_request = :idBuyRequest");
+                $check_id->BindParam('idBuyRequest', $variation['idBuyRequest']);
+                $check_id->execute();
 
-                $exec = $sql->prepare("
+                if ($check_id->fetchColumn() == 0) {
+                    $exec = $sql->prepare("
                     INSERT INTO variation_values (
                         id_buy_request, 
                         `values`
@@ -111,17 +115,22 @@ class Register
                     )
                 ");
 
-                $exec->bindParam(':id_buy_request', $variation['idBuyRequest']);
-                $exec->bindParam(':values', $variation['value']);
-                $exec->execute();
-
+                    $exec->bindParam(':id_buy_request', $variation['idBuyRequest']);
+                    $exec->bindParam(':values', $variation['value']);
+                    $exec->execute();
+                }
             }
+
+            $new_values_variation[] = [
+                'idBuyRequest' => $variation['idBuyRequest'],
+                'value' => $variation['value']
+            ];
 
             $sql->commit();
 
             $message_log = "Variação de valores cadastrada com sucesso";
             Panel::LogAction($user_id, 'Variação de valores cadastrada com sucesso', $message_log, $today);
-            Response::send(true, 'Variação de valores cadastrada com sucesso', $today);
+            echo json_encode(['success' => true, 'new_values_variation' => $new_values_variation]);
 
         } catch (Exception $e) {
             http_response_code(500);

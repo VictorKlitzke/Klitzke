@@ -69,7 +69,7 @@ $count_sales = Controllers::SelectAll('sales');
         <?php echo $_SESSION['name']; ?>
       </h1>
       <p style="color: #ccc; padding-top: 10px;">
-        Aqui esta tudo que aconteceu hoje!
+        Aqui esta tudo que aconteceu até o momento!
       </p>
     </div>
   </div>
