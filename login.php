@@ -1,5 +1,6 @@
 <?php
 global $title_login;
+global $title;
 global $chave_secret;
 include_once './services/db.php';
 include_once './classes/panel.php';
@@ -107,14 +108,14 @@ if (isset($_POST['action'])) {
                 </div>
                 <div>
                     <button type="submit" name="action" class="btn animation" style="--i:3;">Login</button>
-                    <div class="logreg-link animation" style="--i:4;">
+                    <!-- <div class="logreg-link animation" style="--i:4;">
                         <p>Não tem uma Conta ?<a href="#" class="register-link">Registrar-me</a></p>
-                    </div>
+                    </div> -->
                 </div>
             </form>
         </div>
         <div class="info-text login">
-            <h2 class="animation" style="--i:0;">Bem vindo de volta !</h2>
+            <h3 class="animation" style="--i:0; font-size: 32px;">Bem vindo ao <?php echo $title; ?></h3>
             <p class="animation" style="--i:1;">Onde seu negocio toma novos rumos</p>
         </div>
         <div class="form-box register">

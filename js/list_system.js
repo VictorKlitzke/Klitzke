@@ -1,14 +1,16 @@
 const ButtonSearchBuyRequest = document.getElementById('button-search');
 const FieldFormBuyRequest = document.getElementById('input-buy-request');
 const FieldFormVariationValues = document.getElementById('input-variation-values');
+const AddVariationForn = document.getElementById('add-variation-forn');
 
-let AddVariation = [];
+let AddVariation = {};
 
 window.onload = ListProducts();
 window.onload = ListForn();
 window.onload = ListBuyRequest();
 window.onload = ListVariationValues();
-AddVariationValues();
+window.onload = loadValuesFromLocalStorage;
+window.omload = AddVariationValues();
 
 async function InativarInvo(button) {
 
@@ -450,8 +452,6 @@ async function ListForn() {
 
                 fornList.appendChild(row);
             });
-        } else {
-            showMessage('Erro ao listar fornecedores', 'error');
         }
 
     } catch (error) {
@@ -600,13 +600,14 @@ async function ListVariationValues(searchTermVariation = '') {
 }
 async function AddVariationValues() {
     const rowns = document.querySelectorAll('#table-variation-values tbody tr');
+    const storedVariations = JSON.parse(localStorage.getItem('tableVariations')) || [];
 
     rowns.forEach(r => {
         const idCell = r.querySelector('.id-variation-values');
         const valueInput = r.querySelector('.input-variation-values');
 
         const idBuyRequest = idCell.textContent.trim();
-        const value = valueInput.value.trim();
+        const value = valueInput.value;
 
         if (value && !AddVariation[idBuyRequest]) {
             AddVariation[idBuyRequest] = value;
@@ -618,10 +619,8 @@ async function AddVariationValues() {
         value: AddVariation[idBuyRequest]
     }));
 
-    if (formattedAddVariation.length === 0) {
-        showMessage('Nenhum valor para ser salvo', 'warning');
-        return;
-    }
+    storedVariations.push(...formattedAddVariation);
+    saveValuesToLocalStorage(storedVariations);
 
     let ResponseVariation = {
         type: 'variation',
@@ -647,10 +646,19 @@ async function AddVariationValues() {
             showMessage('Valores salvos com sucesso!', 'success');
             updateTableWithNewValues(data.new_values_variation);
         } else {
-            showMessage('Erro ao salvar valores: ' + data.message, 'error');
+            showMessage('Erro ao salvar valores: ', 'error');
         }
     } catch (error) {
         showMessage('Erro ao fazer requisição: ' + error, 'error');
+    }
+}
+function saveValuesToLocalStorage(variations) {
+    localStorage.setItem('tableVariations', JSON.stringify(variations));
+}
+function loadValuesFromLocalStorage() {
+    const storedVariations = JSON.parse(localStorage.getItem('tableVariations')) || [];
+    if (storedVariations.length > 0) {
+        updateTableWithNewValues(storedVariations);
     }
 }
 function updateTableWithNewValues(new_values_variation) {
@@ -658,25 +666,19 @@ function updateTableWithNewValues(new_values_variation) {
         new_values_variation.forEach(variation => {
             const row = Array.from(document.querySelectorAll('#table-variation-values tbody tr'))
                 .find(row => row.querySelector('.id-variation-values').textContent.trim() === variation.idBuyRequest);
+
             if (row) {
                 const inputCell = row.querySelector('.input-variation-values');
-                console.log('Input encontrado:', inputCell);
-
                 if (inputCell) {
                     const valueSpan = document.createElement('span');
                     valueSpan.className = 'input-variation-values';
                     valueSpan.textContent = variation.value;
                     inputCell.parentNode.replaceChild(valueSpan, inputCell);
-                } else {
-                    showMessage('Input não encontrado na linha:' + row, 'warning');
                 }
-            } else {
-                showMessage('Linha não encontrada para idBuyRequest:' + variation.idBuyRequest, 'warning');
             }
         });
-    }, 100); 
+    }, 100);
 }
-
 async function ListProducts() {
     try {
         let url = `${BASE_CONTROLLERS}lists.php`;
@@ -743,6 +745,13 @@ async function ListProducts() {
 
     } catch (error) {
         showMessage('Erro ao fazer requisição: ' + error.message, 'error');
+    }
+}
+function ShowModalAddVariation() {
+    if (AddVariationForn.style.display === 'block') {
+        AddVariationForn.style.display = 'none';
+    } else {
+        AddVariationForn.style.display = 'block';
     }
 }
 
