@@ -52,18 +52,18 @@ function showMessage(message, type) {
         ${message}
         <span class="close-btn" onclick="this.parentElement.style.display='none';">&times;</span>
     `;
-    
+
     messageElement.style.opacity = 0;
     messageElement.style.transform = 'translate(-50%, -100%)';
     messageElement.style.transition = 'opacity 0.5s ease-out, transform 0.5s ease-out';
-    
+
     messageContainer.appendChild(messageElement);
-    
+
     setTimeout(() => {
         messageElement.style.opacity = 1;
         messageElement.style.transform = 'translate(-50%, 0%)';
     }, 50);
-    
+
     setTimeout(() => {
         messageElement.style.opacity = 0;
         messageElement.style.transform = 'translate(-50%, -100%)';
@@ -74,7 +74,7 @@ function showMessage(message, type) {
 }
 
 function continueMessage(message, yesButtonLabel, noButtonLabel, yesCallback, noCallback) {
-   
+
     const messageContainer = document.createElement('div');
     messageContainer.className = 'message-container';
 

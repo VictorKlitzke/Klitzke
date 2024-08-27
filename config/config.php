@@ -9,6 +9,7 @@ define('USER', 'root');
 define('PASSWORD', 'root');
 define('DATABASE', 'Klitzke');
 
+$title = 'Klitzke Software';
 $title_home = 'Klitzke Software - Admin';
 $title_login = 'Klitzke software - login';
 $chave_secret = 'EFEGREWSWREGERGEGBTBBFDGBTGHERTGSFDSGVB';

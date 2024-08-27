@@ -88,10 +88,10 @@ function handleRemoveClick(product) {
 }
 
 function toggleFornModal() {
-  if (ModalForn.style.display === 'block') {
+  if (ModalForn.style.display === 'flex') {
     ModalForn.style.display = 'none';
   } else {
-    ModalForn.style.display = 'block';
+    ModalForn.style.display = 'flex';
   }
 }
 

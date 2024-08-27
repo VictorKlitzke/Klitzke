@@ -1,12 +1,11 @@
 
 /* BOTÃO PERSONALIZADO PARA PERGUNTA */
 
-
 .message-container {
     position: fixed;
+    z-index: 1056;
     top: 0px;
     left: 50%;
-    z-index: 1000;
     width: 90%;
     max-width: 600px;
 }

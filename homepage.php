@@ -50,38 +50,47 @@ if ($checkCode->rowCount() > 0) {
     <nav class="navbar bg-dark">
         <div class="container-fluid">
 
-            <a class="navbar-brand" <?php if (@$_GET['url'] == '') { ?>
-                    style="background: #ccc; border-radius: 50%; padding: 5px 10px;" <?php } ?>
-                href="<?php echo INCLUDE_PATH ?>">
-                <span>
-                    <svg xmlns="http://www.w3.org/2000/svg" height="18" viewBox="0 -960 960 960" width="20">
-                        <path fill="#fff"
-                            d="M240-200h120v-240h240v240h120v-360L480-740 240-560v360Zm-80 80v-480l320-240 320 240v480H520v-240h-80v240H160Zm320-350Z" />
-                    </svg>
-                </span>
-            </a>
+            <div class="d-flex">
+                <a class="navbar-brand" <?php if (@$_GET['url'] == '') { ?>
+                        style="border: 3px solid #c1c1c1; border-radius: 7px;" <?php } ?>
+                    href="<?php echo INCLUDE_PATH ?>">
+                    <span style="color: #fff;">
+                        <svg xmlns="http://www.w3.org/2000/svg" height="18" viewBox="0 -960 960 960" width="20">
+                            <path fill="#fff"
+                                d="M240-200h120v-240h240v240h120v-360L480-740 240-560v360Zm-80 80v-480l320-240 320 240v480H520v-240h-80v240H160Zm320-350Z" />
+                        </svg>
+                        Pagina Inicial
+                    </span>
+                </a>
 
-            <a class="navbar-brand" href="<?php echo INCLUDE_PATH; ?>?loggout">
-                <span>
-                    <svg xmlns="http://www.w3.org/2000/svg" height="18" viewBox="0 -960 960 960" width="20">
-                        <path fill="#fff"
-                            d="M300-640v320l160-160-160-160ZM200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h560q33 0 56.5 23.5T840-760v560q0 33-23.5 56.5T760-120H200Zm440-80h120v-560H640v560Zm-80 0v-560H200v560h360Zm80 0h120-120Z" />
-                    </svg>
-                </span>
-            </a>
-            <a class="navbar-brand" <?php if (@$_GET['url'] == 'config-system') { ?>
-                    style="background: #ccc; border-radius: 50%; padding: 5px 10px;" <?php } ?>
-                href="<?php echo INCLUDE_PATH ?>config-system">
-                <svg xmlns="http://www.w3.org/2000/svg" height="18" viewBox="0 -960 960 960" width="20" fill="#fff">
-                    <path
-                        d="m234-480-12-60q-12-5-22.5-10.5T178-564l-58 18-40-68 46-40q-2-13-2-26t2-26l-46-40 40-68 58 18q11-8 21.5-13.5T222-820l12-60h80l12 60q12 5 22.5 10.5T370-796l58-18 40 68-46 40q2 13 2 26t-2 26l46 40-40 68-58-18q-11 8-21.5 13.5T326-540l-12 60h-80Zm40-120q33 0 56.5-23.5T354-680q0-33-23.5-56.5T274-760q-33 0-56.5 23.5T194-680q0 33 23.5 56.5T274-600ZM592-40l-18-84q-17-6-31.5-14.5T514-158l-80 26-56-96 64-56q-2-18-2-36t2-36l-64-56 56-96 80 26q14-11 28.5-19.5T574-516l18-84h112l18 84q17 6 31.5 14.5T782-482l80-26 56 96-64 56q2 18 2 36t-2 36l64 56-56 96-80-26q-14 11-28.5 19.5T722-124l-18 84H592Zm56-160q50 0 85-35t35-85q0-50-35-85t-85-35q-50 0-85 35t-35 85q0 50 35 85t85 35Z" />
-                </svg>
-            </a>
+                <a class="navbar-brand" href="<?php echo INCLUDE_PATH; ?>?loggout">
+                    <span style="color: #fff;">
+                        <svg xmlns="http://www.w3.org/2000/svg" height="18" viewBox="0 -960 960 960" width="20">
+                            <path fill="#fff"
+                                d="M300-640v320l160-160-160-160ZM200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h560q33 0 56.5 23.5T840-760v560q0 33-23.5 56.5T760-120H200Zm440-80h120v-560H640v560Zm-80 0v-560H200v560h360Zm80 0h120-120Z" />
+                        </svg>
+                        Sair
+                    </span>
+                </a>
+                <a class="navbar-brand" <?php if (@$_GET['url'] == 'config-system') { ?>
+                        style="border: 3px solid #c1c1c1; border-radius: 7px;" <?php } ?>
+                    href="<?php echo INCLUDE_PATH ?>config-system">
+                    <span style="color: #fff;">
+                        <svg xmlns="http://www.w3.org/2000/svg" height="18" viewBox="0 -960 960 960" width="20"
+                            fill="#fff">
+                            <path
+                                d="m234-480-12-60q-12-5-22.5-10.5T178-564l-58 18-40-68 46-40q-2-13-2-26t2-26l-46-40 40-68 58 18q11-8 21.5-13.5T222-820l12-60h80l12 60q12 5 22.5 10.5T370-796l58-18 40 68-46 40q2 13 2 26t-2 26l46 40-40 68-58-18q-11 8-21.5 13.5T326-540l-12 60h-80Zm40-120q33 0 56.5-23.5T354-680q0-33-23.5-56.5T274-760q-33 0-56.5 23.5T194-680q0 33 23.5 56.5T274-600ZM592-40l-18-84q-17-6-31.5-14.5T514-158l-80 26-56-96 64-56q-2-18-2-36t2-36l-64-56 56-96 80 26q14-11 28.5-19.5T574-516l18-84h112l18 84q17 6 31.5 14.5T782-482l80-26 56 96-64 56q2 18 2 36t-2 36l64 56-56 96-80-26q-14 11-28.5 19.5T722-124l-18 84H592Zm56-160q50 0 85-35t35-85q0-50-35-85t-85-35q-50 0-85 35t-35 85q0 50 35 85t85 35Z" />
+                        </svg>
+                        Configuração
+                    </span>
+                </a>
+            </div>
 
             <button style="background: #fff" id="menu-btn" class="navbar-toggler" type="button"
                 data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar" aria-controls="offcanvasNavbar"
                 aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
+                Menu
             </button>
 
             <div class="offcanvas offcanvas-end text-bg-dark" tabindex="-1" id="offcanvasNavbar"
@@ -193,14 +202,18 @@ if ($checkCode->rowCount() > 0) {
                         </li>
                         <li class="nav-item dropdown">
                             <a style="color: #fff !important; font-size: 1.3rem" class="nav-link dropdown-toggle"
-                            role="button" data-bs-toggle="dropdown" aria-expanded="false" onclick="ToggleNoteFiscal()">Suprimentos</a>
+                                role="button" data-bs-toggle="dropdown" aria-expanded="false"
+                                onclick="ToggleNoteFiscal()">Suprimentos</a>
                             <ul class="dropdown-menu dropdown-menu-dark">
                                 <li><a class="dropdown-item" <?php SelectedMenu('shopping-request'); ?>
-                                href="<?php echo INCLUDE_PATH; ?>shopping-request"> Solicitação de Compras </a></li>
+                                        href="<?php echo INCLUDE_PATH; ?>shopping-request"> Solicitação de Compras </a>
+                                </li>
                                 <li><a class="dropdown-item" <?php SelectedMenu('list-purchase-request'); ?>
-                                href="<?php echo INCLUDE_PATH; ?>list-purchase-request"> Lista das Solicitações de Compras </a></li>
+                                        href="<?php echo INCLUDE_PATH; ?>list-purchase-request"> Lista das Solicitações
+                                        de Compras </a></li>
                                 <li><a class="dropdown-item" <?php SelectedMenu('list-purchase-request'); ?>
-                                href="<?php echo INCLUDE_PATH; ?>list-purchase-request"> Variação de valores por fornecedores </a></li>
+                                        href="<?php echo INCLUDE_PATH; ?>list-purchase-request"> Variação de valores por
+                                        fornecedores </a></li>
                             </ul>
                         </li>
                     </ul>
@@ -312,11 +325,14 @@ if ($checkCode->rowCount() > 0) {
         <div class="message-container" id="message-container"></div>
     </div>
 
-    <script language="JavaScript" type="text/javascript" src="<?php echo INCLUDE_JAVASCRIPT; ?>const_globais.js"></script>
+    <script language="JavaScript" type="text/javascript"
+        src="<?php echo INCLUDE_JAVASCRIPT; ?>const_globais.js"></script>
     <script language="JavaScript" type="text/javascript" src="<?php echo INCLUDE_JAVASCRIPT; ?>alert.js"></script>
     <script language="JavaScript" type="text/javascript" src="<?php echo INCLUDE_JAVASCRIPT; ?>main.js"></script>
-    <script language="JavaScript" type="text/javascript" src="<?php echo INCLUDE_JAVASCRIPT; ?>register_system.js"></script>
-    <script language="JavaScript" type="text/javascript" src="<?php echo INCLUDE_JAVASCRIPT; ?>delete_system.js"></script>
+    <script language="JavaScript" type="text/javascript"
+        src="<?php echo INCLUDE_JAVASCRIPT; ?>register_system.js"></script>
+    <script language="JavaScript" type="text/javascript"
+        src="<?php echo INCLUDE_JAVASCRIPT; ?>delete_system.js"></script>
     <script language="JavaScript" type="text/javascript" src="<?php echo INCLUDE_JAVASCRIPT; ?>edit_system.js"></script>
     <script language="JavaScript" type="text/javascript" src="<?php echo INCLUDE_JAVASCRIPT; ?>values.js"></script>
     <script language="JavaScript" type="text/javascript" src="<?php echo INCLUDE_JAVASCRIPT; ?>menu.js"></script>

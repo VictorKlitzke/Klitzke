@@ -48,7 +48,7 @@
     </div>
 </div>
 
-<div id="modal-forn" class="modal" tabindex="-1" aria-labelledby="selectSupplierLabel" aria-hidden="true">
+<div id="modal-forn" class="modal">
     <div class="modal-dialog modal-fullscreen">
         <div class="modal-content">
             <div class="modal-header bg-dark text-white">
