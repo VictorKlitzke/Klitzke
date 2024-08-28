@@ -211,9 +211,6 @@ if ($checkCode->rowCount() > 0) {
                                 <li><a class="dropdown-item" <?php SelectedMenu('list-purchase-request'); ?>
                                         href="<?php echo INCLUDE_PATH; ?>list-purchase-request"> Lista das Solicitações
                                         de Compras </a></li>
-                                <li><a class="dropdown-item" <?php SelectedMenu('list-purchase-request'); ?>
-                                        href="<?php echo INCLUDE_PATH; ?>list-purchase-request"> Variação de valores por
-                                        fornecedores </a></li>
                             </ul>
                         </li>
                     </ul>

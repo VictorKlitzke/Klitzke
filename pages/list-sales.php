@@ -2,51 +2,84 @@
 
 $user_id = isset($_SESSION['id']) ? $_SESSION['id'] : null;
 $userFilter = isset($_POST['userFilter']) ? intval($_POST['userFilter']) : $user_id;
+$form_payment = isset($_POST['form_filter']) ? intval($_POST['form_filter']) : null;
 
-$sales = Controllers::SelectSales('sales', ($currentPage - 1) * $porPage, $porPage, $userFilter, $form_payment);
+$date_end = isset($_POST['endDate']) ? $_POST['endDate'] : null; 
+$date_start = isset($_POST['startDate']) ? $_POST['startDate'] : null;
+$date_start1 = !empty($date_start) ? date('Y-m-d', strtotime($date_start)) : null;
+$date_end1 = !empty($date_end) ? date('Y-m-d', strtotime($date_end)) : null;
 
+$sales = Controllers::SelectSales('sales', $userFilter, $form_payment, $date_start1, $date_end1);
 ?>
 
 <div class="box-content">
-     <div class="filter-container">
-        <div class="filter-content">
-            <h2 style="color: #000">Filtros</h2>
-            <div class="filter-form">
-                <form method="post">
-                    <select name="userFilter" id="userFilter">
+    <div class="card bg-dark text-white">
+        <div class="card-header bg-secondary text-white">
+            <h2>Filtros</h2>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <!-- Filtro por Usuário -->
+                <div class="col-md-4">
+                    <form method="post">
+                        <div class="form-group mb-3">
+                            <label for="userFilter" class="form-label">Usuário</label>
+                            <select name="userFilter" id="userFilter"
+                                class="form-select bg-dark text-white border-secondary">
+                                <?php
+                                $users = Controllers::SelectAll('users');
+                                foreach ($users as $user) {
+                                    echo '<option value="' . $user['id'] . '">' . $user['name'] . '</option>';
+                                }
+                                ?>
+                            </select>
+                        </div>
+                        <button class="btn btn-secondary w-100" type="submit">Filtrar</button>
+                    </form>
+                </div>
+                <!-- Filtro por Forma de Pagamento -->
+                <div class="col-md-4">
+                    <form method="post">
+                        <div class="form-group mb-3">
+                            <label for="form_filter" class="form-label">Forma de Pagamento</label>
+                            <select name="form_filter" id="form_filter"
+                                class="form-select bg-dark text-white border-secondary">
+                                <?php
+                                $payment = Controllers::SelectAll('form_payment');
+                                foreach ($payment as $form_payments) {
+                                    echo '<option value="' . $form_payments['id'] . '">' . $form_payments['name'] . '</option>';
+                                }
+                                ?>
+                            </select>
+                        </div>
+                        <button class="btn btn-secondary w-100" type="submit">Filtrar</button>
+                    </form>
+                </div>
 
-                        <?php
-
-                        $users = Controllers::SelectAll('users');
-
-                        foreach ($users as $user) {
-                            echo '<option value="' . $user['id'] . '">' . $user['name'] . '</option>';
-                        }
-
-                        ?>
-
-                    </select>
-                    <button class="filter" type="submit">Filtrar</button>
-                </form>
-                <form method="post">
-                    <select name="form_filter" id="form_filter">
-
-                        <?php
-
-                        $form_payment = Controllers::SelectAll('form_payment');
-
-                        foreach ($form_payment as $form_payments) {
-                            echo '<option value="' . $form_payments['id'] . '">' . $form_payments['name'] . '</option>';
-                        }
-
-                        ?>
-
-                    </select>
-                    <button class="filter" type="submit">Filtrar</button>
-                </form>
+                <!-- Filtro por Data -->
+                <div class="col-md-4">
+                    <form method="post">
+                        <div class="form-group mb-3 row">
+                            <!-- Data Início -->
+                            <div class="col-md-6">
+                                <label for="startDate" class="form-label">Data Início</label>
+                                <input type="date" name="startDate" id="startDate"
+                                    class="form-control bg-dark text-white border-secondary">
+                            </div>
+                            <!-- Data Final -->
+                            <div class="col-md-6">
+                                <label for="endDate" class="form-label">Data Final</label>
+                                <input type="date" name="endDate" id="endDate"
+                                    class="form-control bg-dark text-white border-secondary">
+                            </div>
+                        </div>
+                        <button class="btn btn-secondary w-100" type="submit">Filtrar</button>
+                    </form>
+                </div>
             </div>
         </div>
     </div>
+    <br>
     <h2 class="text-white mb-4">Lista de Vendas</h2>
     <div class="row">
         <div class="col">
@@ -69,7 +102,7 @@ $sales = Controllers::SelectSales('sales', ($currentPage - 1) * $porPage, $porPa
 
                     <?php
 
-                        foreach ($sales as $key => $value) {
+                    foreach ($sales as $key => $value) {
 
                     ?>
 
@@ -87,30 +120,31 @@ $sales = Controllers::SelectSales('sales', ($currentPage - 1) * $porPage, $porPa
                                 <th><?php echo htmlspecialchars($value['form_payment']); ?></th>
                                 <th><?php echo htmlspecialchars($value['status_sales']); ?></th>
                                 <th><?php echo htmlspecialchars($value['total_value']); ?></th>
-                                <th><?php echo htmlspecialchars($value['date_sales']); ?></th>
+                                <th><?php $date = new DateTime($value['date_sales']);
+                                echo htmlspecialchars($date->format('d/m/Y')); ?></th>
 
                                 <th>
                                     <?php
                                     if ($value['status'] == 2) {
                                         ?>
-                                            <button onclick="ReopenSales(this)" type="button"
-                                                data-id="<?php echo $value['id'] ?>" class="btn btn-info">Reabrir venda
-                                            </button>
+                                        <button onclick="ReopenSales(this)" type="button" data-id="<?php echo $value['id'] ?>"
+                                            class="btn btn-info">Reabrir venda
+                                        </button>
 
                                     <?php } else { ?>
-                                            <button onclick="CancelSales(this)" data-id="<?php echo $value['id']; ?>"
-                                                type="button" class="btn btn-danger">Cancelar venda
-                                            </button>
+                                        <button onclick="CancelSales(this)" data-id="<?php echo $value['id']; ?>" type="button"
+                                            class="btn btn-danger">Cancelar venda
+                                        </button>
 
                                     <?php } ?>
-                                        <button onclick="PrintOut(this)" data-id="<?php echo $value['id']; ?>" type="button"
-                                            class="btn btn-primary">Imprimir
-                                        </button>
+                                    <button onclick="PrintOut(this)" data-id="<?php echo $value['id']; ?>" type="button"
+                                        class="btn btn-primary">Imprimir
+                                    </button>
 
-                                        <button onclick="Details(this)" data-id="<?php echo $value['id']; ?>" type="button"
-                                            class="btn btn-light">
-                                            Mais detalhes
-                                        </button>
+                                    <button onclick="Details(this)" data-id="<?php echo $value['id']; ?>" type="button"
+                                        class="btn btn-light">
+                                        Mais detalhes
+                                    </button>
 
                                 </th>
                             </tr>
@@ -128,30 +162,30 @@ $sales = Controllers::SelectSales('sales', ($currentPage - 1) * $porPage, $porPa
 <div id="modal-print" class="modal">
     <div class="modal-dialog modal-fullscreen">
         <div class="modal-content">
-        <div class="modal-header">
-            <h5 class="modal-title">Venda ID: <span id="saleId"></span></h5>
-            <button class="btn-close" onclick="CloseModalInfo()" id="close-details"></button>
-        </div>
-        <div class="modal-title">
-            <div class="modal-body">
-                <div class="table-responsive">
-                <table class="table table-bordered table-hover" id="modalTable" border="1">
-                    <thead class="table-dark" style="white-space: nowrap;">
-                        <tr>
-                            <th>Cliente</th>
-                            <th>Status</th>
-                            <th>Produto</th>
-                            <th>Quantidade</th>
-                            <th>Valor</th>
-                            <th>Forma de pagamento</th>
-                            <th>Usuario</th>
-                        </tr>
-                    </thead>
-                    <tbody></tbody>
-                </table>
+            <div class="modal-header">
+                <h5 class="modal-title">Venda ID: <span id="saleId"></span></h5>
+                <button class="btn-close" onclick="CloseModalInfo()" id="close-details"></button>
+            </div>
+            <div class="modal-title">
+                <div class="modal-body">
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-hover" id="modalTable" border="1">
+                            <thead class="table-dark" style="white-space: nowrap;">
+                                <tr>
+                                    <th>Cliente</th>
+                                    <th>Status</th>
+                                    <th>Produto</th>
+                                    <th>Quantidade</th>
+                                    <th>Valor</th>
+                                    <th>Forma de pagamento</th>
+                                    <th>Usuario</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
-        </div>
         </div>
     </div>
 </div>
