@@ -35,7 +35,7 @@ class Controllers
         $query = "SELECT
                 boxpdv.*,
                 users.name users,
-                (SELECT sangria_boxpdv.value FROM sangria_boxpdv WHERE sangria_boxpdv.id_boxpdv = boxpdv.id LIMIT 1) Withdrawal
+                (SELECT value FROM sangria_boxpdv WHERE sangria_boxpdv.id_boxpdv = boxpdv.id LIMIT 1) Withdrawal
             FROM
                 $name_table
                 INNER JOIN users ON users.id = boxpdv.id_users
@@ -96,7 +96,7 @@ class Controllers
                 FROM
                     $name_table
                 ORDER BY id ASC";
-                
+
         if ($start !== null && $end !== null) {
             $query .= " LIMIT $start, $end";
         }
@@ -106,7 +106,7 @@ class Controllers
 
         return $exec->fetchAll();
     }
-    public static function SelectSales($name_table, $start = null, $end = null, $userFilter = null, $form_payment = null)
+    public static function SelectSales($name_table, $userFilter = null, $form_payment = null, $date_start = null, $date_end = null)
     {
         $sql = Db::Connection();
 
@@ -134,18 +134,21 @@ class Controllers
         }
 
         if ($form_payment !== null) {
-            $conditions[] = "form_payment.id = :form_filter";
+            $conditions[] = "sales.id_payment_method = :form_filter";
         }
 
+        if ($date_start !== null && $date_end !== null) {
+            $conditions[] = "DATE(sales.date_sales) BETWEEN :date_start AND :date_end";
+        } elseif ($date_start !== null) {
+            $conditions[] = "DATE(sales.date_sales) >= :date_start";
+        } elseif ($date_end !== null) {
+            $conditions[] = "DATE(sales.date_sales) <= :date_end";
+        }
         if (!empty($conditions)) {
             $query .= " WHERE " . implode(" AND ", $conditions);
         }
 
         $query .= " ORDER BY id ASC";
-
-        if ($start !== null && $end !== null) {
-            $query .= " LIMIT :start, :end";
-        }
 
         $exec = $sql->prepare($query);
 
@@ -157,9 +160,9 @@ class Controllers
             $exec->bindParam(':form_filter', $form_payment, PDO::PARAM_INT);
         }
 
-        if ($start !== null && $end !== null) {
-            $exec->bindParam(':start', $start, PDO::PARAM_INT);
-            $exec->bindParam(':end', $end, PDO::PARAM_INT);
+        if ($date_start !== null && $date_end !== null) {
+            $exec->bindParam(':date_start', $date_start);
+            $exec->bindParam(':date_end', $date_end);
         }
 
         $exec->execute();
@@ -179,7 +182,7 @@ class Controllers
         }
         return $exec->fetch();
     }
-    public static function SizeClothes($name_table) 
+    public static function SizeClothes($name_table)
     {
         $sql = Db::Connection();
         $exec = $sql->prepare("SELECT size FROM $name_table");
