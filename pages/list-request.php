@@ -1,10 +1,84 @@
 <?php
 
-$request = Controllers::SelectRequest('request');
+$user_id = isset($_SESSION['id']) ? $_SESSION['id'] : null;
+$userFilter = isset($_POST['userFilter']) ? intval($_POST['userFilter']) : $user_id;
+$table_filter = isset($_POST['table_filter']) ? intval($_POST['table_filter']) : null;
+
+$date_end = isset($_POST['endDate']) ? $_POST['endDate'] : null; 
+$date_start = isset($_POST['startDate']) ? $_POST['startDate'] : null;
+$date_start1 = !empty($date_start) ? date('Y-m-d', strtotime($date_start)) : null;
+$date_end1 = !empty($date_end) ? date('Y-m-d', strtotime($date_end)) : null;
+
+$request = Controllers::SelectRequest('request', $table_filter, $userFilter, $date_start1, $date_end1);
 
 ?>
 
 <div class="box-content left w100">
+    <div class="card bg-dark text-white">
+        <div class="card-header bg-secondary text-white">
+            <h2>Filtros</h2>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <!-- Filtro por Usuário -->
+                <div class="col-md-4">
+                    <form method="post">
+                        <div class="form-group mb-3">
+                            <label class="form-label">Usuário</label>
+                            <select name="userFilter" id="userFilter"
+                                class="form-select bg-dark text-white border-secondary">
+                                <?php
+                                $users = Controllers::SelectAll('users');
+                                foreach ($users as $user) {
+                                    echo '<option value="' . $user['id'] . '">' . $user['name'] . '</option>';
+                                }
+                                ?>
+                            </select>
+                        </div>
+                        <button class="btn btn-secondary w-100" type="submit">Filtrar</button>
+                    </form>
+                </div>
+                <div class="col-md-4">
+                    <form method="post">
+                        <div class="form-group mb-3">
+                            <label class="form-label">Comandas</label>
+                            <select name="table_filter" id="table_filter"
+                                class="form-select bg-dark text-white border-secondary">
+                                <?php
+                                $status = 1;
+                                $table_requests = Controllers::SelectAllWhere('table_requests', 'status_table = :status_table', [':status_table' => $status]);
+                                foreach ($table_requests as $table_request) {
+                                    echo '<option value="' . $table_request['id'] . '">' . $table_request['number'] . '</option>';
+                                }
+                                ?>
+                            </select>
+                        </div>
+                        <button class="btn btn-secondary w-100" type="submit">Filtrar</button>
+                    </form>
+                </div>
+
+                <!-- Filtro por Data -->
+                <div class="col-md-4">
+                    <form method="post">
+                        <div class="form-group mb-3 row">
+                            <div class="col-md-6">
+                                <label for="startDate" class="form-label">Data Início</label>
+                                <input type="date" name="startDate" id="startDate"
+                                    class="form-control bg-dark text-white border-secondary">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="endDate" class="form-label">Data Final</label>
+                                <input type="date" name="endDate" id="endDate"
+                                    class="form-control bg-dark text-white border-secondary">
+                            </div>
+                        </div>
+                        <button class="btn btn-secondary w-100" type="submit">Filtrar</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <br>
     <h2 class="text-white mb-4">Lista de pedidos</h2>
     <div class="row">
         <div class="col">
@@ -44,8 +118,9 @@ $request = Controllers::SelectRequest('request');
                                     ); ?>
                                 </th>
                                 <th>
-                                    <?php echo htmlspecialchars(
-                                        $value["date_request"]
+                                    <?php $date = new DateTime($value["date_request"]);
+                                    echo htmlspecialchars(
+                                        $date->format('d/m/Y')
                                     ); ?>
                                 </th>
 
@@ -77,29 +152,30 @@ $request = Controllers::SelectRequest('request');
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" i>Venda <span id="requestID"></span></h5>
-                <button type="button" class="btn-close" onclick="CloseModalInfoRequest()" id="close-details-request"></button>
+                <button type="button" class="btn-close" onclick="CloseModalInfoRequest()"
+                    id="close-details-request"></button>
             </div>
             <div class="modal-title" id="modal-content-details-request">
-               <div class="modal-body">
-                <div class="table-responsive">
-                <table class="table table-bordered table-hover" id="modalTable-request" border="1">
-                    <thead class="table-dark" style="white-space: nowrap;">
-                        <tr>
-                            <th>Comanda</th>
-                            <th>Produto</th>
-                            <th>Quantidade</th>
-                            <th>Valor</th>
-                            <th>Usuario</th>
-                            <th>Forma de pagamento</th>
-                            <th>Valor por forma de pag.</th>
-                            <th>Status</th>
-                            <th>total Pedido</th>
-                        </tr>
-                    </thead>
-                    <tbody></tbody>
-                </table>
+                <div class="modal-body">
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-hover" id="modalTable-request" border="1">
+                            <thead class="table-dark" style="white-space: nowrap;">
+                                <tr>
+                                    <th>Comanda</th>
+                                    <th>Produto</th>
+                                    <th>Quantidade</th>
+                                    <th>Valor</th>
+                                    <th>Usuario</th>
+                                    <th>Forma de pagamento</th>
+                                    <th>Valor por forma de pag.</th>
+                                    <th>Status</th>
+                                    <th>total Pedido</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
                 </div>
-               </div>
             </div>
         </div>
     </div>

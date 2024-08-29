@@ -7,7 +7,27 @@ $sql = Db::Connection();
 class Controllers
 {
 
-    public static function SelectRequest($name_table)
+    public static function SelectAllWhere($table_name, $where = null, $params = [])
+    {
+        $sql = Db::Connection();
+
+        $query = "SELECT * FROM $table_name";
+
+        if ($where) {
+            $query .= " WHERE $where";
+        }
+
+        $exec = $sql->prepare($query);
+
+        foreach ($params as $key => $value) {
+            $exec->bindValue($key, $value);
+        }
+
+        $exec->execute();
+
+        return $exec->fetchAll();
+    }
+    public static function SelectRequest($name_table, $table_filter = null, $user_filter = null, $date_start = null, $date_end = null)
     {
         $sql = Db::Connection();
 
@@ -20,15 +40,56 @@ class Controllers
                         WHEN R.status = 4 THEN 'AGRUPADOS'
                     END AS STATUS_REQUEST
                 FROM 
-                    `request` R
-                     ORDER BY r.`id` ASC";
+                    $name_table R";
+
+        $conditions = [];
+
+        if ($user_filter !== null) {
+            $conditions[] = "R.id_users_request = :user_filter";
+        }
+
+        if ($table_filter !== null) {
+            $conditions[] = "R.id_table = :table_filter";
+        }
+
+        if ($date_start !== null && $date_end !== null) {
+            $conditions[] = "DATE(R.date_request) BETWEEN :date_start AND :date_end";
+        } elseif ($date_start !== null) {
+            $conditions[] = "DATE(R.date_request) >= :date_start";
+        } elseif ($date_end !== null) {
+            $conditions[] = "DATE(R.date_request) <= :date_end";
+        }
+
+        if (!empty($conditions)) {
+            $query .= " WHERE " . implode(" AND ", $conditions);
+        }
+
+        $query .= " ORDER BY R.id ASC";
 
         $exec = $sql->prepare($query);
+
+        if ($user_filter !== null) {
+            $exec->bindParam(':user_filter', $user_filter, PDO::PARAM_INT);
+        }
+
+        if ($table_filter !== null) {
+            $exec->bindParam(':table_filter', $table_filter, PDO::PARAM_INT);
+        }
+
+        if ($date_start !== null) {
+            $exec->bindParam(':date_start', $date_start);
+        }
+
+        if ($date_end !== null) {
+            $exec->bindParam(':date_end', $date_end);
+        }
+
         $exec->execute();
 
         return $exec->fetchAll();
     }
-    public static function SelectBoxPdv($name_table, $start = null, $end = null, $user_filter = null)
+
+    public static function SelectBoxPdv($name_table, $user_filter = null, $date_end = null, $date_start = null)
     {
         $sql = Db::Connection();
 
@@ -47,16 +108,19 @@ class Controllers
             $conditions[] = "users.id = :user_filter";
         }
 
+        if ($date_start !== null && $date_end !== null) {
+            $conditions[] = "DATE(boxpdv.open_date) BETWEEN :date_start AND :date_end";
+        } elseif ($date_start !== null) {
+            $conditions[] = "DATE(boxpdv.open_date) >= :date_start";
+        } elseif ($date_end !== null) {
+            $conditions[] = "DATE(boxpdv.open_date) <= :date_end";
+        }
+
         if (!empty($conditions)) {
             $query .= " WHERE " . implode(" AND ", $conditions);
         }
 
         $query .= " ORDER BY id ASC";
-
-        if ($start !== null && $end !== null) {
-            $query .= " LIMIT :start, :end";
-        }
-
 
         $exec = $sql->prepare($query);
 
@@ -64,9 +128,9 @@ class Controllers
             $exec->bindParam(':user_filter', $user_filter, PDO::PARAM_INT);
         }
 
-        if ($start !== null && $end !== null) {
-            $exec->bindParam(':start', $start, PDO::PARAM_INT);
-            $exec->bindParam(':end', $end, PDO::PARAM_INT);
+        if ($date_start !== null && $date_end !== null) {
+            $exec->bindParam(':date_start', $date_start);
+            $exec->bindParam(':date_end', $date_end);
         }
 
         $exec->execute();
