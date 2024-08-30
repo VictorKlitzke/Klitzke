@@ -682,23 +682,29 @@ function fieldsTotalForms(button) {
 	}
 
 	const newInput = document.createElement('div');
-	newInput.classList.add('input-total-card');
+	newInput.classList.add('input-total-card-container');
 	newInput.dataset.paymentId = buttonId;
 	newInput.innerHTML = `
 		<div>
-			<strong>${button.textContent}</strong><input class="form-control text-black" id="payment-final-fat-${buttonId}" type="text" placeholder="Valor a ser pago"/>
+			<strong>${button.textContent}</strong><input id="payment-final-fat-${buttonId}" class="form-control text-black input-total-card" data-payment-id="${buttonId}" type="text" placeholder="Valor a ser pago"/>
 		</div>
 		<br/>
 	`;
 
 	const orderDetails = document.getElementById('orderDetails');
 	orderDetails.appendChild(newInput);
+
+	// Adiciona o evento de cálculo da diferença ao novo input
+	const paymentInput = newInput.querySelector('.input-total-card');
+	paymentInput.addEventListener('input', function () {
+		const totalcardValue = parseFloat(document.getElementById(`total-card-final`).value);
+		calculateDifference(totalcardValue);
+	});
 }
 
 function ModalFaturamento(commandId) {
-
 	const totalcardElement = document.getElementById(`totalizador-card${commandId}`);
-	const totalcardValue = totalcardElement ? totalcardElement.innerText.replace('R$', '').trim() : '0.00';
+	const totalcardValue = totalcardElement ? parseFloat(totalcardElement.innerText.replace('R$', '').trim()) : 0.00;
 
 	const OpenModalInvoicing = document.getElementById('modal-invo');
 	const overlayModalInvoicing = document.getElementById('overlay-invo');
@@ -710,14 +716,15 @@ function ModalFaturamento(commandId) {
 	itemElement.style.alignItems = 'center';
 
 	itemElement.innerHTML = `
-        <span>Status: Em Atendimento</span>
-        <br/>
-        <br/>
-        <div>
-        	<strong>Total</strong><input class="form-control text-black" id="total-card-final" type="text" value="${totalcardValue}"/>
-				</div>
-        <br>
-    `;
+		<span>Status: Em Atendimento</span>
+		<br/>
+		<span class="text-black d-flex"><strong> Diferença: </strong> <p id="difference-amount">R$ 0.00</p></span>
+		<br/>
+		<div>
+			<strong>Total</strong><input class="form-control text-black" id="total-card-final" type="text" value="${totalcardValue}" readonly/>
+		</div>
+		<br>
+	`;
 	orderDetails.appendChild(itemElement);
 
 	OpenModalInvoicing.style.display = 'block';
@@ -733,12 +740,16 @@ function ModalFaturamento(commandId) {
 				buttonText: button.textContent
 			}
 			ButtonSelected.push(buttonPed);
+
+			calculateDifference(totalcardValue);
+			console.log(totalcardValue);
 		});
+
 		button.addEventListener("dblclick", function () {
 			const paymentId = button.dataset.paymentId;
-			const inputTotalCard = document.querySelector(`.input-total-card[data-payment-id="${paymentId}"]`);
-			if (inputTotalCard) {
-				inputTotalCard.style.display = 'none';
+			const inputContainer = document.querySelector(`.input-total-card-container[data-payment-id="${paymentId}"]`);
+			if (inputContainer) {
+				inputContainer.style.display = 'none';
 			}
 			button.style.background = "";
 			const index = ButtonSelected.findIndex(item => item.buttonId === paymentId);
@@ -767,6 +778,22 @@ function ModalFaturamento(commandId) {
 	}
 }
 
+function calculateDifference(totalValue) {
+	const paymentInputs = document.querySelectorAll('.input-total-card');
+	let sumPayments = 0;
+
+	paymentInputs.forEach(function (input) {
+		const paymentValue = parseFloat(input.value) || 0;
+		sumPayments += paymentValue;
+	});
+
+	const difference = totalValue - sumPayments;
+
+	const differenceElement = document.getElementById('difference-amount');
+	if (differenceElement) {
+		differenceElement.innerText = `R$ ${difference.toFixed(2)}`;
+	}
+}
 async function CloseInvo() {
 
 	const cardOrderFat = document.getElementById('card-order');
@@ -792,7 +819,7 @@ async function CloseInvo() {
 	}).filter(item => item.paymentValue !== '');
 
 	let firstPagament = paymentFormsValor[0];
-	let FormValuesPagament = firstPagament.paymentValue;
+	let FormValuesPagament = parseFloat(firstPagament.paymentValue);
 
 	if (isNaN(FormValuesPagament)) {
 		showMessage('Proibido letras, por favor insira numeros', 'warning');
@@ -808,9 +835,6 @@ async function CloseInvo() {
 		showMessage('Total esta vazio!', 'warning');
 		return;
 	}
-
-
-	console.log(FormValuesPagament < totalCardFinal);
 
 	if (FormValuesPagament < totalCardFinal) {
 		showMessage('Valores menores que o total', 'warning');
@@ -858,6 +882,7 @@ async function CloseInvo() {
 		}
 	} catch (error) {
 		showMessage('Erro ao faturar Pedido' + error, 'error');
+		console.clear();
 	}
 
 }
