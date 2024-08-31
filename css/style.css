@@ -45,8 +45,6 @@
     padding: 2%;
 }
 
-/*MENU DO SISTEMA HORIZONTAL*/
-
 /*PAGINAS DO SISTEMAS*/
 
 .box-content {
@@ -126,57 +124,6 @@
     transform: translate(-50%, -50%);
 }
 
-.filter-container {
-    display: block;
-    margin-bottom: 25px;
-}
-
-.filter-content {
-    background: #ccc;
-    padding: 6px;
-    border-radius: 5px;
-    box-shadow: 0 4px 8px rgba(255, 255, 255, 0.6);
-}
-
-.filter-form {
-    display: flex;
-    gap: 5px;
-    justify-content: start;
-    align-items: center;
-}
-
-#userFilter,
-#user_filter,
-#form_filter {
-    width: auto;
-    height: 30px;
-    border-radius: 5px;
-    padding: 3px 8px;
-    cursor: pointer;
-    margin-top: 10px;
-    font-size: 16px;
-    background: #323232;
-    color: white;
-    border: 0;
-}
-
-.filter {
-    width: auto;
-    height: 30px;
-    border-radius: 5px;
-    border: 1px solid #ccc;
-    padding: 3px 8px;
-    cursor: pointer;
-    font-size: 16px;
-    background: #464646;
-    color: white;
-    border: 0;
-}
-
-.filter:hover {
-    background: #191919;
-}
-
 .totalizator {
     display: flex;
     justify-content: start;
@@ -205,55 +152,23 @@
     z-index: 999;
 }
 
-.overlay-forn {
-    display: none;
+.aprazo-sales {
+    display: block;
+    height: 60%;
+    padding: 10px;
+    float: left;
     position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.63);
-    z-index: 999;
-}
-
-.modal-request {
-    display: none;
-    position: fixed;
-    z-index: 1;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    overflow: auto;
-    background-color: rgba(0, 0, 0, 0.4);
-    padding-top: 60px;
-}
-
-.modal-content-details {
-    background-color: #1b1b1b;
-    margin: 5% auto;
-    padding: 20px;
+    background: #212529;
     border: 1px solid #ccc;
-    width: 80%;
+    border-radius: 4px;
+    top: 50%;
+    left: 50%;
+    width: 70%;
+    transform: translate(-50%, -50%);
     overflow-y: auto;
 }
 
-.close-details {
-    color: #aaa;
-    float: right;
-    font-size: 28px;
-    font-weight: bold;
-    cursor: pointer;
-}
-
-.close:hover,
-.close:focus {
-    color: black;
-    text-decoration: none;
-    cursor: pointer;
-}
-
-.overlay-details-request {
+.overlay-aprazo {
     display: none;
     position: fixed;
     top: 0;
@@ -262,42 +177,6 @@
     height: 100%;
     background: rgba(0, 0, 0, 0.63);
     z-index: 999;
-}
-
-.modal-request {
-    display: none;
-    position: fixed;
-    z-index: 1;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    overflow: auto;
-    background-color: rgba(0, 0, 0, 0.4);
-    padding-top: 60px;
-}
-
-.modal-content-details-request {
-    background-color: #1b1b1b;
-    margin: 5% auto;
-    padding: 20px;
-    border: 1px solid #ccc;
-    width: 80%;
-}
-
-.close-details-request {
-    color: #aaa;
-    float: right;
-    font-size: 28px;
-    font-weight: bold;
-    cursor: pointer;
-}
-
-.close-request:hover,
-.close-request:focus {
-    color: black;
-    text-decoration: none;
-    cursor: pointer;
 }
 
 .error {

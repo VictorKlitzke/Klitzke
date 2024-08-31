@@ -221,6 +221,59 @@
     </div>
 </form>
 
+<div class="overlay-aprazo" id="overlay-aprazo">
+    <div class="aprazo-sales" id="aprazo-sales">
+        <div class="d-flex justify-content-between align-items-center p-3 border-bottom">
+            <h2 class="text-white m-0">Adicionar A Prazo</h2>
+            <svg id="close-aprazo" onclick="CloseModalAPrazo()" fill="#fff" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px">
+                <path d="M0 0h24v24H0z" fill="none"/>
+                <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+            </svg>
+        </div>
+        <div class="p-3">
+            <form class="form">
+                <div class="mb-3">
+                    <label class="form-label text-white">Número de Parcelas</label>
+                    <input type="number" class="form-control" id="aprazo-number" placeholder="Parcelas">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label text-white">Data a Vencimento</label>
+                    <input type="date" class="form-control" id="aprazo-venciment-date" placeholder="Data á começar a pagar">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label text-white">Vencimento</label>
+                    <input type="text" class="form-control" id="aprazo-venciment" placeholder="Dias de Vencimento">
+                </div>
+                <div class="d-grid gap-2 d-flex">
+                    <button id="button-aprazo" class="btn btn-primary" type="button" onclick="calculateInstallments()">Calcular Parcelas</button>
+                </div>
+            </form>
+        </div>
+        <div class="p-3">
+            <div class="row">
+                <div class="col">
+                    <div class="table-responsive" style="max-height: 400px; overflow-y: auto; overflow-x: auto;">
+                        <table class="table table-dark table-hover">
+                            <thead style="white-space: nowrap;">
+                                <tr>
+                                    <th>#</th>
+                                    <th>Parcelas</th>
+                                    <th>Valor das Parcelas (R$)</th>
+                                </tr>
+                            </thead>
+                        <tbody id="desc-aprazo"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="d-flex justify-content-between align-items-center p-3 border-top">
+            <button onclick="FinalizeAprazo()" id="finish-aprazo" class="btn btn-success" type="button">Finalizar venda</button>
+            <p id="total-aprazo-sales" class="text-white fw-bold m-0">Total a Pagar: R$ 0.00</p>
+        </div>
+    </div>
+</div>
+
 <div class="overlay-portion" id="overlay-portion">
     <div class="portion-sales" id="portion-sales">
         <div class="d-flex justify-content-between align-items-center p-3 border-bottom">

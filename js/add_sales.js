@@ -1,5 +1,7 @@
 let selectedProducts = [];
 let selectedPortion = [];
+let selectedAprazo = [];
+
 let selectedClientId;
 let Portion;
 let OverlayPortion;
@@ -10,6 +12,9 @@ const tdButton = document.getElementById("button-product");
 
 const ModalSalesPortion = document.getElementById('portion-sales');
 const overlayPortion = document.getElementById('overlay-portion');
+
+const APrazoModal = document.getElementById('aprazo-sales');
+const OverlayAPrazo = document.getElementById('overlay-aprazo');
 
 const saveButton = document.getElementById('button-portion');
 const descPortionTbody = document.getElementById('desc-portion');
@@ -29,7 +34,7 @@ function AddSelectProducts(index, id, name, stock_quantity, value) {
         if (selectedProducts[i].id === id) {
             let number = selectedProducts[i].stock_quantity + 1;
 
-            validateStock(stock_quantity, number, function(isValid) {
+            validateStock(stock_quantity, number, function (isValid) {
                 if (isValid) {
                     selectedProducts[i].stock_quantity = number;
                     let productQuantityCell = document.getElementById("product-quantity-" + id);
@@ -42,12 +47,12 @@ function AddSelectProducts(index, id, name, stock_quantity, value) {
             });
 
             productAlreadyExists = true;
-            break; 
+            break;
         }
     }
 
     if (!productAlreadyExists) {
-        validateStock(stock_quantity, 1, function(isValid) {
+        validateStock(stock_quantity, 1, function (isValid) {
             if (isValid) {
                 let newProduct = {
                     id: id,
@@ -60,6 +65,7 @@ function AddSelectProducts(index, id, name, stock_quantity, value) {
 
                 let newRow = trProduct.insertRow();
                 newRow.id = "row-" + id;
+                newRow.className = 'sales-sales';
                 newRow.innerHTML = "<td id='product-id'>" + id + "</td>" +
                     "<td id='product-name'>" + name + "</td>" +
                     "<td id='product-quantity-" + id + "'>" + 1 + "</td>" +
@@ -111,6 +117,19 @@ function editProductValue(id) {
     calculateTotal();
 }
 
+function openAPrazoModal() {
+    if (APrazoModal && OverlayAPrazo) {
+        APrazoModal.style.display = 'block';
+        OverlayAPrazo.style.display = 'block';
+    }
+}
+function closeAPrazoModal() {
+    if (APrazoModal && OverlayAPrazo) {
+        APrazoModal.style.display = 'none';
+        OverlayAPrazo.style.display = 'none';
+    }
+}
+
 function openCreditModal() {
     if (Portion && OverlayPortion) {
         Portion.style.display = 'block';
@@ -134,6 +153,12 @@ document.addEventListener('DOMContentLoaded', function () {
         } else {
             closeCreditModal();
         }
+
+        if (selectedPaymentMethod === '5') {
+            openAPrazoModal();
+        } else {
+            closeAPrazoModal();
+        }
     }
 
     document.getElementById('id_payment_method').addEventListener('change', checkPaymentMethod);
@@ -145,12 +170,6 @@ document.addEventListener('DOMContentLoaded', function () {
             portionValues = calculateAndDisplayPortions();
         });
     }
-
-    // if (finishButtonPortion) {
-    //     finishButtonPortion.addEventListener('click', function() {
-    //         finalizeSalePortion();
-    //     });
-    // }
 
     function calculateAndDisplayPortions() {
         const portionTotal = parseInt(portionTotalInput.value) || 1;
@@ -189,7 +208,121 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 });
 
+function calculateInstallments() {
+    
+    let numInstallments = parseInt(document.getElementById('aprazo-number').value);
+    let daysBetweenInstallments = parseInt(document.getElementById('aprazo-venciment').value);
+    let startDate = document.getElementById('aprazo-venciment-date').value;
+
+    let totalAmountElement = document.getElementById('totalAmount');
+    let totalValuezAPrazo = 0;
+    if (totalAmountElement) {
+        totalValuezAPrazo = parseFloat(totalAmountElement.textContent.replace('R$ ', '').replace(',', '.')) || 0;
+    }
+
+    if (isNaN(numInstallments) || isNaN(daysBetweenInstallments) || isNaN(totalValuezAPrazo) || numInstallments <= 0 ||
+        daysBetweenInstallments < 0 || totalValuezAPrazo <= 0 || !startDate) {
+        showMessage("Por favor, insira valores válidos para o número de parcelas, dias de vencimento e valor total.", 'warning');
+        return;
+    }
+
+    function parseDate(dateStr) {
+        const [year, month, day] = dateStr.split('-');
+        return new Date(year, month - 1, day);
+    }
+    let currentDate = parseDate(startDate);
+    
+    let installmentValue = totalValuezAPrazo / numInstallments;
+    let tableBody = document.getElementById('desc-aprazo');
+    tableBody.innerHTML = ''; 
+
+    for (let i = 1; i <= numInstallments; i++) {
+        let dueDate = new Date(currentDate);
+        dueDate.setDate(currentDate.getDate() + (i - 1) * daysBetweenInstallments);
+
+        let formattedDate = dueDate.toLocaleDateString('pt-BR');
+        let row = `<tr>
+                        <td>${i}</td>
+                        <td>${formattedDate}</td>
+                        <td>R$ ${installmentValue.toFixed(2)}</td>
+                   </tr>`;
+        tableBody.innerHTML += row;
+
+        selectedAprazo.push({
+            date_venciment: formattedDate,
+            installmentValue: installmentValue
+        });
+        console.log(selectedAprazo);
+    }
+    document.getElementById('total-aprazo-sales').innerText = `Total a Pagar: R$ ${totalValuezAPrazo.toFixed(2)}`;
+}
+
+async function FinalizeAprazo() {
+    const saleSales = document.querySelector('.sales-sales');
+
+    let totalAmountElement = document.getElementById('totalAmount');
+    let totalValuezAPrazo = 0;
+    if (totalAmountElement) {
+        totalValuezAPrazo = parseFloat(totalAmountElement.textContent.replace('R$ ', '')) || 0;
+    }
+
+    let selectedPaymentMethodAprazo = document.getElementById('id_payment_method').value;
+    let idSalesClientAprazo = selectedClientId || '';
+
+    if (selectedPaymentMethodAprazo === '5') {
+        openAPrazoModal();
+
+        let requestDataAPrazo = {
+            idPaymentMethod: selectedPaymentMethodAprazo,
+            salesIdClient: idSalesClientAprazo,
+            totalValue: totalValuezAPrazo,
+            selectedAprazo: selectedAprazo,
+            products: selectedProducts
+        };
+
+        if (selectedProducts.length === 0) {
+
+            showMessage('Erro ao registrar venda, nenhum produto selecionado', 'warning');
+
+        } else {
+
+            try {
+
+                let url = `${BASE_URL}add_sales_aprazo.php`;
+
+                const responseAPrazo = await fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(requestDataAPrazo),
+                });
+
+                const responseBodyAPrazo = await responseAPrazo.text();
+                const responseDataAPrazo = JSON.parse(responseBodyAPrazo);
+
+                if (responseDataAPrazo && responseDataAPrazo.success) {
+                    showMessage('Venda finalizada com sucesso!', 'success');
+
+                    OverlayAPrazo.style.display = 'none';
+                    APrazoModal.style.display = 'none';
+                    saleSales.innerHTML = "";
+                    saleSales.innerText = "";
+                } else {
+                    showMessage('Erro ao registrar venda:', responseDataAPrazo ? responseDataAPrazo.error : 'Resposta vazia', 'error');
+                }
+            } catch (error) {
+                showMessage('Erro ao enviar dados para o PHP:', error, 'error');
+            }
+        }
+    } else {
+        return false;
+    }
+}
+
 async function finalizeSalePortion() {
+
+    const saleSales = document.querySelector('.sales-sales');
 
     let totalAmountElement = document.getElementById('totalAmount');
     let totalValuezPortion = 0;
@@ -234,6 +367,8 @@ async function finalizeSalePortion() {
 
                     overlayPortion.style.display = 'none';
                     ModalSalesPortion.style.display = 'none';
+                    saleSales.innerHTML = "";
+                    saleSales.innerText = "";
                 } else {
                     showMessage('Erro ao registrar venda:', responseDataPortion ? responseDataPortion.error : 'Resposta vazia', 'error');
                 }
@@ -248,7 +383,7 @@ async function finalizeSalePortion() {
 
 async function finalizeSale() {
 
-    let rowProducts = document.getElementById('row-1');
+    const saleSales = document.querySelector('.sales-sales');
 
     let totalAmountElement = document.getElementById('totalAmount');
     let totalValue = 0;
@@ -286,10 +421,11 @@ async function finalizeSale() {
 
             if (responseData && responseData.success) {
                 showMessage('Venda finalizada com sucesso!', 'success');
+                saleSales.innerHTML = "";
+                saleSales.innerText = "";
             } else {
                 showMessage('Caixa não foi aberto, para essa operação', 'error');
             }
-
         } catch (error) {
             showMessage('Erro ao enviar dados para o PHP:' + error, 'error');
         }
@@ -439,7 +575,7 @@ function updateProductQuantity(id, stock_quantity) {
 function validateStock(stock_quantity, qnt, callback) {
     if (stock_quantity < qnt) {
         continueMessage("Você não possui estoque suficiente. Deseja continuar?", "Sim", "Não", function () {
-            callback(true); 
+            callback(true);
         }, function () {
             showMessage('Operação cancelada', 'warning');
             callback(false);
@@ -456,5 +592,16 @@ async function closeModalPortion() {
     if ((portionSalesModal.style.display === 'block' && overlayModalPortion.style.display === 'block')) {
         portionSalesModal.style.display = 'none';
         overlayModalPortion.style.display = 'none';
+    }
+}
+
+async function CloseModalAPrazo() {
+    const aprazoSalesModal = document.getElementById('aprazo-sales');
+    const overlayModalaprazo = document.getElementById('overlay-portion');
+    const closeModalPortion = document.getElementById('close-aprazo');
+
+    if ((aprazoSalesModal.style.display === 'block' && overlayModalaprazo.style.display === 'block')) {
+        aprazoSalesModal.style.display = 'none';
+        overlayModalaprazo.style.display = 'none';
     }
 }
