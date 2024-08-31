@@ -402,7 +402,7 @@ async function InativarUsers(button) {
                 window.location.reload();
                 showMessage('Usuário com ID ' + id_users_inativar + ' inativado com sucesso!', 'success');
             } else {
-                showMessage(responseBody.message, 'error');
+                showMessage('Erro ao inativar usuários' + responseBody.message, 'error');
             }
 
         } catch (error) {
@@ -452,10 +452,10 @@ async function ListForn() {
 
                 fornList.appendChild(row);
             });
-        }
-
+        } 
     } catch (error) {
-        showMessage('Erro ao fazer requisição: ' + error.message, 'error');
+        console.log('Erro ao fazer requisição: ' + error.message)
+        console.clear();
     }
 }
 async function ListBuyRequest(searchTerm = '') {
@@ -521,7 +521,8 @@ async function ListBuyRequest(searchTerm = '') {
             showMessage('Erro ao listar solicitações', 'error');
         }
     } catch (error) {
-        showMessage('Erro ao fazer requisição: ' + error, 'error');
+        console.log('Erro ao fazer requisição: ' + error.message);
+        console.clear();
     }
 }
 async function ListVariationValues(searchTermVariation = '') {
@@ -594,7 +595,8 @@ async function ListVariationValues(searchTermVariation = '') {
         }
 
     } catch (error) {
-        showMessage('Erro ao fazer requisição: ' + error, 'error');
+        console.log('Erro ao fazer requisição: ' + error.message);
+        console.clear();
     }
 
 }
@@ -649,7 +651,8 @@ async function AddVariationValues() {
             showMessage('Erro ao salvar valores: ', 'error');
         }
     } catch (error) {
-        showMessage('Erro ao fazer requisição: ' + error, 'error');
+        console.log('Erro ao fazer requisição: ' + error.message);
+        console.clear();
     }
 }
 function saveValuesToLocalStorage(variations) {
@@ -744,7 +747,8 @@ async function ListProducts() {
         }
 
     } catch (error) {
-        showMessage('Erro ao fazer requisição: ' + error.message, 'error');
+        console.log('Erro ao fazer requisição: ' + error.message);
+        console.clear();
     }
 }
 function ShowModalAddVariation() {

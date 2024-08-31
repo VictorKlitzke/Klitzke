@@ -34,7 +34,7 @@ function ToggleCompany() {
     subMenuCompany.style.padding = '5px';
 }
 
-function ToggleNoteFiscal() {
+function ToggleRequest() {
     let subMenuFiscal = document.getElementById('fiscal');
     subMenuFiscal.style.display = subMenuFiscal.style.display === 'none' ? 'block' : 'none';
     subMenuFiscal.style.padding = '5px';

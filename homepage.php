@@ -203,7 +203,7 @@ if ($checkCode->rowCount() > 0) {
                         <li class="nav-item dropdown">
                             <a style="color: #fff !important; font-size: 1.3rem" class="nav-link dropdown-toggle"
                                 role="button" data-bs-toggle="dropdown" aria-expanded="false"
-                                onclick="ToggleNoteFiscal()">Suprimentos</a>
+                                onclick="ToggleRequest()">Suprimentos</a>
                             <ul class="dropdown-menu dropdown-menu-dark">
                                 <li><a class="dropdown-item" <?php SelectedMenu('shopping-request'); ?>
                                         href="<?php echo INCLUDE_PATH; ?>shopping-request"> Solicitação de Compras </a>
@@ -211,6 +211,15 @@ if ($checkCode->rowCount() > 0) {
                                 <li><a class="dropdown-item" <?php SelectedMenu('list-purchase-request'); ?>
                                         href="<?php echo INCLUDE_PATH; ?>list-purchase-request"> Lista das Solicitações
                                         de Compras </a></li>
+                            </ul>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a style="color: #fff !important; font-size: 1.3rem" class="nav-link dropdown-toggle"
+                                role="button" data-bs-toggle="dropdown" aria-expanded="false"
+                                onclick="ToggleFinancialControl()">Controle Financeiro</a>
+                            <ul class="dropdown-menu dropdown-menu-dark">
+                                <li><a class="dropdown-item" <?php SelectedMenu('financial-control.php'); ?>
+                                        href="<?php echo INCLUDE_PATH; ?>financial-control"> Visualizar Pagamentos </a></li>
                             </ul>
                         </li>
                     </ul>
