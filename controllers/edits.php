@@ -43,6 +43,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $response_clients = $data;
     $response_company = $data;
     $response_forn = $data;
+    $response_account_payable = $data;
 
     if (isset($data['type'])) {
         if ($data['type'] == 'edituser') {
@@ -53,6 +54,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             Edit::UpdateCompany($sql, $response_company, $user_id);
         } else if ($data['type'] == 'editsuppliers') {
             Edit::UpdateSupplier($sql, $response_forn, $user_id);
+        } else if ($data['type'] == 'editaccountpayable') {
+            Edit::UpdateAccountsPayable($sql, $response_account_payable, $user_id);
         }
     } else {
         Response::json(false, 'Tipo type não encontrado', $today);
@@ -62,6 +65,63 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 class Edit
 {
 
+    public static function UpdateAccountsPayable($sql, $response_account_payable, $user_id) {
+
+        $today = date('Y-m-d H:i:s');
+
+        $id_account = filter_var($response_account_payable['id_account'], FILTER_SANITIZE_NUMBER_INT);
+        $pay = 'paga';
+        $name_table = 'financial_control';
+
+        try {
+
+            $sql->BeginTransaction();
+
+            if (self::UserAccess($sql, $user_id) < 50) {
+                Response::json(false, 'Usuário não tem permissão para executar essa atividade', $today);
+                return;
+            }
+
+            $exec = $sql->prepare("UPDATE $name_table SET 
+            pay = :pay
+            WHERE id = :id_account AND `type` = 'contas a pagar'");
+
+            $exec->bindParam(':pay', $pay, PDO::PARAM_STR);
+            $exec->bindParam(':id_account', $id_account, PDO::PARAM_INT);
+            $exec->execute();
+
+            $sql->commit();
+
+            $message_log = "Contas a pagar faturada com sucesso";
+            Panel::LogAction($user_id, 'Contas a pagar faturada', $message_log, $today);
+            Response::send(true, 'Contas a pagar faturada com sucesso', $today);
+
+        } catch (Exception $e) {
+            http_response_code(500);
+            echo json_encode(['error' => 'Erro no banco de dados: ' . $e->getMessage(), 'code' => $e->getCode()]);
+        }
+
+    }
+    public static function UserAccess($sql, $user_id)
+    {
+
+        try {
+
+            $sql->BeginTransaction();
+
+            $exec = $sql->prepare("SELECT access FROM users WHERE ID = :user_id");
+            $exec->bindParam(':user_id', $user_id, PDO::PARAM_INT);
+            $exec->execute();
+
+            $sql->commit();
+            return $exec->fetchColumn();
+
+        } catch (Exception $e) {
+            http_response_code(500);
+            echo json_encode(['error' => 'Erro no banco de dados: ' . $e->getMessage(), 'code' => $e->getCode()]);
+        }
+
+    }
     public static function UpdateUser($sql, $response_users, $user_id)
     {
 

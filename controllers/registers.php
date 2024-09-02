@@ -51,6 +51,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $response_whatsapp = $data;
     $response_email = $data;
     $response_variation = $data;
+    $response_financial_control = $data;
+    $response_accounts_payable = $data;
 
     if (isset($data['type'])) {
         if ($data['type'] == 'users') {
@@ -79,6 +81,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             Register::SendRequestEmail($sql, $response_email, $user_id);
         } else if ($data['type'] == 'variation') {
             Register::SendAddVariationValues($sql, $response_variation, $user_id);
+        } else if ($data['type'] == 'registerAccountsReceivable') {
+            Register::WriteAccountsReceivable($sql, $response_financial_control, $user_id, $today);
+        } else if ($data['type'] == 'AccountsPayable') {
+            Register::RegisterAccountsPayable($sql, $response_accounts_payable, $user_id, $today);
         }
     } else {
         Response::json(false, 'Tipo type não encontrado', $today);
@@ -88,6 +94,124 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 class Register
 {
 
+    public static function RegisterAccountsPayable($sql, $response_accounts_payable, $user_id, $today)
+    {
+        $dateTransaction = filter_var($response_accounts_payable['dateTransaction'], FILTER_SANITIZE_STRING);
+        $valueTransaction = filter_var($response_accounts_payable['valueTransaction'], FILTER_SANITIZE_STRING);
+        $descriptionTransaction = filter_var($response_accounts_payable['descriptionTransaction'], FILTER_SANITIZE_STRING);
+        $nameExterno = filter_var($response_accounts_payable['nameExterno'], FILTER_SANITIZE_STRING);
+
+        if (!$dateTransaction || !$descriptionTransaction || !$valueTransaction) {
+            Response::json(false, 'Campo invalido', $today);
+            return;
+        }
+
+        try {
+
+            if (self::UserAccess($sql, $user_id) < 50) {
+                Response::json(false, 'Usuário não tem permissão para executar essa atividade', $today);
+                return;
+            }
+
+            $name_table = 'financial_control';
+            $status_aprazo = 'Despesa';
+            $type = 'contas a pagar';
+
+            $exec = $sql->prepare("INSERT INTO $name_table (value, transaction_date, status_aprazo, type, created_at, name_externo, description) 
+                                    VALUES(:value_aprazo, :dateVenciment, :status_aprazo, :type, NOW(), :nameExterno, :description)");
+            $exec->bindValue(':value_aprazo', $valueTransaction, PDO::PARAM_STR);
+            $exec->bindValue(':dateVenciment', $dateTransaction, PDO::PARAM_STR);
+            $exec->bindValue(':status_aprazo', $status_aprazo, PDO::PARAM_STR);
+            $exec->bindValue(':nameExterno', $nameExterno, PDO::PARAM_STR);
+            $exec->bindValue(':description', $descriptionTransaction, PDO::PARAM_STR);
+            $exec->bindValue(':type', $type, PDO::PARAM_STR);
+            $exec->execute();
+
+            $message_log = "Baixa no contas a pagar com sucesso";
+            Panel::LogAction($user_id, 'Baixa no contas a pagar com sucesso ', $message_log, $today);
+            Response::send(true, 'Baixa no contas a pagar com sucesso', $today);
+
+        } catch (Exception $e) {
+            http_response_code(500);
+            echo json_encode(['error' => 'Erro no banco de dados: ' . $e->getMessage(), 'code' => $e->getCode()]);
+        }
+    }
+    public static function WriteAccountsReceivable($sql, $response_financial_control, $user_id, $today)
+    {
+
+        try {
+
+            if (self::UserAccess($sql, $user_id) < 50) {
+                Response::json(false, 'Usuário não tem permissão para executar essa atividade', $today);
+                return;
+            }
+
+            foreach ($response_financial_control['selectedFinacialControl'] as $sales_prazoID) {
+                foreach ($response_financial_control['selectedPagamentalControl'] as $financial_control) {
+
+                    $check_sales_prazoid = $sql->prepare("SELECT COUNT(*) FROM financial_control where sales_aprazo_id = :sales_aprazo_id");
+                    $check_sales_prazoid->BindParam(':sales_aprazo_id', $sales_prazoID, PDO::PARAM_INT);
+                    $check_sales_prazoid->execute();
+                    $count = $check_sales_prazoid->fetchColumn();
+
+                    if ($count > 0) {
+                        Response::json(false, 'Essa parcela já foi feita a baixa', $today);
+                        return;
+                    }
+
+                    $name_table = 'financial_control';
+                    $status_aprazo = 'Receita';
+                    $type = 'contas a receber';
+                    $date_venciment = $financial_control['dateVenciment'];
+                    $date = DateTime::createFromFormat('d/m/Y', $date_venciment);
+                    $date_venciment_SQL = $date->format('Y-m-d');
+
+                    $exec = $sql->prepare("INSERT INTO $name_table (value, transaction_date, sales_aprazo_id, status_aprazo, type, created_at) 
+                                    VALUES(:value_aprazo, :dateVenciment, :selectedFinacialControlID, :status_aprazo, :type, NOW())");
+                    $exec->bindValue(':value_aprazo', $financial_control['value_aprazo'], PDO::PARAM_STR);
+                    $exec->bindValue(':dateVenciment', $date_venciment_SQL, PDO::PARAM_STR);
+                    $exec->bindValue(':selectedFinacialControlID', $sales_prazoID, PDO::PARAM_INT);
+                    $exec->bindValue(':status_aprazo', $status_aprazo, PDO::PARAM_STR);
+                    $exec->bindValue(':type', $type, PDO::PARAM_STR);
+                    $exec->execute();
+
+                    $prazo_status = 'paga';
+                    $update_salesprazo = $sql->prepare("UPDATE sales_aprazo SET status = :prazo_status WHERE id = :sales_prazoID");
+                    $update_salesprazo->BindParam('prazo_status', $prazo_status, PDO::PARAM_STR);
+                    $update_salesprazo->BindParam('sales_prazoID', $sales_prazoID, PDO::PARAM_INT);
+                    $update_salesprazo->execute();
+                }
+            }
+
+            $message_log = "Baixa no contas a receber com sucesso";
+            Panel::LogAction($user_id, 'Baixa no contas a receber com sucesso ' . $financial_control['value_aprazo'], $message_log, $today);
+            Response::send(true, 'Baixa no contas a receber com sucesso', $today);
+
+        } catch (Exception $e) {
+            http_response_code(500);
+            echo json_encode(['error' => 'Erro no banco de dados: ' . $e->getMessage(), 'code' => $e->getCode()]);
+        }
+    }
+    public static function UserAccess($sql, $user_id)
+    {
+
+        try {
+
+            $sql->BeginTransaction();
+
+            $exec = $sql->prepare("SELECT access FROM users WHERE ID = :user_id");
+            $exec->bindParam(':user_id', $user_id, PDO::PARAM_INT);
+            $exec->execute();
+
+            $sql->commit();
+            return $exec->fetchColumn();
+
+        } catch (Exception $e) {
+            http_response_code(500);
+            echo json_encode(['error' => 'Erro no banco de dados: ' . $e->getMessage(), 'code' => $e->getCode()]);
+        }
+
+    }
     public static function SendAddVariationValues($sql, $response_variation, $user_id)
     {
 
@@ -187,7 +311,6 @@ class Register
             echo json_encode(['error' => 'Erro no banco de dados: ' . $e->getMessage(), 'code' => $e->getCode()]);
         }
     }
-
     public static function SendRequestEmail($sql, $response_email, $user_id)
     {
         $today = date('Y-m-d H:i:s');
@@ -237,7 +360,6 @@ class Register
             echo json_encode(['error' => 'Erro no banco de dados: ' . $e->getMessage(), 'code' => $e->getCode()]);
         }
     }
-
     public static function RegisterUsers($sql, $response_users, $user_id)
     {
 
@@ -291,7 +413,6 @@ class Register
         }
 
     }
-
     public static function RegisterClient($sql, $response_clients, $user_id)
     {
 
@@ -356,7 +477,6 @@ class Register
             echo json_encode(['error' => 'Erro no banco de dados: ' . $e->getMessage(), 'code' => $e->getCode()]);
         }
     }
-
     public static function RegisterCompany($sql, $response_company, $user_id)
     {
 
@@ -407,7 +527,6 @@ class Register
         }
 
     }
-
     public static function RegisterTableRequest($sql, $response_table, $user_id)
     {
 
@@ -451,7 +570,6 @@ class Register
             echo json_encode(['error' => 'Erro no banco de dados: ' . $e->getMessage(), 'code' => $e->getCode()]);
         }
     }
-
     public static function RegisterAccount($sql, $response_account, $user_id)
     {
         $today = date('Y-m-d H:i:s');
@@ -491,7 +609,6 @@ class Register
             echo json_encode(['error' => 'Erro no banco de dados: ' . $e->getMessage(), 'code' => $e->getCode()]);
         }
     }
-
     public static function RegisterProducts($sql, $response_products, $user_id)
     {
         $today = date('Y-m-d H:i:s');
@@ -551,7 +668,6 @@ class Register
             echo json_encode(['error' => 'Erro no banco de dados: ' . $e->getMessage(), 'code' => $e->getCode()]);
         }
     }
-
     private function ValidateImg($flow)
     {
 
@@ -564,7 +680,6 @@ class Register
         unlink($tempFilePath);
         return in_array($mime_type, $allowedMimeTypes);
     }
-
     public static function RegisterForn($sql, $response_forn, $user_id)
     {
 
@@ -624,7 +739,6 @@ class Register
             echo json_encode(['error' => 'Erro no banco de dados: ' . $e->getMessage(), 'code' => $e->getCode()]);
         }
     }
-
     public static function RegisterBoxPdv($sql, $response_boxpdv, $user_id)
     {
 
@@ -675,7 +789,6 @@ class Register
         }
 
     }
-
     public static function RegisterSangria($sql, $response_sangria, $user_id)
     {
 
@@ -726,7 +839,6 @@ class Register
         }
 
     }
-
     public static function RegisterMultiply($sql, $response_multiply, $user_id)
     {
 

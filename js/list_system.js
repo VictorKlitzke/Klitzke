@@ -1,6 +1,7 @@
 const ButtonSearchBuyRequest = document.getElementById('button-search');
 const FieldFormBuyRequest = document.getElementById('input-buy-request');
 const FieldFormVariationValues = document.getElementById('input-variation-values');
+const FieldFormFinancialControl = document.getElementById('input-financial-control');
 const AddVariationForn = document.getElementById('add-variation-forn');
 
 let AddVariation = {};
@@ -11,6 +12,7 @@ window.onload = ListBuyRequest();
 window.onload = ListVariationValues();
 window.onload = loadValuesFromLocalStorage;
 window.omload = AddVariationValues();
+window.onload = ListAPrazo();
 
 async function InativarInvo(button) {
 
@@ -452,7 +454,7 @@ async function ListForn() {
 
                 fornList.appendChild(row);
             });
-        } 
+        }
     } catch (error) {
         console.log('Erro ao fazer requisição: ' + error.message)
         console.clear();
@@ -751,6 +753,301 @@ async function ListProducts() {
         console.clear();
     }
 }
+
+function calculateTotals(financialControlData) {
+    let totalReceitas = 0;
+    let totalDespesas = 0;
+    let saldoAtual = 0;
+
+    financialControlData.forEach(f => {
+        if (f.pay === null) {
+            totalDespesas += parseFloat(f.value);
+        } else if (f.pay === 'paga') {
+            saldoAtual += parseFloat(f.value);
+        } 
+        if (f.status_aprazo === 'paga' && f.type === 'Receita') {
+            totalReceitas += parseFloat(f.value_aprazo);
+            console.log(f.value);
+        }
+    });
+    // saldoAtual = totalReceitas - totalDespesas;
+    document.getElementById('saldoAtual').textContent = `R$ ${saldoAtual.toFixed(2)}`;
+    document.getElementById('receitasMes').textContent = `R$ ${totalReceitas.toFixed(2)}`;
+    document.getElementById('despesasMes').textContent = `R$ ${totalDespesas.toFixed(2)}`;
+    document.getElementById('resultadoMes').textContent = `R$ ${(totalReceitas - totalDespesas).toFixed(2)}`;
+}
+
+async function ListAPrazo(searchTermFinancialControl = '') {
+
+    let formFinancialControl = {
+        type: 'listFinancialControl',
+        searchTermFinancialControl: searchTermFinancialControl
+    }
+
+    try {
+
+        let url = `${BASE_CONTROLLERS}lists.php`;
+
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(formFinancialControl)
+        });
+
+        if (!response.ok) {
+            throw new Error('Erro na resposta da rede');
+        }
+
+        const data = await response.json();
+
+        if (data.success) {
+            const salesData = data.salesData || [];
+            const financialControlData = data.financialcontrol || [];
+            const financialcontrosaleslList = document.getElementById('table-sales').querySelector('tbody');
+            const financialcontrolList = document.getElementById('table-financial-control').querySelector('tbody');
+
+            financialcontrolList.innerHTML = '';
+            financialcontrosaleslList.innerHTML = '';
+
+            salesData.forEach(f => {
+                const row = document.createElement('tr');
+
+                if (f.status_aprazo === 'em andamento') {
+                    row.className = 'table-warning';
+                } else if (f.status_aprazo === 'nenhum pagamento') {
+                    row.className = 'table-secondary';
+                } else if (f.status_aprazo === 'paga') {
+                    row.className = 'table-success';
+                }
+
+                const idCell = document.createElement('th');
+                idCell.textContent = f.id;
+                idCell.className = 'id-financial-control-values';
+                row.appendChild(idCell);
+
+                const clientCell = document.createElement('th');
+                clientCell.textContent = f.client;
+                row.appendChild(clientCell);
+
+                const formPagamentCell = document.createElement('th');
+                formPagamentCell.textContent = f.formpagament;
+                row.appendChild(formPagamentCell);
+
+                const portionCell = document.createElement('th');
+                portionCell.textContent = f.portion_aprazo;
+                row.appendChild(portionCell);
+
+                const statusCell = document.createElement('th');
+                statusCell.textContent = f.status_aprazo;
+                row.appendChild(statusCell);
+
+                const buttonCell = document.createElement('th');
+                const inputButton = document.createElement('button');
+                inputButton.type = 'button';
+                inputButton.className = 'btn btn-info btn-sm';
+                inputButton.innerHTML = 'Mais Detalhes';
+                inputButton.onclick = function () {
+                    ListDetailsAprazo(f.id);
+                };
+                buttonCell.appendChild(inputButton);
+                row.appendChild(buttonCell);
+
+                financialcontrosaleslList.appendChild(row);
+            });
+
+            financialControlData.forEach(f => {
+                const row = document.createElement('tr');
+
+                row.className = 'table-light';
+
+                const idCell = document.createElement('th');
+                idCell.textContent = f.id;
+                row.appendChild(idCell);
+
+                const descriptionCell = document.createElement('th');
+                descriptionCell.textContent = f.description || 'Sem descrição';
+                row.appendChild(descriptionCell);
+
+                const valueCell = document.createElement('th');
+                valueCell.textContent = f.value || 'Sem valor';
+                row.appendChild(valueCell);
+
+                const dateCell = document.createElement('td');
+                const dateString = f.transaction_date;
+                const [year, month, day] = dateString.split('-');
+                const formattedDate = `${day}/${month}/${year}`;
+                dateCell.textContent = formattedDate;
+                row.appendChild(dateCell);
+
+                const typeCell = document.createElement('th');
+                typeCell.textContent = f.type || 'Sem tipo';
+                row.appendChild(typeCell);
+
+                if (f.pay == null) {
+                    const buttonCell = document.createElement('th');
+                    const inputButton = document.createElement('button');
+                    inputButton.type = 'button';
+                    inputButton.className = 'btn btn-dark btn-sm';
+                    inputButton.innerHTML = 'Faturar';
+                    inputButton.onclick = function () {
+                        InvoiceAccountsPayable(f.id);
+                    };
+                    buttonCell.appendChild(inputButton);
+                    row.appendChild(buttonCell);
+
+                } else {
+                    const PayCell = document.createElement('th');
+                    PayCell.textContent = f.pay;
+                    row.appendChild(PayCell);
+
+                }
+                financialcontrolList.appendChild(row);
+            });
+
+            calculateTotals(financialControlData)
+
+        } else {
+            showMessage('Erro ao listar solicitações', 'error');
+        }
+
+    } catch (error) {
+        console.log('Erro ao fazer requisição: ' + error.message);
+    }
+}
+async function InvoiceAccountsPayable(id_account) {
+    if (!id_account) {
+        showMessage('ID do pagamento não encontrado', 'warning');
+        return;
+    }
+
+    let responseEditAccountsPayable = {
+        type: 'editaccountpayable',
+        id_account: id_account
+    }
+
+    console.log(responseEditAccountsPayable);
+
+    continueMessage("Deseja continuar o faturamento?", "Sim", "Não", async function () {
+        try {
+
+            let url = `${BASE_CONTROLLERS}edits.php`;
+
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(responseEditAccountsPayable)
+            })
+
+            const responseBody = await response.json();
+
+            if (responseBody.success) {
+                showMessage("Contas a pagar faturado com sucesso!", 'success');
+                location.reload();
+            } else {
+                showMessage(responseBody.message || "Erro ao tentar faturar contas a pagar ", 'error');
+            }
+
+        } catch (error) {
+            showMessage('Erro ao fazer requisição' + error, 'error')
+        }
+    }, function () {
+        showMessage('Operação cancelada', 'warning')
+    })
+}
+async function ListDetailsAprazo(id_detals) {
+
+    const modal = new bootstrap.Modal(document.getElementById('detailsModal'));
+
+    if (!id_detals) {
+        showMessage('ID do pagamento não encontrado', 'warning');
+        return;
+    }
+
+    let formFinancialControlDetals = {
+        type: 'listFinancialControlDetals',
+        id_detals: id_detals
+    }
+
+    try {
+        const url = `${BASE_CONTROLLERS}lists.php`;
+
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(formFinancialControlDetals)
+        })
+
+        const data = await response.json();
+
+        if (data.success) {
+            const financialcontroldetals = data.financialcontroldetals;
+            const financialcontrolDetalsList = document.getElementById('table-financial-control-detals').querySelector('tbody');
+
+            financialcontrolDetalsList.innerHTML = '';
+
+            if (!Array.isArray(financialcontroldetals)) {
+                throw new Error('financialcontrol não é um array');
+            }
+
+            financialcontroldetals.forEach(fp => {
+                const row = document.createElement('tr');
+
+                if (fp.status === 'paga') {
+                    row.className = 'table-success';
+                }
+
+                const selectCell = document.createElement('th');
+                const checkbox = document.createElement('input');
+                checkbox.type = 'checkbox';
+                checkbox.className = 'form-check-input';
+                checkbox.value = fp.id;
+                checkbox.dataset.id = fp.sale_id;
+                selectCell.appendChild(checkbox);
+                row.appendChild(selectCell);
+
+                const idCell = document.createElement('th');
+                idCell.textContent = fp.id;
+                row.appendChild(idCell);
+
+                const DateVencimentCell = document.createElement('td');
+                const dateString = fp.date_venciment;
+                const [year, month, day] = dateString.split('-');
+                const formattedDate = `${day}/${month}/${year}`;
+                DateVencimentCell.textContent = formattedDate;
+                row.appendChild(DateVencimentCell);
+
+                const ValuePagamentCell = document.createElement('th');
+                ValuePagamentCell.textContent = fp.value_aprazo;
+                row.appendChild(ValuePagamentCell);
+
+                const StatusCell = document.createElement('th');
+                StatusCell.textContent = fp.status;
+                row.appendChild(StatusCell);
+
+                const TypeCell = document.createElement('th');
+                TypeCell.textContent = fp.type;
+                row.appendChild(TypeCell);
+
+                financialcontrolDetalsList.appendChild(row);
+            });
+
+            calculateTotals(financialControlData)
+
+        } else {
+            showMessage('Erro ao listar solicitações', 'error');
+        }
+
+    } catch (error) {
+        showMessage('Erro ao fazer requisição!' + error, 'error');
+    }
+    modal.show();
+}
 function ShowModalAddVariation() {
     if (AddVariationForn.style.display === 'block') {
         AddVariationForn.style.display = 'none';
@@ -766,4 +1063,8 @@ FieldFormBuyRequest.addEventListener('input', async function () {
 FieldFormVariationValues.addEventListener('input', async function () {
     const searchTermVariation = FieldFormVariationValues.value.trim();
     await ListVariationValues(searchTermVariation);
+});
+FieldFormFinancialControl.addEventListener('input', async function () {
+    const searchTermFinancialControl = FieldFormFinancialControl.value.trim();
+    await ListAPrazo(searchTermFinancialControl);
 });

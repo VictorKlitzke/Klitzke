@@ -249,10 +249,10 @@ function calculateInstallments() {
         tableBody.innerHTML += row;
 
         selectedAprazo.push({
+            portionAprazo: i,
             date_venciment: formattedDate,
             installmentValue: installmentValue
         });
-        console.log(selectedAprazo);
     }
     document.getElementById('total-aprazo-sales').innerText = `Total a Pagar: R$ ${totalValuezAPrazo.toFixed(2)}`;
 }
@@ -279,6 +279,11 @@ async function FinalizeAprazo() {
             selectedAprazo: selectedAprazo,
             products: selectedProducts
         };
+
+        if (idSalesClientAprazo.length === 0) {
+            showMessage('Erro nenhum cliente informado', 'warning');
+            return;
+        }
 
         if (selectedProducts.length === 0) {
 
@@ -312,7 +317,7 @@ async function FinalizeAprazo() {
                     showMessage('Erro ao registrar venda:', responseDataAPrazo ? responseDataAPrazo.error : 'Resposta vazia', 'error');
                 }
             } catch (error) {
-                showMessage('Erro ao enviar dados para o PHP:', error, 'error');
+                showMessage('Erro ao enviar dados para o PHP:' + error, 'error');
             }
         }
     } else {
@@ -597,7 +602,7 @@ async function closeModalPortion() {
 
 async function CloseModalAPrazo() {
     const aprazoSalesModal = document.getElementById('aprazo-sales');
-    const overlayModalaprazo = document.getElementById('overlay-portion');
+    const overlayModalaprazo = document.getElementById('overlay-aprazo');
     const closeModalPortion = document.getElementById('close-aprazo');
 
     if ((aprazoSalesModal.style.display === 'block' && overlayModalaprazo.style.display === 'block')) {

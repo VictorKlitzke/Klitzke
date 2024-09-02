@@ -1089,5 +1089,4 @@ async function RegisterMultiply() {
     }, function () {
         showMessage('Registro cancelado', 'warning')
     })
-
 }

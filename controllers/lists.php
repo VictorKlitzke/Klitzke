@@ -29,6 +29,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         Lists::ListBuyRequest($sql, $input);
     } else if ($type === 'listvariationvalues') {
         lists::ListVariationValues($sql, $input);
+    } else if ($type === 'listFinancialControl') {
+        lists::ListFinancialControl($sql, $input);
+    } else if ($type === 'listFinancialControlDetals') {
+        lists::ListFinancialControlDetals($sql, $input);
     }
 }
 
@@ -148,7 +152,102 @@ class lists
             echo json_encode(['success' => false, 'message' => 'Erro no banco de dados: ' . $e->getMessage()]);
         }
     }
+    public static function ListFinancialControl($sql, $input)
+    {
+        $searchTermFinancialControl = isset($input['searchTermFinancialControl']) ? $input['searchTermFinancialControl'] : null;
 
+        try {
+            $salesData = [];
+            $financialControlData = [];
+
+            $querySales = "SELECT 
+                            s.*,
+                            c.name AS client,
+                            fp.name AS formpagament,
+                            (SELECT COUNT(*) FROM `sales_aprazo` sp WHERE sp.`sale_id` = s.`id`) AS portion_aprazo,
+                            CASE 
+                                WHEN COUNT(CASE WHEN sp.status = 'paga' THEN 1 END) = COUNT(sp.id) THEN 'paga'
+                                WHEN COUNT(CASE WHEN sp.status = 'paga' THEN 1 END) > 0 THEN 'em andamento'
+                                ELSE 'nenhum pagamento'
+                            END AS status_aprazo
+                        FROM 
+                            `sales` s
+                        INNER JOIN `clients` c ON c.`id` = s.`id_client`
+                        INNER JOIN `form_payment` fp ON fp.`id` = s.`id_payment_method`
+                        LEFT JOIN `sales_aprazo` sp ON sp.`sale_id` = s.`id`
+                        WHERE 
+                            fp.id = 5 ";
+
+            if ($searchTermFinancialControl) {
+                $querySales .= " AND (c.name LIKE :search_term OR fp.name LIKE :search_term)";
+            }
+
+            $querySales .= " GROUP BY s.id, c.name, fp.name";
+
+            $stmtSales = $sql->prepare($querySales);
+
+            if ($searchTermFinancialControl) {
+                $stmtSales->bindValue(':search_term', '%' . $searchTermFinancialControl . '%', PDO::PARAM_STR);
+            }
+
+            $stmtSales->execute();
+            $salesData = $stmtSales->fetchAll(PDO::FETCH_ASSOC);
+
+            $queryFinancialControl = "SELECT * FROM `financial_control` WHERE `type` = 'contas a pagar'";
+            $stmtFinancial = $sql->prepare($queryFinancialControl);
+            $stmtFinancial->execute();
+            $financialControlData = $stmtFinancial->fetchAll(PDO::FETCH_ASSOC);
+
+            echo json_encode([
+                'success' => true,
+                'salesData' => $salesData,
+                'financialcontrol' => $financialControlData
+            ]);
+
+        } catch (PDOException $e) {
+            http_response_code(500);
+            echo json_encode([
+                'success' => false,
+                'message' => 'Erro no banco de dados: ' . $e->getMessage()
+            ]);
+        }
+    }
+    public static function ListFinancialControlDetals($sql, $input)
+    {
+        $id_detals = isset($input['id_detals']) ? $input['id_detals'] : null;
+
+        try {
+
+            $query = "select 
+                sp.*,
+                s.`total_value`,
+                c.`name` clients
+            from 
+                `sales_aprazo` sp
+                inner join `sales` s on s.`id` = sp.`sale_id`
+                inner join `clients` c on c.`id` = s.`id_client`";
+
+            if (isset($id_detals)) {
+                $query .= "where sp.sale_id = :id_detals";
+            }
+
+            $stmt = $sql->prepare($query);
+
+            if (!empty($id_detals)) {
+                $stmt->bindValue(':id_detals', $id_detals, PDO::PARAM_INT);
+            }
+
+            $stmt->execute();
+            $financialcontroldetals = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+            echo json_encode(['success' => true, 'financialcontroldetals' => $financialcontroldetals]);
+
+        } catch (PDOException $e) {
+            http_response_code(500);
+            echo json_encode(['success' => false, 'message' => 'Erro no banco de dados: ' . $e->getMessage()]);
+        }
+
+    }
 }
 
 ?>
