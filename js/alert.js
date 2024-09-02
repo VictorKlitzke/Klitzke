@@ -4,7 +4,7 @@ const styles = `
             top: 0;
             left: 50%;
             transform: translateX(-50%);
-            z-index: 1000;
+            z-index: 2000;
             width: 90%;
             max-width: 600px;
             background: #1b1b1b;

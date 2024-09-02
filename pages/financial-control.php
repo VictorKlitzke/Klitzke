@@ -37,83 +37,134 @@
   </div>
   <!-- Filtros -->
   <div class="row mb-4">
-    <div class="col-md-4">
-      <input type="text" class="form-control" placeholder="Buscar por descrição...">
-    </div>
-    <div class="col-md-4">
-      <select class="form-select">
-        <option selected>Filtrar por tipo</option>
-        <option value="1">Receita</option>
-        <option value="2">Despesa</option>
-      </select>
-    </div>
-    <div class="col-md-4">
-      <input type="date" class="form-control">
+    <div class="col-md-12">
+      <input class="form-control" id="input-financial-control" type="search" placeholder="Pesquisar"
+        aria-label="Pesquisar">
     </div>
   </div>
 
   <!-- Tabela de Transações -->
-  <div class="table-responsive mb-4">
-    <table class="table table-striped table-bordered">
-      <thead class="table-dark">
-        <tr>
-          <th>ID</th>
-          <th>Data</th>
-          <th>Descrição</th>
-          <th>Tipo</th>
-          <th>Valor</th>
-          <th>Parcelas</th>
-          <th>Ações</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>1</td>
-          <td>01/08/2024</td>
-          <td>Venda de Produto</td>
-          <td>Receita</td>
-          <td class="text-success">R$ 1.000,00</td>
-          <td>1</td>
-          <td>
-            <button class="btn btn-sm btn-warning">Editar</button>
-            <button class="btn btn-sm btn-danger">Excluir</button>
-          </td>
-        </tr>
-        <!-- Mais linhas podem ser adicionadas aqui -->
-      </tbody>
-    </table>
+  <!-- Estrutura de Abas -->
+  <ul class="nav nav-tabs" id="myTab" role="tablist">
+    <li class="nav-item" role="presentation">
+      <button class="nav-link active" style="color: #696969;" id="sales-tab" data-bs-toggle="tab" data-bs-target="#sales" type="button"
+        role="tab" aria-controls="sales" aria-selected="true">Controle Contas a Receber</button>
+    </li>
+    <li class="nav-item" role="presentation">
+      <button class="nav-link" id="financial-tab" style="color: #696969;" data-bs-toggle="tab" data-bs-target="#financial" type="button"
+        role="tab" aria-controls="financial" aria-selected="false">Controle Contas a pagar</button>
+    </li>
+  </ul>
+
+  <!-- Conteúdo das Abas -->
+  <div class="tab-content" id="myTabContent">
+    <!-- Aba de Vendas -->
+    <div class="tab-pane fade show active" id="sales" role="tabpanel" aria-labelledby="sales-tab">
+      <div class="table-responsive" style="max-height: 400px; overflow-y: auto; overflow-x: auto;">
+        <table class="table table-dark table-hover table-striped table-bordered" id="table-sales">
+          <thead>
+            <tr style="white-space: nowrap;">
+              <th>#</th>
+              <th>Clientes</th>
+              <th>Formas de Pagamentos</th>
+              <th>Parcelas</th>
+              <th>Status</th>
+              <th>Ações</th>
+            </tr>
+          </thead>
+          <tbody id="sales-result"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Aba de Controle Financeiro -->
+    <div class="tab-pane fade" id="financial" role="tabpanel" aria-labelledby="financial-tab">
+      <div class="table-responsive" style="max-height: 400px; overflow-y: auto; overflow-x: auto;">
+        <table class="table table-dark table-hover table-striped table-bordered" id="table-financial-control">
+          <thead>
+            <tr style="white-space: nowrap;">
+              <th>#</th>
+              <th>Descrição</th>
+              <th>Valor</th>
+              <th>Data</th>
+              <th>Tipo</th>
+              <th>Ações</th>
+            </tr>
+          </thead>
+          <tbody id="financial-control-result"></tbody>
+        </table>
+      </div>
+    </div>
   </div>
+
+
+  <!-- Modal -->
+  <div class="modal fade" id="detailsModal" tabindex="-1" aria-labelledby="detailsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+      <div class="modal-content">
+        <div class="modal-header bg-dark text-white">
+          <h5 class="modal-title" id="detailsModalLabel">Detalhes da Parcela</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div class="table-responsive">
+            <table class="table table-hover table-striped table-bordered" id="table-financial-control-detals">
+              <thead class="table-dark">
+                <tr>
+                  <th>Selecionar</th>
+                  <th>#</th>
+                  <th>Valor</th>
+                  <th>Data Vencimento</th>
+                  <th>Status</th>
+                  <th>Tipo</th>
+                </tr>
+              </thead>
+              <tbody id="financial-control-result-detals">
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+          <button type="button" onclick="FinalizeAPrazo()" class="btn btn-primary">Faturar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <br>
 
   <!-- Formulário de Adição de Transações -->
   <div class="card mb-4">
     <div class="card-header">
-      Adicionar Nova Transação
+      Adicionar Contas a Pagar
     </div>
     <div class="card-body">
       <form>
         <div class="row mb-3">
           <div class="col-md-4">
-            <label for="dataTransacao" class="form-label">Data</label>
-            <input type="date" class="form-control" id="dataTransacao" required>
-          </div>
-          <div class="col-md-4">
-            <label for="tipoTransacao" class="form-label">Tipo</label>
-            <select class="form-select" id="tipoTransacao" required>
-              <option selected disabled>Escolha...</option>
-              <option value="Receita">Receita</option>
-              <option value="Despesa">Despesa</option>
-            </select>
+            <label class="form-label">Data</label>
+            <input type="date" class="form-control" id="dateTransaction" required>
+            <span id="error" class="error-message">Campo está invalido, Ajuste se possivel.</span>
           </div>
           <div class="col-md-4">
             <label for="valorTransacao" class="form-label">Valor</label>
-            <input type="text" class="form-control" id="valorTransacao" placeholder="R$" required>
+            <input type="text" class="form-control" id="valueTransaction" placeholder="R$" required>
+            <span id="error" class="error-message">Campo está invalido, Ajuste se possivel.</span>
+          </div>
+          <div class="col-md-4">
+            <label class="form-label">Nome externo</label>
+            <input type="text" class="form-control" id="nameExterno" placeholder="Nome" required>
+            <span id="error" class="error-message">Campo está invalido, Ajuste se possivel.</span>
+          </div>
+          <div class="col-md-12">
+            <label class="form-label">Descrição</label>
+            <input type="text" class="form-control" id="descriptionTransaction" placeholder="Descrição da transação"
+              required>
+            <span id="error" class="error-message">Campo está invalido, Ajuste se possivel.</span>
           </div>
         </div>
-        <div class="mb-3">
-          <label for="descricaoTransacao" class="form-label">Descrição</label>
-          <input type="text" class="form-control" id="descricaoTransacao" placeholder="Descrição da transação" required>
-        </div>
-        <button type="submit" class="btn btn-primary">Adicionar Transação</button>
+        <button type="button" onclick="RegisterAccountsPayable()" class="btn btn-primary">Adicionar Transação</button>
       </form>
     </div>
   </div>
