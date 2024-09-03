@@ -13,6 +13,7 @@ window.onload = ListVariationValues();
 window.onload = loadValuesFromLocalStorage;
 window.omload = AddVariationValues();
 window.onload = ListAPrazo();
+window.onload = ListDetailsAprazo();
 
 async function InativarInvo(button) {
 
@@ -527,6 +528,7 @@ async function ListBuyRequest(searchTerm = '') {
         console.clear();
     }
 }
+
 async function ListVariationValues(searchTermVariation = '') {
 
     let formDataVariation = {
@@ -684,6 +686,7 @@ function updateTableWithNewValues(new_values_variation) {
         });
     }, 100);
 }
+
 async function ListProducts() {
     try {
         let url = `${BASE_CONTROLLERS}lists.php`;
@@ -754,29 +757,55 @@ async function ListProducts() {
     }
 }
 
-function calculateTotals(financialControlData) {
+function calculateTotalsListAPrazo(data) {
+    let saldoAtual = 0;
     let totalReceitas = 0;
     let totalDespesas = 0;
-    let saldoAtual = 0;
+    let totalContasAPagar = 0;
+    let totalContasPagas = 0;
+    let totalContasVencidas = 0;
 
-    financialControlData.forEach(f => {
-        if (f.pay === null) {
-            totalDespesas += parseFloat(f.value);
-        } else if (f.pay === 'paga') {
-            saldoAtual += parseFloat(f.value);
-        } 
-        if (f.status_aprazo === 'paga' && f.type === 'Receita') {
-            totalReceitas += parseFloat(f.value_aprazo);
-            console.log(f.value);
+    data.forEach(item => {
+        const value = parseFloat(item.value) || 0;
+
+        if (item.type === 'receita') {
+            totalReceitas += value;
+        } else if (item.type === 'despesa') {
+            totalDespesas += value;
+        }
+
+        if (item.pay === null) {
+            totalContasAPagar += value;
+        } else {
+            totalContasPagas += value;
+        }
+
+        const dataVencimento = new Date(item.transaction_date);
+        const dataAtual = new Date();
+        if (item.pay === null && dataVencimento < dataAtual) {
+            totalContasVencidas += value;
         }
     });
-    // saldoAtual = totalReceitas - totalDespesas;
-    document.getElementById('saldoAtual').textContent = `R$ ${saldoAtual.toFixed(2)}`;
-    document.getElementById('receitasMes').textContent = `R$ ${totalReceitas.toFixed(2)}`;
-    document.getElementById('despesasMes').textContent = `R$ ${totalDespesas.toFixed(2)}`;
-    document.getElementById('resultadoMes').textContent = `R$ ${(totalReceitas - totalDespesas).toFixed(2)}`;
-}
 
+    saldoAtual = totalReceitas - totalDespesas;
+
+    document.getElementById('saldoAtualAPrazo').textContent = `R$ ${saldoAtual.toFixed(2)}`;
+    document.getElementById('receitasMesAPrazo').textContent = `R$ ${totalReceitas.toFixed(2)}`;
+    document.getElementById('despesasMesAPrazo').textContent = `R$ ${totalDespesas.toFixed(2)}`;
+    document.getElementById('totalContasAPagarAPrazo').textContent = `R$ ${totalContasAPagar.toFixed(2)}`;
+    document.getElementById('totalContasPagasAPrazo').textContent = `R$ ${totalContasPagas.toFixed(2)}`;
+    document.getElementById('totalContasVencidasAPrazo').textContent = `R$ ${totalContasVencidas.toFixed(2)}`;
+}
+function calculateTotalsListDetails(data) {
+    let totalDetalhes = 0;
+
+    data.forEach(item => {
+        const value = parseFloat(item.value_aprazo) || 0;
+        totalDetalhes += value;
+    });
+
+    document.getElementById('receitasMesAPrazo').textContent = `R$ ${totalDetalhes.toFixed(2)}`;
+}
 async function ListAPrazo(searchTermFinancialControl = '') {
 
     let formFinancialControl = {
@@ -916,48 +945,6 @@ async function ListAPrazo(searchTermFinancialControl = '') {
         console.log('Erro ao fazer requisição: ' + error.message);
     }
 }
-async function InvoiceAccountsPayable(id_account) {
-    if (!id_account) {
-        showMessage('ID do pagamento não encontrado', 'warning');
-        return;
-    }
-
-    let responseEditAccountsPayable = {
-        type: 'editaccountpayable',
-        id_account: id_account
-    }
-
-    console.log(responseEditAccountsPayable);
-
-    continueMessage("Deseja continuar o faturamento?", "Sim", "Não", async function () {
-        try {
-
-            let url = `${BASE_CONTROLLERS}edits.php`;
-
-            const response = await fetch(url, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(responseEditAccountsPayable)
-            })
-
-            const responseBody = await response.json();
-
-            if (responseBody.success) {
-                showMessage("Contas a pagar faturado com sucesso!", 'success');
-                location.reload();
-            } else {
-                showMessage(responseBody.message || "Erro ao tentar faturar contas a pagar ", 'error');
-            }
-
-        } catch (error) {
-            showMessage('Erro ao fazer requisição' + error, 'error')
-        }
-    }, function () {
-        showMessage('Operação cancelada', 'warning')
-    })
-}
 async function ListDetailsAprazo(id_detals) {
 
     const modal = new bootstrap.Modal(document.getElementById('detailsModal'));
@@ -1037,7 +1024,7 @@ async function ListDetailsAprazo(id_detals) {
                 financialcontrolDetalsList.appendChild(row);
             });
 
-            calculateTotals(financialControlData)
+            calculateTotalsListDetails(financialcontroldetals);
 
         } else {
             showMessage('Erro ao listar solicitações', 'error');
@@ -1048,12 +1035,55 @@ async function ListDetailsAprazo(id_detals) {
     }
     modal.show();
 }
+
 function ShowModalAddVariation() {
     if (AddVariationForn.style.display === 'block') {
         AddVariationForn.style.display = 'none';
     } else {
         AddVariationForn.style.display = 'block';
     }
+}
+async function InvoiceAccountsPayable(id_account) {
+    if (!id_account) {
+        showMessage('ID do pagamento não encontrado', 'warning');
+        return;
+    }
+
+    let responseEditAccountsPayable = {
+        type: 'editaccountpayable',
+        id_account: id_account
+    }
+
+    console.log(responseEditAccountsPayable);
+
+    continueMessage("Deseja continuar o faturamento?", "Sim", "Não", async function () {
+        try {
+
+            let url = `${BASE_CONTROLLERS}edits.php`;
+
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(responseEditAccountsPayable)
+            })
+
+            const responseBody = await response.json();
+
+            if (responseBody.success) {
+                showMessage("Contas a pagar faturado com sucesso!", 'success');
+                location.reload();
+            } else {
+                showMessage(responseBody.message || "Erro ao tentar faturar contas a pagar ", 'error');
+            }
+
+        } catch (error) {
+            showMessage('Erro ao fazer requisição' + error, 'error')
+        }
+    }, function () {
+        showMessage('Operação cancelada', 'warning')
+    })
 }
 
 FieldFormBuyRequest.addEventListener('input', async function () {
