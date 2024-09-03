@@ -2,35 +2,43 @@
   <h2 class="text-white">Controle Financeiro</h2>
   <!-- Cards de Resumo -->
   <div class="row mb-4">
-    <div class="col-md-3">
+    <div class="col-md-4 col-lg-3 mb-3">
       <div class="card bg-success text-white">
         <div class="card-body">
           <h5 class="card-title">Saldo Atual</h5>
-          <p class="card-text" id="saldoAtual">R$ 12.000,00</p>
+          <p class="card-text" id="saldoAtual">R$ 00,00</p>
         </div>
       </div>
     </div>
-    <div class="col-md-3">
+    <div class="col-md-4 col-lg-3 mb-3">
       <div class="card bg-primary text-white">
         <div class="card-body">
           <h5 class="card-title">Receitas do Mês</h5>
-          <p class="card-text" id="receitasMes">R$ 8.000,00</p>
+          <p class="card-text" id="receitasMes">R$ 00,00</p>
         </div>
       </div>
     </div>
-    <div class="col-md-3">
+    <div class="col-md-4 col-lg-3 mb-3">
+      <div class="card bg-info text-white">
+        <div class="card-body">
+          <h5 class="card-title">Total Contas Pagas</h5>
+          <p class="card-text" id="totalContasPagas">R$ 00,00</p>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6 col-lg-3 mb-3">
       <div class="card bg-danger text-white">
         <div class="card-body">
-          <h5 class="card-title">Despesas do Mês</h5>
-          <p class="card-text" id="despesasMes">R$ 5.000,00</p>
+          <h5 class="card-title">Total Contas Vencidas</h5>
+          <p class="card-text" id="totalContasVencidas">R$ 00,00</p>
         </div>
       </div>
     </div>
-    <div class="col-md-3">
+    <div class="col-md-6 col-lg-3 mb-3">
       <div class="card bg-warning text-dark">
         <div class="card-body">
-          <h5 class="card-title">Resultado do Mês</h5>
-          <p class="card-text" id="resultadoMes">R$ 3.000,00</p>
+          <h5 class="card-title">Total Contas a Pagar</h5>
+          <p class="card-text" id="totalContasAPagar">R$ 00,00</p>
         </div>
       </div>
     </div>
@@ -47,12 +55,14 @@
   <!-- Estrutura de Abas -->
   <ul class="nav nav-tabs" id="myTab" role="tablist">
     <li class="nav-item" role="presentation">
-      <button class="nav-link active" style="color: #696969;" id="sales-tab" data-bs-toggle="tab" data-bs-target="#sales" type="button"
-        role="tab" aria-controls="sales" aria-selected="true">Controle Contas a Receber</button>
+      <button class="nav-link active" style="color: #696969;" id="sales-tab" data-bs-toggle="tab"
+        data-bs-target="#sales" type="button" role="tab" aria-controls="sales" aria-selected="true">Controle Contas a
+        Receber</button>
     </li>
     <li class="nav-item" role="presentation">
-      <button class="nav-link" id="financial-tab" style="color: #696969;" data-bs-toggle="tab" data-bs-target="#financial" type="button"
-        role="tab" aria-controls="financial" aria-selected="false">Controle Contas a pagar</button>
+      <button class="nav-link" id="financial-tab" style="color: #696969;" data-bs-toggle="tab"
+        data-bs-target="#financial" type="button" role="tab" aria-controls="financial" aria-selected="false">Controle
+        Contas a pagar</button>
     </li>
   </ul>
 

@@ -75,8 +75,6 @@ class Edit
 
         try {
 
-            $sql->BeginTransaction();
-
             if (self::UserAccess($sql, $user_id) < 50) {
                 Response::json(false, 'Usuário não tem permissão para executar essa atividade', $today);
                 return;
@@ -89,8 +87,6 @@ class Edit
             $exec->bindParam(':pay', $pay, PDO::PARAM_STR);
             $exec->bindParam(':id_account', $id_account, PDO::PARAM_INT);
             $exec->execute();
-
-            $sql->commit();
 
             $message_log = "Contas a pagar faturada com sucesso";
             Panel::LogAction($user_id, 'Contas a pagar faturada', $message_log, $today);
