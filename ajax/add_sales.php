@@ -2,6 +2,8 @@
 
 include_once '../config/config.php';
 include_once '../services/db.php';
+include_once '../helpers/response.php';
+include_once '../classes/panel.php';
 
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
@@ -9,6 +11,8 @@ error_reporting(E_ALL);
 
 header("Access-Control-Allow-Origin: *");
 header("Content-Type: application/json");
+
+$today = date('Y-m-d H:i:s');
 
 function generateQrCodePIX($totalValue) {
 
@@ -167,6 +171,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $exec->execute();
 
             $sql->commit();
+
+            $message_log = "Venda realizada com sucesso";
+            Panel::LogAction($user_id, 'Venda realizada com com sucesso: ID Forma de pagamento: ' . $selectedPaymentMethod, $message_log, $today);
+            Response::send(true, 'Venda realizada com com sucesso', $today);
 
             echo json_encode(['success' => true, 'message' => htmlspecialchars('Venda registrada com sucesso')]);
         }

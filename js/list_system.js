@@ -11,9 +11,10 @@ window.onload = ListForn();
 window.onload = ListBuyRequest();
 window.onload = ListVariationValues();
 window.onload = loadValuesFromLocalStorage;
-window.omload = AddVariationValues();
+window.onload = AddVariationValues();
 window.onload = ListAPrazo();
 window.onload = ListDetailsAprazo();
+window.onload = calculateTotalsListAPrazo();
 
 async function InativarInvo(button) {
 
@@ -525,7 +526,6 @@ async function ListBuyRequest(searchTerm = '') {
         }
     } catch (error) {
         console.log('Erro ao fazer requisição: ' + error.message);
-        console.clear();
     }
 }
 
@@ -600,7 +600,6 @@ async function ListVariationValues(searchTermVariation = '') {
 
     } catch (error) {
         console.log('Erro ao fazer requisição: ' + error.message);
-        console.clear();
     }
 
 }
@@ -757,54 +756,84 @@ async function ListProducts() {
     }
 }
 
-function calculateTotalsListAPrazo(data) {
-    let saldoAtual = 0;
-    let totalReceitas = 0;
-    let totalDespesas = 0;
-    let totalContasAPagar = 0;
-    let totalContasPagas = 0;
-    let totalContasVencidas = 0;
+async function calculateTotalsListAPrazo() {
 
-    data.forEach(item => {
-        const value = parseFloat(item.value) || 0;
+    let sumresponse = {
+        type: 'sumcontrolfinancial'
+    }
 
-        if (item.type === 'receita') {
-            totalReceitas += value;
-        } else if (item.type === 'despesa') {
-            totalDespesas += value;
+    try {
+
+        let url = `${BASE_CONTROLLERS}lists.php`;
+
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(sumresponse)
+        });
+
+        if (!response.ok) {
+            throw new Error('Erro na resposta da rede');
         }
 
-        if (item.pay === null) {
-            totalContasAPagar += value;
+        const data = await response.json();
+
+        if (data.success) {
+            const result_payable = data.result_payable;
+            const sum_payable = document.getElementById('totalContasAPagar');
+
+            const result_control = data.result_control;
+            const sum_control = document.getElementById('totalContasPagas');
+
+            const result_aprazo = data.result_aprazo;
+            const sum_aprazo = document.getElementById('totalContasVencidas');
+
+            const total_sal = data.total_sal;
+            const sum_saldo = document.getElementById('saldoAtual');
+
+            sum_payable.innerHTML = '';
+            sum_aprazo.innerHTML = '';
+            sum_control.innerHTML = '';
+            sum_saldo.innerHTML = '';
+
+            total_sal.forEach(ts => {
+                const span = document.createElement('span');
+                span.textContent = ts.TotalSaldo;
+                sum_saldo.appendChild(span);
+            });
+
+            result_payable.forEach(rp => {
+                const span = document.createElement('span');
+                span.textContent = rp.TotalContasPagar;
+                sum_payable.appendChild(span);
+            });
+
+            result_aprazo.forEach(ra => {
+                const span = document.createElement('span');
+                if (ra.TotalContasNaoRecebidas == null) {
+                    span.textContent = 'Todas as contas em dia';
+                } else {
+                    span.textContent = ra.TotalContasNaoRecebidas;
+                }
+                sum_aprazo.appendChild(span);
+            });
+
+            result_control.forEach(rc => {
+                const span = document.createElement('span');
+                span.textContent = rc.TotalContasReceber;
+                sum_control.appendChild(span);
+            });
+
         } else {
-            totalContasPagas += value;
+            showMessage('Não foi possivel trazer valores', 'error');
         }
 
-        const dataVencimento = new Date(item.transaction_date);
-        const dataAtual = new Date();
-        if (item.pay === null && dataVencimento < dataAtual) {
-            totalContasVencidas += value;
-        }
-    });
-
-    saldoAtual = totalReceitas - totalDespesas;
-
-    document.getElementById('saldoAtualAPrazo').textContent = `R$ ${saldoAtual.toFixed(2)}`;
-    document.getElementById('receitasMesAPrazo').textContent = `R$ ${totalReceitas.toFixed(2)}`;
-    document.getElementById('despesasMesAPrazo').textContent = `R$ ${totalDespesas.toFixed(2)}`;
-    document.getElementById('totalContasAPagarAPrazo').textContent = `R$ ${totalContasAPagar.toFixed(2)}`;
-    document.getElementById('totalContasPagasAPrazo').textContent = `R$ ${totalContasPagas.toFixed(2)}`;
-    document.getElementById('totalContasVencidasAPrazo').textContent = `R$ ${totalContasVencidas.toFixed(2)}`;
-}
-function calculateTotalsListDetails(data) {
-    let totalDetalhes = 0;
-
-    data.forEach(item => {
-        const value = parseFloat(item.value_aprazo) || 0;
-        totalDetalhes += value;
-    });
-
-    document.getElementById('receitasMesAPrazo').textContent = `R$ ${totalDetalhes.toFixed(2)}`;
+    } catch (error) {
+        console.log('Erro ao fazer requisição!');
+        console.clear();
+    }
 }
 async function ListAPrazo(searchTermFinancialControl = '') {
 
@@ -935,8 +964,6 @@ async function ListAPrazo(searchTermFinancialControl = '') {
                 financialcontrolList.appendChild(row);
             });
 
-            calculateTotals(financialControlData)
-
         } else {
             showMessage('Erro ao listar solicitações', 'error');
         }
@@ -1024,8 +1051,6 @@ async function ListDetailsAprazo(id_detals) {
                 financialcontrolDetalsList.appendChild(row);
             });
 
-            calculateTotalsListDetails(financialcontroldetals);
-
         } else {
             showMessage('Erro ao listar solicitações', 'error');
         }
@@ -1053,8 +1078,6 @@ async function InvoiceAccountsPayable(id_account) {
         type: 'editaccountpayable',
         id_account: id_account
     }
-
-    console.log(responseEditAccountsPayable);
 
     continueMessage("Deseja continuar o faturamento?", "Sim", "Não", async function () {
         try {

@@ -6,15 +6,7 @@
       <div class="card bg-success text-white">
         <div class="card-body">
           <h5 class="card-title">Saldo Atual</h5>
-          <p class="card-text" id="saldoAtual">R$ 00,00</p>
-        </div>
-      </div>
-    </div>
-    <div class="col-md-4 col-lg-3 mb-3">
-      <div class="card bg-primary text-white">
-        <div class="card-body">
-          <h5 class="card-title">Receitas do Mês</h5>
-          <p class="card-text" id="receitasMes">R$ 00,00</p>
+          <p class="card-text" id="saldoAtual"></p>
         </div>
       </div>
     </div>
@@ -22,7 +14,7 @@
       <div class="card bg-info text-white">
         <div class="card-body">
           <h5 class="card-title">Total Contas Pagas</h5>
-          <p class="card-text" id="totalContasPagas">R$ 00,00</p>
+          <p class="card-text" id="totalContasPagas"></p>
         </div>
       </div>
     </div>
@@ -30,7 +22,7 @@
       <div class="card bg-danger text-white">
         <div class="card-body">
           <h5 class="card-title">Total Contas Vencidas</h5>
-          <p class="card-text" id="totalContasVencidas">R$ 00,00</p>
+          <p class="card-text" id="totalContasVencidas"></p>
         </div>
       </div>
     </div>
@@ -38,7 +30,7 @@
       <div class="card bg-warning text-dark">
         <div class="card-body">
           <h5 class="card-title">Total Contas a Pagar</h5>
-          <p class="card-text" id="totalContasAPagar">R$ 00,00</p>
+          <p class="card-text" id="totalContasAPagar"></p>
         </div>
       </div>
     </div>

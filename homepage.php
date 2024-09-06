@@ -50,42 +50,6 @@ if ($checkCode->rowCount() > 0) {
     <nav class="navbar bg-dark">
         <div class="container-fluid">
 
-            <div class="d-flex">
-                <a class="navbar-brand" <?php if (@$_GET['url'] == '') { ?>
-                        style="border: 3px solid #c1c1c1; border-radius: 7px;" <?php } ?>
-                    href="<?php echo INCLUDE_PATH ?>">
-                    <span style="color: #fff;">
-                        <svg xmlns="http://www.w3.org/2000/svg" height="18" viewBox="0 -960 960 960" width="20">
-                            <path fill="#fff"
-                                d="M240-200h120v-240h240v240h120v-360L480-740 240-560v360Zm-80 80v-480l320-240 320 240v480H520v-240h-80v240H160Zm320-350Z" />
-                        </svg>
-                        Pagina Inicial
-                    </span>
-                </a>
-
-                <a class="navbar-brand" href="<?php echo INCLUDE_PATH; ?>?loggout">
-                    <span style="color: #fff;">
-                        <svg xmlns="http://www.w3.org/2000/svg" height="18" viewBox="0 -960 960 960" width="20">
-                            <path fill="#fff"
-                                d="M300-640v320l160-160-160-160ZM200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h560q33 0 56.5 23.5T840-760v560q0 33-23.5 56.5T760-120H200Zm440-80h120v-560H640v560Zm-80 0v-560H200v560h360Zm80 0h120-120Z" />
-                        </svg>
-                        Sair
-                    </span>
-                </a>
-                <a class="navbar-brand" <?php if (@$_GET['url'] == 'config-system') { ?>
-                        style="border: 3px solid #c1c1c1; border-radius: 7px;" <?php } ?>
-                    href="<?php echo INCLUDE_PATH ?>config-system">
-                    <span style="color: #fff;">
-                        <svg xmlns="http://www.w3.org/2000/svg" height="18" viewBox="0 -960 960 960" width="20"
-                            fill="#fff">
-                            <path
-                                d="m234-480-12-60q-12-5-22.5-10.5T178-564l-58 18-40-68 46-40q-2-13-2-26t2-26l-46-40 40-68 58 18q11-8 21.5-13.5T222-820l12-60h80l12 60q12 5 22.5 10.5T370-796l58-18 40 68-46 40q2 13 2 26t-2 26l46 40-40 68-58-18q-11 8-21.5 13.5T326-540l-12 60h-80Zm40-120q33 0 56.5-23.5T354-680q0-33-23.5-56.5T274-760q-33 0-56.5 23.5T194-680q0 33 23.5 56.5T274-600ZM592-40l-18-84q-17-6-31.5-14.5T514-158l-80 26-56-96 64-56q-2-18-2-36t2-36l-64-56 56-96 80 26q14-11 28.5-19.5T574-516l18-84h112l18 84q17 6 31.5 14.5T782-482l80-26 56 96-64 56q2 18 2 36t-2 36l64 56-56 96-80-26q-14 11-28.5 19.5T722-124l-18 84H592Zm56-160q50 0 85-35t35-85q0-50-35-85t-85-35q-50 0-85 35t-35 85q0 50 35 85t85 35Z" />
-                        </svg>
-                        Configuração
-                    </span>
-                </a>
-            </div>
-
             <button style="background: #fff" id="menu-btn" class="navbar-toggler" type="button"
                 data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar" aria-controls="offcanvasNavbar"
                 aria-label="Toggle navigation">
@@ -93,9 +57,8 @@ if ($checkCode->rowCount() > 0) {
                 Menu
             </button>
 
-            <div class="offcanvas offcanvas-end text-bg-dark" tabindex="-1" id="offcanvasNavbar"
-                aria-labelledby="offcanvasNavbarLabel">
-                <div class="offcanvas-header">
+            <div class="d-flex justify-content-center align-items-sm-center">
+                <div class="navbar-brand d-flex">
                     <?php
                     $sql = Db::Connection();
 
@@ -112,7 +75,7 @@ if ($checkCode->rowCount() > 0) {
 
                             if ($boxpdv["status"] == 1) {
                                 ?>
-                                <div class="offcanvas-title d-grid btn-lg mb-3 btn btn-success" id="open-boxpdv">
+                                <div class="btn btn-success" id="open-boxpdv">
                                     <span>Caixa aberto</span>
                                     <form action="">
                                         <input type="hidden" name="id_box" value="<?php echo base64_encode($boxpdv['id']); ?>">
@@ -120,19 +83,77 @@ if ($checkCode->rowCount() > 0) {
                                 </div>
                             <?php } else {
                                 ?>
-                                <div class="d-grid btn-lg mb-3 btn btn-danger">
+                                <div class="btn btn-danger">
                                     <span>Caixa Fechado</span>
                                 </div>
                             <?php }
                         } else {
                             ?>
-                            <div class="d-grid btn btn--info btn-lg mb-3">
+                            <div class="btn btn-info ">
                                 <span>Nenhum caixa aberto</span>
                             </div>
                         <?php }
                     }
                     ?>
                 </div>
+
+                <div class="navbar-brand">
+                    <button type="button" class="btn btn-outline-info" id="liveToastBtn">Notificações</button>
+
+                    <div class="toast-container position-fixed bottom-0 end-0 p-3">
+                        <div id="liveToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+                            <div class="toast-header">
+                                <img src="..." class="rounded me-2" alt="...">
+                                <strong class="me-auto">Bootstrap</strong>
+                                <small>11 mins ago</small>
+                                <button type="button" class="btn-close" data-bs-dismiss="toast"
+                                    aria-label="Close"></button>
+                            </div>
+                            <div class="toast-body">
+                                Hello, world! This is a toast message.
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <a class="navbar-brand" <?php if (@$_GET['url'] == '') { ?>
+                        style="border: 3px solid #c1c1c1; border-radius: 7px;" <?php } ?> href="<?php echo INCLUDE_PATH ?>">
+                    <span style="color: #fff;">
+                        <svg xmlns="http://www.w3.org/2000/svg" height="18" viewBox="0 -960 960 960" width="20">
+                            <path fill="#fff"
+                                d="M240-200h120v-240h240v240h120v-360L480-740 240-560v360Zm-80 80v-480l320-240 320 240v480H520v-240h-80v240H160Zm320-350Z" />
+                        </svg>
+                        Pagina Inicial
+                    </span>
+                </a>
+
+                <a class="navbar-brand" <?php if (@$_GET['url'] == 'config-system') { ?>
+                        style="border: 3px solid #c1c1c1; border-radius: 7px;" <?php } ?>
+                    href="<?php echo INCLUDE_PATH ?>config-system">
+                    <span style="color: #fff;">
+                        <svg xmlns="http://www.w3.org/2000/svg" height="18" viewBox="0 -960 960 960" width="20"
+                            fill="#fff">
+                            <path
+                                d="m234-480-12-60q-12-5-22.5-10.5T178-564l-58 18-40-68 46-40q-2-13-2-26t2-26l-46-40 40-68 58 18q11-8 21.5-13.5T222-820l12-60h80l12 60q12 5 22.5 10.5T370-796l58-18 40 68-46 40q2 13 2 26t-2 26l46 40-40 68-58-18q-11 8-21.5 13.5T326-540l-12 60h-80Zm40-120q33 0 56.5-23.5T354-680q0-33-23.5-56.5T274-760q-33 0-56.5 23.5T194-680q0 33 23.5 56.5T274-600ZM592-40l-18-84q-17-6-31.5-14.5T514-158l-80 26-56-96 64-56q-2-18-2-36t2-36l-64-56 56-96 80 26q14-11 28.5-19.5T574-516l18-84h112l18 84q17 6 31.5 14.5T782-482l80-26 56 96-64 56q2 18 2 36t-2 36l64 56-56 96-80-26q-14 11-28.5 19.5T722-124l-18 84H592Zm56-160q50 0 85-35t35-85q0-50-35-85t-85-35q-50 0-85 35t-35 85q0 50 35 85t85 35Z" />
+                        </svg>
+                        Configuração
+                    </span>
+                </a>
+
+                <a class="navbar-brand" href="<?php echo INCLUDE_PATH; ?>?loggout">
+                    <span style="color: #fff;">
+                        <svg xmlns="http://www.w3.org/2000/svg" height="18" viewBox="0 -960 960 960" width="20">
+                            <path fill="#fff"
+                                d="M300-640v320l160-160-160-160ZM200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h560q33 0 56.5 23.5T840-760v560q0 33-23.5 56.5T760-120H200Zm440-80h120v-560H640v560Zm-80 0v-560H200v560h360Zm80 0h120-120Z" />
+                        </svg>
+                        Sair
+                    </span>
+                </a>
+            </div>
+
+            <div class="offcanvas offcanvas-start text-bg-dark" tabindex="-1" id="offcanvasNavbar"
+                aria-labelledby="offcanvasNavbarLabel">
                 <div class="offcanvas-body">
                     <ul class="navbar-nav justify-content-end flex-grow-1 pe-3">
                         <li class="nav-item dropdown">
@@ -216,10 +237,20 @@ if ($checkCode->rowCount() > 0) {
                         <li class="nav-item dropdown">
                             <a style="color: #fff !important; font-size: 1.3rem" class="nav-link dropdown-toggle"
                                 role="button" data-bs-toggle="dropdown" aria-expanded="false"
-                                onclick="ToggleFinancialControl()">Controle Financeiro</a>
+                            >Controle Financeiro</a>
                             <ul class="dropdown-menu dropdown-menu-dark">
                                 <li><a class="dropdown-item" <?php SelectedMenu('financial-control.php'); ?>
-                                        href="<?php echo INCLUDE_PATH; ?>financial-control"> Visualizar Pagamentos </a></li>
+                                        href="<?php echo INCLUDE_PATH; ?>financial-control"> Visualizar Pagamentos </a>
+                                </li>
+                            </ul>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a style="color: #fff !important; font-size: 1.3rem" class="nav-link dropdown-toggle"
+                                role="button" data-bs-toggle="dropdown" aria-expanded="false">Administrativo</a>
+                            <ul class="dropdown-menu dropdown-menu-dark">
+                                <li><a class="dropdown-item" <?php SelectedMenu('dashboard.php'); ?>
+                                        href="<?php echo INCLUDE_PATH; ?>dashboard"> Dashboard ADM </a>
+                                </li>
                             </ul>
                         </li>
                     </ul>
@@ -227,19 +258,6 @@ if ($checkCode->rowCount() > 0) {
             </div>
         </div>
     </nav>
-
-    <!-- <h2 style="cursor: pointer;" onclick="ToggleDelivery()">delivery</h2>
-            <div id="delivery" style="display: none;">
-                <a class="dropdown-item" href="<?php echo INCLUDE_PATH; ?>list-product-delivery"> Pedidos delivery </a>
-            </div> -->
-    <!--
-            <a onclick="ToggleReport()">Relatórios</a>
-            <div id="report">
-                <a class="dropdown-item" <?php SelectedMenu('reports') ?> href="<?php echo INCLUDE_PATH; ?>reports">Relatórios diversos</a>
-            </div>
-                </ul>
-            </div> -->
-
     <div class="content" id="content">
 
         <?php Panel::LoadPage(); ?>
@@ -274,6 +292,11 @@ if ($checkCode->rowCount() > 0) {
             $exec->bindParam(':boxId', $openBoxId, PDO::PARAM_INT);
             $exec->execute();
             $result_money = $exec->fetch(PDO::FETCH_ASSOC);
+
+            $exec = $sql->prepare("SELECT SUM(total_value) as total_aprazo FROM sales inner join sales_aprazo on `sales_aprazo`.`sale_id` = sales.id WHERE sales.id_payment_method = 5 and sales_aprazo.status = 'paga' AND id_boxpdv = :boxId");
+            $exec->bindParam(':boxId', $openBoxId, PDO::PARAM_INT);
+            $exec->execute();
+            $result_aprazo = $exec->fetch(PDO::FETCH_ASSOC);
 
         }
 
@@ -314,6 +337,11 @@ if ($checkCode->rowCount() > 0) {
                                     name="value_money" value="<?php echo $result_money["total_money"]; ?>" />
                             </div>
                             <div class="col-sm-12">
+                                <label class="text-white">A Prazo</label>
+                                <input id="value_aprazo" class="form-control" type="text" placeholder="A Prazo"
+                                    name="value_aprazo" value="<?php echo $result_aprazo["total_aprazo"]; ?>" />
+                            </div>
+                            <div class="col-sm-12">
                                 <label class="text-white">Data fechamento</label>
                                 <input id="date_close" class="form-control" type="date" placeholder="Data fechamento"
                                     name="date_close">
@@ -331,6 +359,18 @@ if ($checkCode->rowCount() > 0) {
         <div class="message-container" id="message-container"></div>
     </div>
 
+    <!-- <h2 style="cursor: pointer;" onclick="ToggleDelivery()">delivery</h2>
+            <div id="delivery" style="display: none;">
+                <a class="dropdown-item" href="<?php echo INCLUDE_PATH; ?>list-product-delivery"> Pedidos delivery </a>
+            </div> -->
+    <!--
+            <a onclick="ToggleReport()">Relatórios</a>
+            <div id="report">
+                <a class="dropdown-item" <?php SelectedMenu('reports') ?> href="<?php echo INCLUDE_PATH; ?>reports">Relatórios diversos</a>
+            </div>
+                </ul>
+            </div> -->
+
     <script language="JavaScript" type="text/javascript"
         src="<?php echo INCLUDE_JAVASCRIPT; ?>const_globais.js"></script>
     <script language="JavaScript" type="text/javascript" src="<?php echo INCLUDE_JAVASCRIPT; ?>alert.js"></script>
@@ -344,7 +384,9 @@ if ($checkCode->rowCount() > 0) {
     <script language="JavaScript" type="text/javascript" src="<?php echo INCLUDE_JAVASCRIPT; ?>menu.js"></script>
     <script language="JavaScript" type="text/javascript" src="<?php echo INCLUDE_JAVASCRIPT; ?>list_system.js"></script>
     <script language="JavaScript" type="text/javascript" src="<?php echo INCLUDE_JAVASCRIPT; ?>buy_request.js"></script>
-    <script language="JavaScript" type="text/javascript" src="<?php echo INCLUDE_JAVASCRIPT; ?>financial_control.js"></script>
+    <script language="JavaScript" type="text/javascript"
+        src="<?php echo INCLUDE_JAVASCRIPT; ?>financial_control.js"></script>
+    <script src="<?php echo INCLUDE_JAVASCRIPT; ?>dashboard.js"></script>
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>

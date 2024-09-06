@@ -79,41 +79,50 @@ $count_sales = Controllers::SelectAll('sales');
 
 <div class="row">
   <div class="col-sm-6 mb-3">
-    <div class="card">
-      <h2>Produtos em Estoque</h2>
-      <h2>
-        <?php echo $result['stock_quantity']; ?>
-      </h2>
+    <div class="card border-primary shadow">
+      <div class="card-body">
+        <h4 class="card-title text-primary">Produtos em Estoque</h4>
+        <h2 class="display-5 fw-bold text-center">
+          <?php echo $result['stock_quantity']; ?>
+        </h2>
+      </div>
     </div>
   </div>
 
-  <div class="col-sm-6">
-    <div class="card">
-      <h2>Clientes</h2>
-      <h2>
-        <?php echo count($count_clients); ?>
-      </h2>
+  <div class="col-sm-6 mb-3">
+    <div class="card border-success shadow">
+      <div class="card-body">
+        <h4 class="card-title text-success">Clientes</h4>
+        <h2 class="display-5 fw-bold text-center">
+          <?php echo count($count_clients); ?>
+        </h2>
+      </div>
     </div>
   </div>
 
-  <div class="col-sm-6">
-    <div class="card">
-      <h2>Vendas</h2>
-      <h2>
-        <?php echo count($count_sales); ?>
-      </h2>
-    </div>
-
-  </div>
-
-  <div class="col-sm-6">
-    <div class="card">
-      <h2>Produto + Vendido</h2>
-      <h2><?php echo $result_prod['name_product']; ?></h2>
+  <div class="col-sm-6 mb-3">
+    <div class="card border-info shadow">
+      <div class="card-body">
+        <h4 class="card-title text-info">Vendas</h4>
+        <h2 class="display-5 fw-bold text-center">
+          <?php echo count($count_sales); ?>
+        </h2>
+      </div>
     </div>
   </div>
 
+  <div class="col-sm-6 mb-3">
+    <div class="card border-warning shadow">
+      <div class="card-body">
+        <h4 class="card-title text-warning">Produto + Vendido</h4>
+        <h2 class="display-5 fw-bold text-center">
+          <?php echo $result_prod['name_product']; ?>
+        </h2>
+      </div>
+    </div>
+  </div>
 </div>
+
 <br>
 <?php
 
@@ -217,10 +226,10 @@ $status_product = $products->fetchAll();
 
                     <?php } ?>
 
-                    <button onclick="Details(this)" data-id="<?php echo $value['id']; ?>" type="button"
+                    <!-- <button onclick="Details(this)" data-id="<?php echo $value['id']; ?>" type="button"
                       class="btn btn-primary">
                       Mais detalhes
-                    </button>
+                    </button> -->
                   </th>
                 </tr>
               </tbody>

@@ -33,6 +33,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         lists::ListFinancialControl($sql, $input);
     } else if ($type === 'listFinancialControlDetals') {
         lists::ListFinancialControlDetals($sql, $input);
+    } else if ($type === 'sumcontrolfinancial') {
+        lists::SumFinancialControl($sql);
+    } else if ($type === 'sumUsersSales') {
+        lists::UsersSumSales($sql);
     }
 }
 
@@ -248,6 +252,81 @@ class lists
         }
 
     }
-}
+    public static function SumFinancialControl($sql)
+    {
 
+        try {
+            $query = "select SUM(value) TotalContasPagar from `financial_control` where type = 'contas a pagar'";
+            $exec = $sql->prepare($query);
+            $exec->execute();
+            $result_payable = $exec->fetchAll(PDO::FETCH_ASSOC);
+
+            $query1 = "select SUM(value) TotalContasReceber from `financial_control` where type = 'contas a receber'";
+            $exec1 = $sql->prepare($query1);
+            $exec1->execute();
+            $result_control = $exec1->fetchAll(PDO::FETCH_ASSOC);
+
+            $query2 = "select SUM(value_aprazo) TotalContasNaoRecebidas from `sales_aprazo` where status = 'pendente'";
+            $exec = $sql->prepare($query2);
+            $exec->execute();
+            $result_aprazo = $exec->fetchAll(PDO::FETCH_ASSOC);
+
+            $query3 = "select SUM(value) TotalSaldo from `financial_control`";
+            $exec3 = $sql->prepare($query3);
+            $exec3->execute();
+            $total_sal = $exec3->fetchAll(PDO::FETCH_ASSOC);
+
+            echo json_encode([
+                'success' => true,
+                'result_payable' => $result_payable,
+                'result_control' => $result_control,
+                'result_aprazo' => $result_aprazo,
+                'total_sal' => $total_sal
+            ]);
+
+        } catch (Exception $e) {
+            http_response_code(500);
+            echo json_encode([
+                'success' => false,
+                'message' => 'Erro no banco de dados: ' . $e->getMessage()
+            ]);
+        }
+
+    }
+    public static function UsersSumSales($sql)
+    {
+        try {
+            $query = "SELECT COUNT(`id_users`) AS total_sales, u.name AS users_name
+                      FROM sales s
+                      INNER JOIN users u ON u.id = s.id_users
+                      GROUP BY u.name";
+            $exec = $sql->prepare($query);
+            $exec->execute();
+            $result_sales = $exec->fetchAll(PDO::FETCH_ASSOC);
+
+            $query1 = "SELECT 
+                      DATE_FORMAT(s.`date_sales`, '%Y-%m') AS month, 
+                      COUNT(*) AS total_sales,
+                      sum(s.`total_value`) total_value
+                    FROM sales s
+                    GROUP BY DATE_FORMAT(s.date_sales, '%Y-%m')
+                    ORDER BY DATE_FORMAT(s.date_sales, '%Y-%m')";
+            $exec1 = $sql->prepare($query1);
+            $exec1->execute();
+            $date_sales = $exec1->fetchAll(PDO::FETCH_ASSOC);
+
+            echo json_encode([
+                'success' => true,
+                'data' => $result_sales,
+                'date_sales' => $date_sales
+            ]);
+        } catch (Exception $e) {
+            http_response_code(500);
+            echo json_encode([
+                'success' => false,
+                'message' => 'Erro no banco de dados: ' . $e->getMessage()
+            ]);
+        }
+    }
+}
 ?>
