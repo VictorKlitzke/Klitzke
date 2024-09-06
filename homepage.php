@@ -234,8 +234,9 @@ if ($checkCode->rowCount() > 0) {
                                         de Compras </a></li>
                             </ul>
                         </li>
-                        <li class="nav-item dropdown">
-                            <a style="color: #fff !important; font-size: 1.3rem" class="nav-link dropdown-toggle"
+                        <?php if($showMenuAdm): ?>
+                            <li class="nav-item dropdown">
+                            <a <?php VerificationAccess('financial-control') ?> style="color: #fff !important; font-size: 1.3rem" class="nav-link dropdown-toggle"
                                 role="button" data-bs-toggle="dropdown" aria-expanded="false"
                             >Controle Financeiro</a>
                             <ul class="dropdown-menu dropdown-menu-dark">
@@ -244,6 +245,8 @@ if ($checkCode->rowCount() > 0) {
                                 </li>
                             </ul>
                         </li>
+                        <?php endif; ?>
+                        <?php if ($showMenuAdm): ?>
                         <li class="nav-item dropdown">
                             <a style="color: #fff !important; font-size: 1.3rem" class="nav-link dropdown-toggle"
                                 role="button" data-bs-toggle="dropdown" aria-expanded="false">Administrativo</a>
@@ -253,6 +256,7 @@ if ($checkCode->rowCount() > 0) {
                                 </li>
                             </ul>
                         </li>
+                        <?php endif; ?>
                     </ul>
                 </div>
             </div>

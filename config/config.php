@@ -28,14 +28,17 @@ function SelectedMenu($par)
     }
 }
 
-function VerificationAccess() {
+function VerificationAccess($par) {
 
-    if ($_SESSION['access'] >= 50) {
+    $url = explode('/', @$_GET['url'])[0];
+    if ($url != $par) {
         include_once('./error/error-access.php');
-    } else {
-        echo 'Erro';
+        exit();
     }
-
+    
+}
+function VerificationAccessADM() {
+    return isset($_SESSION['access']) && $_SESSION['access'] == 100;
 }
 
 function VerificationMenu()
@@ -46,5 +49,7 @@ function VerificationMenu()
         echo 'style="display:none;"';
     }
 }
+
+$showMenuAdm = VerificationAccessADM();
 
 ?>
