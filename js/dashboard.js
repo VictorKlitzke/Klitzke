@@ -82,7 +82,6 @@ async function fetchSalesPerMonth() {
     return [];
   }
 }
-
 async function createChartSalesDate() {
   const salesData = await fetchSalesPerMonth();
 
@@ -170,7 +169,25 @@ async function createChartSalesDate() {
   });
 }
 
+async function createChartsDateMaisSales() {
+
+  const ctx = document.getElementById('total-date-sales').getContext('2d');
+  new Chart(ctx, {
+    type: 'line',
+    data: data,
+    options: {
+        scales: {
+            y: {
+                stacked: true
+            }
+        }
+    }
+});
+
+}
+
 document.addEventListener('DOMContentLoaded', function () {
   createChart();
-  createChartSalesDate()
+  createChartSalesDate();
+  createChartsDateMaisSales();
 });

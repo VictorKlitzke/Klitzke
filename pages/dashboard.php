@@ -10,6 +10,13 @@
     </div>
   </div>
 </div>
+<div class="row">
+  <div class="col">
+    <div>
+      <canvas id="total-date-sales"></canvas>
+    </div>
+  </div>
+</div>
 
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
