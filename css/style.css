@@ -1,34 +1,12 @@
 * {
-    margin: 0;
-    padding: 0;
     box-sizing: border-box;
     text-decoration: none;
     font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
     font-weight: 300;
 }
 
-#button-standard {
-    font-size: 14px;
-}
-
 .w100 {
     width: 100%;
-}
-
-.w70 {
-    width: 70%;
-}
-
-.w60 {
-    width: 60%;
-}
-
-.w40 {
-    width: 40%;
-}
-
-.w50 {
-    width: 50%;
 }
 
 .left {
@@ -52,30 +30,6 @@
     border-radius: 24px;
     padding: 30px;
     margin-bottom: 25px;
-}
-
-/* TUDO DO SISTEMA */
-
-@keyframes slidein {
-    0% {
-        transform: translateX(200px);
-        opacity: 1;
-    }
-
-    100% {
-        transform: translateX(0);
-        opacity: 1;
-    }
-}
-
-@keyframes time {
-    0% {
-        width: 0;
-    }
-
-    100% {
-        width: 100%;
-    }
 }
 
 /* BOXPDV */

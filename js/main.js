@@ -25,12 +25,12 @@ async function closeBox() {
   let valueCredit = parseFloat(document.getElementById('value_credit').value);
   let valuePIX = parseFloat(document.getElementById('value_pix').value);
   let valueMoney = parseFloat(document.getElementById('value_money').value);
+  let value_aprazo = parseFloat(document.getElementById('value_aprazo').value);
   let closeDate = document.getElementById('date_close').value;
 
-  let confirmClose = confirm('Deseja realmente fechar o caixa?');
+  continueMessage("Deseja realmente fechar o caixa?", "Sim", "Não", async function () {
 
-  if (confirmClose) {
-    fetch('http://localhost/Klitzke/ajax/close_boxpdv.php', {
+    fetch(`${BASE_URL}close_boxpdv.php`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -40,23 +40,30 @@ async function closeBox() {
         value_credit: valueCredit,
         value_pix: valuePIX,
         value_money: valueMoney,
+        value_aprazo: value_aprazo,
         close_date: closeDate
       }),
     })
       .then(response => response.json())
       .then(data => {
         if (data && data.success) {
-          window.alert('Caixa fechado com sucesso.');
+          showMessage('Caixa fechado com sucesso', 'success');
           CloseBoxpdv.style.display = 'none';
           overlay.style.display = 'none';
-          window.location.reload();
+
+          setTimeout(() => {
+            window.location.reload();
+          }, 3000);
+          
         } else {
-          window.alert('Erro ao fechar o caixa. Tente novamente.');
+          showMessage('Erro ao fechar o caixa. Tente novamente.', 'error');
         }
       })
       .catch(error => {
         console.error('Erro ao fechar o caixa:', error);
         console.log('Erro ao fechar o caixa. Tente novamente.');
       });
+  }), function () {
+    showMessage('Operação cancelada', 'error');
   }
 }
