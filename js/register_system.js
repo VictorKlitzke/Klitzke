@@ -48,7 +48,7 @@ async function RegisterUsers() {
         return;
     }
 
-    if (isNaN(values.targetCommission) || isNaN(values.commission) || isNaN(values.phone)){
+    if (isNaN(values.targetCommission) || isNaN(values.commission) || isNaN(values.phone)) {
         showMessage('Campos só aceita numeros', 'warning',);
 
         if (!isNaN(values.targetCommission)) inputs.targetCommission.classList.add('error');
@@ -732,13 +732,13 @@ const getFieldsProducts = () => {
 }
 async function RegisterProducts() {
     const { type, values, inputs } = await getFieldsProducts();
-    let InputValueProduct = values.value_product.replace(/\D/g, "");
-    let InputValueCost = values.cost_value.replace(/\D/g, "");
+    let InputValueCost = values.cost_value.replace(/^R\$\s?/, "");
+    let InputValueProduct = values.value_product.replace(/^R\$\s?/, "");
 
     if (values.barcode == "" || values.name == "" || values.reference == "" || values.quantity == ""
         || values.stock_quantity == "" || values.cost_value == "" || values.value_product == ""
     ) {
-        showMessage('Quantidade e Quantidade estoque não podem ser diferente de numero', 'warning');
+        showMessage('Quantidade e Quantidade estoque não podem ser diferente de número', 'warning');
 
         if (values.barcode === "") inputs.barcode.classList.add('error');
         if (values.name === "") inputs.name.classList.add('error');
@@ -814,7 +814,7 @@ async function RegisterProducts() {
     }
 
     function parseCurrency(value) {
-        return parseFloat(value.replace(/[^0-9,-]+/g, '').replace(',', '.'));
+        return parseFloat(value.replace(',', '.'));  // Preserva pontos e vírgulas corretamente
     }
 
     async function sendProductData(type, values, imageBase64, quantity, stock_quantity, barcode, cost_value, value_product) {
@@ -833,33 +833,37 @@ async function RegisterProducts() {
             flow: imageBase64
         };
 
-        try {
-            let url = `${BASE_CONTROLLERS}registers.php`;
+        continueMessage("Deseja realmente continuar com o cadastro?", "Sim", "Não", async function () {
+            try {
+                let url = `${BASE_CONTROLLERS}registers.php`;
 
-            const response = await fetch(url, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(responseProduct)
-            });
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(responseProduct)
+                });
 
-            const responseBody = await response.json();
+                const responseBody = await response.json();
 
-            if (responseBody.success) {
-                showMessage('Produto ' + values.name + ' cadastrado com sucesso', 'success');
+                if (responseBody.success) {
+                    showMessage('Produto ' + values.name + ' cadastrado com sucesso', 'success');
 
-                setTimeout(() => {
-                    location.reload();
-                }, 2000);
+                    setTimeout(() => {
+                        location.reload();
+                    }, 2000);
 
-            } else {
-                showMessage(responseBody.message || 'Erro ao cadastrar produto', 'error');
+                } else {
+                    showMessage(responseBody.message || 'Erro ao cadastrar produto', 'error');
+                }
+
+            } catch (error) {
+                showMessage("Erro ao fazer requisição: " + error, 'error');
             }
-
-        } catch (error) {
-            showMessage("Erro ao fazer requisição: " + error, 'error');
-        }
+        }, function () {
+            ShowMessage('Operação cancelada', 'warning');
+        })
     }
 }
 
@@ -927,7 +931,7 @@ async function RegisterBoxPdv() {
 
             if (responseBody.success) {
                 showMessage('Caixa aberto no valor de ' + values.value, 'success');
-                
+
                 setTimeout(() => {
                     location.reload();
                 }, 2000);
@@ -964,7 +968,7 @@ async function RegisterSangria() {
     const { type, values, inputs } = await getFieldsSangria();
     let InputValueSangria = values.value.replace(/\D/g, "");
 
-    if (values.value == ""|| values.observation == "") {
+    if (values.value == "" || values.observation == "") {
         showMessage('Campos vazios', 'warning');
 
         if (values.value === "") inputs.value.classList.add('error');

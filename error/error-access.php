@@ -1,4 +1,4 @@
-<style>
+<!-- <style>
     .error-container3 {
         text-align: center;
         display: flex;
@@ -6,10 +6,7 @@
         background-color: red !important;
     }
 </style>
-</head>
-
-<body>
     <div class="error-container3">
         <h1>Acesso Negado</h1>
         <p>Você não tem permissão para acessar esta página.</p>
-    </div>
+    </div> -->

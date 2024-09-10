@@ -1,6 +1,6 @@
 <?php
 
-$products = Controllers::SelectAll('products', ($currentPage - 1) * $porPage, $porPage);
+$products = Controllers::SelectAll('products');
 
 ?>
 
@@ -43,7 +43,6 @@ $products = Controllers::SelectAll('products', ($currentPage - 1) * $porPage, $p
                                 <th><?php echo htmlspecialchars($value['reference']); ?></th>
                                 <th><?php echo htmlspecialchars($value['id_users']); ?></th>
                                 <th><?php echo htmlspecialchars($value['model']); ?></th>
-
                                 <th>
                                     <a onclick="ShowOnPage(this)" data-id="<?php echo $value['id']; ?>"
                                         class="btn btn-dark">

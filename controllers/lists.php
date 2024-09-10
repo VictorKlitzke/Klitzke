@@ -276,12 +276,18 @@ class lists
             $exec3->execute();
             $total_sal = $exec3->fetchAll(PDO::FETCH_ASSOC);
 
+            $query4 = "select fp.*, sp.* from `financial_control` fp left join sales_aprazo sp on sp.id = fp.sales_aprazo_id";
+            $exec4 = $sql->prepare($query4);
+            $exec4->execute();
+            $sumfinancial = $exec4->fetchAll(PDO::FETCH_ASSOC);
+
             echo json_encode([
                 'success' => true,
                 'result_payable' => $result_payable,
                 'result_control' => $result_control,
                 'result_aprazo' => $result_aprazo,
-                'total_sal' => $total_sal
+                'total_sal' => $total_sal,
+                'sumfinancial' => $sumfinancial
             ]);
 
         } catch (Exception $e) {
@@ -297,17 +303,17 @@ class lists
     {
         try {
             $query = "SELECT COUNT(`id_users`) AS total_sales, u.name AS users_name
-                      FROM sales s
-                      INNER JOIN users u ON u.id = s.id_users
-                      GROUP BY u.name";
+                    FROM sales s
+                    INNER JOIN users u ON u.id = s.id_users
+                    GROUP BY u.name";
             $exec = $sql->prepare($query);
             $exec->execute();
             $result_sales = $exec->fetchAll(PDO::FETCH_ASSOC);
 
             $query1 = "SELECT 
-                      DATE_FORMAT(s.`date_sales`, '%Y-%m') AS month, 
-                      COUNT(*) AS total_sales,
-                      sum(s.`total_value`) total_value
+                    DATE_FORMAT(s.`date_sales`, '%Y-%m') AS month, 
+                    COUNT(*) AS total_sales,
+                    sum(s.`total_value`) total_value
                     FROM sales s
                     GROUP BY DATE_FORMAT(s.date_sales, '%Y-%m')
                     ORDER BY DATE_FORMAT(s.date_sales, '%Y-%m')";

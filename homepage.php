@@ -97,24 +97,9 @@ if ($checkCode->rowCount() > 0) {
                     ?>
                 </div>
 
-                <div class="navbar-brand">
-                    <button type="button" class="btn btn-outline-info" id="liveToastBtn">Notificações</button>
-
-                    <div class="toast-container position-fixed bottom-0 end-0 p-3">
-                        <div id="liveToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
-                            <div class="toast-header">
-                                <img src="..." class="rounded me-2" alt="...">
-                                <strong class="me-auto">Bootstrap</strong>
-                                <small>11 mins ago</small>
-                                <button type="button" class="btn-close" data-bs-dismiss="toast"
-                                    aria-label="Close"></button>
-                            </div>
-                            <div class="toast-body">
-                                Hello, world! This is a toast message.
-                            </div>
-                        </div>
+                <div aria-live="polite" aria-atomic="true" class="d-flex">
+                    <div class="toast-container position-fixed bottom-0 end-0 p-3" id="toastContainer">
                     </div>
-
                 </div>
 
                 <a class="navbar-brand" <?php if (@$_GET['url'] == '') { ?>
@@ -234,28 +219,27 @@ if ($checkCode->rowCount() > 0) {
                                         de Compras </a></li>
                             </ul>
                         </li>
-                        <?php if($showMenuAdm): ?>
+                        <?php if ($showMenuAdm): ?>
                             <li class="nav-item dropdown">
-                            <a <?php VerificationAccess('financial-control') ?> style="color: #fff !important; font-size: 1.3rem" class="nav-link dropdown-toggle"
-                                role="button" data-bs-toggle="dropdown" aria-expanded="false"
-                            >Controle Financeiro</a>
-                            <ul class="dropdown-menu dropdown-menu-dark">
-                                <li><a class="dropdown-item" <?php SelectedMenu('financial-control.php'); ?>
-                                        href="<?php echo INCLUDE_PATH; ?>financial-control"> Visualizar Pagamentos </a>
-                                </li>
-                            </ul>
-                        </li>
+                                <a style="color: #fff !important; font-size: 1.3rem" class="nav-link dropdown-toggle"
+                                    role="button" data-bs-toggle="dropdown" aria-expanded="false">Controle Financeiro</a>
+                                <ul class="dropdown-menu dropdown-menu-dark">
+                                    <li><a class="dropdown-item" <?php SelectedMenu('financial-control.php'); ?>
+                                            href="<?php echo INCLUDE_PATH; ?>financial-control"> Visualizar Pagamentos </a>
+                                    </li>
+                                </ul>
+                            </li>
                         <?php endif; ?>
                         <?php if ($showMenuAdm): ?>
-                        <li class="nav-item dropdown">
-                            <a style="color: #fff !important; font-size: 1.3rem" class="nav-link dropdown-toggle"
-                                role="button" data-bs-toggle="dropdown" aria-expanded="false">Administrativo</a>
-                            <ul class="dropdown-menu dropdown-menu-dark">
-                                <li><a class="dropdown-item" <?php SelectedMenu('dashboard.php'); ?>
-                                        href="<?php echo INCLUDE_PATH; ?>dashboard"> Dashboard ADM </a>
-                                </li>
-                            </ul>
-                        </li>
+                            <li class="nav-item dropdown">
+                                <a style="color: #fff !important; font-size: 1.3rem" class="nav-link dropdown-toggle"
+                                    role="button" data-bs-toggle="dropdown" aria-expanded="false">Administrativo</a>
+                                <ul class="dropdown-menu dropdown-menu-dark">
+                                    <li><a class="dropdown-item" <?php SelectedMenu('dashboard.php'); ?>
+                                            href="<?php echo INCLUDE_PATH; ?>dashboard"> Dashboard ADM </a>
+                                    </li>
+                                </ul>
+                            </li>
                         <?php endif; ?>
                     </ul>
                 </div>
@@ -393,6 +377,7 @@ if ($checkCode->rowCount() > 0) {
     <script src="<?php echo INCLUDE_JAVASCRIPT; ?>dashboard.js"></script>
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
 </body>
 
 </html>
