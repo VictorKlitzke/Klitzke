@@ -14,7 +14,7 @@
 
     <div class="d-flex justify-content-end">
         <!-- Primeiro Card -->
-        <div class="card bg-dark text-white me-3">
+        <div class="card bg-dark text-white me-3" style="width: 65%; float: left;">
             <div class="card-body">
                 <div class="d-flex justify-content-end align-items-center mb-3">
                     <input id="number-table" placeholder="Número da Mesa"

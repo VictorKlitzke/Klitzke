@@ -130,6 +130,8 @@ async function RegisterAccountsPayable() {
       if (responseBody.success) {
         showMessage('Contas a pagar cadastrada com sucesso', 'success');
 
+        scheduleNotification(values.dateTransaction, `Conta a pagar - Valor: ${values.valueTransaction}`);
+
         setTimeout(() => {
           location.reload();
         }, 2000);
@@ -145,5 +147,4 @@ async function RegisterAccountsPayable() {
   }, function () {
     showMessage('Operação cancelada', 'warning');
   })
-
 }

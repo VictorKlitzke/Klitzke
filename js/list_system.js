@@ -5,6 +5,7 @@ const FieldFormFinancialControl = document.getElementById('input-financial-contr
 const AddVariationForn = document.getElementById('add-variation-forn');
 
 let AddVariation = {};
+let notificationQueue = [];
 
 window.onload = ListProducts();
 window.onload = ListForn();
@@ -528,7 +529,6 @@ async function ListBuyRequest(searchTerm = '') {
         console.log('Erro ao fazer requisição: ' + error.message);
     }
 }
-
 async function ListVariationValues(searchTermVariation = '') {
 
     let formDataVariation = {
@@ -685,7 +685,6 @@ function updateTableWithNewValues(new_values_variation) {
         });
     }, 100);
 }
-
 async function ListProducts() {
     try {
         let url = `${BASE_CONTROLLERS}lists.php`;
@@ -755,7 +754,6 @@ async function ListProducts() {
         console.clear();
     }
 }
-
 async function calculateTotalsListAPrazo() {
 
     let sumresponse = {
@@ -866,6 +864,8 @@ async function ListAPrazo(searchTermFinancialControl = '') {
             const financialcontrosaleslList = document.getElementById('table-sales').querySelector('tbody');
             const financialcontrolList = document.getElementById('table-financial-control').querySelector('tbody');
 
+            console.log(salesData);
+
             financialcontrolList.innerHTML = '';
             financialcontrosaleslList.innerHTML = '';
 
@@ -913,6 +913,14 @@ async function ListAPrazo(searchTermFinancialControl = '') {
                 row.appendChild(buttonCell);
 
                 financialcontrosaleslList.appendChild(row);
+
+                const now = new Date();             
+                const transactionDate = new Date(f.date_sales);
+                if (f.status_aprazo === 'em andamento' || f.status_aprazo === 'nenhum pagamento') {
+                    if (transactionDate < now) {
+                        scheduleNotification(formatDate(transactionDate), f.total_value, f.id);
+                    }
+                }
             });
 
             financialControlData.forEach(f => {
@@ -959,9 +967,16 @@ async function ListAPrazo(searchTermFinancialControl = '') {
                     const PayCell = document.createElement('th');
                     PayCell.textContent = f.pay;
                     row.appendChild(PayCell);
-
                 }
                 financialcontrolList.appendChild(row);
+
+                const now = new Date();
+                const transactionDate = new Date(f.transaction_date);
+                if (f.pay === null) {
+                    if (transactionDate < now) {
+                        scheduleNotification(formatDate(transactionDate), f.value, f.id);
+                    }
+                }
             });
 
         } else {
@@ -1061,52 +1076,70 @@ async function ListDetailsAprazo(id_detals) {
     modal.show();
 }
 
-function ShowModalAddVariation() {
-    if (AddVariationForn.style.display === 'block') {
-        AddVariationForn.style.display = 'none';
-    } else {
-        AddVariationForn.style.display = 'block';
-    }
+function formatDate(date) {
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0'); // Mês começa do 0, por isso somamos 1
+    const year = date.getFullYear();
+    return `${day}/${month}/${year}`;
 }
-async function InvoiceAccountsPayable(id_account) {
-    if (!id_account) {
-        showMessage('ID do pagamento não encontrado', 'warning');
+
+function showToast(message) {
+
+    const toastContainer = document.getElementById('toastContainer');
+    const toastElement = document.createElement('div');
+    toastElement.className = 'toast';
+    toastElement.setAttribute('role', 'alert');
+    toastElement.setAttribute('aria-live', 'assertive');
+    toastElement.setAttribute('aria-atomic', 'true');
+
+    toastElement.innerHTML = `
+        <div class="toast-header">
+            <img src="https://via.placeholder.com/20" class="rounded me-2" alt="Notification">
+            <strong class="me-auto">Notificação</strong>
+            <small class="text-body-secondary">Agora</small>
+            <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+        <div class="toast-body">
+            ${message}
+        </div>
+    `;
+
+    toastContainer.appendChild(toastElement);
+
+    const toast = new bootstrap.Toast(toastElement, {
+        animation: true,
+        autohide: true,
+        delay: 5000
+    });
+    toast.show();
+}
+function scheduleNotification(dateTransaction, value, id) {
+    if (!('Notification' in window)) {
+        console.log('Este navegador não suporta notificações.');
         return;
     }
 
-    let responseEditAccountsPayable = {
-        type: 'editaccountpayable',
-        id_account: id_account
-    }
-
-    continueMessage("Deseja continuar o faturamento?", "Sim", "Não", async function () {
-        try {
-
-            let url = `${BASE_CONTROLLERS}edits.php`;
-
-            const response = await fetch(url, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(responseEditAccountsPayable)
-            })
-
-            const responseBody = await response.json();
-
-            if (responseBody.success) {
-                showMessage("Contas a pagar faturado com sucesso!", 'success');
-                location.reload();
-            } else {
-                showMessage(responseBody.message || "Erro ao tentar faturar contas a pagar ", 'error');
-            }
-
-        } catch (error) {
-            showMessage('Erro ao fazer requisição' + error, 'error')
+    Notification.requestPermission().then(permission => {
+        if (permission !== 'granted') {
+            console.log('Permissão de notificação negada.');
+            return;
         }
-    }, function () {
-        showMessage('Operação cancelada', 'warning')
-    })
+
+        const now = new Date();
+        const notificationTime = new Date(dateTransaction);
+        const timeToNotification = notificationTime - now;
+
+        if (timeToNotification <= 0) {
+            addNotificationToQueue(`A conta ${id} de valor ${value} está vencida!`);
+        } else {
+            setTimeout(() => {
+                addNotificationToQueue(`A conta ${id} de valor ${value} está vencida!`);
+            }, timeToNotification);
+        }
+    });
+}
+function addNotificationToQueue(message) {
+    showToast(message);
 }
 
 FieldFormBuyRequest.addEventListener('input', async function () {

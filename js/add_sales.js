@@ -314,7 +314,7 @@ async function FinalizeAprazo() {
                     saleSales.innerHTML = "";
                     saleSales.innerText = "";
                 } else {
-                    showMessage('Erro ao registrar venda:', responseDataAPrazo ? responseDataAPrazo.error : 'Resposta vazia', 'error');
+                    showMessage('Erro ao registrar venda:' + responseDataAPrazo.error, 'error');
                 }
             } catch (error) {
                 showMessage('Erro ao enviar dados para o PHP:' + error, 'error');

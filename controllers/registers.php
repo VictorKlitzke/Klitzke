@@ -252,8 +252,8 @@ class Register
 
             $sql->commit();
 
-            $message_log = "Variação de valores cadastrada com sucesso";
-            Panel::LogAction($user_id, 'Variação de valores cadastrada com sucesso', $message_log, $today);
+            // $message_log = "Variação de valores cadastrada com sucesso";
+            // Panel::LogAction($user_id, 'Variação de valores cadastrada com sucesso', $message_log, $today);
             echo json_encode(['success' => true, 'new_values_variation' => $new_values_variation]);
 
         } catch (Exception $e) {
@@ -640,7 +640,7 @@ class Register
             }
 
             $exec = $sql->prepare("INSERT INTO products (name, quantity, stock_quantity, barcode, value_product, cost_value, reference, model, brand, flow, show_on_page, size) 
-                               VALUES (:name, :quantity, :stock_quantity, :barcode, :value_product, :cost_value, :reference, :model, :brand, :flow, :show_on_page, :size)");
+                            VALUES (:name, :quantity, :stock_quantity, :barcode, :value_product, :cost_value, :reference, :model, :brand, :flow, :show_on_page, :size)");
 
             $exec->bindParam(':name', $name);
             $exec->bindParam(':quantity', $quantity);

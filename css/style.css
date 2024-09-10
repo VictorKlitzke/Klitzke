@@ -34,22 +34,6 @@
 
 /* BOXPDV */
 
-.navbar-boxpdv {
-    display: flex;
-    justify-content: space-between;
-    padding-bottom: 12px;
-}
-
-.boxpdv {
-    color: #ccc;
-    background: rgb(91, 173, 91);
-    padding: 6px;
-    margin: 6px;
-    font-size: 18px;
-    text-align: center;
-    cursor: pointer;
-}
-
 .boxpdv:hover {
     background: rgb(87, 138, 87);
 }

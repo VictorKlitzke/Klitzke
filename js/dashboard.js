@@ -85,7 +85,6 @@ async function fetchSalesPerMonth() {
 async function createChartSalesDate() {
   const salesData = await fetchSalesPerMonth();
 
-  // Função para converter a string de data no formato 'YYYY-MM' para um objeto Date
   function parseDate(dateStr) {
     const [year, month] = dateStr.split('-');
     return new Date(year, month - 1); // `month - 1` porque meses são indexados a partir de 0 em JavaScript
@@ -93,7 +92,7 @@ async function createChartSalesDate() {
 
   // Obtém o ano atual para criar a lista de todos os meses
   const currentYear = new Date().getFullYear();
-  
+
   // Cria uma lista de todos os meses do ano
   const months = Array.from({ length: 12 }, (_, i) => {
     const month = i + 1; // Mês de 1 a 12
@@ -168,26 +167,158 @@ async function createChartSalesDate() {
     }
   });
 }
-
 async function createChartsDateMaisSales() {
 
+  const salesData = await fetchSalesPerMonth();
+  const labels = salesData.map(item => item.month);
+  const totalSales = salesData.map(item => parseInt(item.total_sales, 10));
+  const totalAmount = salesData.map(item => parseFloat(item.total_value));
+  const maxSales = Math.max(...totalSales);
+  const maxSalesIndex = totalSales.indexOf(maxSales);
+  const bestMonth = labels[maxSalesIndex];
+
+  document.getElementById('best-month').innerText = `O mês com mais vendas é: ${bestMonth}, com um total de ${maxSales} vendas.`;
   const ctx = document.getElementById('total-date-sales').getContext('2d');
+
   new Chart(ctx, {
     type: 'line',
-    data: data,
-    options: {
-        scales: {
-            y: {
-                stacked: true
-            }
+    data: {
+      labels: labels,
+      datasets: [
+        {
+          label: 'Total de Vendas',
+          data: totalSales,
+          borderColor: 'rgba(75, 192, 192, 1)',
+          borderWidth: 2,
+          fill: false
+        },
+        {
+          label: 'Valor Total Vendido',
+          data: totalAmount,
+          borderColor: 'rgba(153, 102, 255, 1)',
+          borderWidth: 2,
+          fill: false
         }
+      ]
+    },
+    options: {
+      scales: {
+        x: {
+          title: {
+            display: true,
+            text: 'Meses'
+          }
+        },
+        y: {
+          beginAtZero: true,
+          title: {
+            display: true,
+            text: 'Valores'
+          }
+        }
+      }
     }
-});
+  });
+}
 
+async function fetchFinacialControl() {
+  let responseType = {
+    type: 'sumcontrolfinancial'
+  }
+  try {
+    let url = `${BASE_CONTROLLERS}lists.php`;
+
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(responseType)
+    });
+    const data = await response.json();
+
+    if (data.success) {
+      return data.sumfinancial;
+    } else {
+      console.error(data.message);
+      return [];
+    }
+  } catch (error) {
+    console.error('Erro ao buscar dados:', error);
+    return [];
+  }
+}
+async function createChartsFinacialControl() {
+  const DataFinancialControl = await fetchFinacialControl();
+
+  const TotalDes = DataFinancialControl
+    .filter(item => item.pay === null && item.status_aprazo === 'Despesa')
+    .map(item => parseFloat(item.value));
+
+  const TotalReceb = DataFinancialControl
+    .filter(item => item.status_aprazo === 'Receita' && item.type === 'Receita')
+    .map(item => parseFloat(item.value));
+
+  const totalDespesas = TotalDes.reduce((a, b) => a + b, 0);
+  const totalReceitas = TotalReceb.reduce((a, b) => a + b, 0);
+
+  const ctx = document.getElementById('total-financial-control').getContext('2d');
+
+  new Chart(ctx, {
+    type: 'doughnut',
+    data: {
+      labels: ['Despesas', 'Receitas'],
+      datasets: [{
+        label: 'Distribuição Financeira',
+        data: [totalDespesas, totalReceitas],
+        backgroundColor: [
+          'rgba(255, 99, 132, 0.7)',
+          'rgba(75, 192, 192, 0.7)'
+        ],
+        hoverBackgroundColor: [
+          'rgba(255, 99, 132, 1)',
+          'rgba(75, 192, 192, 1)'
+        ],
+        hoverOffset: 4
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: {
+          position: 'top',
+          labels: {
+            boxWidth: 100
+          }
+        },
+        title: {
+          display: true,
+          text: 'Distribuição Financeira: Despesas e Receitas',
+          font: {
+            size: 16,
+            weight: 'bold'
+          }
+        }
+      },
+      layout: {
+        padding: {
+          top: 20,
+          bottom: 20
+        }
+      }
+    }
+  });
 }
 
 document.addEventListener('DOMContentLoaded', function () {
-  createChart();
-  createChartSalesDate();
-  createChartsDateMaisSales();
+  try {
+    createChart();
+    createChartSalesDate();
+    createChartsDateMaisSales();
+    createChartsFinacialControl();
+  } catch (error) {
+    console.error(error);
+    console.clear();
+  }
 });

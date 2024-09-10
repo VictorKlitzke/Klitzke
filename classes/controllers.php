@@ -137,18 +137,13 @@ class Controllers
 
         return $exec->fetchAll();
     }
-    public static function SelectAll($name_table, $start = null, $end = null)
+    public static function SelectAll($name_table)
     {
         $sql = Db::Connection();
-
-        if ($start == null && $end == null) {
-            $exec = $sql->prepare("SELECT * FROM $name_table ORDER BY id ASC");
-        } else {
-            $exec = $sql->prepare("SELECT * FROM $name_table ORDER BY id ASC LIMIT $start,$end");
-        }
+        $exec = $sql->prepare("SELECT * FROM $name_table ORDER BY id ASC");
         $exec->execute();
 
-        return $exec->fetchAll();
+        return $exec->fetchAll(PDO::FETCH_ASSOC);
     }
     public static function SelectAllFormPayment($name_table, $start = null, $end = null)
     {
