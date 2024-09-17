@@ -5,9 +5,9 @@ session_start();
 date_default_timezone_set('America/Cuiaba');
 
 define('HOST', 'localhost');
-define('USER', 'root');
-define('PASSWORD', 'root');
-define('DATABASE', 'Klitzke');
+define('USER', 'klitzk78_Klitzke');
+define('PASSWORD', 'klitzke1235500!');
+define('DATABASE', 'klitzk78_KlitzkeProducao');
 
 $title = 'Klitzke Software';
 $title_home = 'Klitzke Software - Admin';
