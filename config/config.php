@@ -14,8 +14,8 @@ $title_home = 'Klitzke Software - Admin';
 $title_login = 'Klitzke software - login';
 $chave_secret = 'EFEGREWSWREGERGEGBTBBFDGBTGHERTGSFDSGVB';
 
-define('INCLUDE_PATH', 'https://klitzkesoftware.com.br//Klitzke/');
-define('INCLUDE_JAVASCRIPT', 'https://klitzkesoftware.com.br//Klitzke/js/');
+define('INCLUDE_PATH', 'https://klitzkesoftware.com.br/Klitzke/');
+define('INCLUDE_JAVASCRIPT', 'https://klitzkesoftware.com.br/Klitzke/js/');
 define('INCLUDE_PATH_PANEL', INCLUDE_PATH . 'pages/');
 
 define('BASE_DIR_PAINEL', __DIR__ . '/public');
