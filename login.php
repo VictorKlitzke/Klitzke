@@ -149,8 +149,6 @@ if (isset($_POST['action'])) {
             <p class="animation" style="--i:18;">Onde seu negocio toma novos rumos</p>
         </div>
     </div>
-
-    <script src="<?php echo INCLUDE_PATH ?>js/login.js"></script>
 </body>
 
 </html>
