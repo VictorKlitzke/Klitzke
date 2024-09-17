@@ -155,9 +155,6 @@ if ($checkCode->rowCount() > 0) {
                                         href="<?php echo INCLUDE_PATH; ?>register-clients">Cadastrar Clientes</a></li>
                                 <li><a class="dropdown-item" <?php SelectedMenu('register-companys'); ?>
                                         href="<?php echo INCLUDE_PATH; ?>register-companys">Cadastrar Empresa</a></li>
-                                <li><a class="dropdown-item" <?php SelectedMenu('register-stockcontrol'); ?>
-                                        href="<?php echo INCLUDE_PATH; ?>register-stockcontrol">Cadastrar Produtos</a>
-                                </li>
                                 <li><a class="dropdown-item" <?php SelectedMenu('register-table'); ?>
                                         href="<?php echo INCLUDE_PATH; ?>register-table">Cadastrar Mesa</a></li>
                                 <li><a class="dropdown-item" <?php SelectedMenu('register-back-account'); ?>
@@ -178,8 +175,6 @@ if ($checkCode->rowCount() > 0) {
                                         href="<?php echo INCLUDE_PATH; ?>list-suppliers">Lista de Fornecedores</a></li>
                                 <li><a class="dropdown-item" <?php SelectedMenu('list-boxpdv'); ?>
                                         href="<?php echo INCLUDE_PATH; ?>list-boxpdv">Lista de Caixas</a></li>
-                                <li><a class="dropdown-item" <?php SelectedMenu('list-products'); ?>
-                                        href="<?php echo INCLUDE_PATH; ?>list-products"> Lista de Produtos</a></li>
                                 <li><a class="dropdown-item" <?php SelectedMenu('list-sales'); ?>
                                         href="<?php echo INCLUDE_PATH; ?>list-sales">Lista de Vendas </a></li>
                                 <li><a class="dropdown-item" <?php SelectedMenu('list-request'); ?>
@@ -226,6 +221,19 @@ if ($checkCode->rowCount() > 0) {
                                 <ul class="dropdown-menu dropdown-menu-dark">
                                     <li><a class="dropdown-item" <?php SelectedMenu('financial-control.php'); ?>
                                             href="<?php echo INCLUDE_PATH; ?>financial-control"> Visualizar Pagamentos </a>
+                                    </li>
+                                </ul>
+                            </li>
+                        <?php endif; ?>
+                        <?php if ($showMenuAdm): ?>
+                            <li class="nav-item dropdown">
+                                <a style="color: #fff !important; font-size: 1.3rem" class="nav-link dropdown-toggle"
+                                    role="button" data-bs-toggle="dropdown" aria-expanded="false">Controle Estoque</a>
+                                <ul class="dropdown-menu dropdown-menu-dark">
+                                    <li><a class="dropdown-item" <?php SelectedMenu('list-products'); ?>
+                                            href="<?php echo INCLUDE_PATH; ?>list-products"> Lista de Produtos</a></li>
+                                    <li><a class="dropdown-item" <?php SelectedMenu('register-stockcontrol'); ?>
+                                            href="<?php echo INCLUDE_PATH; ?>register-stockcontrol">Cadastrar Produtos</a>
                                     </li>
                                 </ul>
                             </li>
