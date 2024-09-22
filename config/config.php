@@ -5,17 +5,17 @@ session_start();
 date_default_timezone_set('America/Cuiaba');
 
 define('HOST', 'localhost');
-define('USER', 'klitzk78_Klitzke');
-define('PASSWORD', 'klitzke1235500!');
-define('DATABASE', 'klitzk78_KlitzkeProducao');
+define('USER', 'root');
+define('PASSWORD', 'root');
+define('DATABASE', 'klitzke');
 
 $title = 'Klitzke Software';
 $title_home = 'Klitzke Software - Admin';
 $title_login = 'Klitzke software - login';
 $chave_secret = 'EFEGREWSWREGERGEGBTBBFDGBTGHERTGSFDSGVB';
 
-define('INCLUDE_PATH', 'https://klitzkesoftware.com.br/');
-define('INCLUDE_JAVASCRIPT', 'https://klitzkesoftware.com.br/Klitzke/js/');
+define('INCLUDE_PATH', 'http://localhost:3000/Klitzke/');
+define('INCLUDE_JAVASCRIPT', 'http://localhost:3000/Klitzke/js/');
 define('INCLUDE_PATH_PANEL', INCLUDE_PATH . 'pages/');
 
 define('BASE_DIR_PAINEL', __DIR__ . '/public');

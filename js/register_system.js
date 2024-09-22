@@ -1,3 +1,5 @@
+const FilesContent = document.getElementById('file-pdf');
+
 const FieldsUsers = () => {
     return {
         type: {
@@ -1057,8 +1059,6 @@ async function RegisterMultiply() {
         multiply: values.multiply
     }
 
-    console.log(responseMultiply);
-
     continueMessage("Deseja relamente cadastrar um multiplicador?", "Sim", "Não", async function () {
 
         try {
@@ -1093,4 +1093,95 @@ async function RegisterMultiply() {
     }, function () {
         showMessage('Registro cancelado', 'warning')
     })
+}
+
+const getFildsFile = () => {
+    return {
+        type: {
+            type: 'registerfile'
+        },
+        values: {
+            fileregister: document.getElementById('files').value,
+        },
+        inputs: {
+            fileregister: document.getElementById('files')
+        }
+    }
+}
+async function RegisterFile() {
+    const { type, values, inputs } = await getFildsFile();
+
+    if (values.fileregister == "") {
+        showMessage('Campo vazio', 'warning')
+
+        if (values.multiply === "") inputs.fileregister.classList.add('error');
+        setTimeout(() => {
+            inputs.value.fileregister.remove('error');
+        }, 3000);
+
+        return;
+
+    }
+
+    let responsefileregister = {
+        type: type.type,
+        fileregister: values.fileregister
+    }
+
+    console.log(responsefileregister);
+
+    continueMessage("Deseja realmente cadastrar por esse método?", "Sim", "Não", async function () {
+
+        try {
+
+            let url = `${BASE_CONTROLLERS}registers.php`;
+
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(responsefileregister)
+            });
+
+            const responseBody = await response.json();
+
+            if (responseBody.success) {
+                showMessage('Cadastro de produto realizado com sucesso ', 'success');
+
+                setTimeout(() => {
+                    location.reload();
+                }, 2000);
+
+            } else {
+                showMessage(responseBody.message || 'Erro ao cadastrar produto ' + responseBody.error, 'error');
+            }
+
+        } catch (error) {
+            showMessage('Erro na requisição' + error.message, 'error')
+        }
+
+    }, function () {
+        showMessage('Registro cancelado', 'warning')
+    })
+}
+
+function closeModal() {
+    FilesContent.style.display = 'none';
+    localStorage.setItem('modalState', 'fechado');
+}
+
+window.onload = function () {
+    const modalState = localStorage.getItem('modalState');
+
+    if (modalState === 'fechado') {
+        FilesContent.style.display = 'none';
+    } else {
+        FilesContent.style.display = 'block';
+    }
+}
+
+function DisplayFiles() {
+    FilesContent.style.display = 'block';
+    localStorage.setItem('modalState', 'aberto');
 }
