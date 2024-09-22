@@ -1,68 +1,78 @@
 import pdfplumber
-from db_connection import connect  # Importar a função de conexão
+import re
+from services import connect  
 
-# Função para extrair dados do PDF
-def extract_pdf_data(pdf_path):
+def extract_table_data(pdf_path):
     with pdfplumber.open(pdf_path) as pdf:
-        first_page = pdf.pages[0]
-        text = first_page.extract_text()
+        first_page = pdf.pages[0] 
+        table = first_page.extract_table()
 
-        # Dividir o texto em linhas
-        lines = text.split('\n')
+        products = []
 
-        # Filtrando algumas informações da nota fiscal de exemplo
-        produto, valor_unitario, valor_total = None, None, None
-        for line in lines:
-            if "Descrição DO PRODUTO" in line:
-                produto = line.split()[-1]  # Exemplo de extração
-            if "Vlr. Unitário" in line:
-                valor_unitario = line.split()[-1]
-            if "Vl. Total" in line:
-                valor_total = line.split()[-1]
+        if table:
+            for row in table:
+                if row[0] and re.match(r'\d+', row[0]):  
+                    product_data = {
+                        "cod_prod": row[0],
+                        "descricao": row[1],
+                        "vl_unitario": row[7],  
+                        "QTDE": extract_quantity(row[6]),  
+                    }
+                    products.append(product_data)
 
-        # Verificar se todas as variáveis foram preenchidas antes de retornar
-        if produto and valor_unitario and valor_total:
-            return {
-                "produto": produto,
-                "valor_unitario": valor_unitario,
-                "valor_total": valor_total
-            }
-        else:
-            return None
+        return products
 
-# Função para cadastrar no banco de dados
-def insert_into_database(data):
-    # Usar a conexão do arquivo db_connection
+def extract_quantity(qty_string):
+    match = re.match(r'[\d.,]+', qty_string)
+    if match:
+        qty_value = match.group(0)
+        return qty_value.split(',')[0].split('.')[0]
+    return '0'
+
+
+def insert_into_database(products):
     connection = connect()
     if connection is None:
-        print("Conexão com o banco falhou.")
+        print("Falha ao estabelecer a conexão.")
         return
-
-    cursor = connection.cursor()
-
-    # Inserir dados na tabela products
-    query = """
-    INSERT INTO products (produto, valor_unitario, valor_total) 
-    VALUES (%s, %s, %s)
-    """
-    values = (data['produto'], data['valor_unitario'], data['valor_total'])
     
-    cursor.execute(query, values)
-    connection.commit()
+    show_on_page = 0;
+
+    try:
+        cursor = connection.cursor()
+
+        query = """
+        INSERT INTO products (name, value_product, quantity, stock_quantity, show_on_page) 
+        VALUES (%s, %s, %s, %s, %s)
+        """
+        
+        print(products)
+
+        for product in products:
+            vl_unitario = product['vl_unitario'].replace(' ', '').replace('.', '', 2).replace(',', '.').strip()
+            qtde = product['QTDE'].replace(' ', '').replace('.', '', 2).replace(',', '.').strip()
+            
+            vl_unitario = float(vl_unitario)
+            qtde = float(qtde)
+
+            values = (product['descricao'], vl_unitario, qtde, qtde, show_on_page)  # Adiciona dados à lista de valores
+            cursor.execute(query, values)
+
+        connection.commit()
+        print("Dados inseridos com sucesso!")
     
-    # Fechar conexão
-    cursor.close()
-    connection.close()
+    except Exception as e:
+        print(f"Ocorreu um erro: {e}")
+    
+    finally:
+        cursor.close()
+        connection.close()
 
-# Caminho do PDF
-pdf_path = '/mnt/data/nota-fiscal-notebook-dell.pdf'
 
-# Extraindo dados do PDF
-data = extract_pdf_data(pdf_path)
+pdf_path = 'nota-fiscal-notebook-dell.pdf'
+data = extract_table_data(pdf_path) 
 
-# Verificar se os dados foram extraídos corretamente
 if data:
-    # Inserindo os dados no banco de dados
     insert_into_database(data)
     print("Dados inseridos com sucesso!")
 else:

@@ -1097,73 +1097,53 @@ async function RegisterMultiply() {
 
 const getFildsFile = () => {
     return {
-        type: {
-            type: 'registerfile'
-        },
         values: {
-            fileregister: document.getElementById('files').value,
+            fileregister: document.getElementById('files').files[0], // Mude para pegar o arquivo
         },
         inputs: {
             fileregister: document.getElementById('files')
         }
     }
 }
+
 async function RegisterFile() {
-    const { type, values, inputs } = await getFildsFile();
+    const { values, inputs } = await getFildsFile();
 
-    if (values.fileregister == "") {
-        showMessage('Campo vazio', 'warning')
-
-        if (values.multiply === "") inputs.fileregister.classList.add('error');
+    if (!values.fileregister) {
+        showMessage('Campo vazio', 'warning');
+        inputs.fileregister.classList.add('error');
         setTimeout(() => {
-            inputs.value.fileregister.remove('error');
+            inputs.fileregister.classList.remove('error');
         }, 3000);
-
         return;
-
     }
 
-    let responsefileregister = {
-        type: type.type,
-        fileregister: values.fileregister
-    }
-
-    console.log(responsefileregister);
+    let formData = new FormData();
+    formData.append('file', values.fileregister); 
 
     continueMessage("Deseja realmente cadastrar por esse método?", "Sim", "Não", async function () {
-
         try {
-
-            let url = `${BASE_CONTROLLERS}registers.php`;
-
-            const response = await fetch(url, {
+            const response = await fetch('http://localhost:5000/upload', { 
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(responsefileregister)
+                body: formData 
             });
 
             const responseBody = await response.json();
 
             if (responseBody.success) {
                 showMessage('Cadastro de produto realizado com sucesso ', 'success');
-
                 setTimeout(() => {
                     location.reload();
                 }, 2000);
-
             } else {
-                showMessage(responseBody.message || 'Erro ao cadastrar produto ' + responseBody.error, 'error');
+                showMessage(responseBody.message || 'Erro ao cadastrar produto ', 'error');
             }
-
         } catch (error) {
-            showMessage('Erro na requisição' + error.message, 'error')
+            showMessage('Erro na requisição: ' + error.message, 'error');
         }
-
     }, function () {
-        showMessage('Registro cancelado', 'warning')
-    })
+        showMessage('Registro cancelado', 'warning');
+    });
 }
 
 function closeModal() {

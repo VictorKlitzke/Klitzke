@@ -5,14 +5,14 @@ def connect():
   try:
     connection = mysql.connector.connect(
       host='localhost',  
-      database='Klitzke',  
+      database='klitzke',  
       user='root',  
       password='root'
     )
     if connection.is_connected():
-      db_info = connection.get_server_info()
-      print("Conectado ao servidor MySQL versão ", db_info)    
+      return connection   
   except Error as e:
     print("Erro ao conectar ao MySQL", e)    
     return None 
+       
 connect()

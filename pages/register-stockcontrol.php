@@ -68,7 +68,9 @@
             <span id="flow-error" class="error-message">Campo está invalido, Ajuste se possivel.</span>
         </div>
         <div class="col-12">
-        <button class="btn btn-primary" onclick="RegisterProducts()" type="button">Cadastrar</button>
+            <button class="btn btn-primary" onclick="RegisterProducts()" type="button">Cadastrar</button>
+            <button class="btn btn-secondary" onclick="DisplayFiles()" type="button">Cadastrar Produtos por
+                Arquivo</button>
         </div>
     </div>
 </div>
@@ -84,10 +86,14 @@
             </svg>
         </button>
     </div>
-    <div class="row">
-        <div class="col">
+    <div class="row g-3">
+        <div class="col-md-12">
             <label class="form-label text-white">Arquivo</label>
             <input class="form-control" type="file" id="files">
+            <span class="error-message">Campo está invalido, Ajuste se possivel.</span>
+        </div>
+        <div class="col-12">
+            <button class="btn btn-primary" onclick="RegisterFile()" type="button">Cadastrar</button>
         </div>
     </div>
 </div>
