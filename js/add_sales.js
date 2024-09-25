@@ -123,6 +123,7 @@ function openAPrazoModal() {
         OverlayAPrazo.style.display = 'block';
     }
 }
+
 function closeAPrazoModal() {
     if (APrazoModal && OverlayAPrazo) {
         APrazoModal.style.display = 'none';
@@ -209,7 +210,7 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 function calculateInstallments() {
-    
+
     let numInstallments = parseInt(document.getElementById('aprazo-number').value);
     let daysBetweenInstallments = parseInt(document.getElementById('aprazo-venciment').value);
     let startDate = document.getElementById('aprazo-venciment-date').value;
@@ -231,10 +232,10 @@ function calculateInstallments() {
         return new Date(year, month - 1, day);
     }
     let currentDate = parseDate(startDate);
-    
+
     let installmentValue = totalValuezAPrazo / numInstallments;
     let tableBody = document.getElementById('desc-aprazo');
-    tableBody.innerHTML = ''; 
+    tableBody.innerHTML = '';
 
     for (let i = 1; i <= numInstallments; i++) {
         let dueDate = new Date(currentDate);
@@ -309,6 +310,24 @@ async function FinalizeAprazo() {
                 if (responseDataAPrazo && responseDataAPrazo.success) {
                     showMessage('Venda finalizada com sucesso!', 'success');
 
+                    let printSales = {
+                        date: new Date().toLocaleString(),
+                        clientName: idSalesClient,
+                        totalValue: totalValue,
+                        products: selectedProducts.map(product => ({
+                            name: product.name,
+                            value: parseFloat(product.value),
+                        }))
+                    }
+
+                    setTimeout(() => {
+                        continueMessage("Deseja imprimir comprovante?", "Sim", "Não", async function () {
+                            printReceipt(printSales);
+                        }, function () {
+                            showMessage('Operação cancelada', 'warning')
+                        })
+                    }, 5000);
+
                     OverlayAPrazo.style.display = 'none';
                     APrazoModal.style.display = 'none';
                     saleSales.innerHTML = "";
@@ -370,6 +389,24 @@ async function finalizeSalePortion() {
                 if (responseDataPortion && responseDataPortion.success) {
                     showMessage('Venda finalizada com sucesso!', 'success');
 
+                    let printSales = {
+                        date: new Date().toLocaleString(),
+                        clientName: idSalesClient,
+                        totalValue: totalValue,
+                        products: selectedProducts.map(product => ({
+                            name: product.name,
+                            value: parseFloat(product.value),
+                        }))
+                    }
+
+                    setTimeout(() => {
+                        continueMessage("Deseja imprimir comprovante?", "Sim", "Não", async function () {
+                            printReceipt(printSales);
+                        }, function () {
+                            showMessage('Operação cancelada', 'warning')
+                        })
+                    }, 5000);
+
                     overlayPortion.style.display = 'none';
                     ModalSalesPortion.style.display = 'none';
                     saleSales.innerHTML = "";
@@ -426,6 +463,25 @@ async function finalizeSale() {
 
             if (responseData && responseData.success) {
                 showMessage('Venda finalizada com sucesso!', 'success');
+
+                let printSales = {
+                    date: new Date().toLocaleString(),
+                    clientName: idSalesClient,
+                    totalValue: totalValue,
+                    products: selectedProducts.map(product => ({
+                        name: product.name,
+                        value: parseFloat(product.value),
+                    }))
+                }
+
+                setTimeout(() => {
+                    continueMessage("Deseja imprimir comprovante?", "Sim", "Não", async function () {
+                        printReceipt(printSales);
+                    }, function () {
+                        showMessage('Operação cancelada', 'warning')
+                    })
+                }, 5000);
+
                 saleSales.innerHTML = "";
                 saleSales.innerText = "";
             } else {
@@ -436,6 +492,82 @@ async function finalizeSale() {
         }
     }
 }
+
+async function printReceipt(saleDetails) {
+    let printWindow = window.open('', '_blank', 'width=800,height=600');
+
+    let receiptContent = `
+        <html>
+            <head>
+                <title>Comprovante de Venda</title>
+                <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/5.3.0/css/bootstrap.min.css">
+                <style>
+                    .receipt-container {
+                        border: 1px solid #dee2e6;
+                        padding: 20px;
+                        max-width: 400px;
+                        margin: 0 auto;
+                    }
+                    .receipt-header {
+                        background-color: #f8f9fa;
+                        padding: 15px;
+                        border-bottom: 1px solid #dee2e6;
+                    }
+                    .receipt-footer {
+                        border-top: 1px solid #dee2e6;
+                        padding-top: 15px;
+                        margin-top: 20px;
+                    }
+                    .receipt-items {
+                        border-bottom: 1px solid #dee2e6;
+                        padding-bottom: 15px;
+                        margin-bottom: 15px;
+                    }
+                    .receipt-item {
+                        font-size: 14px;
+                    }
+                    .receipt-total {
+                        font-size: 18px;
+                        font-weight: bold;
+                    }
+                </style>
+            </head>
+            <body>
+                <div class="container mt-5">
+                    <div class="receipt-container shadow-sm rounded">
+                        <div class="receipt-header text-center mb-3">
+                            <h3>Comprovante de Venda</h3>
+                            <p><strong>Data:</strong> ${saleDetails.date}</p>
+                            <p><strong>Cliente:</strong> ${saleDetails.clientName || 'N/A'}</p>
+                        </div>
+
+                        <div class="receipt-items">
+                            <h5 class="mb-3">Itens</h5>
+                            <ul class="list-group">
+                                ${saleDetails.products.map(product => `
+                                    <li class="list-group-item d-flex justify-content-between align-items-center receipt-item">
+                                        <span>${product.name}</span>
+                                        <span>R$ ${product.value.toFixed(2)}</span>
+                                    </li>
+                                `).join('')}
+                            </ul>
+                        </div>
+
+                        <div class="receipt-footer text-end">
+                            <p class="receipt-total">Total: R$ ${saleDetails.totalValue.toFixed(2)}</p>
+                        </div>
+                    </div>
+                </div>
+            </body>
+        </html>
+    `;
+
+    printWindow.document.write(receiptContent);
+    printWindow.document.close();
+    printWindow.focus();
+    printWindow.print();
+}
+
 
 function showQRCode(qrCodeDataUri) {
     let qrCodeContainer = document.getElementById('qrcode');

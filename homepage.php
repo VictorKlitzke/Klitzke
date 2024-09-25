@@ -173,8 +173,6 @@ if ($checkCode->rowCount() > 0) {
                                         href="<?php echo INCLUDE_PATH; ?>list-clients">Lista de Clientes</a></li>
                                 <li><a class="dropdown-item" <?php SelectedMenu('list-suppliers'); ?>
                                         href="<?php echo INCLUDE_PATH; ?>list-suppliers">Lista de Fornecedores</a></li>
-                                <li><a class="dropdown-item" <?php SelectedMenu('list-boxpdv'); ?>
-                                        href="<?php echo INCLUDE_PATH; ?>list-boxpdv">Lista de Caixas</a></li>
                                 <li><a class="dropdown-item" <?php SelectedMenu('list-sales'); ?>
                                         href="<?php echo INCLUDE_PATH; ?>list-sales">Lista de Vendas </a></li>
                                 <li><a class="dropdown-item" <?php SelectedMenu('list-request'); ?>
@@ -195,10 +193,14 @@ if ($checkCode->rowCount() > 0) {
                         </li>
                         <li class="nav-item dropdown">
                             <a style="color: #fff !important; font-size: 1.3rem" class="nav-link dropdown-toggle"
-                                role="button" data-bs-toggle="dropdown" aria-expanded="false">Minha Empresa</a>
+                                role="button" data-bs-toggle="dropdown" aria-expanded="false">Fluxo de Caixa</a>
                             <ul class="dropdown-menu dropdown-menu-dark">
-                                <li><a class="dropdown-item" <?php echo VerificationMenu(); ?> <?php SelectedMenu('list-companys'); ?>
-                                        href="<?php echo INCLUDE_PATH; ?>list-companys">Empresa</a></li>
+                                <li><a class="dropdown-item" <?php SelectedMenu('register-boxpdv'); ?>
+                                        href="<?php echo INCLUDE_PATH; ?>register-boxpdv">Abrir Caixa</a></li>
+                                <li><a class="dropdown-item" <?php SelectedMenu('list-boxpdv'); ?>
+                                        href="<?php echo INCLUDE_PATH; ?>list-boxpdv">Lista de Caixas</a></li>
+                                <li><a class="dropdown-item" <?php SelectedMenu(''); ?>
+                                        href="<?php echo INCLUDE_PATH; ?>">Relatorios Fluxo de Caixa</a></li>
                             </ul>
                         </li>
                         <li class="nav-item dropdown">
@@ -249,6 +251,14 @@ if ($checkCode->rowCount() > 0) {
                                 </ul>
                             </li>
                         <?php endif; ?>
+                        <li class="nav-item dropdown">
+                            <a style="color: #fff !important; font-size: 1.3rem" class="nav-link dropdown-toggle"
+                                role="button" data-bs-toggle="dropdown" aria-expanded="false">Minha Empresa</a>
+                            <ul class="dropdown-menu dropdown-menu-dark">
+                                <li><a class="dropdown-item" <?php echo VerificationMenu(); ?> <?php SelectedMenu('list-companys'); ?>
+                                        href="<?php echo INCLUDE_PATH; ?>list-companys">Empresa</a></li>
+                            </ul>
+                        </li>
                     </ul>
                 </div>
             </div>
@@ -261,36 +271,45 @@ if ($checkCode->rowCount() > 0) {
         <?php
 
         $sql = DB::Connection();
+        $user_id = isset($_SESSION['id']) ? $_SESSION['id'] : null;
+        $status = 1;
 
-        $openBoxQuery = $sql->prepare("SELECT id FROM boxpdv WHERE status = 1");
+        $openBoxQuery = $sql->prepare("SELECT id FROM boxpdv WHERE status = :status AND id_users = :id_users");
+        $openBoxQuery->bindParam(':status', $status, PDO::PARAM_INT);
+        $openBoxQuery->bindParam(':id_users', $user_id, PDO::PARAM_INT);
         $openBoxQuery->execute();
         $openBoxResult = $openBoxQuery->fetch(PDO::FETCH_ASSOC);
 
         if ($openBoxResult) {
             $openBoxId = $openBoxResult['id'];
 
-            $exec = $sql->prepare("SELECT SUM(total_value) as total_pix FROM sales WHERE sales.id_payment_method = 1 AND id_boxpdv = :boxId");
+            $exec = $sql->prepare("SELECT SUM(total_value) as total_pix FROM sales WHERE sales.id_payment_method = 1 AND id_boxpdv = :boxId AND id_users = :id_users");
             $exec->bindParam(':boxId', $openBoxId, PDO::PARAM_INT);
+            $exec->bindParam(':id_users', $user_id, PDO::PARAM_INT);
             $exec->execute();
             $result_pix = $exec->fetch(PDO::FETCH_ASSOC);
 
-            $exec = $sql->prepare("SELECT SUM(total_value) as total_debit FROM sales WHERE sales.id_payment_method = 2 AND id_boxpdv = :boxId");
+            $exec = $sql->prepare("SELECT SUM(total_value) as total_debit FROM sales WHERE sales.id_payment_method = 2 AND id_boxpdv = :boxId AND id_users = :id_users");
             $exec->bindParam(':boxId', $openBoxId, PDO::PARAM_INT);
+            $exec->bindParam(':id_users', $user_id, PDO::PARAM_INT);
             $exec->execute();
             $result_debit = $exec->fetch(PDO::FETCH_ASSOC);
 
-            $exec = $sql->prepare("SELECT SUM(total_value) as total_credit FROM sales WHERE sales.id_payment_method = 3 AND id_boxpdv = :boxId");
+            $exec = $sql->prepare("SELECT SUM(total_value) as total_credit FROM sales WHERE sales.id_payment_method = 3 AND id_boxpdv = :boxId AND id_users = :id_users");
             $exec->bindParam(':boxId', $openBoxId, PDO::PARAM_INT);
+            $exec->bindParam(':id_users', $user_id, PDO::PARAM_INT);
             $exec->execute();
             $result_credit = $exec->fetch(PDO::FETCH_ASSOC);
 
-            $exec = $sql->prepare("SELECT SUM(total_value) as total_money FROM sales WHERE sales.id_payment_method = 4 AND id_boxpdv = :boxId");
+            $exec = $sql->prepare("SELECT SUM(total_value) as total_money FROM sales WHERE sales.id_payment_method = 4 AND id_boxpdv = :boxId AND id_users = :id_users");
             $exec->bindParam(':boxId', $openBoxId, PDO::PARAM_INT);
+            $exec->bindParam(':id_users', $user_id, PDO::PARAM_INT);
             $exec->execute();
             $result_money = $exec->fetch(PDO::FETCH_ASSOC);
 
-            $exec = $sql->prepare("SELECT SUM(total_value) as total_aprazo FROM sales inner join sales_aprazo on `sales_aprazo`.`sale_id` = sales.id WHERE sales.id_payment_method = 5 and sales_aprazo.status = 'paga' AND id_boxpdv = :boxId");
+            $exec = $sql->prepare("SELECT SUM(total_value) as total_aprazo FROM sales inner join sales_aprazo on `sales_aprazo`.`sale_id` = sales.id WHERE sales.id_payment_method = 5 and sales_aprazo.status = 'paga' AND id_boxpdv = :boxId AND id_users = :id_users");
             $exec->bindParam(':boxId', $openBoxId, PDO::PARAM_INT);
+            $exec->bindParam(':id_users', $user_id, PDO::PARAM_INT);
             $exec->execute();
             $result_aprazo = $exec->fetch(PDO::FETCH_ASSOC);
 
