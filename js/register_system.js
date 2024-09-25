@@ -475,12 +475,16 @@ const getFieldsAccount = () => {
         values: {
             pix: document.getElementById('pix').value.trim(),
             name_holder: document.getElementById('name_holder').value.trim(),
-            city: document.getElementById('city').value.trim(),
+            bank: document.getElementById('bank').value.trim(),
+            bank: document.getElementById('agency').value.trim(),
+            typeAccount: document.getElementById('type-account').value.trim(),
         },
         inputs: {
             pix: document.getElementById('pix'),
             name_holder: document.getElementById('name_holder'),
-            city: document.getElementById('city')
+            bank: document.getElementById('bank'),
+            bank: document.getElementById('agency'),
+            typeAccount: document.getElementById('type-account'),
         }
     };
 }
@@ -1105,7 +1109,6 @@ const getFildsFile = () => {
         }
     }
 }
-
 async function RegisterFile() {
     const { values, inputs } = await getFildsFile();
 
