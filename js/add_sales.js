@@ -568,18 +568,127 @@ async function printReceipt(saleDetails) {
     printWindow.print();
 }
 
+async function finalizeSale() {
+    const saleSales = document.querySelector('.sales-sales');
+    let totalAmountElement = document.getElementById('totalAmount');
+    let totalValue = 0;
 
-function showQRCode(qrCodeDataUri) {
-    let qrCodeContainer = document.getElementById('qrcode');
-
-    if (!qrCodeContainer) {
-        qrCodeContainer = document.createElement('div');
-        qrCodeContainer.id = 'qrcode';
-        document.body.appendChild(qrCodeContainer);
+    if (totalAmountElement) {
+        totalValue = parseFloat(totalAmountElement.textContent.replace('R$ ', '')) || 0;
     }
 
-    qrCodeContainer.innerHTML = `<img src="${qrCodeDataUri}" style="width: 500px; display: flex; justify-content: center; align-items: center; z-index: 999" />`;
-    qrCodeContainer.style.display = 'block';
+    let selectedPaymentMethod = document.getElementById('id_payment_method').value;
+    let idSalesClient = selectedClientId || '';
+
+    let requestData = {
+        idPaymentMethod: selectedPaymentMethod,
+        salesIdClient: idSalesClient,
+        totalValue: totalValue,
+        products: selectedProducts
+    };
+
+    if (selectedProducts.length === 0) {
+        showMessage('Erro ao registrar venda, nenhum produto selecionado', 'warning');
+        return;
+    }
+
+    if (selectedPaymentMethod == 1) {
+        let url = `${BASE_URL}qrcode.php`;
+
+        const requestData1 = {
+            totalValue: totalValue
+        };
+
+        try {
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(requestData1),
+            });
+
+            const responseBody = await response.json();
+            if (responseBody && responseBody.success) {
+                console.log(responseBody.qrCodePIX);
+                generateQRCode(responseBody.qrCodePIX);
+                openQRCodeModal();
+            } else {
+                console.error('Erro ao gerar QR Code:', responseBody.message);
+            }
+        } catch (error) {
+            console.error('Erro na requisição:', error);
+        }
+    }
+
+    try {
+        let url = `${BASE_URL}add_sales.php`;
+
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(requestData),
+        });
+
+        const responseBody = await response.text();
+        const responseData = JSON.parse(responseBody);
+
+        if (responseData && responseData.success) {
+            showMessage('Venda finalizada com sucesso!', 'success');
+
+            let printSales = {
+                date: new Date().toLocaleString(),
+                clientName: idSalesClient,
+                totalValue: totalValue,
+                products: selectedProducts.map(product => ({
+                    name: product.name,
+                    value: parseFloat(product.value),
+                }))
+            }
+
+            setTimeout(() => {
+                continueMessage("Deseja imprimir comprovante?", "Sim", "Não", async function () {
+                    printReceipt(printSales);
+                }, function () {
+                    showMessage('Operação cancelada', 'warning');
+                });
+            }, 5000);
+
+            saleSales.innerHTML = "";
+            saleSales.innerText = "";
+        } else {
+            showMessage('Caixa não foi aberto, para essa operação', 'error');
+        }
+    } catch (error) {
+        showMessage('Erro ao enviar dados para o PHP:' + error, 'error');
+    }
+}
+
+function generateQRCode(qrCodeData) {
+    const qrCodeContainer = document.getElementById('qrCodeContainer'); 
+    qrCodeContainer.innerHTML = "";
+    
+    const qrCodeImage = document.createElement('img');
+    qrCodeImage.src = `data:image/png;base64,${qrCodeData}`; 
+    qrCodeImage.alt = "QR Code";
+
+    qrCodeContainer.appendChild(qrCodeImage); 
+}
+
+
+function openQRCodeModal() {
+    const qrCodeModal = new bootstrap.Modal(document.getElementById('qrCodeModal'));
+    qrCodeModal.show();
+}
+
+async function confirmPayment() {
+    return new Promise((resolve) => {
+        setTimeout(() => {
+            resolve(true);
+        }, 3000);
+    });
 }
 
 function updateTotalAmount(total) {

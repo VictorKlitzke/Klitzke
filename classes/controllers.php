@@ -6,7 +6,6 @@ $sql = Db::Connection();
 
 class Controllers
 {
-
     public static function SelectAllWhere($table_name, $where = null, $params = [])
     {
         $sql = Db::Connection();
@@ -249,40 +248,6 @@ class Controllers
 
         return $exec->fetchAll();
 
-    }
-    public static function Update($arr, $single = false)
-    {
-        $true = true;
-        $first = false;
-        $name_table = $arr['name_table'];
-
-        $query = "UPDATE `$name_table` SET ";
-        foreach ($arr as $key => $value) {
-            $name = $key;
-            if ($name == 'action' || $name == 'name_table' || $name == 'id')
-                continue;
-
-            if ($first == false) {
-                $first = true;
-                $query .= "$name=?";
-            } else {
-                $query .= ",$name=?";
-            }
-
-            $param[] = $value;
-        }
-
-        if ($true == true) {
-            if ($single == false) {
-                $param[] = $arr['id'];
-                $sql = Db::Connection()->prepare($query .= ' WHERE id=?');
-                $sql->execute($param);
-            } else {
-                $sql = Db::Connection()->prepare($query);
-                $sql->execute($param);
-            }
-        }
-        return $true;
     }
 
 }

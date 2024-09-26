@@ -551,9 +551,6 @@ class Register
                 return;
             }
 
-
-            $sql->BeginTransaction();
-
             $exec = $sql->prepare("INSERT INTO $name_table (name, status_table) VALUES (:name, :status_table)");
             $exec->bindValue(':name', $name, PDO::PARAM_STR);
             $exec->bindValue(':status_table', $status, PDO::PARAM_INT);
@@ -574,27 +571,50 @@ class Register
     {
         $today = date('Y-m-d H:i:s');
         $id_company = Controllers::Select('company');
+        if (!$id_company) {
+            Response::json(false, 'Erro ao buscar dados da empresa', $today);
+            return;
+        }
         $company = $id_company['id'];
 
         $name_holder = filter_var($response_account['name_holder'], FILTER_SANITIZE_STRING);
-        $city = filter_var($response_account['city'], FILTER_SANITIZE_STRING);
+        $bank = filter_var($response_account['bank'], FILTER_SANITIZE_STRING);
         $pix = filter_var($response_account['pix'], FILTER_SANITIZE_STRING);
+        $agency = filter_var($response_account['agency'], FILTER_SANITIZE_STRING);
+        $account_type = filter_var($response_account['typeAccount'], FILTER_SANITIZE_NUMBER_INT);
+        $account_number = filter_var($response_account['account_number'], FILTER_SANITIZE_STRING);
 
-        $name_table = "banck_account";
+        $name_table = "bank_account";
 
-        if (!$name_holder || !$pix || !$city) {
+        if (!$name_holder || !$pix || !$bank) {
             Response::json(false, 'Campo invalido', $today);
             return;
         }
 
         try {
-            $sql->beginTransaction();
 
-            $exec = $sql->prepare("INSERT INTO $name_table (pix, account_holder_name, city, id_company) 
-                                   VALUES (:pix, :account_holder_name, :city, :id_company)");
+            // if (self::UserAccess($sql, $user_id) < 50) {
+            //     Response::json(false, 'Usuário não tem permissão para executar essa atividade', $today);
+            //     return;
+            // }
+
+            $exec_verification = $sql->prepare("select * from $name_table where pix = :pix");
+            $exec_verification->BindParam(':pix', $pix, PDO::PARAM_STR);
+            $exec_verification->execute();
+            $result_verification = $exec_verification->fetch(PDO::FETCH_ASSOC);
+
+            if ($result_verification['pix']) {
+                Response::json(false, 'Esse PIX já está cadastrado!', $today);
+            }
+
+            $exec = $sql->prepare("INSERT INTO $name_table (pix, account_name, bank, agency, account_type, account_number, id_company) 
+                                VALUES (:pix, :account_name, :bank, :agency, :account_type, :account_number, :id_company)");
             $exec->bindValue(':pix', $pix, PDO::PARAM_STR);
-            $exec->bindValue(':account_holder_name', $name_holder, PDO::PARAM_STR);
-            $exec->bindValue(':city', $city, PDO::PARAM_STR);
+            $exec->bindValue(':account_name', $name_holder, PDO::PARAM_STR);
+            $exec->bindValue(':bank', $bank, PDO::PARAM_STR);
+            $exec->bindValue(':agency', $agency, PDO::PARAM_STR);
+            $exec->bindValue(':account_type', $account_type, PDO::PARAM_STR);
+            $exec->bindValue(':account_number', $account_number, PDO::PARAM_STR);
             $exec->bindValue(':id_company', $company, PDO::PARAM_INT);
             $exec->execute();
 
@@ -602,8 +622,8 @@ class Register
 
             $message_log = "Conta $pix cadastrada com sucesso";
             Panel::LogAction($user_id, 'Cadastrar Conta', $message_log, $today);
-
             echo json_encode(['success' => true, 'message' => 'Conta cadastrada com sucesso', 'date' => $today]);
+
         } catch (Exception $e) {
             http_response_code(500);
             echo json_encode(['error' => 'Erro no banco de dados: ' . $e->getMessage(), 'code' => $e->getCode()]);
@@ -682,7 +702,6 @@ class Register
     }
     public static function RegisterForn($sql, $response_forn, $user_id)
     {
-
         $today = date('Y-m-d H:i:s');
         $name_table = 'suppliers';
 

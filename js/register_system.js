@@ -475,57 +475,65 @@ const getFieldsAccount = () => {
         values: {
             pix: document.getElementById('pix').value.trim(),
             name_holder: document.getElementById('name_holder').value.trim(),
+            account_number: document.getElementById('account_number').value.trim(),
             bank: document.getElementById('bank').value.trim(),
-            bank: document.getElementById('agency').value.trim(),
+            agency: document.getElementById('agency').value.trim(),
             typeAccount: document.getElementById('type-account').value.trim(),
         },
         inputs: {
             pix: document.getElementById('pix'),
             name_holder: document.getElementById('name_holder'),
+            account_number: document.getElementById('account_number'),
             bank: document.getElementById('bank'),
-            bank: document.getElementById('agency'),
+            agency: document.getElementById('agency'),
             typeAccount: document.getElementById('type-account'),
         }
     };
 }
+
 async function RegisterAccount() {
     const { values, inputs, type } = await getFieldsAccount();
     const lettersRegex = /^[A-Za-z\s]+$/;
 
-    if (values.pix === "" || values.city === "" || values.name_holder === "") {
+    if (values.pix === "" || values.name_holder === "" || values.bank === "" || values.agency === "" || values.typeAccount === "") {
         showMessage('Campos vazios, preencha os campos', 'warning');
 
         if (values.pix === "") inputs.pix.classList.add('error');
-        if (values.city === "") inputs.city.classList.add('error');
         if (values.name_holder === "") inputs.name_holder.classList.add('error');
+        if (values.bank === "") inputs.bank.classList.add('error');
+        if (values.agency === "") inputs.agency.classList.add('error');
+        if (values.typeAccount === "") inputs.typeAccount.classList.add('error');
+
         setTimeout(() => {
             inputs.pix.classList.remove('error');
-            inputs.city.classList.remove('error');
             inputs.name_holder.classList.remove('error');
+            inputs.bank.classList.remove('error');
+            inputs.agency.classList.remove('error');
+            inputs.typeAccount.classList.remove('error');
         }, 3000);
 
         return;
     }
 
-    if (values.pix != Number && values.pix == String) {
-        showMessage('Campo invalido, só numeros', 'warning');
+    if (isNaN(values.pix) || isNaN(values.account_number)) {
+        showMessage('Campo PIX inválido ou Numero da Conta, apenas números são aceitos', 'warning');
+        inputs.pix.classList.add('error');
+        inputs.account_number.classList.add('error');
 
-        if (values.pix != Number) inputs.pix.classList.add('error');
         setTimeout(() => {
             inputs.pix.classList.remove('error');
+            inputs.account_number.classList.remove('error');
         }, 3000);
 
         return;
     }
 
-    if (!lettersRegex.test(values.name_holder) || !lettersRegex.test(values.city)) {
-        showMessage('Campos invalidos, não aceita números', 'warning');
+    if (!lettersRegex.test(values.name_holder)) {
+        showMessage('Nome do titular inválido, não aceita números', 'warning');
+        inputs.name_holder.classList.add('error');
 
-        if (!lettersRegex.test(values.name_holder)) inputs.name_holder.classList.add('error');
-        if (!lettersRegex.test(values.city)) inputs.city.classList.add('error');
         setTimeout(() => {
             inputs.name_holder.classList.remove('error');
-            inputs.city.classList.remove('error');
         }, 3000);
 
         return;
@@ -535,7 +543,10 @@ async function RegisterAccount() {
         type: type.type,
         pix: values.pix,
         name_holder: values.name_holder,
-        city: values.city
+        bank: values.bank,
+        agency: values.agency,
+        typeAccount: values.typeAccount,
+        account_number: values.account_number
     };
 
     continueMessage("Deseja realmente cadastrar conta para o PIX?", "Sim", "Não", async function () {
@@ -554,13 +565,11 @@ async function RegisterAccount() {
 
             if (responseBody.success) {
                 showMessage('Conta cadastrada com sucesso', 'success');
-
                 setTimeout(() => {
                     location.reload();
                 }, 2000);
-
             } else {
-                showMessage('Erro ao cadastrar conta bancaria: ' + (responseBody.error || 'Erro desconhecido'), 'error');
+                showMessage('Erro ao cadastrar conta bancária: ' + (responseBody.error || 'Erro desconhecido'), 'error');
             }
         } catch (error) {
             showMessage("Erro ao fazer requisição: " + error, 'error');
@@ -1122,13 +1131,13 @@ async function RegisterFile() {
     }
 
     let formData = new FormData();
-    formData.append('file', values.fileregister); 
+    formData.append('file', values.fileregister);
 
     continueMessage("Deseja realmente cadastrar por esse método?", "Sim", "Não", async function () {
         try {
-            const response = await fetch('http://localhost:5000/upload', { 
+            const response = await fetch('http://localhost:5000/upload', {
                 method: 'POST',
-                body: formData 
+                body: formData
             });
 
             const responseBody = await response.json();

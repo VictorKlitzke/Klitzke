@@ -4,6 +4,7 @@ include_once '../config/config.php';
 include_once '../services/db.php';
 include_once '../helpers/response.php';
 include_once '../classes/panel.php';
+include_once './qrcode.php';
 
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
@@ -13,54 +14,6 @@ header("Access-Control-Allow-Origin: *");
 header("Content-Type: application/json");
 
 $today = date('Y-m-d H:i:s');
-
-function generateQrCodePIX($totalValue) {
-
-    $sql = Db::Connection();
-
-    $exec = $sql->prepare("SELECT pix, account_holder_name, city FROM banck_account WHERE id = :id LIMIT 1");
-    $id_pix = 1;
-    $exec->bindValue(':id', $id_pix, PDO::PARAM_INT);
-    $exec->execute();
-    $pix = $exec->fetch(PDO::FETCH_ASSOC);
-
-    if (!$pix) {
-        throw new Exception('Dados da conta bancária não encontrados.');
-    }
-
-    $pix_key = $pix['pix'];
-    $name_company = $pix['account_holder_name'];
-    $city_company = $pix['city'];
-    $transition = uniqid();
-
-    $payload = "000201"
-        . "26" . str_pad(strlen("BR.GOV.BCB.PIX"), 2, '0', STR_PAD_LEFT) . "BR.GOV.BCB.PIX"
-        . "01" . str_pad(strlen($pix_key), 2, '0', STR_PAD_LEFT) . $pix_key
-        . "52" . "0000"
-        . "53" . "986"
-        . "54" . str_pad(number_format(floatval($totalValue), 2, '.', ''), 2, '0', STR_PAD_LEFT)
-        . "58" . "BR"
-        . "59" . str_pad($name_company, 25, ' ', STR_PAD_RIGHT)
-        . "60" . str_pad($city_company, 15, ' ', STR_PAD_RIGHT)
-        . "62" . str_pad(strlen($transition), 2, '0', STR_PAD_LEFT) . $transition;
-
-    $crc16 = function ($str) {
-        $crc = 0xFFFF;
-        for ($c = 0; $c < strlen($str); $c++) {
-            $crc ^= ord($str[$c]) << 8;
-            for ($i = 0; $i < 8; $i++) {
-                if (($crc <<= 1) & 0x10000) $crc ^= 0x1021;
-                $crc &= 0xFFFF;
-            }
-        }
-        return strtoupper(dechex($crc));
-
-    };
-
-    $codigoPIX = $payload . "6304" . $crc16($payload . "6304");
-
-    return $codigoPIX;
-}
 
 function status_boxpdv($status)
 {
@@ -84,6 +37,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         $sql = Db::Connection();
         $sql->beginTransaction();
+
+        $totalValue = $requestData['totalValue'];
+        $qrCodePIX = generateQrCodePIX($totalValue);
+        echo json_encode(['success' => true, 'message' => 'Venda registrada com sucesso', 'qrCodePIX' => $qrCodePIX]);
 
         $status = 1;
         $boxpdv_open = status_boxpdv($status);
@@ -114,8 +71,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 return;
             }
 
-                $exec = $sql->prepare("INSERT INTO sales (id_payment_method, id_client, id_boxpdv, id_users, date_sales, status) 
-                    VALUES (:paymentMethod, :salesClient, :id_boxpdv, :id_users, NOW(), :status)");
+            $exec = $sql->prepare("INSERT INTO sales (id_payment_method, id_client, id_boxpdv, id_users, date_sales, status) 
+                VALUES (:paymentMethod, :salesClient, :id_boxpdv, :id_users, NOW(), :status)");
             $exec->bindParam(':paymentMethod', $selectedPaymentMethod, PDO::PARAM_INT);
             $exec->bindParam(':salesClient', $id_sales_client, PDO::PARAM_INT);
             $exec->bindParam(':id_users', $user_id, PDO::PARAM_INT);
@@ -131,7 +88,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 if ($productId === null) {
                     break;
                 } else {
-
                     $productQuantity = $product['stock_quantity'];
                     $productValue = floatval($product['value']);
 
@@ -144,10 +100,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $status_item = 1;
                     $exec->bindParam(':status_item', $status_item, PDO::PARAM_INT);
                     $exec->execute();
-
                 }
             }
-            
+
+            // Atualiza o estoque
             $checkStock = $sql->prepare("SELECT id FROM products WHERE id = :productId AND stock_quantity - :productQuantity < 0");
             $checkStock->bindParam(':productId', $productId, PDO::PARAM_INT);
             $checkStock->bindParam(':productQuantity', $productQuantity, PDO::PARAM_INT);
@@ -165,18 +121,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $updateStock->execute();
             }
 
+            // Atualiza o valor total da venda
             $exec = $sql->prepare("UPDATE sales SET total_value = :totalValue WHERE id = :lastSaleId");
             $exec->bindParam(':totalValue', $requestData['totalValue'], PDO::PARAM_STR);
             $exec->bindParam(':lastSaleId', $lastSaleId, PDO::PARAM_INT);
             $exec->execute();
 
+
             $sql->commit();
 
             $message_log = "Venda realizada com sucesso";
             Panel::LogAction($user_id, 'Venda realizada com com sucesso: ID Forma de pagamento: ' . $selectedPaymentMethod, $message_log, $today);
-            Response::send(true, 'Venda realizada com com sucesso', $today);
-
-            echo json_encode(['success' => true, 'message' => htmlspecialchars('Venda registrada com sucesso')]);
         }
 
     } catch (PDOException $e) {
@@ -186,7 +141,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } finally {
         $sql = null;
     }
-
 }
 
 ?>
