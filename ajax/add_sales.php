@@ -4,7 +4,7 @@ include_once '../config/config.php';
 include_once '../services/db.php';
 include_once '../helpers/response.php';
 include_once '../classes/panel.php';
-include_once './qrcode.php';
+require_once './qrcode.php';
 
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);

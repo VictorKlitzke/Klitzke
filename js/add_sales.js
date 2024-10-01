@@ -423,76 +423,6 @@ async function finalizeSalePortion() {
     }
 }
 
-async function finalizeSale() {
-
-    const saleSales = document.querySelector('.sales-sales');
-
-    let totalAmountElement = document.getElementById('totalAmount');
-    let totalValue = 0;
-    if (totalAmountElement) {
-        totalValue = parseFloat(totalAmountElement.textContent.replace('R$ ', '')) || 0;
-    }
-
-    let selectedPaymentMethod = document.getElementById('id_payment_method').value;
-    let idSalesClient = selectedClientId || '';
-
-    let requestData = {
-        idPaymentMethod: selectedPaymentMethod,
-        salesIdClient: idSalesClient,
-        totalValue: totalValue,
-        products: selectedProducts
-    };
-
-    if (selectedProducts.length === 0) {
-        showMessage('Erro ao registrar venda, nenhum produto selecionado', 'warning');
-
-    } else {
-        try {
-            let url = `${BASE_URL}add_sales.php`;
-
-            const response = await fetch(url, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(requestData),
-            });
-
-            const responseBody = await response.text();
-            const responseData = JSON.parse(responseBody);
-
-            if (responseData && responseData.success) {
-                showMessage('Venda finalizada com sucesso!', 'success');
-
-                let printSales = {
-                    date: new Date().toLocaleString(),
-                    clientName: idSalesClient,
-                    totalValue: totalValue,
-                    products: selectedProducts.map(product => ({
-                        name: product.name,
-                        value: parseFloat(product.value),
-                    }))
-                }
-
-                setTimeout(() => {
-                    continueMessage("Deseja imprimir comprovante?", "Sim", "Não", async function () {
-                        printReceipt(printSales);
-                    }, function () {
-                        showMessage('Operação cancelada', 'warning')
-                    })
-                }, 5000);
-
-                saleSales.innerHTML = "";
-                saleSales.innerText = "";
-            } else {
-                showMessage('Caixa não foi aberto, para essa operação', 'error');
-            }
-        } catch (error) {
-            showMessage('Erro ao enviar dados para o PHP:' + error, 'error');
-        }
-    }
-}
-
 async function printReceipt(saleDetails) {
     let printWindow = window.open('', '_blank', 'width=800,height=600');
 
@@ -593,60 +523,65 @@ async function finalizeSale() {
     }
 
     if (selectedPaymentMethod == 1) {
-        let url = `${BASE_URL}qrcode.php`;
-
-        const requestData1 = {
-            totalValue: totalValue
-        };
+        let urlQrCode = `${BASE_URL}qrcode.php`;
+        const requestDataQr = { totalValue: totalValue };
 
         try {
-            const response = await fetch(url, {
+            const responseQr = await fetch(urlQrCode, {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(requestData1),
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(requestDataQr),
             });
 
-            const responseBody = await response.json();
-            if (responseBody && responseBody.success) {
-                console.log(responseBody.qrCodePIX);
-                generateQRCode(responseBody.qrCodePIX);
+            const responseBodyQr = await responseQr.json();
+
+            if (responseBodyQr && responseBodyQr.success) {
+                console.log(responseBodyQr.qrCodePIX);
+                generateQRCode(responseBodyQr.qrCodePIX);
                 openQRCodeModal();
+                const paymentConfirmed = await confirmPayment();
+
+                if (paymentConfirmed) {
+                    await registerSale(requestData);
+                } else {
+                    showMessage('Pagamento não confirmado. Venda não registrada.', 'error');
+                }
             } else {
-                console.error('Erro ao gerar QR Code:', responseBody.message);
+                showMessage('Erro ao gerar QR Code: ' + responseBodyQr.message, 'error');
             }
         } catch (error) {
-            console.error('Erro na requisição:', error);
+            showMessage('Erro na comunicação com o servidor ao gerar QR Code', 'error');
         }
+    } else {
+        await registerSale(requestData);
     }
+}
+
+async function registerSale(requestData) {
+    let urlSales = `${BASE_URL}add_sales.php`;
 
     try {
-        let url = `${BASE_URL}add_sales.php`;
-
-        const response = await fetch(url, {
+        const responseSales = await fetch(urlSales, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify(requestData),
         });
+        const responseBodySales = await responseSales.json();
 
-        const responseBody = await response.text();
-        const responseData = JSON.parse(responseBody);
-
-        if (responseData && responseData.success) {
+        if (responseBodySales && responseBodySales.success) {
             showMessage('Venda finalizada com sucesso!', 'success');
 
             let printSales = {
                 date: new Date().toLocaleString(),
-                clientName: idSalesClient,
-                totalValue: totalValue,
-                products: selectedProducts.map(product => ({
+                clientName: requestData.salesIdClient,
+                totalValue: requestData.totalValue,
+                products: requestData.products.map(product => ({
                     name: product.name,
                     value: parseFloat(product.value),
                 }))
-            }
+            };
 
             setTimeout(() => {
                 continueMessage("Deseja imprimir comprovante?", "Sim", "Não", async function () {
@@ -656,25 +591,36 @@ async function finalizeSale() {
                 });
             }, 5000);
 
+            const saleSales = document.querySelector('.sales-sales');
             saleSales.innerHTML = "";
             saleSales.innerText = "";
         } else {
             showMessage('Caixa não foi aberto, para essa operação', 'error');
         }
     } catch (error) {
-        showMessage('Erro ao enviar dados para o PHP:' + error, 'error');
+        showMessage('Erro ao enviar dados para o PHP: ' + error, 'error');
     }
 }
 
 function generateQRCode(qrCodeData) {
-    const qrCodeContainer = document.getElementById('qrCodeContainer'); 
-    qrCodeContainer.innerHTML = "";
-    
-    const qrCodeImage = document.createElement('img');
-    qrCodeImage.src = `data:image/png;base64,${qrCodeData}`; 
-    qrCodeImage.alt = "QR Code";
+    const qrCodeContainer = document.getElementById('qrCodeContainer');
 
-    qrCodeContainer.appendChild(qrCodeImage); 
+    if (!qrCodeContainer) {
+        console.error('Elemento qrCodeContainer não encontrado.');
+        return;
+    }
+
+    console.log('Base64 QR Code Data:', qrCodeData);  // Verifica o conteúdo de qrCodeData
+
+    qrCodeContainer.innerHTML = "";
+
+    const qrCodeImage = document.createElement('img');
+    qrCodeImage.src = `data:image/png;base64,${qrCodeData}`;
+    console.log('QR Code Image:', qrCodeImage);  // Inspeciona a imagem
+
+    qrCodeImage.alt = "QR Code PIX";
+
+    qrCodeContainer.appendChild(qrCodeImage);
 }
 
 
@@ -690,6 +636,7 @@ async function confirmPayment() {
         }, 3000);
     });
 }
+
 
 function updateTotalAmount(total) {
 
