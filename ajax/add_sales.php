@@ -4,7 +4,6 @@ include_once '../config/config.php';
 include_once '../services/db.php';
 include_once '../helpers/response.php';
 include_once '../classes/panel.php';
-require_once './qrcode.php';
 
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
@@ -32,15 +31,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $selectedPaymentMethod = isset($requestData['idPaymentMethod']) ? $requestData['idPaymentMethod'] : '';
     $id_sales_client = $requestData['salesIdClient'] ?? '';
     $selectedProducts = $requestData['products'] ?? [];
+    $totalValueSales = $requestData['totalValue'] ?? '';
 
     try {
 
         $sql = Db::Connection();
         $sql->beginTransaction();
-
-        $totalValue = $requestData['totalValue'];
-        $qrCodePIX = generateQrCodePIX($totalValue);
-        echo json_encode(['success' => true, 'message' => 'Venda registrada com sucesso', 'qrCodePIX' => $qrCodePIX]);
 
         $status = 1;
         $boxpdv_open = status_boxpdv($status);
@@ -71,14 +67,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 return;
             }
 
-            $exec = $sql->prepare("INSERT INTO sales (id_payment_method, id_client, id_boxpdv, id_users, date_sales, status) 
-                VALUES (:paymentMethod, :salesClient, :id_boxpdv, :id_users, NOW(), :status)");
+            $exec = $sql->prepare("INSERT INTO sales (id_payment_method, id_client, id_boxpdv, id_users, date_sales, status, total_value) 
+                VALUES (:paymentMethod, :salesClient, :id_boxpdv, :id_users, NOW(), :status, :totalValueSales)");
             $exec->bindParam(':paymentMethod', $selectedPaymentMethod, PDO::PARAM_INT);
             $exec->bindParam(':salesClient', $id_sales_client, PDO::PARAM_INT);
             $exec->bindParam(':id_users', $user_id, PDO::PARAM_INT);
             $exec->bindParam(':id_boxpdv', $id_boxpdv, PDO::PARAM_INT);
             $status = 1;
             $exec->bindParam(':status', $status, PDO::PARAM_INT);
+            $exec->bindParam(':totalValueSales', $totalValueSales, PDO::PARAM_INT);
             $exec->execute();
 
             $lastSaleId = $sql->lastInsertId();
@@ -103,7 +100,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 }
             }
 
-            // Atualiza o estoque
             $checkStock = $sql->prepare("SELECT id FROM products WHERE id = :productId AND stock_quantity - :productQuantity < 0");
             $checkStock->bindParam(':productId', $productId, PDO::PARAM_INT);
             $checkStock->bindParam(':productQuantity', $productQuantity, PDO::PARAM_INT);
@@ -121,17 +117,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $updateStock->execute();
             }
 
-            // Atualiza o valor total da venda
             $exec = $sql->prepare("UPDATE sales SET total_value = :totalValue WHERE id = :lastSaleId");
             $exec->bindParam(':totalValue', $requestData['totalValue'], PDO::PARAM_STR);
             $exec->bindParam(':lastSaleId', $lastSaleId, PDO::PARAM_INT);
             $exec->execute();
 
-
             $sql->commit();
 
-            $message_log = "Venda realizada com sucesso";
+            $message_log = "Venda realizada com sucesso"; 
             Panel::LogAction($user_id, 'Venda realizada com com sucesso: ID Forma de pagamento: ' . $selectedPaymentMethod, $message_log, $today);
+            echo json_encode(['success' => true, 'message' => 'Venda registrada com sucesso']);
         }
 
     } catch (PDOException $e) {

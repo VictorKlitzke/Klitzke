@@ -5,7 +5,11 @@ $users = Controllers::SelectAll('users');
 ?>
 
 <div class="box-content">
-  <h2 class="text-white mb-4">Lista de Usuários</h2>
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h2 class="text-white mb-4">Lista de Usuários</h2>
+    <a class="btn btn-success" <?php SelectedMenu('register-users') ?>
+      href="<?php echo INCLUDE_PATH; ?>register-users">Novo Usuário</a>
+  </div>
   <div class="row">
     <div class="col">
       <div class="table-responsive" style="max-height: 400px; overflow-y: auto; overflow-x: auto;">
@@ -31,7 +35,9 @@ $users = Controllers::SelectAll('users');
                 <th><?php echo htmlspecialchars($value['function']); ?></th>
                 <th><?php echo htmlspecialchars($value['commission']); ?> %</th>
                 <th><?php echo htmlspecialchars($value['target_commission']); ?> %</th>
-                <th><?php echo $value['access'] == 10 ? 'Padrão' : ($value['access'] == 50 ? 'Moderado' : ($value['access'] == 100 ? 'Administrador' : ''));?></th>
+                <th>
+                  <?php echo $value['access'] == 10 ? 'Padrão' : ($value['access'] == 50 ? 'Moderado' : ($value['access'] == 100 ? 'Administrador' : '')); ?>
+                </th>
                 <th class="gap-2">
                   <a class="btn btn-info"
                     href="<?php echo INCLUDE_PATH ?>edit-users?id=<?php echo base64_encode($value['id']); ?>">Editar
@@ -56,4 +62,4 @@ $users = Controllers::SelectAll('users');
       </div>
     </div>
   </div>
-  </div>
+</div>

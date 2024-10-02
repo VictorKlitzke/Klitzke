@@ -517,6 +517,8 @@ async function finalizeSale() {
         products: selectedProducts
     };
 
+    console.log(requestData);
+
     if (selectedProducts.length === 0) {
         showMessage('Erro ao registrar venda, nenhum produto selecionado', 'warning');
         return;
@@ -536,16 +538,14 @@ async function finalizeSale() {
             const responseBodyQr = await responseQr.json();
 
             if (responseBodyQr && responseBodyQr.success) {
-                console.log(responseBodyQr.qrCodePIX);
                 generateQRCode(responseBodyQr.qrCodePIX);
                 openQRCodeModal();
-                const paymentConfirmed = await confirmPayment();
-
-                if (paymentConfirmed) {
+                continueMessage("Pagamento recebido?", "Pago", "Cancelado", async function () {
                     await registerSale(requestData);
-                } else {
-                    showMessage('Pagamento não confirmado. Venda não registrada.', 'error');
-                }
+                    CloseQRCodeModal()
+                }, function () {
+                    showMessage('Operação cancelada', 'error');
+                })
             } else {
                 showMessage('Erro ao gerar QR Code: ' + responseBodyQr.message, 'error');
             }
@@ -568,9 +568,11 @@ async function registerSale(requestData) {
             },
             body: JSON.stringify(requestData),
         });
-        const responseBodySales = await responseSales.json();
 
-        if (responseBodySales && responseBodySales.success) {
+        const responseBody = await responseSales.text();
+        const responseData = JSON.parse(responseBody);
+
+        if (responseData && responseData.success) {
             showMessage('Venda finalizada com sucesso!', 'success');
 
             let printSales = {
@@ -602,6 +604,7 @@ async function registerSale(requestData) {
     }
 }
 
+
 function generateQRCode(qrCodeData) {
     const qrCodeContainer = document.getElementById('qrCodeContainer');
 
@@ -610,24 +613,30 @@ function generateQRCode(qrCodeData) {
         return;
     }
 
-    console.log('Base64 QR Code Data:', qrCodeData);  // Verifica o conteúdo de qrCodeData
-
     qrCodeContainer.innerHTML = "";
 
     const qrCodeImage = document.createElement('img');
+    qrCodeImage.style.margin = 'auto';
+    qrCodeImage.style.height = '50%';
+    qrCodeImage.style.width = '50%';
+
     qrCodeImage.src = `data:image/png;base64,${qrCodeData}`;
-    console.log('QR Code Image:', qrCodeImage);  // Inspeciona a imagem
 
     qrCodeImage.alt = "QR Code PIX";
 
     qrCodeContainer.appendChild(qrCodeImage);
 }
 
-
 function openQRCodeModal() {
     const qrCodeModal = new bootstrap.Modal(document.getElementById('qrCodeModal'));
     qrCodeModal.show();
 }
+function CloseQRCodeModal() {
+    const qrCodeModal = document.getElementById('qrCodeModal');
+    const modalInstance = bootstrap.Modal.getInstance(qrCodeModal);
+    modalInstance.hide();
+}
+
 
 async function confirmPayment() {
     return new Promise((resolve) => {
@@ -636,7 +645,6 @@ async function confirmPayment() {
         }, 3000);
     });
 }
-
 
 function updateTotalAmount(total) {
 

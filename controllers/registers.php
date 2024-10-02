@@ -419,6 +419,7 @@ class Register
         $today = date("Y-m-d H:i:s");
 
         $name_table = 'clients';
+        $disable = 1;
 
         $name = isset($response_clients['name']) ? filter_var($response_clients['name'], FILTER_SANITIZE_STRING) : '';
         $email = isset($response_clients['email']) ? filter_var($response_clients['email'], FILTER_VALIDATE_EMAIL) : '';
@@ -451,9 +452,9 @@ class Register
 
             $exec = $sql->prepare("
             INSERT INTO $name_table 
-            (name, email, social_reason, cpf, phone, address, city, cep, neighborhood) 
+            (name, email, social_reason, cpf, phone, address, city, cep, neighborhood, disable) 
             VALUES 
-            (:name, :email, :social_reason, :cpf, :phone, :address, :city, :cep, :neighborhood)
+            (:name, :email, :social_reason, :cpf, :phone, :address, :city, :cep, :neighborhood, :disable)
         ");
             $exec->bindValue(':name', $name, PDO::PARAM_STR);
             $exec->bindValue(':email', $email, PDO::PARAM_STR);
@@ -464,6 +465,7 @@ class Register
             $exec->bindValue(':city', $city, PDO::PARAM_STR);
             $exec->bindValue(':cep', $cep, PDO::PARAM_STR);
             $exec->bindValue(':neighborhood', $neighborhood, PDO::PARAM_STR);
+            $exec->bindValue(':disable', $disable, PDO::PARAM_STR);
             $exec->execute();
 
             $sql->commit();

@@ -5,7 +5,11 @@ $clients = Controllers::SelectAll('clients');
 ?>
 
 <div class="box-content">
-	<h2 class="text-white mb-4">Lista de Clientes</h2>
+	<div class="d-flex justify-content-between align-items-center mb-3">
+		<h2 class="text-white mb-4">Lista de Clientes</h2>
+		<a class="btn btn-success" <?php SelectedMenu('register-clients'); ?>
+			href="<?php echo INCLUDE_PATH; ?>register-clients">Novo Cliente</a>
+	</div>
 	<div class="row">
 		<div class="col">
 			<div class="table-responsive" style="max-height: 400px; overflow-y: auto; overflow-x: auto;">

@@ -144,51 +144,36 @@ if ($checkCode->rowCount() > 0) {
                         <li class="nav-item dropdown">
                             <a style="color: #fff !important; font-size: 1.3rem" class="nav-link dropdown-toggle"
                                 style="cursor: pointer;" role="button" data-bs-toggle="dropdown"
-                                aria-expanded="false">Cadastros</a>
-                            <ul class="dropdown-menu dropdown-menu-dark">
-                                <li><a class="dropdown-item" <?php SelectedMenu('register-users') ?>
-                                        href="<?php echo INCLUDE_PATH; ?>register-users">Cadastrar Usuários</a></li>
-                                <li><a class="dropdown-item" <?php SelectedMenu('register-suppliers'); ?>
-                                        href="<?php echo INCLUDE_PATH; ?>register-suppliers">Cadastrar Fornecedores</a>
-                                </li>
-                                <li><a class="dropdown-item" <?php SelectedMenu('register-clients'); ?>
-                                        href="<?php echo INCLUDE_PATH; ?>register-clients">Cadastrar Clientes</a></li>
-                                <li><a class="dropdown-item" <?php SelectedMenu('register-companys'); ?>
-                                        href="<?php echo INCLUDE_PATH; ?>register-companys">Cadastrar Empresa</a></li>
-                                <li><a class="dropdown-item" <?php SelectedMenu('register-table'); ?>
-                                        href="<?php echo INCLUDE_PATH; ?>register-table">Cadastrar Mesa</a></li>
-                                <li><a class="dropdown-item" <?php SelectedMenu('register-back-account'); ?>
-                                        href="<?php echo INCLUDE_PATH; ?>register-back-account">Cadastrar Conta
-                                        Bancaria</a></li>
-                            </ul>
-                        </li>
-                        <li class="nav-item dropdown">
-                            <a style="color: #fff !important; font-size: 1.3rem" class="nav-link dropdown-toggle"
-                                style="cursor: pointer;" role="button" data-bs-toggle="dropdown"
-                                aria-expanded="false">Listagens</a>
+                                aria-expanded="false">Cadastros Gerais</a>
                             <ul class="dropdown-menu dropdown-menu-dark">
                                 <li><a class="dropdown-item" <?php SelectedMenu('list-users'); ?>
-                                        href="<?php echo INCLUDE_PATH; ?>list-users">Lista de Usuários</a></li>
+                                        href="<?php echo INCLUDE_PATH; ?>list-users">Usuários</a></li>
                                 <li><a class="dropdown-item" <?php SelectedMenu('list-clients'); ?>
-                                        href="<?php echo INCLUDE_PATH; ?>list-clients">Lista de Clientes</a></li>
+                                        href="<?php echo INCLUDE_PATH; ?>list-clients">Clientes</a></li>
                                 <li><a class="dropdown-item" <?php SelectedMenu('list-suppliers'); ?>
-                                        href="<?php echo INCLUDE_PATH; ?>list-suppliers">Lista de Fornecedores</a></li>
-                                <li><a class="dropdown-item" <?php SelectedMenu('list-sales'); ?>
-                                        href="<?php echo INCLUDE_PATH; ?>list-sales">Lista de Vendas </a></li>
-                                <li><a class="dropdown-item" <?php SelectedMenu('list-request'); ?>
-                                        href="<?php echo INCLUDE_PATH; ?>list-request">Lista de Pedidos</a></li>
+                                        href="<?php echo INCLUDE_PATH; ?>list-suppliers">Fornecedores</a></li>
                             </ul>
                         </li>
                         <li class="nav-item dropdown">
                             <a style="color: #fff !important; font-size: 1.3rem" class="nav-link dropdown-toggle"
                                 role="button" data-bs-toggle="dropdown" aria-expanded="false">Faturamento</a>
                             <ul class="dropdown-menu dropdown-menu-dark">
-                                <li><a class="dropdown-item" <?php SelectedMenu('register-boxpdv'); ?>
-                                        href="<?php echo INCLUDE_PATH; ?>register-boxpdv">Abrir Caixa</a></li>
                                 <li><a class="dropdown-item" <?php SelectedMenu('register-sales'); ?>
                                         href="<?php echo INCLUDE_PATH; ?>register-sales">Vendas</a></li>
+                                <li><a class="dropdown-item" <?php SelectedMenu('list-sales'); ?>
+                                        href="<?php echo INCLUDE_PATH; ?>list-sales">Lista de Vendas </a></li>
+                            </ul>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a style="color: #fff !important; font-size: 1.3rem" class="nav-link dropdown-toggle"
+                                role="button" data-bs-toggle="dropdown" aria-expanded="false">Food</a>
+                            <ul class="dropdown-menu dropdown-menu-dark">
                                 <li><a class="dropdown-item" <?php SelectedMenu('register-request'); ?>
                                         href="<?php echo INCLUDE_PATH; ?>register-request">Pedidos</a></li>
+                                <li><a class="dropdown-item" <?php SelectedMenu('list-request'); ?>
+                                        href="<?php echo INCLUDE_PATH; ?>list-request">Lista de Pedidos</a></li>
+                                <li><a class="dropdown-item" <?php SelectedMenu('register-table'); ?>
+                                        href="<?php echo INCLUDE_PATH; ?>register-table">Cadastrar Mesa</a></li>
                             </ul>
                         </li>
                         <li class="nav-item dropdown">

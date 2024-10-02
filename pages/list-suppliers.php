@@ -1,11 +1,15 @@
 <?php
 
-$suppliers = Controllers::SelectAll('suppliers', ($currentPage - 1) * $porPage, $porPage);
+$suppliers = Controllers::SelectAll('suppliers');
 
 ?>
 
 <div class="box-content">
-  <h2 class="text-white mb-4">Lista de Fornecedores</h2>
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h2 class="text-white mb-4">Lista de Fornecedores</h2>
+    <a class="btn btn-success" <?php SelectedMenu('register-suppliers'); ?>
+      href="<?php echo INCLUDE_PATH; ?>register-suppliers">Novo Fornecedor</a>
+  </div>
   <div class="row">
     <div class="com">
       <div class="table-responsive" style="max-height: 400px; overflow-y: auto; overflow-x: auto;">
@@ -42,11 +46,11 @@ $suppliers = Controllers::SelectAll('suppliers', ($currentPage - 1) * $porPage, 
                 <th><?php echo htmlspecialchars($value['cnpjcpf']); ?></th>
 
                 <th class="gap-2">
-                    <a class="btn btn-info"
-                      href="<?php echo INCLUDE_PATH; ?>edit-suppliers?id=<?php echo base64_encode($value['id']); ?>">Editar</a>
+                  <a class="btn btn-info"
+                    href="<?php echo INCLUDE_PATH; ?>edit-suppliers?id=<?php echo base64_encode($value['id']); ?>">Editar</a>
 
-                    <button class="btn btn-danger" onclick="DeleteForn(this)"
-                      data-id="<?php echo base64_encode($value['id']); ?>">Deletar</button>
+                  <button class="btn btn-danger" onclick="DeleteForn(this)"
+                    data-id="<?php echo base64_encode($value['id']); ?>">Deletar</button>
                 </th>
               </tr>
             </tbody>
