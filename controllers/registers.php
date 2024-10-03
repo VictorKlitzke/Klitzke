@@ -375,6 +375,19 @@ class Register
         $commission = filter_var($response_users['commission'], FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION);
         $target_commission = filter_var($response_users['targetCommission'], FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION);
         $access = filter_var($response_users['access'], FILTER_SANITIZE_NUMBER_INT);
+        $menu_register_user = filter_var($response_users['registerusers'], FILTER_SANITIZE_STRING);
+        $menu_register_clients = filter_var($response_users['registerclients'], FILTER_SANITIZE_STRING);
+        $menu_register_forn = filter_var($response_users['registerforn'], FILTER_SANITIZE_STRING);
+        $menu_sales = filter_var($response_users['sales'], FILTER_SANITIZE_STRING);
+        $menu_list_sales = filter_var($response_users['listSales'], FILTER_SANITIZE_STRING);
+
+        $menu_access = [
+            'list-user' => ($menu_register_user === 'sim') ? 1 : 0,
+            'list-clients' => ($menu_register_clients === 'sim') ? 1 : 0,
+            'list-suppliers' => ($menu_register_forn === 'sim') ? 1 : 0,
+            'register-sales' => ($menu_sales === 'sim') ? 1 : 0,
+            'list-sales' => ($menu_list_sales === 'sim') ? 1 : 0,
+        ];
 
         if (!$access || !$name || !$password || !$function || !$phone) {
             Response::json(false, 'Campos invalidos', $today);
@@ -400,6 +413,19 @@ class Register
             $exec->bindValue(':access', $access, PDO::PARAM_STR);
             $exec->bindValue(':disable', $disable, PDO::PARAM_INT);
             $exec->execute();
+
+            $user_id_menu_access = $sql->lastInsertId();
+
+            foreach ($menu_access as $menu => $released) {
+                $exec_menu = $sql->prepare("INSERT INTO menu_access (user_id, menu, creation_date, released) 
+                VALUES (:user_id, :menu, NOW(), :released)");
+
+                $exec_menu->bindParam(':user_id', $user_id_menu_access, PDO::PARAM_INT);
+                $exec_menu->bindParam(':menu', $menu, PDO::PARAM_STR);
+                $exec_menu->bindParam(':released', $released, PDO::PARAM_INT);
+
+                $exec_menu->execute();
+            }
 
             $sql->commit();
 

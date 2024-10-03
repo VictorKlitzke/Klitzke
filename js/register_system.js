@@ -24,12 +24,21 @@ const FieldsUsers = () => {
             commission: document.getElementById("commission"),
             targetCommission: document.getElementById("target_commission"),
             access: document.getElementById("access")
+        },
+        menuaccess: {
+            registeruser: document.getElementById("cadastros-submenu-usuario").value,
+            registerclients: document.getElementById("cadastros-submenu-clientes").value,
+            registerforn: document.getElementById("cadastros-submenu-fornecedores").value,
+            sales: document.getElementById("faturamento-submenu-vendas").value,
+            listSales: document.getElementById("faturamento-submenu-lista-vendas").value,
         }
     };
 }
 async function RegisterUsers() {
 
-    const { values, type, inputs } = await FieldsUsers();
+    const { values, type, inputs, menuaccess } = await FieldsUsers();
+
+    console.log(menuaccess.registeruser);
 
     if (values.name == "" || values.password == "" || values.email == "" || values.phone == "" || values.userFunction == "") {
         showMessage('Preencha todos os campos!', 'warning',);
@@ -85,8 +94,15 @@ async function RegisterUsers() {
         userFunction: values.userFunction,
         commission: values.commission,
         targetCommission: values.targetCommission,
-        access: values.access
+        access: values.access,
+        registerusers: menuaccess.registeruser,
+        registerclients: menuaccess.registerclients,
+        registerforn: menuaccess.registerforn,
+        sales: menuaccess.sales,
+        listSales: menuaccess.listSales
     }
+
+    console.log(responseFields);
 
     continueMessage(
         "Deseja realmente cadastrar esse usuário?", "Sim", "Não", async function () {
@@ -490,7 +506,6 @@ const getFieldsAccount = () => {
         }
     };
 }
-
 async function RegisterAccount() {
     const { values, inputs, type } = await getFieldsAccount();
     const lettersRegex = /^[A-Za-z\s]+$/;

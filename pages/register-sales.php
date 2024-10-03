@@ -1,3 +1,16 @@
+<?php
+session_start(); 
+if (!isset($_SESSION['id'])) {
+    header("Location: login.php"); 
+    exit();
+}
+$page_permission = 'register-sales'; 
+if (!isset($_SESSION['user_permissions'][$page_permission]) || $_SESSION['user_permissions'][$page_permission] !== 1) {
+    header("Location: " . INCLUDE_PATH . "access-denied.php"); 
+    exit();
+}
+?>
+
 <form class="" method="POST" enctype="multipart/form-data">
     <div class="names left">
         <svg fill="#000" xmlns="http://www.w3.org/2000/svg" height="40" viewBox="0 -960 960 960" width="40">

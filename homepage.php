@@ -8,6 +8,8 @@ include_once 'services/db.php';
 
 $sql = Db::Connection();
 
+$user_id = isset($_SESSION['id']) ? $_SESSION['id'] : null;
+
 $checkCode = $sql->prepare("SELECT * FROM validade_system WHERE id_users = ? ORDER BY date_final DESC LIMIT 1");
 $checkCode->execute(array($_SESSION['id']));
 $currentDate = date('Y-m-d H:i:s');
@@ -18,6 +20,13 @@ if ($checkCode->rowCount() > 0) {
         die();
     }
 }
+
+$checkMenu = $sql->prepare("SELECT menu FROM menu_access WHERE user_id = :user_id");
+$checkMenu->bindParam('user_id', $user_id, PDO::PARAM_INT);
+$checkMenu->execute();
+
+$user_permissions = $checkMenu->fetchAll(PDO::FETCH_COLUMN);
+$_SESSION['user_permissions'] = array_fill_keys($user_permissions, 1);
 
 ?>
 
@@ -146,22 +155,37 @@ if ($checkCode->rowCount() > 0) {
                                 style="cursor: pointer;" role="button" data-bs-toggle="dropdown"
                                 aria-expanded="false">Cadastros Gerais</a>
                             <ul class="dropdown-menu dropdown-menu-dark">
-                                <li><a class="dropdown-item" <?php SelectedMenu('list-users'); ?>
-                                        href="<?php echo INCLUDE_PATH; ?>list-users">Usuários</a></li>
-                                <li><a class="dropdown-item" <?php SelectedMenu('list-clients'); ?>
-                                        href="<?php echo INCLUDE_PATH; ?>list-clients">Clientes</a></li>
-                                <li><a class="dropdown-item" <?php SelectedMenu('list-suppliers'); ?>
-                                        href="<?php echo INCLUDE_PATH; ?>list-suppliers">Fornecedores</a></li>
+                                <?php
+                                if ($user_id) {
+                                    if (isset($_SESSION['user_permissions']['list-users'])): ?>
+                                        <li><a class="dropdown-item" <?php SelectedMenu('list-users'); ?>
+                                                href="<?php echo INCLUDE_PATH; ?>list-users">Usuários</a></li>
+                                    <?php endif; ?>
+
+                                    <?php if (isset($_SESSION['user_permissions']['list-clients'])): ?>
+                                        <li><a class="dropdown-item" <?php SelectedMenu('list-clients'); ?>
+                                                href="<?php echo INCLUDE_PATH; ?>list-clients">Clientes</a></li>
+                                    <?php endif; ?>
+
+                                    <?php if (isset($_SESSION['user_permissions']['list-suppliers'])): ?>
+                                        <li><a class="dropdown-item" <?php SelectedMenu('list-suppliers'); ?>
+                                                href="<?php echo INCLUDE_PATH; ?>list-suppliers">Fornecedores</a></li>
+                                    <?php endif; ?>
+                               
                             </ul>
                         </li>
                         <li class="nav-item dropdown">
                             <a style="color: #fff !important; font-size: 1.3rem" class="nav-link dropdown-toggle"
                                 role="button" data-bs-toggle="dropdown" aria-expanded="false">Faturamento</a>
                             <ul class="dropdown-menu dropdown-menu-dark">
-                                <li><a class="dropdown-item" <?php SelectedMenu('register-sales'); ?>
+                                <?php if (isset($_SESSION['user_permission']['register-sales'])): ?>
+                                    <li><a class="dropdown-item" <?php SelectedMenu('register-sales'); ?>
                                         href="<?php echo INCLUDE_PATH; ?>register-sales">Vendas</a></li>
-                                <li><a class="dropdown-item" <?php SelectedMenu('list-sales'); ?>
+                                <?php endif; ?>
+                                <?php if (isset($_SESSION['list-sales']['list-sales'])): ?>
+                                    <li><a class="dropdown-item" <?php SelectedMenu('list-sales'); ?>
                                         href="<?php echo INCLUDE_PATH; ?>list-sales">Lista de Vendas </a></li>
+                                <?php endif ?>
                             </ul>
                         </li>
                         <li class="nav-item dropdown">
@@ -244,6 +268,7 @@ if ($checkCode->rowCount() > 0) {
                                         href="<?php echo INCLUDE_PATH; ?>list-companys">Empresa</a></li>
                             </ul>
                         </li>
+                        <?php } ?>
                     </ul>
                 </div>
             </div>
