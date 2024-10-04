@@ -1,5 +1,7 @@
 <?php
 
+$sql = Db::Connection();
+
 if (!isset($_SESSION['id'])) {
   header("Location: login.php");
   exit();
@@ -49,7 +51,7 @@ $users = Controllers::SelectAll('users');
                   <?php echo $value['access'] == 10 ? 'Padrão' : ($value['access'] == 50 ? 'Moderado' : ($value['access'] == 100 ? 'Administrador' : '')); ?>
                 </th>
                 <th class="gap-2">
-                  <a class="btn btn-info"
+                  <a class="btn btn-info" id="edit-users"
                     href="<?php echo INCLUDE_PATH ?>edit-users?id=<?php echo base64_encode($value['id']); ?>">Editar
                   </a>
                   <?php if ($value['disable'] == 1) { ?>

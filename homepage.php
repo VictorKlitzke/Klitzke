@@ -486,8 +486,10 @@ $_SESSION['user_permissions'] = array_fill_keys($user_permissions, 1);
     <script language="JavaScript" type="text/javascript" src="<?php echo INCLUDE_JAVASCRIPT; ?>list_system.js"></script>
     <script language="JavaScript" type="text/javascript" src="<?php echo INCLUDE_JAVASCRIPT; ?>buy_request.js"></script>
     <script language="JavaScript" type="text/javascript"
-        src="<?php echo INCLUDE_JAVASCRIPT; ?>financial_control.js"></script>
+        src="<?php echo INCLUDE_JAVASCRIPT; ?>financial_control.js">
+    </script>
     <script src="<?php echo INCLUDE_JAVASCRIPT; ?>dashboard.js"></script>
+    <script src="<?php echo INCLUDE_JAVASCRIPT; ?>querys.js"></script>
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
