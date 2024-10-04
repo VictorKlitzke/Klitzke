@@ -158,116 +158,192 @@ $_SESSION['user_permissions'] = array_fill_keys($user_permissions, 1);
                                 <?php
                                 if ($user_id) {
                                     if (isset($_SESSION['user_permissions']['list-users'])): ?>
-                                        <li><a class="dropdown-item" <?php SelectedMenu('list-users'); ?>
-                                                href="<?php echo INCLUDE_PATH; ?>list-users">Usuários</a></li>
+                                        <li>
+                                            <a class="dropdown-item" <?php SelectedMenu('list-users'); ?>
+                                                href="<?php echo INCLUDE_PATH; ?>list-users">Usuários
+                                            </a>
+                                        </li>
                                     <?php endif; ?>
 
                                     <?php if (isset($_SESSION['user_permissions']['list-clients'])): ?>
-                                        <li><a class="dropdown-item" <?php SelectedMenu('list-clients'); ?>
-                                                href="<?php echo INCLUDE_PATH; ?>list-clients">Clientes</a></li>
+                                        <li>
+                                            <a class="dropdown-item" <?php SelectedMenu('list-clients'); ?>
+                                                href="<?php echo INCLUDE_PATH; ?>list-clients">Clientes
+                                            </a>
+                                        </li>
                                     <?php endif; ?>
 
                                     <?php if (isset($_SESSION['user_permissions']['list-suppliers'])): ?>
-                                        <li><a class="dropdown-item" <?php SelectedMenu('list-suppliers'); ?>
-                                                href="<?php echo INCLUDE_PATH; ?>list-suppliers">Fornecedores</a></li>
+                                        <li>
+                                            <a class="dropdown-item" <?php SelectedMenu('list-suppliers'); ?>
+                                                href="<?php echo INCLUDE_PATH; ?>list-suppliers">Fornecedores
+                                            </a>
+                                        </li>
                                     <?php endif; ?>
-                               
-                            </ul>
-                        </li>
-                        <li class="nav-item dropdown">
-                            <a style="color: #fff !important; font-size: 1.3rem" class="nav-link dropdown-toggle"
-                                role="button" data-bs-toggle="dropdown" aria-expanded="false">Faturamento</a>
-                            <ul class="dropdown-menu dropdown-menu-dark">
-                                <?php if (isset($_SESSION['user_permission']['register-sales'])): ?>
-                                    <li><a class="dropdown-item" <?php SelectedMenu('register-sales'); ?>
-                                        href="<?php echo INCLUDE_PATH; ?>register-sales">Vendas</a></li>
-                                <?php endif; ?>
-                                <?php if (isset($_SESSION['list-sales']['list-sales'])): ?>
-                                    <li><a class="dropdown-item" <?php SelectedMenu('list-sales'); ?>
-                                        href="<?php echo INCLUDE_PATH; ?>list-sales">Lista de Vendas </a></li>
-                                <?php endif ?>
-                            </ul>
-                        </li>
-                        <li class="nav-item dropdown">
-                            <a style="color: #fff !important; font-size: 1.3rem" class="nav-link dropdown-toggle"
-                                role="button" data-bs-toggle="dropdown" aria-expanded="false">Food</a>
-                            <ul class="dropdown-menu dropdown-menu-dark">
-                                <li><a class="dropdown-item" <?php SelectedMenu('register-request'); ?>
-                                        href="<?php echo INCLUDE_PATH; ?>register-request">Pedidos</a></li>
-                                <li><a class="dropdown-item" <?php SelectedMenu('list-request'); ?>
-                                        href="<?php echo INCLUDE_PATH; ?>list-request">Lista de Pedidos</a></li>
-                                <li><a class="dropdown-item" <?php SelectedMenu('register-table'); ?>
-                                        href="<?php echo INCLUDE_PATH; ?>register-table">Cadastrar Mesa</a></li>
-                            </ul>
-                        </li>
-                        <li class="nav-item dropdown">
-                            <a style="color: #fff !important; font-size: 1.3rem" class="nav-link dropdown-toggle"
-                                role="button" data-bs-toggle="dropdown" aria-expanded="false">Fluxo de Caixa</a>
-                            <ul class="dropdown-menu dropdown-menu-dark">
-                                <li><a class="dropdown-item" <?php SelectedMenu('register-boxpdv'); ?>
-                                        href="<?php echo INCLUDE_PATH; ?>register-boxpdv">Abrir Caixa</a></li>
-                                <li><a class="dropdown-item" <?php SelectedMenu('list-boxpdv'); ?>
-                                        href="<?php echo INCLUDE_PATH; ?>list-boxpdv">Lista de Caixas</a></li>
-                                <li><a class="dropdown-item" <?php SelectedMenu(''); ?>
-                                        href="<?php echo INCLUDE_PATH; ?>">Relatorios Fluxo de Caixa</a></li>
-                            </ul>
-                        </li>
-                        <li class="nav-item dropdown">
-                            <a style="color: #fff !important; font-size: 1.3rem" class="nav-link dropdown-toggle"
-                                role="button" data-bs-toggle="dropdown" aria-expanded="false"
-                                onclick="ToggleRequest()">Suprimentos</a>
-                            <ul class="dropdown-menu dropdown-menu-dark">
-                                <li><a class="dropdown-item" <?php SelectedMenu('shopping-request'); ?>
-                                        href="<?php echo INCLUDE_PATH; ?>shopping-request"> Solicitação de Compras </a>
+
+                                </ul>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a style="color: #fff !important; font-size: 1.3rem" class="nav-link dropdown-toggle"
+                                    role="button" data-bs-toggle="dropdown" aria-expanded="false">Faturamento</a>
+                                <ul class="dropdown-menu dropdown-menu-dark">
+                                    <?php if (isset($_SESSION['user_permission']['register-sales'])): ?>
+                                        <li>
+                                            <a class="dropdown-item" <?php SelectedMenu('register-sales'); ?>
+                                                href="<?php echo INCLUDE_PATH; ?>register-sales">Vendas
+                                            </a>
+                                        </li>
+                                    <?php endif; ?>
+                                    <?php if (isset($_SESSION['list-sales']['list-sales'])): ?>
+                                        <li>
+                                            <a class="dropdown-item" <?php SelectedMenu('list-sales'); ?>
+                                                href="<?php echo INCLUDE_PATH; ?>list-sales">Lista de Vendas 
+                                            </a>
+                                        </li>
+                                    <?php endif ?>
+                                </ul>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a style="color: #fff !important; font-size: 1.3rem" class="nav-link dropdown-toggle"
+                                    role="button" data-bs-toggle="dropdown" aria-expanded="false">Food</a>
+                                <ul class="dropdown-menu dropdown-menu-dark">
+                                    <?php if (isset($_SESSION['register-request']['register-request'])): ?>
+                                        <li>
+                                            <a class="dropdown-item" <?php SelectedMenu('register-request'); ?>
+                                                href="<?php echo INCLUDE_PATH; ?>register-request">Pedidos
+                                            </a>
+                                        </li>
+                                    <?php endif ?>
+                                    <?php if (isset($_SESSION['list-request']['list-request'])): ?>
+                                        <li>
+                                            <a class="dropdown-item" <?php SelectedMenu('list-request'); ?>
+                                                href="<?php echo INCLUDE_PATH; ?>list-request">Lista de Pedidos
+                                            </a>
+                                        </li>
+                                    <?php endif ?>
+                                    <?php if (isset($_SESSION['register-table']['register-table'])): ?>
+                                        <li>
+                                            <a class="dropdown-item" <?php SelectedMenu('register-table'); ?>
+                                                href="<?php echo INCLUDE_PATH; ?>register-table">Cadastrar Mesa
+                                            </a>
+                                        </li>
+                                    <?php endif ?>
+                                </ul>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a style="color: #fff !important; font-size: 1.3rem" class="nav-link dropdown-toggle"
+                                    role="button" data-bs-toggle="dropdown" aria-expanded="false">Fluxo de Caixa</a>
+                                <ul class="dropdown-menu dropdown-menu-dark">
+                                    <?php if (isset($_SESSION['register-boxpdv']['register-boxpdv'])): ?>
+                                        <li>
+                                            <a class="dropdown-item" <?php SelectedMenu('register-boxpdv'); ?>
+                                                href="<?php echo INCLUDE_PATH; ?>register-boxpdv">Abrir Caixa
+                                            </a>
+                                        </li>
+                                    <?php endif ?>
+                                    <?php if (isset($_SESSION['list-boxpdv']['list-boxpdv'])): ?>
+                                        <li>
+                                            <a class="dropdown-item" <?php SelectedMenu('list-boxpdv'); ?>
+                                                href="<?php echo INCLUDE_PATH; ?>list-boxpdv">Lista de Caixas
+                                            </a>
+                                        </li>
+                                    <?php endif ?>
+                                    <?php if (isset($_SESSION[''][''])): ?>
+                                        <li>
+                                            <a class="dropdown-item" <?php SelectedMenu(''); ?>
+                                                href="<?php echo INCLUDE_PATH; ?>">Relatorios Fluxo de Caixa
+                                            </a>
+                                        </li>
+                                    <?php endif ?>
+                                </ul>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a style="color: #fff !important; font-size: 1.3rem" class="nav-link dropdown-toggle"
+                                    role="button" data-bs-toggle="dropdown" aria-expanded="false"
+                                    onclick="ToggleRequest()">Suprimentos</a>
+                                <ul class="dropdown-menu dropdown-menu-dark">
+                                    <?php if (isset($_SESSION[''][''])): ?>
+                                        <li>
+                                            <a class="dropdown-item" <?php SelectedMenu('shopping-request'); ?>
+                                                href="<?php echo INCLUDE_PATH; ?>shopping-request"> Solicitação de Compras 
+                                            </a>
+                                        </li>
+                                    <?php endif ?>
+                                    <?php if (isset($_SESSION[''][''])): ?>
+                                        <li>
+                                            <a class="dropdown-item" <?php SelectedMenu('list-purchase-request'); ?>
+                                                href="<?php echo INCLUDE_PATH; ?>list-purchase-request"> Lista das Solicitações
+                                                de Compras 
+                                            </a>
+                                        </li>
+                                    <?php endif ?>
+                                </ul>
+                            </li>
+                            <?php if ($showMenuAdm): ?>
+                                <li class="nav-item dropdown">
+                                    <a style="color: #fff !important; font-size: 1.3rem" class="nav-link dropdown-toggle"
+                                        role="button" data-bs-toggle="dropdown" aria-expanded="false">Controle Financeiro</a>
+                                    <ul class="dropdown-menu dropdown-menu-dark">
+                                        <?php if ($_SESSION['financial-control']['financial-control']): ?>
+                                            <li>
+                                                <a class="dropdown-item" <?php SelectedMenu('financial-control.php'); ?>
+                                                href="<?php echo INCLUDE_PATH; ?>financial-control"> Visualizar Pagamentos 
+                                            </a>
+                                        </li>
+                                        <?php endif; ?>
+                                    </ul>
                                 </li>
-                                <li><a class="dropdown-item" <?php SelectedMenu('list-purchase-request'); ?>
-                                        href="<?php echo INCLUDE_PATH; ?>list-purchase-request"> Lista das Solicitações
-                                        de Compras </a></li>
-                            </ul>
-                        </li>
-                        <?php if ($showMenuAdm): ?>
+                            <?php endif; ?>
+                            <?php if ($showMenuAdm): ?>
+                                <li class="nav-item dropdown">
+                                    <a style="color: #fff !important; font-size: 1.3rem" class="nav-link dropdown-toggle"
+                                        role="button" data-bs-toggle="dropdown" aria-expanded="false">Controle Estoque</a>
+                                    <ul class="dropdown-menu dropdown-menu-dark">
+                                        <?php if ($_SESSION['list-products']['list-products']): ?>
+                                            <li>
+                                                <a class="dropdown-item" <?php SelectedMenu('list-products'); ?>
+                                                    href="<?php echo INCLUDE_PATH; ?>list-products"> Lista de Produtos
+                                                </a>
+                                            </li>
+                                        <?php endif; ?>
+                                        <?php if ($_SESSION['register-stockcontrol']['register-stockcontrol']): ?>
+                                            <li>
+                                                <a class="dropdown-item" <?php SelectedMenu('register-stockcontrol'); ?>
+                                                    href="<?php echo INCLUDE_PATH; ?>register-stockcontrol">Cadastrar Produtos
+                                                </a>
+                                            </li>
+                                        <?php endif; ?>
+                                    </ul>
+                                </li>
+                            <?php endif; ?>
+                            <?php if ($showMenuAdm): ?>
+                                <li class="nav-item dropdown">
+                                    <a style="color: #fff !important; font-size: 1.3rem" class="nav-link dropdown-toggle"
+                                        role="button" data-bs-toggle="dropdown" aria-expanded="false">Administrativo</a>
+                                    <ul class="dropdown-menu dropdown-menu-dark">
+                                    <?php if ($_SESSION['dashboard']['dashboard']): ?>
+                                        <li>
+                                            <a class="dropdown-item" <?php SelectedMenu('dashboard'); ?>
+                                                href="<?php echo INCLUDE_PATH; ?>dashboard"> Dashboard ADM 
+                                            </a>
+                                        </li>
+                                    <?php endif; ?>
+                                    </ul>
+                                </li>
+                            <?php endif; ?>
                             <li class="nav-item dropdown">
                                 <a style="color: #fff !important; font-size: 1.3rem" class="nav-link dropdown-toggle"
-                                    role="button" data-bs-toggle="dropdown" aria-expanded="false">Controle Financeiro</a>
+                                    role="button" data-bs-toggle="dropdown" aria-expanded="false">Minha Empresa</a>
                                 <ul class="dropdown-menu dropdown-menu-dark">
-                                    <li><a class="dropdown-item" <?php SelectedMenu('financial-control.php'); ?>
-                                            href="<?php echo INCLUDE_PATH; ?>financial-control"> Visualizar Pagamentos </a>
-                                    </li>
+                                    <?php if ($_SESSION['list-companys']['list-companys']): ?>
+                                        <li>
+                                            <a class="dropdown-item" <?php echo VerificationMenu(); ?><?php SelectedMenu('list-companys'); ?>
+                                                href="<?php echo INCLUDE_PATH; ?>list-companys">Empresa
+                                            </a>
+                                        </li>
+                                    <?php endif; ?>
                                 </ul>
                             </li>
-                        <?php endif; ?>
-                        <?php if ($showMenuAdm): ?>
-                            <li class="nav-item dropdown">
-                                <a style="color: #fff !important; font-size: 1.3rem" class="nav-link dropdown-toggle"
-                                    role="button" data-bs-toggle="dropdown" aria-expanded="false">Controle Estoque</a>
-                                <ul class="dropdown-menu dropdown-menu-dark">
-                                    <li><a class="dropdown-item" <?php SelectedMenu('list-products'); ?>
-                                            href="<?php echo INCLUDE_PATH; ?>list-products"> Lista de Produtos</a></li>
-                                    <li><a class="dropdown-item" <?php SelectedMenu('register-stockcontrol'); ?>
-                                            href="<?php echo INCLUDE_PATH; ?>register-stockcontrol">Cadastrar Produtos</a>
-                                    </li>
-                                </ul>
-                            </li>
-                        <?php endif; ?>
-                        <?php if ($showMenuAdm): ?>
-                            <li class="nav-item dropdown">
-                                <a style="color: #fff !important; font-size: 1.3rem" class="nav-link dropdown-toggle"
-                                    role="button" data-bs-toggle="dropdown" aria-expanded="false">Administrativo</a>
-                                <ul class="dropdown-menu dropdown-menu-dark">
-                                    <li><a class="dropdown-item" <?php SelectedMenu('dashboard.php'); ?>
-                                            href="<?php echo INCLUDE_PATH; ?>dashboard"> Dashboard ADM </a>
-                                    </li>
-                                </ul>
-                            </li>
-                        <?php endif; ?>
-                        <li class="nav-item dropdown">
-                            <a style="color: #fff !important; font-size: 1.3rem" class="nav-link dropdown-toggle"
-                                role="button" data-bs-toggle="dropdown" aria-expanded="false">Minha Empresa</a>
-                            <ul class="dropdown-menu dropdown-menu-dark">
-                                <li><a class="dropdown-item" <?php echo VerificationMenu(); ?> <?php SelectedMenu('list-companys'); ?>
-                                        href="<?php echo INCLUDE_PATH; ?>list-companys">Empresa</a></li>
-                            </ul>
-                        </li>
                         <?php } ?>
                     </ul>
                 </div>

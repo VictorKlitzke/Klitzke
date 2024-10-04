@@ -1,5 +1,15 @@
 <?php
 
+if (!isset($_SESSION['id'])) {
+	header("Location: login.php");
+	exit();
+}
+$page_permission = 'list-clients';
+if (!isset($_SESSION['user_permissions'][$page_permission]) || $_SESSION['user_permissions'][$page_permission] !== 1) {
+	header("Location: " . INCLUDE_PATH . "access-denied.php");
+	exit();
+}
+
 $clients = Controllers::SelectAll('clients');
 
 ?>

@@ -1,3 +1,16 @@
+<?php 
+
+if (!isset($_SESSION['id'])) {
+  header("Location: login.php");
+  exit();
+}
+$page_permission = 'financial-control';
+if (!isset($_SESSION['user_permissions'][$page_permission]) || $_SESSION['user_permissions'][$page_permission] !== 1) {
+  header("Location: " . INCLUDE_PATH . "access-denied.php");
+  exit();
+}
+
+?>
 <div class="box-content">
   <h2 class="text-white">Controle Financeiro</h2>
   <!-- Cards de Resumo -->

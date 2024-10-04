@@ -1,10 +1,19 @@
 <?php
+if (!isset($_SESSION['id'])) {
+    header("Location: login.php");
+    exit();
+}
+$page_permission = 'list-request';
+if (!isset($_SESSION['user_permissions'][$page_permission]) || $_SESSION['user_permissions'][$page_permission] !== 1) {
+    header("Location: " . INCLUDE_PATH . "access-denied.php");
+    exit();
+}
 
 $user_id = isset($_SESSION['id']) ? $_SESSION['id'] : null;
 $userFilter = isset($_POST['userFilter']) ? intval($_POST['userFilter']) : $user_id;
 $table_filter = isset($_POST['table_filter']) ? intval($_POST['table_filter']) : null;
 
-$date_end = isset($_POST['endDate']) ? $_POST['endDate'] : null; 
+$date_end = isset($_POST['endDate']) ? $_POST['endDate'] : null;
 $date_start = isset($_POST['startDate']) ? $_POST['startDate'] : null;
 $date_start1 = !empty($date_start) ? date('Y-m-d', strtotime($date_start)) : null;
 $date_end1 = !empty($date_end) ? date('Y-m-d', strtotime($date_end)) : null;

@@ -1,5 +1,15 @@
 <?php
 
+if (!isset($_SESSION['id'])) {
+    header("Location: login.php");
+    exit();
+}
+$page_permission = 'list-products';
+if (!isset($_SESSION['user_permissions'][$page_permission]) || $_SESSION['user_permissions'][$page_permission] !== 1) {
+    header("Location: " . INCLUDE_PATH . "access-denied.php");
+    exit();
+}
+
 $products = Controllers::SelectAll('products');
 
 ?>
@@ -86,29 +96,29 @@ $cost_value_product = number_format($result_cost_value_product['cost_value'], 2,
 ?>
 
 <div class="row mt-4">
-        <div class="col-md-4">
-            <div class="card text-white bg-dark mb-3">
-                <div class="card-header">Quantidade total de itens</div>
-                <div class="card-body">
-                    <h5 class="card-title"><?php echo $result_quantity_product['quantity']; ?></h5>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="card text-white bg-dark mb-3">
-                <div class="card-header">Total valores produtos</div>
-                <div class="card-body">
-                    <h5 class="card-title"><?php echo $value_product; ?> Reais</h5>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="card text-white bg-dark mb-3">
-                <div class="card-header">Total valores de custo</div>
-                <div class="card-body">
-                    <h5 class="card-title"><?php echo $cost_value_product; ?> Reais</h5>
-                </div>
+    <div class="col-md-4">
+        <div class="card text-white bg-dark mb-3">
+            <div class="card-header">Quantidade total de itens</div>
+            <div class="card-body">
+                <h5 class="card-title"><?php echo $result_quantity_product['quantity']; ?></h5>
             </div>
         </div>
     </div>
+    <div class="col-md-4">
+        <div class="card text-white bg-dark mb-3">
+            <div class="card-header">Total valores produtos</div>
+            <div class="card-body">
+                <h5 class="card-title"><?php echo $value_product; ?> Reais</h5>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card text-white bg-dark mb-3">
+            <div class="card-header">Total valores de custo</div>
+            <div class="card-body">
+                <h5 class="card-title"><?php echo $cost_value_product; ?> Reais</h5>
+            </div>
+        </div>
+    </div>
+</div>
 </div>

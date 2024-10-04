@@ -1,5 +1,15 @@
 <?php
 
+if (!isset($_SESSION['id'])) {
+  header("Location: login.php");
+  exit();
+}
+$page_permission = 'list-boxpdv';
+if (!isset($_SESSION['user_permissions'][$page_permission]) || $_SESSION['user_permissions'][$page_permission] !== 1) {
+  header("Location: " . INCLUDE_PATH . "access-denied.php");
+  exit();
+}
+
 $user_id = isset($_SESSION['id']) ? $_SESSION['id'] : null;
 $user_filter = isset($_POST['user_filter']) ? intval($_POST['user_filter']) : $user_id;
 

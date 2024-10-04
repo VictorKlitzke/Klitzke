@@ -1,3 +1,16 @@
+<?php
+if (!isset($_SESSION['id'])) {
+  header("Location: login.php");
+  exit();
+}
+$page_permission = 'list-purchase-request';
+if (!isset($_SESSION['user_permissions'][$page_permission]) || $_SESSION['user_permissions'][$page_permission] !== 1) {
+  header("Location: " . INCLUDE_PATH . "access-denied.php");
+  exit();
+}
+
+?>
+
 <div class="box-content p-4">
   <div class="d-flex justify-content-between align-items-center mb-4">
     <h2 class="text-white mb-0">Lista de Solicitações</h2>

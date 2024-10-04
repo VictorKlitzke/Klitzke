@@ -1,5 +1,15 @@
 <?php
 
+if (!isset($_SESSION['id'])) {
+    header("Location: login.php");
+    exit();
+  }
+  $page_permission = 'list-sales';
+  if (!isset($_SESSION['user_permissions'][$page_permission]) || $_SESSION['user_permissions'][$page_permission] !== 1) {
+    header("Location: " . INCLUDE_PATH . "access-denied.php");
+    exit();
+  }
+
 $user_id = isset($_SESSION['id']) ? $_SESSION['id'] : null;
 $userFilter = isset($_POST['userFilter']) ? intval($_POST['userFilter']) : $user_id;
 $form_payment = isset($_POST['form_filter']) ? intval($_POST['form_filter']) : null;

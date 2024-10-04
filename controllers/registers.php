@@ -375,19 +375,74 @@ class Register
         $commission = filter_var($response_users['commission'], FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION);
         $target_commission = filter_var($response_users['targetCommission'], FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION);
         $access = filter_var($response_users['access'], FILTER_SANITIZE_NUMBER_INT);
+
         $menu_register_user = filter_var($response_users['registerusers'], FILTER_SANITIZE_STRING);
         $menu_register_clients = filter_var($response_users['registerclients'], FILTER_SANITIZE_STRING);
         $menu_register_forn = filter_var($response_users['registerforn'], FILTER_SANITIZE_STRING);
+
         $menu_sales = filter_var($response_users['sales'], FILTER_SANITIZE_STRING);
         $menu_list_sales = filter_var($response_users['listSales'], FILTER_SANITIZE_STRING);
+
+        $menu_orders = filter_var($response_users['orders'], FILTER_SANITIZE_STRING);
+        $menu_list_orders = filter_var($response_users['listOrders'], FILTER_SANITIZE_STRING);
+        $menu_register_tables = filter_var($response_users['registerTables'], FILTER_SANITIZE_STRING);
+        
+        $menu_register_boxpdv = filter_var($response_users['registerBoxPdv'], FILTER_SANITIZE_STRING);
+        $menu_list_boxpdv = filter_var($response_users['listBoxPdv'], FILTER_SANITIZE_STRING);
+        // $menu_reports_boxpdv = filter_var($response_users['reportsBoxPdv'], FILTER_SANITIZE_STRING);
+
+        $menu_request_purchase = filter_var($response_users['requestPurchase'], FILTER_SANITIZE_STRING);
+        $menu_list_request_purchase = filter_var($response_users['listrequestPurchase'], FILTER_SANITIZE_STRING);
+        
+        $menu_list_products = filter_var($response_users['listProducts'], FILTER_SANITIZE_STRING);
+        $menu_register_products = filter_var($response_users['registerProducts'], FILTER_SANITIZE_STRING);
+        
+        $menu_dashboard = filter_var($response_users['listProducts'], FILTER_SANITIZE_STRING);
+        
+        $menu_my_company = filter_var($response_users['registerProducts'], FILTER_SANITIZE_STRING);
+
+        $menu_financial_control = filter_var($response_users['financialControl'], FILTER_SANITIZE_STRING);
 
         $menu_access = [
             'list-user' => ($menu_register_user === 'sim') ? 1 : 0,
             'list-clients' => ($menu_register_clients === 'sim') ? 1 : 0,
             'list-suppliers' => ($menu_register_forn === 'sim') ? 1 : 0,
+
             'register-sales' => ($menu_sales === 'sim') ? 1 : 0,
             'list-sales' => ($menu_list_sales === 'sim') ? 1 : 0,
+
+            'register-request' => ($menu_orders === 'sim') ? 1 : 0,
+            'list-request' => ($menu_list_orders === 'sim') ? 1 : 0,
+            'register-table' => ($menu_register_tables === 'sim') ? 1 : 0,
+
+            'register-boxpdv' => ($menu_register_boxpdv === 'sim') ? 1 : 0,
+            'list-boxpdv' => ($menu_list_boxpdv === 'sim') ? 1 : 0,
+            // 'register-table' => ($menu_reports_boxpdv === 'sim') ? 1 : 0,
+
+            'shopping-request' => ($menu_request_purchase === 'sim') ? 1 : 0,
+            'list-purchase-request' => ($menu_list_request_purchase === 'sim') ? 1 : 0,
+
+            'list-products' => ($menu_list_products === 'sim') ? 1 : 0,
+            'register-stockcontrol' => ($menu_register_products === 'sim') ? 1 : 0,
+
+            'dashboard' => ($menu_dashboard === 'sim') ? 1 : 0,
+
+            'list-companys' => ($menu_my_company === 'sim') ? 1 : 0,
+
+            'financial-control' => ($menu_financial_control === 'sim') ? 1 : 0,
         ];
+
+        if ($_SESSION['user_permissions']['list-users'] === 1) {
+            $_SESSION['user_permissions']['register-users'] = 1;
+        }
+        
+        if ($_SESSION['user_permissions']['list-clients'] === 1) {
+            $_SESSION['user_permissions']['register-clients'] = 1;
+        }
+        
+        if ($_SESSION['user_permissions']['list-suppliers'] === 1) {
+            $_SESSION['user_permissions']['register-suppliers'] = 1;
+        }
 
         if (!$access || !$name || !$password || !$function || !$phone) {
             Response::json(false, 'Campos invalidos', $today);

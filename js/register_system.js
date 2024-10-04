@@ -29,16 +29,35 @@ const FieldsUsers = () => {
             registeruser: document.getElementById("cadastros-submenu-usuario").value,
             registerclients: document.getElementById("cadastros-submenu-clientes").value,
             registerforn: document.getElementById("cadastros-submenu-fornecedores").value,
+
             sales: document.getElementById("faturamento-submenu-vendas").value,
             listSales: document.getElementById("faturamento-submenu-lista-vendas").value,
+
+            orders: document.getElementById("food-submenu-pedidos").value,
+            listOrders: document.getElementById("food-submenu-lista-pedidos").value,
+            registerTables: document.getElementById("food-submenu-cadastro-mesa").value,
+
+            registerBoxPdv: document.getElementById("fluxo-caixa-submenu-abertura").value,
+            listBoxPdv: document.getElementById("fluxo-caixa-submenu-lista").value,
+            reportsBoxPdv: document.getElementById("fluxo-caixa-submenu-relatorio").value,
+
+            requestPurchase: document.getElementById("suprimentos-submenu-solicitacao").value,
+            listrequestPurchase: document.getElementById("suprimentos-submenu-").value,
+
+            listProducts: document.getElementById("controle-estoque-submenu-lista").value,
+            registerProducts: document.getElementById("controle-estoque-submenu-produtos").value,
+
+            dashboardADM: document.getElementById("administrativo-submenu").value,
+
+            financialControl: document.getElementById("controle-financeiro-submenu-pagamentos").value,
+
+            myCompany: document.getElementById("minha-empresa-submenu").value
         }
     };
 }
 async function RegisterUsers() {
 
     const { values, type, inputs, menuaccess } = await FieldsUsers();
-
-    console.log(menuaccess.registeruser);
 
     if (values.name == "" || values.password == "" || values.email == "" || values.phone == "" || values.userFunction == "") {
         showMessage('Preencha todos os campos!', 'warning',);
@@ -99,7 +118,10 @@ async function RegisterUsers() {
         registerclients: menuaccess.registerclients,
         registerforn: menuaccess.registerforn,
         sales: menuaccess.sales,
-        listSales: menuaccess.listSales
+        listSales: menuaccess.listSales,
+        orders: menuaccess.orders,
+        listOrders: menuaccess.listOrders,
+        registerTables: menuaccess.registerTables
     }
 
     console.log(responseFields);

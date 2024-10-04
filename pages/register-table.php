@@ -1,3 +1,17 @@
+<?php
+
+if (!isset($_SESSION['id'])) {
+    header("Location: login.php");
+    exit();
+}
+$page_permission = 'register-table';
+if (!isset($_SESSION['user_permissions'][$page_permission]) || $_SESSION['user_permissions'][$page_permission] !== 1) {
+    header("Location: " . INCLUDE_PATH . "access-denied.php");
+    exit();
+}
+
+?>
+
 <div class="box-content">
     <div class="row g-3">
         <div class="col-md-4">
