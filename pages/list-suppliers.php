@@ -56,10 +56,10 @@ $suppliers = Controllers::SelectAll('suppliers');
                 <th><?php echo htmlspecialchars($value['cnpjcpf']); ?></th>
 
                 <th class="gap-2">
-                  <a class="btn btn-info"
+                  <a class="btn btn-info accessnivel"
                     href="<?php echo INCLUDE_PATH; ?>edit-suppliers?id=<?php echo base64_encode($value['id']); ?>">Editar</a>
 
-                  <button class="btn btn-danger" onclick="DeleteForn(this)"
+                  <button class="btn btn-danger accessnivel" onclick="DeleteForn(this)"
                     data-id="<?php echo base64_encode($value['id']); ?>">Deletar</button>
                 </th>
               </tr>

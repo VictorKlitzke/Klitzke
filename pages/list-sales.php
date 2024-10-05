@@ -143,7 +143,7 @@ $sales = Controllers::SelectSales('sales', $userFilter, $form_payment, $date_sta
 
                                     <?php } else { ?>
                                         <button onclick="CancelSales(this)" data-id="<?php echo $value['id']; ?>" type="button"
-                                            class="btn btn-danger">Cancelar venda
+                                            class="btn btn-danger accessnivel">Cancelar venda
                                         </button>
 
                                     <?php } ?>

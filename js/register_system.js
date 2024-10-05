@@ -1,4 +1,17 @@
 const FilesContent = document.getElementById('file-pdf');
+const checkboxes = document.querySelectorAll('.form-check-input');
+const selects = document.querySelectorAll('.form-select');
+
+checkboxes.forEach(checkbox => {
+    checkbox.addEventListener('change', function () {
+        const cardBody = this.closest('.card-body');
+        const selectsInCard = cardBody.querySelectorAll('.form-select');
+
+        selectsInCard.forEach(select => {
+            select.value = this.checked ? 'sim' : 'nao';
+        });
+    });
+});
 
 const FieldsUsers = () => {
     return {
@@ -13,7 +26,8 @@ const FieldsUsers = () => {
             userFunction: document.getElementById("function").value,
             commission: document.getElementById("commission").value,
             targetCommission: document.getElementById("target_commission").value,
-            access: document.getElementById("access").value
+            access: document.getElementById("access").value,
+            typeUsers: document.getElementById("user-type").value
         },
         inputs: {
             name: document.getElementById("name"),
@@ -23,7 +37,8 @@ const FieldsUsers = () => {
             userFunction: document.getElementById("function"),
             commission: document.getElementById("commission"),
             targetCommission: document.getElementById("target_commission"),
-            access: document.getElementById("access")
+            access: document.getElementById("access"),
+            typeUsers: document.getElementById("user-type")
         },
         menuaccess: {
             registeruser: document.getElementById("cadastros-submenu-usuario").value,
@@ -42,12 +57,12 @@ const FieldsUsers = () => {
             reportsBoxPdv: document.getElementById("fluxo-caixa-submenu-relatorio").value,
 
             requestPurchase: document.getElementById("suprimentos-submenu-solicitacao").value,
-            listrequestPurchase: document.getElementById("suprimentos-submenu-").value,
+            listrequestPurchase: document.getElementById("suprimentos-submenu-lista").value,
 
             listProducts: document.getElementById("controle-estoque-submenu-lista").value,
             registerProducts: document.getElementById("controle-estoque-submenu-produtos").value,
 
-            dashboardADM: document.getElementById("administrativo-submenu").value,
+            dashboardADM: document.getElementById("administrativo-submenu-dashboards").value,
 
             financialControl: document.getElementById("controle-financeiro-submenu-pagamentos").value,
 
@@ -121,10 +136,19 @@ async function RegisterUsers() {
         listSales: menuaccess.listSales,
         orders: menuaccess.orders,
         listOrders: menuaccess.listOrders,
-        registerTables: menuaccess.registerTables
+        registerTables: menuaccess.registerTables,
+        typeUsers: values.typeUsers,
+        registerBoxPdv: menuaccess.registerBoxPdv,
+        listBoxPdv: menuaccess.listBoxPdv,
+        reportsBoxPdv: menuaccess.reportsBoxPdv,
+        requestPurchase: menuaccess.requestPurchase,
+        listrequestPurchase: menuaccess.listrequestPurchase,
+        listProducts: menuaccess.listProducts,
+        registerProducts: menuaccess.registerProducts,
+        dashboardADM: menuaccess.dashboardADM,
+        financialControl: menuaccess.financialControl,
+        myCompany: menuaccess.myCompany
     }
-
-    console.log(responseFields);
 
     continueMessage(
         "Deseja realmente cadastrar esse usuário?", "Sim", "Não", async function () {
@@ -475,34 +499,38 @@ async function RegisterTableRequest() {
         name: values.name
     }
 
-    try {
+    continueMessage("Continuar com o cadastro?", "Sim", "Não", async function () {
+        try {
 
-        let url = `${BASE_CONTROLLERS}registers.php`;
+            let url = `${BASE_CONTROLLERS}registers.php`;
 
-        const response = await fetch(url, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(responseFieldsTable)
-        })
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(responseFieldsTable)
+            })
 
-        const responseBody = await response.json();
+            const responseBody = await response.json();
 
-        if (responseBody.success) {
-            showMessage('Mesa cadastrada com sucesso', 'success');
+            if (responseBody.success) {
+                showMessage('Mesa cadastrada com sucesso', 'success');
 
-            setTimeout(() => {
-                location.reload();
-            }, 2000);
+                setTimeout(() => {
+                    location.reload();
+                }, 2000);
 
-        } else {
-            showMessage(responseBody.message || 'Erro ao cadastrar mesa', 'error');
+            } else {
+                showMessage(responseBody.message || 'Erro ao cadastrar mesa' + responseBody.message, 'error');
+            }
+
+        } catch (error) {
+            showMessage("Erro ao fazer requisição" + error, 'error');
         }
-
-    } catch (error) {
-        showMessage("Erro ao fazer requisição" + error, 'error');
-    }
+    }, function () {
+        showMessage('Erro ao fazer requisição' + error, 'error')
+    })
 }
 
 const getFieldsAccount = () => {
@@ -963,8 +991,6 @@ async function RegisterBoxPdv() {
         value: valueBoxPdv,
         observation: values.observation,
     }
-
-    console.log(responseBoxPdv);
 
     continueMessage("Deseja realmente abrir o caixa?", "Sim", "Não", async function () {
 

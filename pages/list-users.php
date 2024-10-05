@@ -51,9 +51,10 @@ $users = Controllers::SelectAll('users');
                   <?php echo $value['access'] == 10 ? 'Padrão' : ($value['access'] == 50 ? 'Moderado' : ($value['access'] == 100 ? 'Administrador' : '')); ?>
                 </th>
                 <th class="gap-2">
-                  <a class="btn btn-info" id="edit-users"
+                  <a class="btn btn-info accessnivel"
                     href="<?php echo INCLUDE_PATH ?>edit-users?id=<?php echo base64_encode($value['id']); ?>">Editar
                   </a>
+
                   <?php if ($value['disable'] == 1) { ?>
                     <button onclick="InativarUsers(this)" type="button" data-id="<?php echo $value['id']; ?>"
                       class="btn btn-warning">Desativar
@@ -62,7 +63,7 @@ $users = Controllers::SelectAll('users');
                     <button class="btn btn-secondary" disabled>Desativado</button>
                   <?php } ?>
 
-                  <button class="btn btn-danger" onclick="DeleteUsers(this)"
+                  <button class="btn btn-danger accessnivel" onclick="DeleteUsers(this)"
                     data-id="<?php echo base64_encode($value['id']); ?>">Deletar
                   </button>
 

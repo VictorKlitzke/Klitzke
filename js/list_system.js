@@ -13,9 +13,57 @@ window.onload = ListBuyRequest();
 window.onload = ListVariationValues();
 window.onload = loadValuesFromLocalStorage;
 window.onload = AddVariationValues();
-window.onload = ListAPrazo();
-window.onload = ListDetailsAprazo();
 window.onload = calculateTotalsListAPrazo();
+
+document.addEventListener('DOMContentLoaded', function() {
+    ListDetailsAprazo();
+    ListAPrazo();
+});
+
+function showToast(message, id) {
+    console.log("Notificação gerada");
+
+    const toastContainer = document.getElementById('toastContainer');
+    const toastElement = document.createElement('div');
+
+    toastElement.className = 'toast';
+    toastElement.setAttribute('role', 'alert');
+    toastElement.setAttribute('aria-live', 'assertive');
+    toastElement.setAttribute('aria-atomic', 'true');
+    toastElement.dataset.id = id; 
+
+    toastElement.innerHTML = `
+        <div class="toast-header">
+            <img src="https://via.placeholder.com/20" class="rounded me-2" alt="Notification">
+            <strong class="me-auto">Notificação</strong>
+            <small class="text-body-secondary">Agora</small>
+            <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close" onclick="removeNotification(${id})"></button>
+        </div>
+        <div class="toast-body">
+            ${message}
+            <div class="mt-2">
+                <button class="btn btn-success btn-sm" onclick="updateStatus(${id})">Marcar como resolvido</button>
+            </div>
+        </div>
+    `;
+
+    toastContainer.appendChild(toastElement);
+    const toast = new bootstrap.Toast(toastElement, {
+        animation: true,
+        autohide: false 
+    });
+    toast.show();
+}
+function removeNotification(id) {
+    const toastElement = document.querySelector(`#toastContainer .toast[data-id="${id}"]`);
+    if (toastElement) {
+        toastElement.remove();
+    }
+}
+function addNotificationToQueue(message, id) {
+    showToast(message, id);
+    console.log(`Adicionando notificação para ID ${id}: ${message}`);
+}
 
 async function InativarInvo(button) {
 
@@ -339,6 +387,8 @@ async function DetailsOrder(button) {
 
         const result = await response.json();
 
+        console.log(result);
+
         if (result.success) {
             const items = result.items;
 
@@ -460,7 +510,6 @@ async function ListForn() {
         }
     } catch (error) {
         console.log('Erro ao fazer requisição: ' + error.message)
-        console.clear();
     }
 }
 async function ListBuyRequest(searchTerm = '') {
@@ -655,7 +704,6 @@ async function AddVariationValues() {
         }
     } catch (error) {
         console.log('Erro ao fazer requisição: ' + error.message);
-        console.clear();
     }
 }
 function saveValuesToLocalStorage(variations) {
@@ -751,7 +799,6 @@ async function ListProducts() {
 
     } catch (error) {
         console.log('Erro ao fazer requisição: ' + error.message);
-        console.clear();
     }
 }
 async function calculateTotalsListAPrazo() {
@@ -830,7 +877,6 @@ async function calculateTotalsListAPrazo() {
 
     } catch (error) {
         console.log('Erro ao fazer requisição!');
-        console.clear();
     }
 }
 async function ListAPrazo(searchTermFinancialControl = '') {
@@ -914,12 +960,11 @@ async function ListAPrazo(searchTermFinancialControl = '') {
 
                 financialcontrosaleslList.appendChild(row);
 
-                const now = new Date();             
+                const now = new Date();
                 const transactionDate = new Date(f.date_sales);
-                if (f.status_aprazo === 'em andamento' || f.status_aprazo === 'nenhum pagamento') {
-                    if (transactionDate < now) {
-                        scheduleNotification(formatDate(transactionDate), f.total_value, f.id);
-                    }
+                if ((f.status_aprazo === 'em andamento' || f.status_aprazo === 'nenhum pagamento') &&
+                    transactionDate < now) {
+                    addNotificationToQueue(`A conta ${f.id} de valor ${f.total_value} está vencida!`, f.id);
                 }
             });
 
@@ -973,8 +1018,8 @@ async function ListAPrazo(searchTermFinancialControl = '') {
                 const now = new Date();
                 const transactionDate = new Date(f.transaction_date);
                 if (f.pay === null) {
-                    if (transactionDate < now) {
-                        scheduleNotification(formatDate(transactionDate), f.value, f.id);
+                    if (f.pay === null && transactionDate < now) {
+                        addNotificationToQueue(`A conta ${f.id} de valor ${f.value} está vencida!`, f.id);
                     }
                 }
             });
@@ -1044,7 +1089,7 @@ async function ListDetailsAprazo(id_detals) {
                 idCell.textContent = fp.id;
                 row.appendChild(idCell);
 
-                const DateVencimentCell = document.createElement('td');
+                const DateVencimentCell = document.createElement('th');
                 const dateString = fp.date_venciment;
                 const [year, month, day] = dateString.split('-');
                 const formattedDate = `${day}/${month}/${year}`;
@@ -1081,65 +1126,6 @@ function formatDate(date) {
     const month = String(date.getMonth() + 1).padStart(2, '0'); // Mês começa do 0, por isso somamos 1
     const year = date.getFullYear();
     return `${day}/${month}/${year}`;
-}
-
-function showToast(message) {
-
-    const toastContainer = document.getElementById('toastContainer');
-    const toastElement = document.createElement('div');
-    toastElement.className = 'toast';
-    toastElement.setAttribute('role', 'alert');
-    toastElement.setAttribute('aria-live', 'assertive');
-    toastElement.setAttribute('aria-atomic', 'true');
-
-    toastElement.innerHTML = `
-        <div class="toast-header">
-            <img src="https://via.placeholder.com/20" class="rounded me-2" alt="Notification">
-            <strong class="me-auto">Notificação</strong>
-            <small class="text-body-secondary">Agora</small>
-            <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
-        </div>
-        <div class="toast-body">
-            ${message}
-        </div>
-    `;
-
-    toastContainer.appendChild(toastElement);
-
-    const toast = new bootstrap.Toast(toastElement, {
-        animation: true,
-        autohide: true,
-        delay: 5000
-    });
-    toast.show();
-}
-function scheduleNotification(dateTransaction, value, id) {
-    if (!('Notification' in window)) {
-        console.log('Este navegador não suporta notificações.');
-        return;
-    }
-
-    Notification.requestPermission().then(permission => {
-        if (permission !== 'granted') {
-            console.log('Permissão de notificação negada.');
-            return;
-        }
-
-        const now = new Date();
-        const notificationTime = new Date(dateTransaction);
-        const timeToNotification = notificationTime - now;
-
-        if (timeToNotification <= 0) {
-            addNotificationToQueue(`A conta ${id} de valor ${value} está vencida!`);
-        } else {
-            setTimeout(() => {
-                addNotificationToQueue(`A conta ${id} de valor ${value} está vencida!`);
-            }, timeToNotification);
-        }
-    });
-}
-function addNotificationToQueue(message) {
-    showToast(message);
 }
 
 FieldFormBuyRequest.addEventListener('input', async function () {

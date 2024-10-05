@@ -64,14 +64,24 @@ $count_sales = Controllers::SelectAll('sales');
 <div class="box-content">
   <div class="row">
     <div class="col">
-      <div class="box-content">
-        <h1 style="display: flex; justify-content: start; color: #ccc">
-          Ola,
-          <?php echo $_SESSION['name']; ?>
-        </h1>
-        <p style="color: #ccc; padding-top: 10px;">
-          Aqui esta tudo que aconteceu até o momento!
-        </p>
+      <h1 class="text-white">
+        Ola,
+        <?php echo $_SESSION['name']; ?>
+      </h1>
+      <p class="text-white">
+        Aqui esta tudo que aconteceu até o momento!
+      </p>
+    </div>
+  </div>
+</div>
+
+<div class="box-content">
+  <div class="row">
+    <div class="col">
+      <h2 class="text-white">Quadro de Avisos</h2>
+      <div aria-live="polite" aria-atomic="true" class="d-flex">
+        <div class="toast-container position-fixed bottom-0 end-0 p-3" id="toastContainer">
+        </div>
       </div>
     </div>
   </div>
@@ -137,30 +147,28 @@ $status_product = $products->fetchAll();
 <div class="box-content">
   <div class="row">
     <div class="col">
-      <div class="box-content">
-        <h2 class="text-white mb-4">Produtos Negativados</h2>
-        <div class="table-responsive">
-          <table class="table table-dark table-hover">
-            <thead>
+      <h2 class="text-white mb-4">Produtos Negativados</h2>
+      <div class="table-responsive">
+        <table class="table table-dark table-hover">
+          <thead>
+            <tr>
+              <th scope="col">Nome</th>
+              <th scope="col">Quantidade</th>
+              <th scope="col">Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <?php
+            foreach ($status_product as $row => $value) {
+              ?>
               <tr>
-                <th scope="col">Nome</th>
-                <th scope="col">Quantidade</th>
-                <th scope="col">Status</th>
+                <th scope="row"><?php echo $value['product']; ?></th>
+                <td><?php echo $value['product_stock_quantity']; ?></td>
+                <td><?php echo $value['status_product']; ?></td>
               </tr>
-            </thead>
-            <tbody>
-              <?php
-              foreach ($status_product as $row => $value) {
-                ?>
-                <tr>
-                  <th scope="row"><?php echo $value['product']; ?></th>
-                  <td><?php echo $value['product_stock_quantity']; ?></td>
-                  <td><?php echo $value['status_product']; ?></td>
-                </tr>
-              <?php } ?>
-            </tbody>
-          </table>
-        </div>
+            <?php } ?>
+          </tbody>
+        </table>
       </div>
     </div>
   </div>
@@ -168,76 +176,74 @@ $status_product = $products->fetchAll();
 
 <div class="box-content">
   <div class="row">
-    <div class="col">
-      <div class="box-content" style="max-height: 700px;">
-        <h2 class="text-white mb-4">Lista das 10 ultimas vendas</h2>
-        <div class="table-responsive" style="max-height: 700px; overflow-y: auto; overflow-x: auto;">
-          <table class="table table-dark table-hover">
-            <thead style="white-space: nowrap;">
-              <th scope="col">#</th>
-              <th scope="col">Usuario</th>
-              <th scope="col">Cliente</th>
-              <th scope="col">Forma de Pagamento</th>
-              <th scope="col">Status Venda</th>
-              <th scope="col">Valor Total</th>
-              <th scope="col">Data</th>
-              <th scope="col">Ações</th>
-            </thead>
+    <div class="col" style="max-height: 700px;">
+      <h2 class="text-white mb-4">Lista das 10 ultimas vendas</h2>
+      <div class="table-responsive" style="max-height: 700px; overflow-y: auto; overflow-x: auto;">
+        <table class="table table-dark table-hover">
+          <thead style="white-space: nowrap;">
+            <th scope="col">#</th>
+            <th scope="col">Usuario</th>
+            <th scope="col">Cliente</th>
+            <th scope="col">Forma de Pagamento</th>
+            <th scope="col">Status Venda</th>
+            <th scope="col">Valor Total</th>
+            <th scope="col">Data</th>
+            <th scope="col">Ações</th>
+          </thead>
 
-            <?php
+          <?php
 
-            foreach ($result_sales as $key => $value) {
+          foreach ($result_sales as $key => $value) {
 
-              ?>
+            ?>
 
-              <tbody style="white-space: nowrap;">
+            <tbody style="white-space: nowrap;">
 
-                <tr>
-                  <th scope="row"><?php echo htmlspecialchars($value['id']); ?></th>
-                  <th> <?php echo htmlspecialchars($value['users']); ?></th>
+              <tr>
+                <th scope="row"><?php echo htmlspecialchars($value['id']); ?></th>
+                <th> <?php echo htmlspecialchars($value['users']); ?></th>
 
-                  <?php if (htmlspecialchars($value['clients']) == null) {
-                    echo '<td><p>' . 'Cliente consumidor final' . '</p></td>';
-                  } else {
-                    echo '<td><p>' . htmlspecialchars($value['clients']) . '</p></td>';
-                  }
-                  ?>
-                  <th><?php echo htmlspecialchars($value['form_payment']); ?></th>
-                  <th><?php echo htmlspecialchars($value['status_sales']); ?></th>
-                  <th><?php echo htmlspecialchars($value['total_value']); ?></th>
-                  <th><?php echo htmlspecialchars($value['date_sales']); ?></th>
+                <?php if (htmlspecialchars($value['clients']) == null) {
+                  echo '<td><p>' . 'Cliente consumidor final' . '</p></td>';
+                } else {
+                  echo '<td><p>' . htmlspecialchars($value['clients']) . '</p></td>';
+                }
+                ?>
+                <th><?php echo htmlspecialchars($value['form_payment']); ?></th>
+                <th><?php echo htmlspecialchars($value['status_sales']); ?></th>
+                <th><?php echo htmlspecialchars($value['total_value']); ?></th>
+                <th><?php echo htmlspecialchars($value['date_sales']); ?></th>
 
-                  <th>
-                    <?php
+                <th>
+                  <?php
 
-                    if ($value['status'] == 2) {
+                  if ($value['status'] == 2) {
 
-                      ?>
+                    ?>
 
-                      <button onclick="ReopenSales(this)" type="button" data-id="<?php echo $value['id'] ?>"
-                        class="btn btn-info">Reabrir venda
-                      </button>
+                    <button onclick="ReopenSales(this)" type="button" data-id="<?php echo $value['id'] ?>"
+                      class="btn btn-info accessnivel">Reabrir venda
+                    </button>
 
-                    <?php } else { ?>
+                  <?php } else { ?>
 
-                      <button onclick="CancelSales(this)" data-id="<?php echo $value['id']; ?>" type="button"
-                        class="btn btn-danger">Cancelar venda
-                      </button>
+                    <button onclick="CancelSales(this)" data-id="<?php echo $value['id']; ?>" type="button"
+                      class="btn btn-danger accessnivel">Cancelar venda
+                    </button>
 
-                    <?php } ?>
+                  <?php } ?>
 
-                    <!-- <button onclick="Details(this)" data-id="<?php echo $value['id']; ?>" type="button"
+                  <!-- <button onclick="Details(this)" data-id="<?php echo $value['id']; ?>" type="button"
                       class="btn btn-primary">
                       Mais detalhes
                     </button> -->
-                  </th>
-                </tr>
-              </tbody>
+                </th>
+              </tr>
+            </tbody>
 
-            <?php } ?>
+          <?php } ?>
 
-          </table>
-        </div>
+        </table>
       </div>
     </div>
   </div>

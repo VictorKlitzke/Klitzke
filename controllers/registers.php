@@ -197,8 +197,6 @@ class Register
 
         try {
 
-            $sql->BeginTransaction();
-
             $exec = $sql->prepare("SELECT access FROM users WHERE ID = :user_id");
             $exec->bindParam(':user_id', $user_id, PDO::PARAM_INT);
             $exec->execute();
@@ -219,8 +217,6 @@ class Register
         $new_values_variation = [];
 
         try {
-
-            $sql->BeginTransaction();
 
             foreach ($response_variation['AddVariation'] as $variation) {
 
@@ -375,6 +371,7 @@ class Register
         $commission = filter_var($response_users['commission'], FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION);
         $target_commission = filter_var($response_users['targetCommission'], FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION);
         $access = filter_var($response_users['access'], FILTER_SANITIZE_NUMBER_INT);
+        $type_users = filter_var($response_users['typeUsers'], FILTER_SANITIZE_NUMBER_INT);
 
         $menu_register_user = filter_var($response_users['registerusers'], FILTER_SANITIZE_STRING);
         $menu_register_clients = filter_var($response_users['registerclients'], FILTER_SANITIZE_STRING);
@@ -386,27 +383,35 @@ class Register
         $menu_orders = filter_var($response_users['orders'], FILTER_SANITIZE_STRING);
         $menu_list_orders = filter_var($response_users['listOrders'], FILTER_SANITIZE_STRING);
         $menu_register_tables = filter_var($response_users['registerTables'], FILTER_SANITIZE_STRING);
-        
+
         $menu_register_boxpdv = filter_var($response_users['registerBoxPdv'], FILTER_SANITIZE_STRING);
         $menu_list_boxpdv = filter_var($response_users['listBoxPdv'], FILTER_SANITIZE_STRING);
         // $menu_reports_boxpdv = filter_var($response_users['reportsBoxPdv'], FILTER_SANITIZE_STRING);
 
         $menu_request_purchase = filter_var($response_users['requestPurchase'], FILTER_SANITIZE_STRING);
         $menu_list_request_purchase = filter_var($response_users['listrequestPurchase'], FILTER_SANITIZE_STRING);
-        
+
         $menu_list_products = filter_var($response_users['listProducts'], FILTER_SANITIZE_STRING);
         $menu_register_products = filter_var($response_users['registerProducts'], FILTER_SANITIZE_STRING);
-        
+
         $menu_dashboard = filter_var($response_users['listProducts'], FILTER_SANITIZE_STRING);
-        
+
         $menu_my_company = filter_var($response_users['registerProducts'], FILTER_SANITIZE_STRING);
 
         $menu_financial_control = filter_var($response_users['financialControl'], FILTER_SANITIZE_STRING);
 
         $menu_access = [
-            'list-user' => ($menu_register_user === 'sim') ? 1 : 0,
+            'list-users' => ($menu_register_user === 'sim') ? 1 : 0,
+            'register-users' => ($menu_register_user === 'sim') ? 1 : 0,
+            'edit-users' => ($menu_register_user === 'sim') ? 1 : 0,
+
             'list-clients' => ($menu_register_clients === 'sim') ? 1 : 0,
+            'register-clients' => ($menu_register_clients === 'sim') ? 1 : 0,
+            'edit-clients' => ($menu_register_clients === 'sim') ? 1 : 0,
+
             'list-suppliers' => ($menu_register_forn === 'sim') ? 1 : 0,
+            'register-suppliers' => ($menu_register_forn === 'sim') ? 1 : 0,
+            'edit-suppliers' => ($menu_register_forn === 'sim') ? 1 : 0,
 
             'register-sales' => ($menu_sales === 'sim') ? 1 : 0,
             'list-sales' => ($menu_list_sales === 'sim') ? 1 : 0,
@@ -432,31 +437,17 @@ class Register
             'financial-control' => ($menu_financial_control === 'sim') ? 1 : 0,
         ];
 
-        if ($_SESSION['user_permissions']['list-users'] === 1) {
-            $_SESSION['user_permissions']['register-users'] = 1;
-        }
-        
-        if ($_SESSION['user_permissions']['list-clients'] === 1) {
-            $_SESSION['user_permissions']['register-clients'] = 1;
-        }
-        
-        if ($_SESSION['user_permissions']['list-suppliers'] === 1) {
-            $_SESSION['user_permissions']['register-suppliers'] = 1;
-        }
-
         if (!$access || !$name || !$password || !$function || !$phone) {
             Response::json(false, 'Campos invalidos', $today);
         }
 
         try {
 
-            $sql->BeginTransaction();
-
             $hashed_password = password_hash($password, PASSWORD_DEFAULT);
 
             $exec = $sql->prepare("INSERT INTO users (name, email, password, login, phone, function, 
-                                commission, target_commission, access, disable)
-                                VALUES (:name, :email, :password, :login, :phone, :function, :commission, :target_commission, :access, :disable)");
+                                commission, target_commission, access, disable, type_users)
+                                VALUES (:name, :email, :password, :login, :phone, :function, :commission, :target_commission, :access, :disable, :type_users)");
             $exec->bindValue(':name', $name, PDO::PARAM_STR);
             $exec->bindValue(':email', $email, PDO::PARAM_STR);
             $exec->bindValue(':password', $hashed_password, PDO::PARAM_STR);
@@ -467,6 +458,7 @@ class Register
             $exec->bindValue(':target_commission', $target_commission, PDO::PARAM_STR);
             $exec->bindValue(':access', $access, PDO::PARAM_STR);
             $exec->bindValue(':disable', $disable, PDO::PARAM_INT);
+            $exec->bindValue(':type_users', $type_users, PDO::PARAM_STR);
             $exec->execute();
 
             $user_id_menu_access = $sql->lastInsertId();
@@ -528,9 +520,6 @@ class Register
                 return;
             }
 
-
-            $sql->BeginTransaction();
-
             $exec = $sql->prepare("
             INSERT INTO $name_table 
             (name, email, social_reason, cpf, phone, address, city, cep, neighborhood, disable) 
@@ -578,8 +567,6 @@ class Register
 
         try {
 
-            $sql->BeginTransaction();
-
             $exec = $sql->prepare("
             INSERT INTO $name_table 
             (name, email, cnpj, state_registration, address, city, phone, state) 
@@ -615,17 +602,17 @@ class Register
 
         $status = 0;
         $today = date('Y-m-d H:i:s');
-        $name = filter_var($response_table['name'], FILTER_SANITIZE_STRING);
+        $number = filter_var($response_table['name'], FILTER_SANITIZE_STRING);
         $name_table = "table_requests";
 
-        if (!$name) {
+        if (!$number) {
             Response::json(false, 'Campo invalido', $today);
         }
 
         try {
 
-            $check = $sql->prepare("SELECT COUNT(*) FROM $name_table WHERE name = :name");
-            $check->bindValue(':name', $name, PDO::PARAM_STR);
+            $check = $sql->prepare("SELECT COUNT(*) FROM $name_table WHERE number = :number");
+            $check->bindValue(':number', $number, PDO::PARAM_STR);
             $check->execute();
             $exists = $check->fetchColumn();
 
@@ -634,14 +621,14 @@ class Register
                 return;
             }
 
-            $exec = $sql->prepare("INSERT INTO $name_table (name, status_table) VALUES (:name, :status_table)");
-            $exec->bindValue(':name', $name, PDO::PARAM_STR);
+            $exec = $sql->prepare("INSERT INTO $name_table (number, status_table) VALUES (:number, :status_table)");
+            $exec->bindValue(':number', $number, PDO::PARAM_STR);
             $exec->bindValue(':status_table', $status, PDO::PARAM_INT);
             $exec->execute();
 
             $sql->commit();
 
-            $message_log = "Mesa $name cadastrado com sucesso";
+            $message_log = "Mesa $number cadastrado com sucesso";
             Panel::LogAction($user_id, 'Cadastrar Mesa', $message_log, $today);
             Response::send(true, 'Mesa cadastrado com sucesso', $today);
 
@@ -735,7 +722,6 @@ class Register
         $flow = $response_products['flow'];
 
         try {
-            $sql->BeginTransaction();
 
             $validate = new self;
             if (!$validate->ValidateImg($flow)) {
@@ -814,8 +800,6 @@ class Register
                 return;
             }
 
-            $sql->beginTransaction();
-
             $exec = $sql->prepare("INSERT INTO $name_table (company, fantasy_name, email, phone, address, city, state, cnpjcpf) 
                                    VALUES (:name_company, :fantasy_name, :email, :phone, :address, :city, :state, :cnpj)");
 
@@ -855,7 +839,6 @@ class Register
         }
 
         try {
-            $sql->BeginTransaction();
 
             $exec = $sql->prepare("SELECT COUNT(*) FROM boxpdv WHERE id_users = :user_id AND status = :status");
             $exec->bindParam(':user_id', $user_id, PDO::PARAM_INT);
@@ -906,7 +889,6 @@ class Register
         }
 
         try {
-            $sql->BeginTransaction();
 
             $exec = $sql->prepare("SELECT id, value FROM boxpdv WHERE status = :status");
             $exec->bindParam(':status', $status, PDO::PARAM_INT);
@@ -953,8 +935,6 @@ class Register
             Response::json(false, 'Campo invalido', $today);
         }
         try {
-
-            $sql->BeginTransaction();
 
             $exec = $sql->prepare("INSERT INTO $name_table (multiply, status) VALUES(:multiply, :status)");
             $exec->bindValue(':multiply', $multiply, PDO::PARAM_STR);

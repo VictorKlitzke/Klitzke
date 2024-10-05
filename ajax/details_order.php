@@ -45,7 +45,7 @@ function detailsPedido($id_pedido_details, $sql)
 
         $exec = $sql->prepare("select 
                                 r.id Codigo,
-                                tb.number comanda,
+                                r.id_table comanda,
                                 p.name, 
                                 ri.quantity, 
                                 ri.price_request,
@@ -61,7 +61,6 @@ function detailsPedido($id_pedido_details, $sql)
                                 `request_items` ri
                                 inner join `products` p on p.id = ri.`id_products`
                                 inner join `request` r on r.`id` = ri.`id_request`
-                                inner join `table_requests` tb on tb.`id` = r.`id_table`
                                 inner join `request_payments` rp on rp.`id_request` = ri.`id_request` 
                                 left join users u on u.id = r.id_users_request
                                 inner join form_payment fp on fp.id = rp.id_payment_method

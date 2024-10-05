@@ -74,20 +74,20 @@ if (!isset($_SESSION['user_permissions'][$page_permission]) || $_SESSION['user_p
       </select>
       <span id="error" class="error-message">Campo está invalido, Ajuste se possivel.</span>
     </div>
-    <div class="co-12">
-      <button onclick="RegisterUsers()" class="btn btn-primary" type="button">Cadastrar</button>
-    </div>
   </div>
 </div>
 
 <div class="container-fluid card">
-  <h2 class="text-black mt-4" style="">Menus de Acesso</h2>
+  <h2 class="text-black mt-4">Menus de Acesso</h2>
   <hr>
   <div class="row g-3">
     <div class="col-md-4 mb-4">
       <div class="card h-100 text-center shadow">
         <div class="card-body">
-          <h5 class="card-title">Cadastros Gerais</h5>
+          <h5 class="card-title">
+            Cadastros Gerais
+            <input type="checkbox" class="form-check-input" id="check-registers">
+          </h5>
           <p class="card-text">Gerencie todos os cadastros de forma eficiente.</p>
           <div class="col">
             <label for="cadastros-submenu-usuario" class="mt-2">Usuário</label>
@@ -116,7 +116,10 @@ if (!isset($_SESSION['user_permissions'][$page_permission]) || $_SESSION['user_p
     <div class="col-md-4 mb-4">
       <div class="card h-100 text-center shadow">
         <div class="card-body">
-          <h5 class="card-title">Faturamento</h5>
+          <h5 class="card-title">
+            Faturamento
+            <input type="checkbox" class="form-check-input" id="check-sales">
+          </h5>
           <p class="card-text">Controle e emita faturas de forma simples.</p>
           <div class="col">
             <label for="faturamento-submenu-vendas" class="mt-2">Vendas:</label>
@@ -138,7 +141,10 @@ if (!isset($_SESSION['user_permissions'][$page_permission]) || $_SESSION['user_p
     <div class="col-md-4 mb-4">
       <div class="card h-100 text-center shadow">
         <div class="card-body">
-          <h5 class="card-title">Food</h5>
+          <h5 class="card-title">
+            Food
+            <input type="checkbox" class="form-check-input" id="check-food">
+          </h5>
           <p class="card-text">Gerencie informações relacionadas à alimentação.</p>
           <div class="col">
             <label for="food-submenu-pedidos" class="mt-2">Pedidos</label>
@@ -167,7 +173,10 @@ if (!isset($_SESSION['user_permissions'][$page_permission]) || $_SESSION['user_p
     <div class="col-md-4 mb-4">
       <div class="card h-100 text-center shadow">
         <div class="card-body">
-          <h5 class="card-title">Fluxo de Caixa</h5>
+          <h5 class="card-title">
+            Fluxo de Caixa
+            <input type="checkbox" class="form-check-input" id="check-boxpdv">
+          </h5>
           <p class="card-text">Acompanhe seu fluxo de caixa de forma precisa.</p>
           <div class="col">
             <label for="fluxo-caixa-submenu-abertura" class="mt-2">Abrir Caixa</label>
@@ -196,7 +205,10 @@ if (!isset($_SESSION['user_permissions'][$page_permission]) || $_SESSION['user_p
     <div class="col-md-4 mb-4">
       <div class="card h-100 text-center shadow">
         <div class="card-body">
-          <h5 class="card-title">Suprimentos</h5>
+          <h5 class="card-title">
+            Suprimentos
+            <input type="checkbox" class="form-check-input" id="check-supplies">
+          </h5>
           <p class="card-text">Controle e gerencie seus suprimentos.</p>
           <div class="col">
             <label for="suprimentos-submenu-solicitacao" class="mt-2">Solicitação de Compras</label>
@@ -218,7 +230,10 @@ if (!isset($_SESSION['user_permissions'][$page_permission]) || $_SESSION['user_p
     <div class="col-md-4 mb-4">
       <div class="card h-100 text-center shadow">
         <div class="card-body">
-          <h5 class="card-title">Controle Financeiro</h5>
+          <h5 class="card-title">
+            Controle Financeiro
+            <input type="checkbox" class="form-check-input" id="check-financial-control">
+          </h5>
           <p class="card-text">Gerencie suas finanças com eficiência.</p>
           <div class="col">
             <label for="controle-financeiro-submenu-pagamentos" class="mt-2">Visualizar Pagamentos</label>
@@ -233,7 +248,10 @@ if (!isset($_SESSION['user_permissions'][$page_permission]) || $_SESSION['user_p
     <div class="col-md-4 mb-4">
       <div class="card h-100 text-center shadow">
         <div class="card-body">
-          <h5 class="card-title">Controle Estoque</h5>
+          <h5 class="card-title">
+            Controle Estoque
+            <input type="checkbox" class="form-check-input" id="check-product-stock">
+          </h5>
           <p class="card-text">Mantenha o controle do seu estoque facilmente.</p>
           <div class="col">
             <label for="controle-estoque-submenu-lista" class="mt-2">Lista de Produtos</label>
@@ -244,7 +262,27 @@ if (!isset($_SESSION['user_permissions'][$page_permission]) || $_SESSION['user_p
           </div>
           <div class="col">
             <label for="controle-estoque-submenu-produtos" class="mt-2">Produtos</label>
-            <select id="controle-estoque-submenu-produtos" class="form-select">
+            <div class="col">
+              <select id="controle-estoque-submenu-produtos" class="form-select">
+                <option value="sim">Sim</option>
+                <option value="nao" selected>Não</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4 mb-4">
+      <div class="card h-100 text-center shadow">
+        <div class="card-body">
+          <h5 class="card-title">
+            Administrativo
+            <input type="checkbox" class="form-check-input" id="check-adm">
+          </h5>
+          <p class="card-text">Gerencie funções administrativas da empresa.</p>
+          <div class="col">
+          <label for="administrativo-submenu-dashboards" class="mt-2">Dashboards</label>
+            <select id="administrativo-submenu-dashboards" class="form-select">
               <option value="sim">Sim</option>
               <option value="nao" selected>Não</option>
             </select>
@@ -255,30 +293,29 @@ if (!isset($_SESSION['user_permissions'][$page_permission]) || $_SESSION['user_p
     <div class="col-md-4 mb-4">
       <div class="card h-100 text-center shadow">
         <div class="card-body">
-          <h5 class="card-title">Administrativo</h5>
-          <p class="card-text">Gerencie funções administrativas da empresa.</p>
-          <label for="administrativo-submenu-dashboards" class="mt-2">Dashboards</label>
-          <select id="administrativo-submenu
-          <select id=" administrativo-submenu-dashboards" class="form-select">
-            <option value="sim">Sim</option>
-            <option value="nao" selected>Não</option>
-          </select>
-        </div>
-      </div>
-    </div>
-    <div class="col-md-4 mb-4">
-      <div class="card h-100 text-center shadow">
-        <div class="card-body">
-          <h5 class="card-title">Minha Empresa</h5>
+          <h5 class="card-title">
+            Minha Empresa
+            <input type="checkbox" class="form-check-input" id="check-mycompany">
+          </h5>
           <p class="card-text">Gerencie informações sobre sua empresa.</p>
+          <div class="col">
           <label for="minha-empresa-submenu" class="mt-2">Empresa</label>
-          <select id="minha-empresa-submenu" class="form-select">
-            <option value="sim">Sim</option>
-            <option value="nao" selected>Não</option>
-          </select>
+            <select id="minha-empresa-submenu" class="form-select">
+              <option value="sim">Sim</option>
+              <option value="nao" selected>Não</option>
+            </select>
+          </div>
         </div>
       </div>
     </div>
+  </div>
+</div>
+
+<br>
+
+<div class="container-fluid card">
+  <div class="col-12 p-2">
+    <button onclick="RegisterUsers()" class="btn btn-primary" type="button">Cadastrar</button>
   </div>
 </div>
 

@@ -140,7 +140,7 @@ $request = Controllers::SelectRequest('request', $table_filter, $userFilter, $da
                                         <button class="btn btn-secondary">Inativado</button>
                                     <?php } else { ?>
                                         <button onclick="InativarInvo(this)" type="button" data-id="<?php echo $value['id']; ?>"
-                                            class="btn btn-light"> Inativar P
+                                            class="btn btn-light accessnivel"> Inativar P
                                         </button>
                                     <?php } ?>
                                     <button onclick="DetailsOrder(this)" class="btn btn-info"

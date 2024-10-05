@@ -52,10 +52,10 @@ $clients = Controllers::SelectAll('clients');
 								<th><?php echo htmlspecialchars($value['neighborhood']); ?>
 								</th>
 								<th class="gap-2">
-									<a class="btn btn-info"
+									<a class="btn btn-info accessnivel"
 										href="<?php echo INCLUDE_PATH ?>edit-clients?id=<?php echo base64_encode($value['id']); ?>">Editar</a>
 									<button class="btn btn-warning" href="<?php echo INCLUDE_PATH ?>">Desativar</button>
-									<button class="btn btn-danger" onclick="deleteClients(this)"
+									<button class="btn btn-danger accessnivel" onclick="deleteClients(this)"
 										data-id="<?php echo base64_encode($value['id']); ?>">Deletar</button>
 								</th>
 							</tr>
