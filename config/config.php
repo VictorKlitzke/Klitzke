@@ -39,7 +39,7 @@ function VerificationAccess($par) {
     
 }
 function VerificationAccessADM() {
-    return isset($_SESSION['access']) && $_SESSION['access'] == 100;
+    return isset($_SESSION['access']) && $_SESSION['access'] >= 50;
 }
 
 function VerificationMenu()

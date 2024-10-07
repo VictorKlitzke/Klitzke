@@ -165,6 +165,8 @@ async function RegisterUsers() {
 
                 const responseBody = await response.json();
 
+                console.log(responseBody);
+
                 if (responseBody.success) {
                     showMessage("Usuário " + values.name + " cadastrado com sucesso!", 'success');
 

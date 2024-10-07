@@ -100,42 +100,54 @@ class Register
         $valueTransaction = filter_var($response_accounts_payable['valueTransaction'], FILTER_SANITIZE_STRING);
         $descriptionTransaction = filter_var($response_accounts_payable['descriptionTransaction'], FILTER_SANITIZE_STRING);
         $nameExterno = filter_var($response_accounts_payable['nameExterno'], FILTER_SANITIZE_STRING);
+        $numberdoc = filter_var($response_accounts_payable['numberdoc'], FILTER_SANITIZE_STRING);
 
         if (!$dateTransaction || !$descriptionTransaction || !$valueTransaction) {
-            Response::json(false, 'Campo invalido', $today);
+            Response::json(false, 'Campo inválido', $today);
+            return;
+        }
+
+        if (self::UserAccess($sql, $user_id) < 50) {
+            Response::json(false, 'Usuário não tem permissão para executar essa atividade', $today);
             return;
         }
 
         try {
 
-            if (self::UserAccess($sql, $user_id) < 50) {
-                Response::json(false, 'Usuário não tem permissão para executar essa atividade', $today);
-                return;
-            }
+            $sql->BeginTransaction();
 
             $name_table = 'financial_control';
             $status_aprazo = 'Despesa';
             $type = 'contas a pagar';
 
-            $exec = $sql->prepare("INSERT INTO $name_table (value, transaction_date, status_aprazo, type, created_at, name_externo, description) 
-                                    VALUES(:value_aprazo, :dateVenciment, :status_aprazo, :type, NOW(), :nameExterno, :description)");
+            $exec = $sql->prepare("INSERT INTO $name_table (value, transaction_date, status_aprazo, type, 
+                                created_at, name_externo, description, number_doc) 
+                            VALUES(:value_aprazo, :dateVenciment, :status_aprazo, :type, NOW(), :nameExterno,
+                                :description, :numberdoc)");
             $exec->bindValue(':value_aprazo', $valueTransaction, PDO::PARAM_STR);
             $exec->bindValue(':dateVenciment', $dateTransaction, PDO::PARAM_STR);
             $exec->bindValue(':status_aprazo', $status_aprazo, PDO::PARAM_STR);
             $exec->bindValue(':nameExterno', $nameExterno, PDO::PARAM_STR);
             $exec->bindValue(':description', $descriptionTransaction, PDO::PARAM_STR);
             $exec->bindValue(':type', $type, PDO::PARAM_STR);
+            $exec->bindValue(':numberdoc', $numberdoc, PDO::PARAM_STR);
             $exec->execute();
 
+            $sql->commit();
+
             $message_log = "Baixa no contas a pagar com sucesso";
-            Panel::LogAction($user_id, 'Baixa no contas a pagar com sucesso ', $message_log, $today);
+            Panel::LogAction($user_id, 'Baixa no contas a pagar com sucesso', $message_log, $today);
             Response::send(true, 'Baixa no contas a pagar com sucesso', $today);
 
         } catch (Exception $e) {
+            if ($sql->inTransaction()) {
+                $sql->rollBack();
+            }
             http_response_code(500);
             echo json_encode(['error' => 'Erro no banco de dados: ' . $e->getMessage(), 'code' => $e->getCode()]);
         }
     }
+
     public static function WriteAccountsReceivable($sql, $response_financial_control, $user_id, $today)
     {
 
@@ -145,6 +157,8 @@ class Register
                 Response::json(false, 'Usuário não tem permissão para executar essa atividade', $today);
                 return;
             }
+
+            $sql->BeginTransaction();
 
             foreach ($response_financial_control['selectedFinacialControl'] as $sales_prazoID) {
                 foreach ($response_financial_control['selectedPagamentalControl'] as $financial_control) {
@@ -180,6 +194,8 @@ class Register
                     $update_salesprazo->BindParam('prazo_status', $prazo_status, PDO::PARAM_STR);
                     $update_salesprazo->BindParam('sales_prazoID', $sales_prazoID, PDO::PARAM_INT);
                     $update_salesprazo->execute();
+
+                    $sql->coomit();
                 }
             }
 
@@ -217,6 +233,8 @@ class Register
         $new_values_variation = [];
 
         try {
+
+            $sql->BeginTransaction();
 
             foreach ($response_variation['AddVariation'] as $variation) {
 
@@ -443,6 +461,8 @@ class Register
 
         try {
 
+            $sql->BeginTransaction();
+
             $hashed_password = password_hash($password, PASSWORD_DEFAULT);
 
             $exec = $sql->prepare("INSERT INTO users (name, email, password, login, phone, function, 
@@ -464,14 +484,16 @@ class Register
             $user_id_menu_access = $sql->lastInsertId();
 
             foreach ($menu_access as $menu => $released) {
-                $exec_menu = $sql->prepare("INSERT INTO menu_access (user_id, menu, creation_date, released) 
-                VALUES (:user_id, :menu, NOW(), :released)");
+                if ($released == 1) {
+                    $exec_menu = $sql->prepare("INSERT INTO menu_access (user_id, menu, creation_date, released) 
+                                                VALUES (:user_id, :menu, NOW(), :released)");
 
-                $exec_menu->bindParam(':user_id', $user_id_menu_access, PDO::PARAM_INT);
-                $exec_menu->bindParam(':menu', $menu, PDO::PARAM_STR);
-                $exec_menu->bindParam(':released', $released, PDO::PARAM_INT);
+                    $exec_menu->bindParam(':user_id', $user_id_menu_access, PDO::PARAM_INT);
+                    $exec_menu->bindParam(':menu', $menu, PDO::PARAM_STR);
+                    $exec_menu->bindParam(':released', $released, PDO::PARAM_INT);
 
-                $exec_menu->execute();
+                    $exec_menu->execute();
+                }
             }
 
             $sql->commit();
@@ -520,6 +542,8 @@ class Register
                 return;
             }
 
+            $sql->BeginTransaction();
+
             $exec = $sql->prepare("
             INSERT INTO $name_table 
             (name, email, social_reason, cpf, phone, address, city, cep, neighborhood, disable) 
@@ -566,6 +590,8 @@ class Register
 
 
         try {
+
+            $sql->BeginTransaction();
 
             $exec = $sql->prepare("
             INSERT INTO $name_table 
@@ -621,6 +647,8 @@ class Register
                 return;
             }
 
+            $sql->BeginTransaction();
+
             $exec = $sql->prepare("INSERT INTO $name_table (number, status_table) VALUES (:number, :status_table)");
             $exec->bindValue(':number', $number, PDO::PARAM_STR);
             $exec->bindValue(':status_table', $status, PDO::PARAM_INT);
@@ -663,10 +691,10 @@ class Register
 
         try {
 
-            // if (self::UserAccess($sql, $user_id) < 50) {
-            //     Response::json(false, 'Usuário não tem permissão para executar essa atividade', $today);
-            //     return;
-            // }
+            if (self::UserAccess($sql, $user_id) < 50) {
+                Response::json(false, 'Usuário não tem permissão para executar essa atividade', $today);
+                return;
+            }
 
             $exec_verification = $sql->prepare("select * from $name_table where pix = :pix");
             $exec_verification->BindParam(':pix', $pix, PDO::PARAM_STR);
@@ -676,6 +704,8 @@ class Register
             if ($result_verification['pix']) {
                 Response::json(false, 'Esse PIX já está cadastrado!', $today);
             }
+
+            $sql->BeginTransaction();
 
             $exec = $sql->prepare("INSERT INTO $name_table (pix, account_name, bank, agency, account_type, account_number, id_company) 
                                 VALUES (:pix, :account_name, :bank, :agency, :account_type, :account_number, :id_company)");
@@ -727,6 +757,8 @@ class Register
             if (!$validate->ValidateImg($flow)) {
                 Response::json(false, 'Formato da imagem incompativel o esperado é PNG ou JPEG/JPG.', $today);
             }
+
+            $sql->BeginTransaction();
 
             $exec = $sql->prepare("INSERT INTO products (name, quantity, stock_quantity, barcode, value_product, cost_value, reference, model, brand, flow, show_on_page, size) 
                             VALUES (:name, :quantity, :stock_quantity, :barcode, :value_product, :cost_value, :reference, :model, :brand, :flow, :show_on_page, :size)");
@@ -790,6 +822,8 @@ class Register
 
         try {
 
+            $sql->BeginTransaction();
+
             $check = $sql->prepare("SELECT COUNT(*) FROM $name_table WHERE cnpjcpf = :cnpjcpf");
             $check->bindValue(':cnpjcpf', $cnpj, PDO::PARAM_STR);
             $check->execute();
@@ -850,6 +884,7 @@ class Register
                 Response::json(false, 'Já existe caixa aberto com esse usuário', $today);
             }
 
+            $sql->BeginTransaction();
 
             $exec = $sql->prepare("INSERT INTO boxpdv (id_users, value, observation, status, open_date) 
                                    VALUES (:user_id, :value, :observation, :status, :open_date)");
@@ -889,6 +924,8 @@ class Register
         }
 
         try {
+
+            $sql->BeginTransaction();
 
             $exec = $sql->prepare("SELECT id, value FROM boxpdv WHERE status = :status");
             $exec->bindParam(':status', $status, PDO::PARAM_INT);
@@ -935,6 +972,8 @@ class Register
             Response::json(false, 'Campo invalido', $today);
         }
         try {
+
+            $sql->BeginTransaction();
 
             $exec = $sql->prepare("INSERT INTO $name_table (multiply, status) VALUES(:multiply, :status)");
             $exec->bindValue(':multiply', $multiply, PDO::PARAM_STR);

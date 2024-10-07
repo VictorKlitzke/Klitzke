@@ -1,6 +1,8 @@
 let selectedFinacialControl = [];
 let selectedPagamentalControl = [];
 
+const AddVariationForn = document.getElementById('add-variation-forn');
+
 async function FinalizeAPrazo() {
   document.querySelectorAll('#table-financial-control-detals input[type="checkbox"]:checked').forEach(checkbox => {
     selectedFinacialControl.push(checkbox.value);
@@ -73,12 +75,14 @@ const getFieldsAccountsPayable = () => {
       valueTransaction: document.getElementById('valueTransaction').value,
       nameExterno: document.getElementById('nameExterno').value,
       descriptionTransaction: document.getElementById('descriptionTransaction').value,
+      numberdoc: document.getElementById('numberdoc').value,
     },
     inputs: {
       dateTransaction: document.getElementById('dateTransaction'),
       valueTransaction: document.getElementById('valueTransaction'),
       nameExterno: document.getElementById('nameExterno'),
       descriptionTransaction: document.getElementById('descriptionTransaction'),
+      numberdoc: document.getElementById('numberdoc')
     }
   }
 }
@@ -106,10 +110,9 @@ async function RegisterAccountsPayable() {
     dateTransaction: values.dateTransaction,
     valueTransaction: values.valueTransaction,
     descriptionTransaction: values.descriptionTransaction,
-    nameExterno: values.nameExterno
+    nameExterno: values.nameExterno,
+    numberdoc: values.numberdoc
   }
-
-  console.log(responseAccountPayable);
 
   continueMessage("Deseja realmente cadastrar contas a pagar?", "Sim", "Não", async function () {
 
@@ -126,6 +129,8 @@ async function RegisterAccountsPayable() {
       });
 
       const responseBody = await response.json();
+
+      console.log(responseBody);
 
       if (responseBody.success) {
         showMessage('Contas a pagar cadastrada com sucesso', 'success');
@@ -147,4 +152,12 @@ async function RegisterAccountsPayable() {
   }, function () {
     showMessage('Operação cancelada', 'warning');
   })
+}
+
+function ShowModalAddVariation() {
+  if (AddVariationForn.style.display === 'block') {
+      AddVariationForn.style.display = 'none';
+  } else {
+      AddVariationForn.style.display = 'block';
+  }
 }

@@ -95,7 +95,7 @@ if (!isset($_SESSION['user_permissions'][$page_permission]) || $_SESSION['user_p
     <!-- Aba de Controle Financeiro -->
     <div class="tab-pane fade" id="financial" role="tabpanel" aria-labelledby="financial-tab">
       <div class="table-responsive" style="max-height: 400px; overflow-y: auto; overflow-x: auto;">
-        <table class="table table-dark table-hover table-striped table-bordered" id="table-financial-control">
+        <table class="table table-dark table-hover table-striped table-bordered" id="result-financial-control">
           <thead>
             <tr style="white-space: nowrap;">
               <th>#</th>
@@ -106,7 +106,9 @@ if (!isset($_SESSION['user_permissions'][$page_permission]) || $_SESSION['user_p
               <th>Ações</th>
             </tr>
           </thead>
-          <tbody id="financial-control-result"></tbody>
+          <tbody>
+
+          </tbody>
         </table>
       </div>
     </div>
@@ -128,8 +130,8 @@ if (!isset($_SESSION['user_permissions'][$page_permission]) || $_SESSION['user_p
                 <tr>
                   <th>Selecionar</th>
                   <th>#</th>
-                  <th>Valor</th>
                   <th>Data Vencimento</th>
+                  <th>Valor</th>              
                   <th>Status</th>
                   <th>Tipo</th>
                 </tr>
@@ -158,6 +160,11 @@ if (!isset($_SESSION['user_permissions'][$page_permission]) || $_SESSION['user_p
       <form>
         <div class="row mb-3">
           <div class="col-md-4">
+            <label class="form-label">Numero Doc</label>
+            <input type="number" class="form-control" id="numberdoc" placeholder="Opcional">
+            <span id="error" class="error-message">Campo está invalido, Ajuste se possivel.</span>
+          </div>
+          <div class="col-md-4">
             <label class="form-label">Data</label>
             <input type="date" class="form-control" id="dateTransaction" required>
             <span id="error" class="error-message">Campo está invalido, Ajuste se possivel.</span>
@@ -168,11 +175,11 @@ if (!isset($_SESSION['user_permissions'][$page_permission]) || $_SESSION['user_p
             <span id="error" class="error-message">Campo está invalido, Ajuste se possivel.</span>
           </div>
           <div class="col-md-4">
-            <label class="form-label">Nome externo</label>
+            <label class="form-label">Nome externo/Empresa</label>
             <input type="text" class="form-control" id="nameExterno" placeholder="Nome" required>
             <span id="error" class="error-message">Campo está invalido, Ajuste se possivel.</span>
           </div>
-          <div class="col-md-12">
+          <div class="col-md-8">
             <label class="form-label">Descrição</label>
             <input type="text" class="form-control" id="descriptionTransaction" placeholder="Descrição da transação"
               required>

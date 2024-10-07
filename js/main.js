@@ -28,25 +28,34 @@ async function closeBox() {
   let value_aprazo = parseFloat(document.getElementById('value_aprazo').value);
   let closeDate = document.getElementById('date_close').value;
 
+  let respondeBoxPdv = {
+    value_debit: valueDebit,
+    value_credit: valueCredit,
+    value_pix: valuePIX,
+    value_money: valueMoney,
+    value_aprazo: value_aprazo,
+    close_date: closeDate
+  }
+
   continueMessage("Deseja realmente fechar o caixa?", "Sim", "Não", async function () {
 
-    fetch(`${BASE_URL}close_boxpdv.php`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        value_debit: valueDebit,
-        value_credit: valueCredit,
-        value_pix: valuePIX,
-        value_money: valueMoney,
-        value_aprazo: value_aprazo,
-        close_date: closeDate
-      }),
-    })
-      .then(response => response.json())
-      .then(data => {
-        if (data && data.success) {
+    try {
+      let url = `${BASE_URL}close_boxpdv.php`;
+
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(respondeBoxPdv)
+      });
+
+      const responseText = await response.text();
+
+      try {
+        const data = JSON.parse(responseText);
+
+        if (data.success) {
           showMessage('Caixa fechado com sucesso', 'success');
           CloseBoxpdv.style.display = 'none';
           overlay.style.display = 'none';
@@ -54,15 +63,19 @@ async function closeBox() {
           setTimeout(() => {
             window.location.reload();
           }, 3000);
-          
         } else {
           showMessage('Erro ao fechar o caixa. Tente novamente.', 'error');
         }
-      })
-      .catch(error => {
-        console.error('Erro ao fechar o caixa:', error);
-        console.log('Erro ao fechar o caixa. Tente novamente.');
-      });
+      } catch (jsonError) {
+        console.error("Erro ao converter resposta para JSON:", jsonError);
+        console.log("Resposta recebida:", responseText);
+        showMessage('Erro inesperado no servidor. Verifique o console para detalhes.', 'error');
+      }
+
+    } catch (error) {
+      console.error('Erro ao fechar o caixa:', error);
+      showMessage('Erro ao fechar o caixa. Tente novamente.', 'error');
+    }
   }), function () {
     showMessage('Operação cancelada', 'error');
   }

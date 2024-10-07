@@ -2,7 +2,6 @@ const ButtonSearchBuyRequest = document.getElementById('button-search');
 const FieldFormBuyRequest = document.getElementById('input-buy-request');
 const FieldFormVariationValues = document.getElementById('input-variation-values');
 const FieldFormFinancialControl = document.getElementById('input-financial-control');
-const AddVariationForn = document.getElementById('add-variation-forn');
 
 let AddVariation = {};
 let notificationQueue = [];
@@ -15,7 +14,7 @@ window.onload = loadValuesFromLocalStorage;
 window.onload = AddVariationValues();
 window.onload = calculateTotalsListAPrazo();
 
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     ListDetailsAprazo();
     ListAPrazo();
 });
@@ -30,7 +29,7 @@ function showToast(message, id) {
     toastElement.setAttribute('role', 'alert');
     toastElement.setAttribute('aria-live', 'assertive');
     toastElement.setAttribute('aria-atomic', 'true');
-    toastElement.dataset.id = id; 
+    toastElement.dataset.id = id;
 
     toastElement.innerHTML = `
         <div class="toast-header">
@@ -50,7 +49,7 @@ function showToast(message, id) {
     toastContainer.appendChild(toastElement);
     const toast = new bootstrap.Toast(toastElement, {
         animation: true,
-        autohide: false 
+        autohide: false
     });
     toast.show();
 }
@@ -429,19 +428,16 @@ async function CloseModalInfoRequest() {
 
 }
 async function InativarUsers(button) {
-
-    const id_users_inativar = button.getAttribute('data-id')
+    const id_users_inativar = button.getAttribute('data-id');
 
     if (!id_users_inativar) {
         showMessage('Usuário não foi encontrado!', 'warning');
+        return;
     }
 
-    const continueInativar = confirm("Deseja continuar com a instivação do usuário?")
-
-    if (continueInativar) {
+    continueMessage("Deseja realmente desativar esse usuário?", "Sim", "Não", async function () {
         try {
-
-            const url = `${BASE_URL}disable.php`;
+            let url = `${BASE_URL}disable.php`;
 
             const response = await fetch(url, {
                 method: 'POST',
@@ -449,22 +445,40 @@ async function InativarUsers(button) {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({ id_users_inativar: id_users_inativar })
-            })
+            });
 
-            const responseBody = await response.json();
+            console.log(response);
 
+            if (!response.ok) {
+                throw new Error(`Erro HTTP! Status: ${response.status}`);
+            }
+
+            const responseText = await response.text();
+            console.log("Resposta do servidor (texto bruto):", responseText);
+
+            let responseBody;
+            try {
+                responseBody = JSON.parse(responseText);
+            } catch (error) {
+                throw new Error('Erro ao converter resposta para JSON: ' + error.message);
+            }
             if (responseBody.success) {
-                window.location.reload();
                 showMessage('Usuário com ID ' + id_users_inativar + ' inativado com sucesso!', 'success');
+                setTimeout(() => {
+                    window.location.reload();
+                }, 3000);
             } else {
-                showMessage('Erro ao inativar usuários' + responseBody.message, 'error');
+                showMessage('Erro ao inativar usuário: ' + responseBody.message, 'error');
             }
 
         } catch (error) {
-            showMessage('Erro ao fazer requisição!' + error, 'error');
+            showMessage('Erro ao fazer requisição: ' + error.message, 'error');
         }
-    }
+    }, function () {
+        showMessage('Operação cancelada', 'warning');
+    });
 }
+
 async function ListForn() {
     try {
         let url = `${BASE_CONTROLLERS}lists.php`;
@@ -510,6 +524,7 @@ async function ListForn() {
         }
     } catch (error) {
         console.log('Erro ao fazer requisição: ' + error.message)
+        console.clear();
     }
 }
 async function ListBuyRequest(searchTerm = '') {
@@ -576,6 +591,7 @@ async function ListBuyRequest(searchTerm = '') {
         }
     } catch (error) {
         console.log('Erro ao fazer requisição: ' + error.message);
+        console.clear();
     }
 }
 async function ListVariationValues(searchTermVariation = '') {
@@ -649,6 +665,7 @@ async function ListVariationValues(searchTermVariation = '') {
 
     } catch (error) {
         console.log('Erro ao fazer requisição: ' + error.message);
+        console.clear();
     }
 
 }
@@ -704,6 +721,7 @@ async function AddVariationValues() {
         }
     } catch (error) {
         console.log('Erro ao fazer requisição: ' + error.message);
+        console.clear();
     }
 }
 function saveValuesToLocalStorage(variations) {
@@ -799,6 +817,7 @@ async function ListProducts() {
 
     } catch (error) {
         console.log('Erro ao fazer requisição: ' + error.message);
+        console.clear();
     }
 }
 async function calculateTotalsListAPrazo() {
@@ -907,45 +926,49 @@ async function ListAPrazo(searchTermFinancialControl = '') {
         if (data.success) {
             const salesData = data.salesData || [];
             const financialControlData = data.financialcontrol || [];
+
             const financialcontrosaleslList = document.getElementById('table-sales').querySelector('tbody');
-            const financialcontrolList = document.getElementById('table-financial-control').querySelector('tbody');
 
-            console.log(salesData);
+            const financialcontrolList = document.getElementById('result-financial-control');
+            let tbody = financialcontrolList.querySelector('tbody');
+            if (!tbody) {
+                tbody = document.createElement('tbody');
+                financialcontrolList.appendChild(tbody);
+            }
 
-            financialcontrolList.innerHTML = '';
+            tbody.innerHTML = '';
             financialcontrosaleslList.innerHTML = '';
 
             salesData.forEach(f => {
-                const row = document.createElement('tr');
-
+                const rowSales = document.createElement('tr');
                 if (f.status_aprazo === 'em andamento') {
-                    row.className = 'table-warning';
+                    rowSales.className = 'table-warning';
                 } else if (f.status_aprazo === 'nenhum pagamento') {
-                    row.className = 'table-secondary';
+                    rowSales.className = 'table-secondary';
                 } else if (f.status_aprazo === 'paga') {
-                    row.className = 'table-success';
+                    rowSales.className = 'table-success';
                 }
 
                 const idCell = document.createElement('th');
                 idCell.textContent = f.id;
                 idCell.className = 'id-financial-control-values';
-                row.appendChild(idCell);
+                rowSales.appendChild(idCell);
 
                 const clientCell = document.createElement('th');
                 clientCell.textContent = f.client;
-                row.appendChild(clientCell);
+                rowSales.appendChild(clientCell);
 
                 const formPagamentCell = document.createElement('th');
                 formPagamentCell.textContent = f.formpagament;
-                row.appendChild(formPagamentCell);
+                rowSales.appendChild(formPagamentCell);
 
                 const portionCell = document.createElement('th');
                 portionCell.textContent = f.portion_aprazo;
-                row.appendChild(portionCell);
+                rowSales.appendChild(portionCell);
 
                 const statusCell = document.createElement('th');
                 statusCell.textContent = f.status_aprazo;
-                row.appendChild(statusCell);
+                rowSales.appendChild(statusCell);
 
                 const buttonCell = document.createElement('th');
                 const inputButton = document.createElement('button');
@@ -956,72 +979,56 @@ async function ListAPrazo(searchTermFinancialControl = '') {
                     ListDetailsAprazo(f.id);
                 };
                 buttonCell.appendChild(inputButton);
-                row.appendChild(buttonCell);
+                rowSales.appendChild(buttonCell);
 
-                financialcontrosaleslList.appendChild(row);
-
-                const now = new Date();
-                const transactionDate = new Date(f.date_sales);
-                if ((f.status_aprazo === 'em andamento' || f.status_aprazo === 'nenhum pagamento') &&
-                    transactionDate < now) {
-                    addNotificationToQueue(`A conta ${f.id} de valor ${f.total_value} está vencida!`, f.id);
-                }
+                financialcontrosaleslList.appendChild(rowSales);
             });
 
-            financialControlData.forEach(f => {
-                const row = document.createElement('tr');
-
-                row.className = 'table-light';
+            financialControlData.forEach(fc => {
+                const rowFinancialControl = document.createElement('tr');
+                rowFinancialControl.className = 'table-light';
 
                 const idCell = document.createElement('th');
-                idCell.textContent = f.id;
-                row.appendChild(idCell);
+                idCell.textContent = fc.id;
+                rowFinancialControl.appendChild(idCell);
 
                 const descriptionCell = document.createElement('th');
-                descriptionCell.textContent = f.description || 'Sem descrição';
-                row.appendChild(descriptionCell);
+                descriptionCell.textContent = fc.description || 'Sem descrição';
+                rowFinancialControl.appendChild(descriptionCell);
 
                 const valueCell = document.createElement('th');
-                valueCell.textContent = f.value || 'Sem valor';
-                row.appendChild(valueCell);
+                valueCell.textContent = fc.value || 'Sem valor';
+                rowFinancialControl.appendChild(valueCell);
 
-                const dateCell = document.createElement('td');
-                const dateString = f.transaction_date;
+                const dateCell = document.createElement('th');
+                const dateString = fc.transaction_date;
                 const [year, month, day] = dateString.split('-');
                 const formattedDate = `${day}/${month}/${year}`;
                 dateCell.textContent = formattedDate;
-                row.appendChild(dateCell);
+                rowFinancialControl.appendChild(dateCell);
 
                 const typeCell = document.createElement('th');
-                typeCell.textContent = f.type || 'Sem tipo';
-                row.appendChild(typeCell);
+                typeCell.textContent = fc.type || 'Sem tipo';
+                rowFinancialControl.appendChild(typeCell);
 
-                if (f.pay == null) {
+                if (fc.pay == null) {
                     const buttonCell = document.createElement('th');
                     const inputButton = document.createElement('button');
                     inputButton.type = 'button';
                     inputButton.className = 'btn btn-dark btn-sm';
                     inputButton.innerHTML = 'Faturar';
                     inputButton.onclick = function () {
-                        InvoiceAccountsPayable(f.id);
+                        InvoiceAccountsPayable(fc.id);
                     };
                     buttonCell.appendChild(inputButton);
-                    row.appendChild(buttonCell);
-
+                    rowFinancialControl.appendChild(buttonCell);
                 } else {
                     const PayCell = document.createElement('th');
-                    PayCell.textContent = f.pay;
-                    row.appendChild(PayCell);
+                    PayCell.textContent = fc.pay;
+                    rowFinancialControl.appendChild(PayCell);
                 }
-                financialcontrolList.appendChild(row);
 
-                const now = new Date();
-                const transactionDate = new Date(f.transaction_date);
-                if (f.pay === null) {
-                    if (f.pay === null && transactionDate < now) {
-                        addNotificationToQueue(`A conta ${f.id} de valor ${f.value} está vencida!`, f.id);
-                    }
-                }
+                tbody.appendChild(rowFinancialControl);
             });
 
         } else {
@@ -1030,6 +1037,7 @@ async function ListAPrazo(searchTermFinancialControl = '') {
 
     } catch (error) {
         console.log('Erro ao fazer requisição: ' + error.message);
+        console.clear();
     }
 }
 async function ListDetailsAprazo(id_detals) {
@@ -1120,7 +1128,46 @@ async function ListDetailsAprazo(id_detals) {
     }
     modal.show();
 }
+async function InvoiceAccountsPayable(id_account) {
+    if (!id_account) {
+        showMessage('ID do pagamento não encontrado', 'warning');
+        return;
+    }
 
+    let responseEditAccountsPayable = {
+        type: 'editaccountpayable',
+        id_account: id_account
+    }
+
+    continueMessage("Deseja continuar o faturamento?", "Sim", "Não", async function () {
+        try {
+
+            let url = `${BASE_CONTROLLERS}edits.php`;
+
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(responseEditAccountsPayable)
+            })
+
+            const responseBody = await response.json();
+
+            if (responseBody.success) {
+                showMessage("Contas a pagar faturado com sucesso!", 'success');
+                location.reload();
+            } else {
+                showMessage(responseBody.message || "Erro ao tentar faturar contas a pagar ", 'error');
+            }
+
+        } catch (error) {
+            showMessage('Erro ao fazer requisição' + error, 'error')
+        }
+    }, function () {
+        showMessage('Operação cancelada', 'warning')
+    })
+}
 function formatDate(date) {
     const day = String(date.getDate()).padStart(2, '0');
     const month = String(date.getMonth() + 1).padStart(2, '0'); // Mês começa do 0, por isso somamos 1

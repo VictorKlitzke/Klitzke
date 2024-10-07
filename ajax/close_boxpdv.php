@@ -1,5 +1,7 @@
 <?php
 
+include_once '../classes/panel.php';
+include_once '../helpers/response.php';
 include_once '../config/config.php';
 include_once '../services/db.php';
 
@@ -13,6 +15,8 @@ header("Content-Type: application/json");
 header("Access-Control-Allow-Methods: GET, POST, OPTIONS");
 
 $sql = Db::Connection();
+$user_id = isset($_SESSION['id']) ? $_SESSION['id'] : null;
+$today = date('Y-m-d H:i:s');
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $requestData = json_decode(file_get_contents('php://input'), true);
@@ -27,8 +31,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     try {
 
         $sql->beginTransaction();
+        $status_update = 2;
+        $status_current = 1;
 
-        $checkBoxOpen = $sql->prepare("SELECT id FROM boxpdv WHERE status = 1");
+        $checkBoxOpen = $sql->prepare("SELECT id FROM boxpdv WHERE status = :status_current AND id_users = :id_users");
+        $checkBoxOpen->bindParam(':status_current', $status_current, PDO::PARAM_INT);
+        $checkBoxOpen->bindParam(':id_users', $user_id, PDO::PARAM_INT);
         $checkBoxOpen->execute();
         $id_boxpdv = $checkBoxOpen->fetchColumn();
 
@@ -55,12 +63,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $exec->bindParam(':date_close', $date_close, PDO::PARAM_STR);
             $exec->execute();
 
-            $exec = $sql->prepare("UPDATE boxpdv SET status = 2 WHERE id = $id_boxpdv");
+            $exec = $sql->prepare("UPDATE boxpdv SET status = :status_update WHERE id_users = :id_users");
+            $exec->bindParam(':status_update', $status_update, PDO::PARAM_INT);
+            $exec->bindParam(':id_users', $user_id, PDO::PARAM_INT);
             $exec->execute();
 
             $sql->commit();
 
-            echo json_encode(['success' => true, 'message' => 'Fechamento de caixa registrado com sucesso']);
+            $message_log = "Caixa Fechado";
+            Panel::LogAction($user_id, 'Caixa fechado com sucesso', $message_log, $today);
+            Response::send(true, 'Caixa fechado com sucesso', $today);
         }
 
     } catch (Exception $e) {
