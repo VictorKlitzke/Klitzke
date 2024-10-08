@@ -75,17 +75,20 @@ $count_sales = Controllers::SelectAll('sales');
   </div>
 </div>
 
-<div class="box-content">
+<div class="container-fluid card">
   <div class="row">
-    <div class="col">
-      <h2 class="text-white">Quadro de Avisos</h2>
-      <div aria-live="polite" aria-atomic="true" class="d-flex">
-        <div class="toast-container position-fixed bottom-0 end-0 p-3" id="toastContainer">
-        </div>
+    <div class="col" style="max-height: 700px; overflow-y: auto; overflow-x: auto;">
+      <h2 class="text-black mb-4">Quadro de Avisos</h2>
+      <div aria-live="polite" aria-atomic="true" class="d-flex flex-wrap justify-content-start">
+        <table>
+        <div class="notice-board row"></div> 
+        </table>
       </div>
     </div>
   </div>
 </div>
+
+<br>
 
 <div class="row">
   <div class="col-sm-6 mb-3">
