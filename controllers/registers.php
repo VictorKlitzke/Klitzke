@@ -153,12 +153,12 @@ class Register
 
         try {
 
+            $sql->BeginTransaction();
+
             if (self::UserAccess($sql, $user_id) < 50) {
                 Response::json(false, 'Usuário não tem permissão para executar essa atividade', $today);
                 return;
             }
-
-            $sql->BeginTransaction();
 
             foreach ($response_financial_control['selectedFinacialControl'] as $sales_prazoID) {
                 foreach ($response_financial_control['selectedPagamentalControl'] as $financial_control) {
@@ -194,8 +194,6 @@ class Register
                     $update_salesprazo->BindParam('prazo_status', $prazo_status, PDO::PARAM_STR);
                     $update_salesprazo->BindParam('sales_prazoID', $sales_prazoID, PDO::PARAM_INT);
                     $update_salesprazo->execute();
-
-                    $sql->coomit();
                 }
             }
 

@@ -342,8 +342,7 @@ if (!isset($_SESSION['user_permissions'][$page_permission]) || $_SESSION['user_p
                                     <th>Valor das parcelas</th>
                                 </tr>
                             </thead>
-                    <tbody id=" desc-portion">
-                                </tbody>
+                    <tbody id="desc-portion"></tbody>
                         </table>
                     </div>
                 </div>

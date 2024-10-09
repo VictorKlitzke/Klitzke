@@ -40,8 +40,6 @@ async function NoticeBoard() {
     let dataresponseNoticeBoard = await responseNoticeBoard.json();
     const query_warnings = dataresponseNoticeBoard.query_warnings;
 
-    console.log(query_warnings);
-
     const noticeBoardContainer = document.querySelector('.notice-board');
     noticeBoardContainer.innerHTML = '';
 
@@ -52,7 +50,7 @@ async function NoticeBoard() {
       const dateVenciment = new Date(`${year}-${month}-${day}`);
 
       if (isNaN(dateVenciment)) {
-        console.log('Data inválida:', warning.transaction_date);
+        showMessage('Data inválida:' + warning.transaction_date, 'warning');
         return; 
       }
 

@@ -13,7 +13,6 @@ if (!isset($_SESSION['user_permissions'][$page_permission]) || $_SESSION['user_p
 ?>
 <div class="box-content">
   <h2 class="text-white">Controle Financeiro</h2>
-  <!-- Cards de Resumo -->
   <div class="row mb-4">
     <div class="col-md-4 col-lg-3 mb-3">
       <div class="card bg-success text-white">
@@ -48,7 +47,7 @@ if (!isset($_SESSION['user_permissions'][$page_permission]) || $_SESSION['user_p
       </div>
     </div>
   </div>
-  <!-- Filtros -->
+
   <div class="row mb-4">
     <div class="col-md-12">
       <input class="form-control" id="input-financial-control" type="search" placeholder="Pesquisar"
@@ -56,8 +55,6 @@ if (!isset($_SESSION['user_permissions'][$page_permission]) || $_SESSION['user_p
     </div>
   </div>
 
-  <!-- Tabela de Transações -->
-  <!-- Estrutura de Abas -->
   <ul class="nav nav-tabs" id="myTab" role="tablist">
     <li class="nav-item" role="presentation">
       <button class="nav-link active" style="color: #696969;" id="sales-tab" data-bs-toggle="tab"
@@ -71,9 +68,7 @@ if (!isset($_SESSION['user_permissions'][$page_permission]) || $_SESSION['user_p
     </li>
   </ul>
 
-  <!-- Conteúdo das Abas -->
   <div class="tab-content" id="myTabContent">
-    <!-- Aba de Vendas -->
     <div class="tab-pane fade show active" id="sales" role="tabpanel" aria-labelledby="sales-tab">
       <div class="table-responsive" style="max-height: 400px; overflow-y: auto; overflow-x: auto;">
         <table class="table table-dark table-hover table-striped table-bordered" id="table-sales">
@@ -92,7 +87,6 @@ if (!isset($_SESSION['user_permissions'][$page_permission]) || $_SESSION['user_p
       </div>
     </div>
 
-    <!-- Aba de Controle Financeiro -->
     <div class="tab-pane fade" id="financial" role="tabpanel" aria-labelledby="financial-tab">
       <div class="table-responsive" style="max-height: 400px; overflow-y: auto; overflow-x: auto;">
         <table class="table table-dark table-hover table-striped table-bordered" id="result-financial-control">
@@ -107,15 +101,12 @@ if (!isset($_SESSION['user_permissions'][$page_permission]) || $_SESSION['user_p
             </tr>
           </thead>
           <tbody>
-
           </tbody>
         </table>
       </div>
     </div>
   </div>
 
-
-  <!-- Modal -->
   <div class="modal fade" id="detailsModal" tabindex="-1" aria-labelledby="detailsModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg modal-dialog-scrollable">
       <div class="modal-content">
@@ -148,10 +139,7 @@ if (!isset($_SESSION['user_permissions'][$page_permission]) || $_SESSION['user_p
       </div>
     </div>
   </div>
-
   <br>
-
-  <!-- Formulário de Adição de Transações -->
   <div class="card mb-4">
     <div class="card-header">
       Adicionar Contas a Pagar

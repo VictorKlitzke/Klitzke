@@ -8,8 +8,8 @@ async function FinalizeAPrazo() {
     selectedFinacialControl.push(checkbox.value);
 
     const row = checkbox.closest('tr');
+    const dateVenciment = row.querySelector('th:nth-child(3)').textContent;
     const value_aprazo = row.querySelector('th:nth-child(4)').textContent;
-    const dateVenciment = row.querySelector('td:nth-child(3)').textContent;
 
     selectedPagamentalControl.push({
       dateVenciment: dateVenciment,
@@ -44,6 +44,8 @@ async function FinalizeAPrazo() {
       });
 
       const responseBody = await response.json();
+
+      console.log(responseBody);
 
       if (responseBody.success) {
         showMessage('Baixa no contas a receber com sucesso ', 'success');

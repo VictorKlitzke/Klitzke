@@ -262,26 +262,26 @@ async function FinalizeAprazo() {
     const saleSales = document.querySelector('.sales-sales');
 
     let totalAmountElement = document.getElementById('totalAmount');
-    let totalValuezAPrazo = 0;
+    let totalValue = 0;
     if (totalAmountElement) {
-        totalValuezAPrazo = parseFloat(totalAmountElement.textContent.replace('R$ ', '')) || 0;
+        totalValue = parseFloat(totalAmountElement.textContent.replace('R$ ', '')) || 0;
     }
 
     let selectedPaymentMethodAprazo = document.getElementById('id_payment_method').value;
-    let idSalesClientAprazo = selectedClientId || '';
+    let idSalesClient = selectedClientId || '';
 
     if (selectedPaymentMethodAprazo === '5') {
         openAPrazoModal();
 
         let requestDataAPrazo = {
             idPaymentMethod: selectedPaymentMethodAprazo,
-            salesIdClient: idSalesClientAprazo,
-            totalValue: totalValuezAPrazo,
+            salesIdClient: idSalesClient,
+            totalValue: totalValue,
             selectedAprazo: selectedAprazo,
             products: selectedProducts
         };
 
-        if (idSalesClientAprazo.length === 0) {
+        if (idSalesClient.length === 0) {
             showMessage('Erro nenhum cliente informado', 'warning');
             return;
         }
@@ -349,21 +349,21 @@ async function finalizeSalePortion() {
     const saleSales = document.querySelector('.sales-sales');
 
     let totalAmountElement = document.getElementById('totalAmount');
-    let totalValuezPortion = 0;
+    let totalValue = 0;
     if (totalAmountElement) {
-        totalValuezPortion = parseFloat(totalAmountElement.textContent.replace('R$ ', '')) || 0;
+        totalValue = parseFloat(totalAmountElement.textContent.replace('R$ ', '')) || 0;
     }
 
     let selectedPaymentMethodPortion = document.getElementById('id_payment_method').value;
-    let idSalesClientPortion = selectedClientId || '';
+    let idSalesClient = selectedClientId || '';
 
     if (selectedPaymentMethodPortion === '3') {
         openCreditModal();
 
         let requestDataPortion = {
             idPaymentMethod: selectedPaymentMethodPortion,
-            salesIdClient: idSalesClientPortion,
-            totalValue: totalValuezPortion,
+            salesIdClient: idSalesClient,
+            totalValue: totalValue,
             selectedPortion: selectedPortion,
             products: selectedProducts
         };
