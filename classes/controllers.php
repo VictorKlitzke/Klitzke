@@ -93,12 +93,12 @@ class Controllers
         $sql = Db::Connection();
 
         $query = "SELECT
-                boxpdv.*,
-                users.name users,
-                (SELECT value FROM sangria_boxpdv WHERE sangria_boxpdv.id_boxpdv = boxpdv.id LIMIT 1) Withdrawal
-            FROM
-                $name_table
-                INNER JOIN users ON users.id = boxpdv.id_users
+                    boxpdv.*,
+                    users.name users,
+                    COALESCE((SELECT value FROM sangria_boxpdv WHERE sangria_boxpdv.id_boxpdv = boxpdv.id LIMIT 1), 'Sem Retirada') AS Withdrawal            
+                FROM
+                    $name_table
+                    INNER JOIN users ON users.id = boxpdv.id_users
         ";
 
         $conditions = [];

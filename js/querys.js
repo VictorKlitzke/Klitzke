@@ -51,27 +51,31 @@ async function NoticeBoard() {
 
       if (isNaN(dateVenciment)) {
         showMessage('Data inválida:' + warning.transaction_date, 'warning');
-        return; 
+        return;
       }
 
       let avisoTexto = '';
       let icone = '';
       let classeCor = '';
 
-      if (dateVenciment < today) {
-        icone = '<i class="fas fa-exclamation-circle"></i>'; 
+      if (warning.pay === 'paga') {
+        icone = '<i class="fas fa-check-circle"></i>';
+        classeCor = 'text-success';
+        avisoTexto = `${icone} <strong>Conta:</strong> ${warning.description || 'Sem descrição'} - <strong>Valor:</strong> <span class="text-bold">R$ ${warning.value || 'N/A'}</span> - <strong>Pago em:</strong> ${day}/${month}/${year}`;
+      } else if (dateVenciment < today) {
+        icone = '<i class="fas fa-exclamation-circle"></i>';
         classeCor = 'text-danger';
         avisoTexto = `${icone} <strong>Conta:</strong> ${warning.description || 'Sem descrição'} - <strong>Valor:</strong> <span class="text-bold">R$ ${warning.value || 'N/A'}</span> - <strong>Vencida em:</strong> ${day}/${month}/${year}`;
       } else if (dateVenciment <= new Date(today.setDate(today.getDate() + 5))) {
-        icone = '<i class="fas fa-hourglass-half"></i>'; 
+        icone = '<i class="fas fa-hourglass-half"></i>';
         classeCor = 'text-warning';
         avisoTexto = `${icone} <strong>Conta:</strong> ${warning.description || 'Sem descrição'} - <strong>Valor:</strong> <span class="text-bold">R$ ${warning.value || 'N/A'}</span> - <strong>Vencimento em:</strong> ${day}/${month}/${year}`;
       } else {
-        return; 
+        return;
       }
 
       const avisoElement = document.createElement('p');
-      avisoElement.className = `${classeCor} mb-2`; 
+      avisoElement.className = `${classeCor} mb-2`;
       avisoElement.innerHTML = avisoTexto;
 
       const separador = document.createElement('hr');
