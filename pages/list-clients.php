@@ -52,16 +52,75 @@ $clients = Controllers::SelectAll('clients');
 								<th><?php echo htmlspecialchars($value['neighborhood']); ?>
 								</th>
 								<th class="gap-2">
-									<a class="btn btn-info accessnivel"
-										href="<?php echo INCLUDE_PATH ?>edit-clients?id=<?php echo base64_encode($value['id']); ?>">Editar</a>
-									<button class="btn btn-warning" href="<?php echo INCLUDE_PATH ?>">Desativar</button>
+									<?php if ($value['disable'] != 1) { ?>
+										<a class="btn btn-info accessnivel"
+											href="<?php echo INCLUDE_PATH ?>edit-clients?id=<?php echo base64_encode($value['id']); ?>">Editar
+										</a>
+									<?php } else { ?>
+										<a></a>
+									<?php } ?>
+									<button class="btn btn-warning" href="<?php echo INCLUDE_PATH ?>">
+										Desativar
+									</button>
 									<button class="btn btn-danger accessnivel" onclick="deleteClients(this)"
-										data-id="<?php echo base64_encode($value['id']); ?>">Deletar</button>
+										data-id="<?php echo base64_encode($value['id']); ?>">
+										Deletar
+									</button>
+									<button class="btn btn-primary" onclick="MoreDetailsClient(this)"
+										data-id="<?php echo base64_encode($value['id']); ?>">Mais Detalhes</button>
 								</th>
 							</tr>
 						<?php } ?>
 					</tbody>
 				</table>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="modal fade" id="details-modal" tabindex="-1" aria-labelledby="detailsModalLabel" aria-hidden="true">
+	<div class="modal-dialog modal-fullscreen">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="detailsModalLabel">Detalhes do Cliente</h5>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			</div>
+			<div class="modal-body">
+				<!-- Abas -->
+				<ul class="nav nav-tabs" id="myTab" role="tablist">
+					<li class="nav-item" role="presentation">
+						<button class="nav-link active" id="sales-tab" data-bs-toggle="tab" data-bs-target="#sales" type="button"
+							role="tab" aria-controls="sales" aria-selected="true">Vendas</button>
+					</li>
+					<li class="nav-item" role="presentation">
+						<button class="nav-link" id="orders-tab" data-bs-toggle="tab" data-bs-target="#orders" type="button"
+							role="tab" aria-controls="orders" aria-selected="false">Pedidos</button>
+					</li>
+					<li class="nav-item" role="presentation">
+						<button class="nav-link" id="budgets-tab" data-bs-toggle="tab" data-bs-target="#budgets" type="button"
+							role="tab" aria-controls="budgets" aria-selected="false">Orçamentos</button>
+					</li>
+				</ul>
+
+				<div class="tab-content" id="myTabContent">
+					<div class="tab-pane fade show active" id="sales" role="tabpanel" aria-labelledby="sales-tab">
+						<div id="client-sales" class="row p-lg-2">
+						</div>
+					</div>
+					<div class="tab-pane fade" id="orders" role="tabpanel" aria-labelledby="orders-tab">
+						<div id="client-orders" class="row p-4">
+							<!-- Detalhes dos pedidos vão aqui -->
+						</div>
+					</div>
+					<div class="tab-pane fade" id="budgets" role="tabpanel" aria-labelledby="budgets-tab">
+						<div id="client-budgets" class="row p-4">
+							<!-- Detalhes dos orçamentos vão aqui -->
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
 			</div>
 		</div>
 	</div>
