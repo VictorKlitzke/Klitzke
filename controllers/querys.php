@@ -27,6 +27,21 @@ $response['query_warnings'] = $query_warnings;
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $data = json_decode(file_get_contents('php://input'), true);
 
+    if (isset($data['type']) && $data['type'] === 'queryuser' && isset($data['id_user_menu'])) {
+        $id_user_menu = base64_decode($data['id_user_menu']);
+
+        $menu_access_response = Querys::MenuAccessEditRemove($id_user_menu, $sql);
+
+        if (isset($menu_access_response['error'])) {
+            $response['error'] = $menu_access_response['error'];
+        } else {
+            $response['menu_user'] = $menu_access_response['menu_user'];
+        }
+
+    }else {
+        $response['error'] = 'Parâmetros inválidos ou incompletos.';
+    }
+
     if (isset($data['type']) && $data['type'] === 'detailsclients' && isset($data['id_client_detals'])) {
         $id_client_details = base64_decode($data['id_client_detals']);
 
@@ -48,6 +63,22 @@ echo json_encode($response);
 
 class Querys
 {
+    public static function MenuAccessEditRemove($id_user_menu, $sql) {
+        try {
+
+            $exec = $sql->prepare("");
+            $exec->BindParam('', $id_user_menu, PDO::PARAM_INT);
+            $exec->execute();
+            $menu_access_user = $exec->fetchAll(PDO::FETCH_ASSOC);
+
+            return [
+                'menu_user' => $menu_access_user
+            ];
+
+        } catch (Exception $e) {
+            return ['error' => 'Erro no banco de dados: ' . $e->getMessage(), 'code' => $e->getCode()];
+        }
+    }
     public static function Moredetails($id_client_details, $sql)
     {
         if (empty($id_client_details) || !is_numeric($id_client_details)) {
@@ -85,7 +116,6 @@ class Querys
             return ['error' => 'Erro no banco de dados: ' . $e->getMessage(), 'code' => $e->getCode()];
         }
     }
-
     public static function QueryAccess($user_id, $sql)
     {
         try {
@@ -102,7 +132,6 @@ class Querys
             return ['error' => 'Erro no banco de dados: ' . $e->getMessage(), 'code' => $e->getCode()];
         }
     }
-
     public static function QueryWarnings($sql)
     {
         try {

@@ -204,7 +204,38 @@ function showClientDetails(salesDetails) {
 }
 async function AccessUsers(button) {
   const userID = button.getAttribute('data-id');
+
+  if (!userID) {
+    showMessage('ID do usuário não encontrado', 'warning');
+    return;
+  }
+
+  let responseUser = {
+    type: 'queryuser',
+    id_user_menu: userID
+  }
+
+  try {
+
+    let url = `${BASE_CONTROLLERS}querys.php`;
+
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(responseUser)
+    })
+
+    const responseBodyUser = response.json();
+
+  } catch (error) {
+    console.log('Erro na requisição', error);
+  }
   const modalElement = document.getElementById('menu-access-user');
   const modal = new bootstrap.Modal(modalElement);
   modal.show();
+}
+function showAccessMenuUser(user) {
+  const modalUser = document.getElementById('menu-access-user');
 }
