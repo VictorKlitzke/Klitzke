@@ -92,10 +92,10 @@ $clients = Controllers::SelectAll('clients');
 						<button class="nav-link active" id="sales-tab" data-bs-toggle="tab" data-bs-target="#sales" type="button"
 							role="tab" aria-controls="sales" aria-selected="true">Vendas</button>
 					</li>
-					<li class="nav-item" role="presentation">
+					<!-- <li class="nav-item" role="presentation">
 						<button class="nav-link" id="orders-tab" data-bs-toggle="tab" data-bs-target="#orders" type="button"
-							role="tab" aria-controls="orders" aria-selected="false">Pedidos</button>
-					</li>
+							role="tab" aria-controls="orders" aria-selected="false">Contas a Pagar</button>
+					</li> -->
 					<li class="nav-item" role="presentation">
 						<button class="nav-link" id="budgets-tab" data-bs-toggle="tab" data-bs-target="#budgets" type="button"
 							role="tab" aria-controls="budgets" aria-selected="false">Orçamentos</button>
@@ -107,14 +107,13 @@ $clients = Controllers::SelectAll('clients');
 						<div id="client-sales" class="row p-lg-2">
 						</div>
 					</div>
-					<div class="tab-pane fade" id="orders" role="tabpanel" aria-labelledby="orders-tab">
-						<div id="client-orders" class="row p-4">
-							<!-- Detalhes dos pedidos vão aqui -->
+					<!-- <div class="tab-pane fade" id="orders" role="tabpanel" aria-labelledby="orders-tab">
+						<div id="client-financial-control" class="row p-4">
 						</div>
-					</div>
+					</div> -->
 					<div class="tab-pane fade" id="budgets" role="tabpanel" aria-labelledby="budgets-tab">
 						<div id="client-budgets" class="row p-4">
-							<!-- Detalhes dos orçamentos vão aqui -->
+							<h1>Em desenvolvimento</h1>
 						</div>
 					</div>
 				</div>

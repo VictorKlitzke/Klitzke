@@ -52,11 +52,11 @@ $users = Controllers::SelectAll('users');
                   <?php echo $value['access'] == 10 ? 'Padrão' : ($value['access'] == 50 ? 'Moderado' : ($value['access'] == 100 ? 'Administrador' : '')); ?>
                 </th>
                 <th><?php echo htmlspecialchars($value['type_users']); ?></th>
-                <th class="gap-2">
+                <th class="gap-2 d-flex justify-content-between">
                   <?php if ($value['disable'] == 2) { ?>
                     <a></a>
                   <?php } else { ?>
-                    <a class="btn btn-info accessnivel"
+                    <a class="btn btn-info accessnivel w-100"
                       href="<?php echo INCLUDE_PATH ?>edit-users?id=<?php echo base64_encode($value['id']); ?>">Editar
                     </a>
                   <?php } ?>
@@ -64,16 +64,21 @@ $users = Controllers::SelectAll('users');
 
                   <?php if ($value['disable'] == 1) { ?>
                     <button onclick="InativarUsers(this)" type="button" data-id="<?php echo $value['id']; ?>"
-                      class="btn btn-warning">Desativar
+                      class="btn btn-warning w-100">Desativar
                     </button>
                   <?php } else { ?>
-                    <button class="btn btn-secondary" disabled>Desativado</button>
+                    <button class="btn btn-secondary w-100" disabled>Desativado</button>
                   <?php } ?>
 
-                  <button class="btn btn-danger accessnivel" onclick="DeleteUsers(this)"
+                  <button class="btn btn-danger accessnivel w-100" onclick="DeleteUsers(this)"
                     data-id="<?php echo base64_encode($value['id']); ?>">Deletar
                   </button>
-
+                  <?php if ($value['disable'] == 1){ ?>
+                  <button class="btn btn-light accessnivel w-100" onclick=" AccessUsers(this)"
+                    data-id="<?php echo base64_encode($value['id']); ?>">
+                    Acessos de Menu
+                  </button>
+                  <?php } ?>
                 </th>
               </tr>
             <?php } ?>
@@ -82,4 +87,22 @@ $users = Controllers::SelectAll('users');
       </div>
     </div>
   </div>
+</div>
+
+
+
+<div class="modal fade" id="menu-access-user" tabindex="-1" aria-hidden="true">
+	<div class="modal-dialog modal-fullscreen">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title">Menus de Acesso do Usuário</h5>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			</div>
+			<div class="modal-body"></div>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+			</div>
+		</div>
+	</div>
 </div>

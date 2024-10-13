@@ -29,11 +29,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if (isset($data['type']) && $data['type'] === 'detailsclients' && isset($data['id_client_detals'])) {
         $id_client_details = base64_decode($data['id_client_detals']);
+
         $client_response = Querys::Moredetails($id_client_details, $sql);
-        $response['details_param_clients'] = $client_response;
+
+        if (isset($client_response['error'])) {
+            $response['error'] = $client_response['error'];
+        } else {
+            $response['details_param_clients'] = $client_response['details_param_clients'];
+        }
     } else {
         $response['error'] = 'Parâmetros inválidos ou incompletos.';
     }
+    echo json_encode($response);
+    exit();
 }
 
 echo json_encode($response);
@@ -67,8 +75,11 @@ class Querys
 
             $exec->BindParam(':id_client_details', $id_client_details, PDO::PARAM_INT);
             $exec->execute();
+            $sales_details = $exec->fetchAll(PDO::FETCH_ASSOC);
 
-            return $exec->fetchAll(PDO::FETCH_ASSOC);
+            return [
+                'details_param_clients' => $sales_details
+            ];
 
         } catch (Exception $e) {
             return ['error' => 'Erro no banco de dados: ' . $e->getMessage(), 'code' => $e->getCode()];

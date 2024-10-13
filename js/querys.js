@@ -116,13 +116,21 @@ async function MoreDetailsClient(button) {
       body: JSON.stringify(responseDetalis)
     });
 
-    const responseClientDetals = await response.json();
-    if (responseClientDetals.error) {
-      console.error('Erro na requisição:', responseClientDetals.error);
-      showMessage(responseClientDetals.error, 'error');
-      return;
+    const responseText = await response.text();
+
+    try {
+      const responseClientDetals = JSON.parse(responseText);
+      if (responseClientDetals.details_param_clients) {
+        showClientDetails(responseClientDetals.details_param_clients);
+      } else {
+        showMessage('Erro ao consultar valores da aba de vendas', 'warning');
+      }
+
+    } catch (error) {
+      console.error('Erro ao fazer parse do JSON:', error, responseText);
     }
-    showClientDetails(responseClientDetals.details_param_clients);
+
+
   } catch (error) {
     console.error('Erro na requisição:', error);
   }
@@ -131,33 +139,72 @@ async function MoreDetailsClient(button) {
   const modal = new bootstrap.Modal(modalElement);
   modal.show();
 }
-
-function showClientDetails(clientDetails) {
+function showClientDetails(salesDetails) {
   const clientDetailsContainer = document.getElementById('client-sales');
   clientDetailsContainer.innerHTML = '';
 
-  clientDetails.forEach(detail => {
+  const salesMap = {};
+
+  salesDetails.forEach(detail => {
+    const saleId = detail.sale_id;
+
+    if (salesMap[saleId]) {
+      salesMap[saleId].products.push({
+        product: detail.product,
+        quantity: detail.quantity,
+        value_unit: detail.value_unit
+      });
+    } else {
+      salesMap[saleId] = {
+        client: detail.client,
+        total_value: detail.total_value,
+        form_payment: detail.form_payment,
+        products: [{
+          product: detail.product,
+          quantity: detail.quantity,
+          value_unit: detail.value_unit
+        }]
+      };
+    }
+  });
+
+  for (const saleId in salesMap) {
+    const sale = salesMap[saleId];
+
     const card = document.createElement('div');
     card.classList.add('col-md-4', 'mb-4');
-    card.innerHTML = `
-          <div class="card"> 
-              <div class="card-header">
-                  <h5 class="card-title">${detail.product}</h5>
-              </div>
-              <div class="card-body">
-                  <p class="card-text">Cliente: ${detail.client}</p>
-                  <p class="card-text">Quantidade: ${detail.quantity}</p>
-                  <p class="card-text">Valor Unitário: R$ ${parseFloat(detail.value_unit).toFixed(2)}</p>
-                  <p class="card-text">Total: R$ ${parseFloat(detail.total_value).toFixed(2)}</p>
-                  <p class="card-text">Forma de Pagamento: ${detail.form_payment}</p>
-              </div>
-              <div class="card-footer text-muted">
-                  ID da Venda: ${detail.sale_id}
-              </div>
-          </div>
+
+    let productsHtml = '';
+    sale.products.forEach(productDetail => {
+      productsHtml += `
+        <p class="card-text">Produto: ${productDetail.product}</p>
+        <p class="card-text">Quantidade: ${productDetail.quantity}</p>
+        <p class="card-text">Valor Unitário: R$ ${parseFloat(productDetail.value_unit).toFixed(2)}</p>
       `;
-    clientDetailsContainer.appendChild(card); 
-  });
+    });
+
+    card.innerHTML = `
+      <div class="card h-100"> 
+        <div class="card-header">
+          <h5 class="card-title">Codigo da Venda: ${saleId}</h5>
+        </div>
+        <div class="card-body">
+          <p class="card-text">Cliente: ${sale.client}</p>
+          ${productsHtml}
+          <p class="card-text">Total: R$ ${parseFloat(sale.total_value).toFixed(2)}</p>
+          <p class="card-text">Forma de Pagamento: ${sale.form_payment}</p>
+        </div>
+        <div class="card-footer text-muted">
+          Codigo da Venda: ${saleId}
+        </div>
+      </div>
+    `;
+    clientDetailsContainer.appendChild(card);
+  }
 }
-
-
+async function AccessUsers(button) {
+  const userID = button.getAttribute('data-id');
+  const modalElement = document.getElementById('menu-access-user');
+  const modal = new bootstrap.Modal(modalElement);
+  modal.show();
+}
