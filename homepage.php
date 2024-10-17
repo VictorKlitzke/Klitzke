@@ -307,6 +307,13 @@ if (isset($_GET['loggout'])) {
                                                 </a>
                                             </li>
                                         <?php endif; ?>
+                                        <?php if ($_SESSION['user_permissions']['stock-inventory']): ?>
+                                            <li>
+                                                <a class="dropdown-item" <?php SelectedMenu('stock-inventory'); ?>
+                                                    href="<?php echo INCLUDE_PATH; ?>stock-inventory">Iventario dos Produtos
+                                                </a>
+                                            </li>
+                                        <?php endif; ?>
                                     </ul>
                                 </li>
                             <?php endif; ?>

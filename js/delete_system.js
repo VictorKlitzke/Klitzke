@@ -8,7 +8,6 @@ const getDeleteUsers = (button) => {
         }
     };
 }
-
 async function DeleteUsers(button) {
     const { type, values } = await getDeleteUsers(button);
 
@@ -139,7 +138,7 @@ async function DeleteForn(button) {
         id_forn_delete: values.id_forn_delete,
     }
 
-    continueMessage("Deseja realmente deletar esse fornecedor?", "Sim", "Não", async function() {
+    continueMessage("Deseja realmente deletar esse fornecedor?", "Sim", "Não", async function () {
 
         try {
 
@@ -165,11 +164,53 @@ async function DeleteForn(button) {
                 showMessage(responseBody.message || 'Erro ao deletar fornecedor', 'error');
             }
 
-        } catch(error) {
+        } catch (error) {
             showMessage('Error interno no servidor, contante o suporte ' + error, 'error');
         }
 
-    }, function() {
+    }, function () {
         showMessage('Exclusão de fornecedor cancelada', 'warning');
+    })
+}
+
+async function DeleteMenuAccess(menuName, UserIDMenu) {
+
+    if (!UserIDMenu) {
+        showMessage('ID do Usuário não encontrado', 'warning');
+        return;
+    }
+
+    let responseDeleteMenu = {
+        type: 'deleteMenuAccess',
+        menu: menuName,
+        UserIDMenu: UserIDMenu
+    }
+
+    continueMessage("Deseja realmente deletar menu de acceso?", "Sim", "Não", async function() {
+        try {
+
+            let url = `${BASE_CONTROLLERS}deletes.php`;
+    
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(responseDeleteMenu)
+            })
+    
+            const result = await response.json();
+
+            if (result.success) {
+                showMessage('Menu deletado com sucesso', 'success');
+            } else {
+                showMessage('Erro ao remover menu de acesso' + result.error, 'erro');
+            }
+    
+        } catch (error) {
+            showMessage('Erro ao tentar remover Menu do usuário', 'error')
+        }
+    }, function () {
+        showMessage('Operação cancelada', 'warning')
     })
 }

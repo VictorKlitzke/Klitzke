@@ -52,26 +52,26 @@ $users = Controllers::SelectAll('users');
                   <?php echo $value['access'] == 10 ? 'Padrão' : ($value['access'] == 50 ? 'Moderado' : ($value['access'] == 100 ? 'Administrador' : '')); ?>
                 </th>
                 <th><?php echo htmlspecialchars($value['type_users']); ?></th>
-                <th class="gap-2 d-flex justify-content-between">
+                <th class="gap-2">
                   <?php if ($value['disable'] == 2) { ?>
                     <a></a>
                   <?php } else { ?>
-                    <a class="btn btn-info accessnivel w-100"
+                    <a class="btn btn-info accessnivel"
                       href="<?php echo INCLUDE_PATH ?>edit-users?id=<?php echo base64_encode($value['id']); ?>">Editar
                     </a>
                   <?php } ?>
                   <?php if ($value['disable'] == 1) { ?>
                     <button onclick="InativarUsers(this)" type="button" data-id="<?php echo $value['id']; ?>"
-                      class="btn btn-warning w-100">Desativar
+                      class="btn btn-warning">Desativar
                     </button>
                   <?php } else { ?>
-                    <button class="btn btn-secondary w-100" disabled>Desativado</button>
+                    <button class="btn btn-secondary" disabled>Desativado</button>
                   <?php } ?>
-                  <button class="btn btn-danger accessnivel w-100" onclick="DeleteUsers(this)"
+                  <button class="btn btn-danger accessnivel" onclick="DeleteUsers(this)"
                     data-id="<?php echo base64_encode($value['id']); ?>">Deletar
                   </button>
                   <?php if ($value['disable'] == 1){ ?>
-                  <button class="btn btn-light accessnivel w-100" onclick=" AccessUsers(this)"
+                  <button class="btn btn-light accessnivel" onclick="AccessUsers(this)"
                     data-id="<?php echo base64_encode($value['id']); ?>">
                     Acessos de Menu
                   </button>
@@ -99,11 +99,11 @@ $users = Controllers::SelectAll('users');
       <ul class="nav nav-tabs" id="myTab" role="tablist">
 					<li class="nav-item" role="presentation">
 						<button class="nav-link active" id="sales-tab" data-bs-toggle="tab" data-bs-target="#sales" type="button"
-							role="tab" aria-controls="sales" aria-selected="true">Adicionar</button>
+							role="tab" aria-controls="sales" aria-selected="true">Remover</button>
 					</li>
 					<li class="nav-item" role="presentation">
 						<button class="nav-link" id="budgets-tab" data-bs-toggle="tab" data-bs-target="#budgets" type="button"
-							role="tab" aria-controls="budgets" aria-selected="false">Remover</button>
+							role="tab" aria-controls="budgets" aria-selected="false">Adicionar</button>
 					</li>
 				</ul>
 

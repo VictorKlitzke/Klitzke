@@ -1,9 +1,90 @@
 const editButtons = document.querySelectorAll(".accessnivel");
+const menuMapping = {
+  "list-users": "Listar Usuários",
+  "register-users": "Registrar Usuários",
+  "edit-users": "Editar Usuários",
+  "list-clients": "Listar Clientes",
+  "register-clients": "Registrar Clientes",
+  "edit-clients": "Editar Clientes",
+  "list-suppliers": "Listar Fornecedores",
+  "register-suppliers": "Registrar Fornecedores",
+  "edit-suppliers": "Editar Fornecedores",
+  "register-sales": "Registrar Vendas",
+  "list-sales": "Listar Vendas",
+  "register-request": "Registrar Pedido",
+  "list-request": "Listar Pedidos",
+  "register-table": "Registrar Mesa",
+  "register-boxpdv": "Registrar Caixa PDV",
+  "list-boxpdv": "Listar Caixa PDV",
+  "shopping-request": "Solicitação de Compra",
+  "list-purchase-request": "Listar Solicitações de Compra",
+  "list-products": "Listar Produtos",
+  "register-stockcontrol": "Registrar Controle de Estoque",
+  "dashboard": "Painel de Controle",
+  "list-companys": "Listar Empresas",
+  "financial-control": "Controle Financeiro"
+};
 
 window.onload = function () {
   NivelAccess();
   NoticeBoard();
+  QueryListProducts();
 }
+
+async function QueryListProducts() {
+  try {
+    let url = `${BASE_CONTROLLERS}querys.php`;
+    let response = await fetch(url);
+
+    if (!response.ok) {
+      showMessage('Erro na requisição: ' + response.statusText, 'warning');
+      return;
+    }
+
+    const responseListProd = await response.json();
+
+    const productList = document.getElementById("productTable");
+    productList.innerHTML = '';
+
+    responseListProd.list_products.forEach(product => {
+      const row = document.createElement('tr');
+
+      const idCell = document.createElement('td');
+      idCell.textContent = product.id;
+      idCell.id = 'productID'
+      row.appendChild(idCell);
+
+      const nameCell = document.createElement('td');
+      nameCell.textContent = product.name;
+      row.appendChild(nameCell);
+
+      const stockCell = document.createElement('td');
+      stockCell.textContent = product.stock_quantity;
+      row.appendChild(stockCell);
+
+      const valueCell = document.createElement('td');
+      valueCell.textContent = product.value_product;
+      row.appendChild(valueCell);
+
+      const actionsCell = document.createElement('td');
+      actionsCell.innerHTML = `
+        <button class="btn btn-warning btn-sm" onclick="SelectedProduct('${product.name}', ${product.stock_quantity}, '${product.value_product}')">Selecionar</button>
+      `;
+      row.appendChild(actionsCell);
+
+      productList.appendChild(row);
+    });
+  } catch (error) {
+    console.log('Erro na requisição: ' + error);
+  }
+}
+
+function SelectedProduct(name, stock_quantity, value_product) {
+  document.getElementById('productName').value = name;
+  document.getElementById('productQuantity').value = stock_quantity;
+  document.getElementById('productPrice').value = value_product;
+}
+
 async function NivelAccess() {
   try {
     let response = await fetch(`${BASE_CONTROLLERS}querys.php`);
@@ -127,7 +208,7 @@ async function MoreDetailsClient(button) {
       }
 
     } catch (error) {
-      console.error('Erro ao fazer parse do JSON:', error, responseText);
+      showMessage('Erro ao fazer parse do JSON:' + error + responseText, 'error');
     }
 
 
@@ -227,7 +308,14 @@ async function AccessUsers(button) {
       body: JSON.stringify(responseUser)
     })
 
-    const responseBodyUser = response.json();
+    const responseTextUser = await response.text();
+
+    try {
+      const responseBodyUser = JSON.parse(responseTextUser);
+      showAccessMenuUser(responseBodyUser.menu_user)
+    } catch (error) {
+      showMessage('Erro ao fazer parse do JSON:' + error + responseTextUser, 'error');
+    }
 
   } catch (error) {
     console.log('Erro na requisição', error);
@@ -236,6 +324,30 @@ async function AccessUsers(button) {
   const modal = new bootstrap.Modal(modalElement);
   modal.show();
 }
-function showAccessMenuUser(user) {
-  const modalUser = document.getElementById('menu-access-user');
+function showAccessMenuUser(userMenus) {
+  const modalUser = document.getElementById('remover-menus-user');
+  modalUser.innerHTML = "";
+
+  userMenus.forEach(access => {
+    const OriginalMenuUser = access.menu;
+    const menuName = menuMapping[access.menu] || access.menu; // Faz o mapeamento ou exibe o nome original se não existir
+    const UserIDMenu = access.user_id;
+
+    const card = document.createElement('div');
+    card.classList.add('col-md-4', 'mb-4');
+
+    card.innerHTML = `
+      <div class="card h-100 text-center shadow">
+        <div class="card-body">
+          <h5 class="card-title">${menuName}</h5>
+          <input type="checkbox" class="form-check-input" id="check-${access.menu}" ${access.released === "1" ? 'checked' : ''} disabled>
+          <p class="card-text">Descrição do menu: ${menuName}</p>
+        </div>
+        <button onclick="DeleteMenuAccess('${OriginalMenuUser}', ${UserIDMenu})" class="btn btn-danger">
+          <i class="fas fa-trash-alt"></i>
+        </button>
+      </div>
+    `;
+    modalUser.appendChild(card);
+  });
 }

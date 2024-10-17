@@ -147,7 +147,6 @@ class Register
             echo json_encode(['error' => 'Erro no banco de dados: ' . $e->getMessage(), 'code' => $e->getCode()]);
         }
     }
-
     public static function WriteAccountsReceivable($sql, $response_financial_control, $user_id, $today)
     {
 
@@ -409,6 +408,7 @@ class Register
 
         $menu_list_products = filter_var($response_users['listProducts'], FILTER_SANITIZE_STRING);
         $menu_register_products = filter_var($response_users['registerProducts'], FILTER_SANITIZE_STRING);
+        $menu_register_Inventory = filter_var($response_users['registerInventory'], FILTER_SANITIZE_STRING);
 
         $menu_dashboard = filter_var($response_users['listProducts'], FILTER_SANITIZE_STRING);
 
@@ -445,6 +445,7 @@ class Register
 
             'list-products' => ($menu_list_products === 'sim') ? 1 : 0,
             'register-stockcontrol' => ($menu_register_products === 'sim') ? 1 : 0,
+            'stock-inventory' => ($menu_register_Inventory === 'sim') ? 1 : 0,
 
             'dashboard' => ($menu_dashboard === 'sim') ? 1 : 0,
 

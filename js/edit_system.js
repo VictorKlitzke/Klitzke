@@ -496,3 +496,14 @@ async function EditForn() {
     })
 
 }
+
+const getInventaryQuantity = () => {
+    return {
+        type: {
+            type: 'inventaryquantity',
+        },
+        value: {
+            quantityProduct: document.getElementById('productQuantity').value
+        }
+    }
+}

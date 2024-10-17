@@ -7,6 +7,17 @@ if (isset($_GET['id'])) {
   die();
 }
 
+if (!isset($_SESSION['id'])) {
+  header("Location: login.php");
+  exit();
+}
+
+$page_permission = 'edit-suppliers';
+if (!isset($_SESSION['user_permissions'][$page_permission]) || $_SESSION['user_permissions'][$page_permission] !== 1) {
+  header("Location: " . INCLUDE_PATH . "access-denied.php");
+  exit();
+}
+
 ?>
 
 <div class="box-content">

@@ -61,6 +61,7 @@ const FieldsUsers = () => {
 
             listProducts: document.getElementById("controle-estoque-submenu-lista").value,
             registerProducts: document.getElementById("controle-estoque-submenu-produtos").value,
+            registerInventory: document.getElementById("controle-estoque-submenu-inventory").value,
 
             dashboardADM: document.getElementById("administrativo-submenu-dashboards").value,
 
@@ -145,6 +146,7 @@ async function RegisterUsers() {
         listrequestPurchase: menuaccess.listrequestPurchase,
         listProducts: menuaccess.listProducts,
         registerProducts: menuaccess.registerProducts,
+        registerInventory: menuaccess.registerInventory,
         dashboardADM: menuaccess.dashboardADM,
         financialControl: menuaccess.financialControl,
         myCompany: menuaccess.myCompany

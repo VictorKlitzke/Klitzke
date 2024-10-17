@@ -24,6 +24,9 @@ $response['access'] = $check_access;
 $query_warnings = Querys::QueryWarnings($sql);
 $response['query_warnings'] = $query_warnings;
 
+$list_products = Querys::QueryListProduct($sql);
+$response['list_products'] = $list_products;
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $data = json_decode(file_get_contents('php://input'), true);
 
@@ -66,8 +69,8 @@ class Querys
     public static function MenuAccessEditRemove($id_user_menu, $sql) {
         try {
 
-            $exec = $sql->prepare("");
-            $exec->BindParam('', $id_user_menu, PDO::PARAM_INT);
+            $exec = $sql->prepare("SELECT menu, released, user_id FROM menu_access WHERE user_id = :user_id");
+            $exec->BindParam('user_id', $id_user_menu, PDO::PARAM_INT);
             $exec->execute();
             $menu_access_user = $exec->fetchAll(PDO::FETCH_ASSOC);
 
@@ -139,6 +142,18 @@ class Querys
             $exec = $sql->prepare("SELECT * FROM financial_control");
             $exec->execute();
             return $exec->fetchAll(PDO::FETCH_ASSOC);
+
+        } catch (Exception $e) {
+            return ['error' => 'Erro no banco de dados: ' . $e->getMessage(), 'code' => $e->getCode()];
+        }
+    }
+    public static function QueryListProduct($sql) {
+        try {
+
+            $exec = $sql->prepare("SELECT id, name, stock_quantity, value_product FROM products");
+            $exec->execute();
+            $list_products = $exec->fetchAll(PDO::FETCH_ASSOC);
+            return $list_products;
 
         } catch (Exception $e) {
             return ['error' => 'Erro no banco de dados: ' . $e->getMessage(), 'code' => $e->getCode()];

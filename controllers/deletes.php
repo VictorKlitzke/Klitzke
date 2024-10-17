@@ -17,6 +17,35 @@ header("Access-Control-Allow-Headers: Content-Type, Authorization");
 $user_id = isset($_SESSION['id']) ? $_SESSION['id'] : null;
 $today = date('Y-m-d H:i:s');
 
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    $data = json_decode(file_get_contents('php://input'), true);
+    $sql = Db::Connection();
+
+    if (is_null($data)) {
+        echo json_encode([
+            'success' => false,
+            'message' => 'Invalid JSON data'
+        ]);
+        exit;
+    }
+
+    if (empty($data)) {
+        echo json_encode([
+            'success' => false,
+            'message' => 'No user data found'
+        ]);
+        exit;
+    }
+
+    $response_delete_menu = isset($data['menu'], $data['UserIDMenu']) ? ['menu' => $data['menu'], 'UserIDMenu' => $data['UserIDMenu']] : null;
+
+    if (isset($data['type'])) {
+        if ($data['type'] == 'deleteMenuAccess') {
+            deletes::DeleteMenuUser($response_delete_menu, $user_id, $sql);
+        }
+    }
+}
+
 if ($_SERVER['REQUEST_METHOD'] == 'DELETE') {
 
     $data = json_decode(file_get_contents('php://input'), true);
@@ -43,21 +72,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'DELETE') {
     $id_clients_delete = isset($data['id_clients_delete']) ? base64_decode($data['id_clients_delete']) : null;
 
     if (isset($data['type'])) {
-
         if ($data['type'] == 'deleteUser') {
             Deletes::DeleteUsers($today, $sql, $id_users_delete, $user_id);
         } else if ($data['type'] == 'deleteClients') {
             Deletes::DeleteClients($today, $sql, $id_clients_delete, $user_id);
         } else if ($data['type'] == 'deleteForn') {
             Deletes::DeleteForn($today, $sql, $id_forn_delete, $user_id);
-        }
+        } 
     }
-
 }
 
 class Deletes
 {
-
     public static function UserAccess($sql, $user_id)
     {
 
@@ -77,6 +103,37 @@ class Deletes
             echo json_encode(['error' => 'Erro no banco de dados: ' . $e->getMessage(), 'code' => $e->getCode()]);
         }
 
+    }
+    public static function DeleteMenuUser($response_delete_menu, $user_id, $sql) {
+
+        $today = date('Y-m-d H:i:s');
+
+        $menu_access = isset($response_delete_menu['menu']) ? $response_delete_menu['menu'] : null;
+        $user_id = isset($response_delete_menu['UserIDMenu']) ? $response_delete_menu['UserIDMenu'] : null;
+
+        var_dump($user_id, $menu_access);
+        try {
+
+            if (self::UserAccess($sql, $user_id) < 100) {
+                Response::json(false, 'Usuário não tem permissão para esse comando', $today);
+            }
+
+            $sql->BeginTransaction();
+
+            $exec = $sql->prepare("DELETE FROM menu_access WHERE user_id = :user_id AND menu = :menu");
+            $exec->BindParam(':user_id', $user_id, PDO::PARAM_INT);
+            $exec->BindParam(':menu', $menu_access, PDO::PARAM_STR);
+            $exec->execute();
+
+            $sql->commit();
+
+            $message_log = "Menu $menu_access do usuário $user_id deletado com sucesso";
+            Panel::LogAction($user_id, 'Deletar Menu', $message_log, $today);
+            Response::send(true, 'Menu deletado com sucesso', $today);
+
+        } catch (Exception $e) {
+            http_response_code(500);
+        }
     }
     public static function DeleteUsers($today, $sql, $id_users_delete, $user_id)
     {
