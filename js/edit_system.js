@@ -502,8 +502,51 @@ const getInventaryQuantity = () => {
         type: {
             type: 'inventaryquantity',
         },
-        value: {
-            quantityProduct: document.getElementById('productQuantity').value
+        values: {
+            quantityProduct: document.getElementById('productQuantity').value,
+            productID: document.getElementById('productID').value
+        },
+        inputs: {
+            quantityProduct: document.getElementById('productQuantity'),
+            productID: document.getElementById('productID')
         }
     }
+}
+async function Inventaryquantity() {
+    const { type, values, inputs} = await getInventaryQuantity();
+
+    if (isNaN(values.quantityProduct)) {
+        showMessage('Campo quantidade tem que ser numerico');
+        return;
+    }
+
+    if (values.quantityProduct < 0) {
+        showMessage('Quantidade não pode ser nagativo');
+        return;
+    }
+
+    let responseInventary = {
+        quantityProduct: values.quantityProduct,
+        valueProduct: values.valueProduct,
+        type: type.type
+    }
+
+    continueMessage("Deseja continuar com a edição?", "Sim", "Não", async function () {
+        try {
+
+            let url = `${BASE_CONTROLLERS}edits.php`;
+            let response = await fech(url, {
+                method: "POST",
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(responseInventary)
+            })
+
+        } catch (error) {
+            showMessage('Erro ao fazer requisição' + error ,'error')
+        }
+    },function () {
+        showMessage('Operação cancelada', 'warning');
+    });
 }
