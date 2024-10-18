@@ -90,7 +90,9 @@ async function EditUsers() {
 
             if (responseBody.success) {
                 showMessage("Usuário " + values.name + " editado com sucesso!", 'success');
-                location.reload();
+                setTimeout(() => {
+                    location.reload();
+                }, 3000);
             } else {
                 showMessage("Erro ao tentar editar usuário: " + responseBody.message, 'error');
             }
@@ -227,7 +229,9 @@ async function EditClients() {
 
             if (responseBody.success) {
                 showMessage("Cliente " + values.name + " editado com sucesso!", 'success');
-                location.reload();
+                setTimeout(() => {
+                    location.reload();
+                }, 3000);
             } else {
                 showMessage(responseBody.message || "Erro ao tentar editar cliente " + values.name, 'error');
             }
@@ -355,7 +359,9 @@ async function EditCompany() {
     
             if (responseBody.success) {
                 showMessage("Empresa " + values.name + " editada com sucesso!", 'success');
-                location.reload();
+                setTimeout(() => {
+                    location.reload();
+                }, 3000);
             } else {
                 showMessage(responseBody.message || "Erro ao tentar editar Empresa " + values.name, 'error');
             }
@@ -483,7 +489,9 @@ async function EditForn() {
     
             if (responseBody.success) {
                 showMessage("Fornecedor " + values.name + " editada com sucesso!", 'success');
-                location.reload();
+                setTimeout(() => {
+                    location.reload();
+                }, 3000);
             } else {
                 showMessage(responseBody.message || "Erro ao tentar editar Fornecedor " + values.name, 'error');
             }
@@ -500,20 +508,17 @@ async function EditForn() {
 const getInventaryQuantity = () => {
     return {
         type: {
-            type: 'inventaryquantity',
+            type: 'editinventaryquantity',
         },
         values: {
             quantityProduct: document.getElementById('productQuantity').value,
-            productID: document.getElementById('productID').value
-        },
-        inputs: {
-            quantityProduct: document.getElementById('productQuantity'),
-            productID: document.getElementById('productID')
+            productID: document.getElementById('productID').value,
+            valueProduct: document.getElementById('productPrice').value
         }
     }
 }
 async function Inventaryquantity() {
-    const { type, values, inputs} = await getInventaryQuantity();
+    const { type, values} = await getInventaryQuantity();
 
     if (isNaN(values.quantityProduct)) {
         showMessage('Campo quantidade tem que ser numerico');
@@ -525,23 +530,41 @@ async function Inventaryquantity() {
         return;
     }
 
+    if (values.quantityProduct == null || values.valueProduct == null) {
+        showMessage('Quantidade ou Valor não podem ser vazios');
+        return;
+    }
+
     let responseInventary = {
         quantityProduct: values.quantityProduct,
         valueProduct: values.valueProduct,
+        productID: values.productID,
         type: type.type
     }
 
-    continueMessage("Deseja continuar com a edição?", "Sim", "Não", async function () {
+    continueMessage("Deseja realizar inventario do produto?", "Sim", "Não", async function () {
         try {
 
             let url = `${BASE_CONTROLLERS}edits.php`;
-            let response = await fech(url, {
+
+            let response = await fetch(url, {
                 method: "POST",
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify(responseInventary)
-            })
+            });
+
+            const responseInve = await response.json();
+
+            if (responseInve.success) {
+                showMessage('Inventario realizado com sucesso', 'success');
+                setTimeout(() => {
+                    location.reload();
+                }, 3000);
+            } else {
+                showMessage('Erro ao tentar fazer inventario' + responseInve.message, 'error');
+            }
 
         } catch (error) {
             showMessage('Erro ao fazer requisição' + error ,'error')

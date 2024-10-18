@@ -51,7 +51,6 @@ async function QueryListProducts() {
 
       const idCell = document.createElement('td');
       idCell.textContent = product.id;
-      idCell.id = 'productID'
       row.appendChild(idCell);
 
       const nameCell = document.createElement('td');
@@ -68,7 +67,7 @@ async function QueryListProducts() {
 
       const actionsCell = document.createElement('td');
       actionsCell.innerHTML = `
-        <button class="btn btn-warning btn-sm" onclick="SelectedProduct('${product.name}', ${product.stock_quantity}, '${product.value_product}')">Selecionar</button>
+        <button class="btn btn-warning btn-sm" onclick="SelectedProduct('${product.id}', '${product.name}', ${product.stock_quantity}, '${product.value_product}')">Selecionar</button>
       `;
       row.appendChild(actionsCell);
 
@@ -79,7 +78,8 @@ async function QueryListProducts() {
   }
 }
 
-function SelectedProduct(name, stock_quantity, value_product) {
+function SelectedProduct(id, name, stock_quantity, value_product) {
+  document.getElementById('productID').value = id;
   document.getElementById('productName').value = name;
   document.getElementById('productQuantity').value = stock_quantity;
   document.getElementById('productPrice').value = value_product;

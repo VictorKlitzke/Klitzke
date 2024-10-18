@@ -44,6 +44,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $response_company = $data;
     $response_forn = $data;
     $response_account_payable = $data;
+    $response_inventory = $data;
 
     if (isset($data['type'])) {
         if ($data['type'] == 'edituser') {
@@ -56,6 +57,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             Edit::UpdateSupplier($sql, $response_forn, $user_id);
         } else if ($data['type'] == 'editaccountpayable') {
             Edit::UpdateAccountsPayable($sql, $response_account_payable, $user_id);
+        } else if ($data['type'] == 'editinventaryquantity') {
+            Edit::UpdateInventory($response_inventory, $sql, $user_id);
         }
     } else {
         Response::json(false, 'Tipo type não encontrado', $today);
@@ -64,7 +67,41 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 class Edit
 {
+    public static function UpdateInventory($response_inventory, $sql, $user_id) {
 
+        $today = date('Y-m-d H:i:s');
+        $quantity_product = filter_var($response_inventory['quantityProduct'], FILTER_SANITIZE_STRING);
+        $value_product = filter_var($response_inventory['valueProduct'], FILTER_SANITIZE_STRING);
+        $product_id = filter_var($response_inventory['productID'], FILTER_SANITIZE_NUMBER_INT);
+
+        try {
+
+            if (self::UserAccess($sql, $user_id) < 50) {
+                Response::json(false, 'Usuário não tem permissão para executar essa atividade', $today);
+                return;
+            }
+
+            $sql->BeginTransaction();
+
+            $exec = $sql->prepare("UPDATE products SET stock_quantity = :stock_quantity, 
+            value_product = :value_product WHERE id = :product_id");
+
+            $exec->BindParam(':stock_quantity', $quantity_product, PDO::PARAM_STR);
+            $exec->BindParam(':value_product', $value_product, PDO::PARAM_STR);
+            $exec->BindParam(':product_id', $product_id, PDO::PARAM_STR);
+            $exec->execute();
+
+            $sql->commit();
+
+            $message_log = "Inventario realizado com sucesso";
+            Panel::LogAction($user_id, 'Inventario', $message_log, $today);
+            Response::send(true, 'Inventario realizado com sucesso', $today);
+
+        } catch (Exception $e) {
+            http_response_code(500);
+            echo json_encode(['error' => 'Erro no banco de dados: ' . $e->getMessage(), 'code' => $e->getCode()]);
+        }
+    }
     public static function UpdateAccountsPayable($sql, $response_account_payable, $user_id) {
 
         $today = date('Y-m-d H:i:s');
