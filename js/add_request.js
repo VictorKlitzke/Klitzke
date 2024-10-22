@@ -162,8 +162,6 @@ document.addEventListener('DOMContentLoaded', function () {
 	});
 });
 
-/* CODIGO PARA ADICIONAR ITEM EM ITENS DO PEDIDO */
-
 function updatePedido() {
 	var requestID = document.getElementById('product-id').value;
 	var requestName = document.getElementById('product-name').value;
@@ -306,10 +304,6 @@ async function deleteSelectedRow(row, quantityCell) {
 	}
 	calculateTotal();
 }
-
-/***/
-
-/* CODIGO PARA ADICONAR ITENS NO CARD */
 
 async function addItemCard() {
 
@@ -511,7 +505,6 @@ function calculateTotal() {
 	return totalRequest.toFixed(2);
 }
 
-
 async function addGathersArray(index, id, table_request, total_request) {
 
 	const ResulttableGathers = document.getElementById('table-gathers-selected');
@@ -703,6 +696,9 @@ function fieldsTotalForms(button) {
 }
 
 function ModalFaturamento(commandId) {
+
+	let ButtonSelected = [];
+	
 	const totalcardElement = document.getElementById(`totalizador-card${commandId}`);
 	const totalcardValue = totalcardElement ? parseFloat(totalcardElement.innerText.replace('R$', '').trim()) : 0.00;
 
@@ -796,6 +792,8 @@ function calculateDifference(totalValue) {
 }
 async function CloseInvo() {
 
+	let SelectedFatPed = [];
+
 	const cardOrderFat = document.getElementById('card-order');
 	const CloseButtonInvo = document.getElementById('Invo-Fat');
 	const commandId = CloseButtonInvo ? CloseButtonInvo.dataset.commandId : null;
@@ -884,7 +882,6 @@ async function CloseInvo() {
 		showMessage('Erro ao faturar Pedido' + error, 'error');
 		console.clear();
 	}
-
 }
 
 document.getElementById('button-request').addEventListener('click', updatePedido, calculateTotal());

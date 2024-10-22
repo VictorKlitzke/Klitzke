@@ -3,6 +3,7 @@ const menuMapping = {
   "list-users": "Listar Usuários",
   "register-users": "Registrar Usuários",
   "edit-users": "Editar Usuários",
+  "edit-products": "Editar Produtos",
   "list-clients": "Listar Clientes",
   "register-clients": "Registrar Clientes",
   "edit-clients": "Editar Clientes",
@@ -20,6 +21,7 @@ const menuMapping = {
   "list-purchase-request": "Listar Solicitações de Compra",
   "list-products": "Listar Produtos",
   "register-stockcontrol": "Registrar Controle de Estoque",
+  "stock-inventory": "Inventario de Estoque",
   "dashboard": "Painel de Controle",
   "list-companys": "Listar Empresas",
   "financial-control": "Controle Financeiro"
@@ -85,6 +87,20 @@ function SelectedProduct(id, name, stock_quantity, value_product) {
   document.getElementById('productPrice').value = value_product;
 }
 
+function toggleNoticeBoard() {
+  let noticeBoard = document.getElementById('notice-board');
+  let toggleIcon = document.getElementById('toggle-icon');
+
+  if (noticeBoard.classList.contains('d-none')) {
+    noticeBoard.classList.remove('d-none');
+    toggleIcon.classList.remove('fa-chevron-down');
+    toggleIcon.classList.add('fa-chevron-up');
+  } else {
+    noticeBoard.classList.add('d-none');
+    toggleIcon.classList.remove('fa-chevron-up');
+    toggleIcon.classList.add('fa-chevron-down');
+  }
+}
 async function NivelAccess() {
   try {
     let response = await fetch(`${BASE_CONTROLLERS}querys.php`);
@@ -119,8 +135,8 @@ async function NoticeBoard() {
     let dataresponseNoticeBoard = await responseNoticeBoard.json();
     const query_warnings = dataresponseNoticeBoard.query_warnings;
 
-    const noticeBoardContainer = document.querySelector('.notice-board');
-    noticeBoardContainer.innerHTML = '';
+    const noticeBoardContainer = document.getElementById('notice-board');
+    noticeBoardContainer.innerHTML = ''; // Limpa o conteúdo anterior
 
     const today = new Date();
 
@@ -129,39 +145,51 @@ async function NoticeBoard() {
       const dateVenciment = new Date(`${year}-${month}-${day}`);
 
       if (isNaN(dateVenciment)) {
-        showMessage('Data inválida:' + warning.transaction_date, 'warning');
+        showMessage('Data inválida: ' + warning.transaction_date, 'warning');
         return;
       }
 
       let avisoTexto = '';
       let icone = '';
       let classeCor = '';
+      let statusTexto = '';
 
       if (warning.pay === 'paga') {
         icone = '<i class="fas fa-check-circle"></i>';
-        classeCor = 'text-success';
-        avisoTexto = `${icone} <strong>Conta:</strong> ${warning.description || 'Sem descrição'} - <strong>Valor:</strong> <span class="text-bold">R$ ${warning.value || 'N/A'}</span> - <strong>Pago em:</strong> ${day}/${month}/${year}`;
+        classeCor = 'table-success';
+        statusTexto = 'Pago';
       } else if (dateVenciment < today) {
         icone = '<i class="fas fa-exclamation-circle"></i>';
-        classeCor = 'text-danger';
-        avisoTexto = `${icone} <strong>Conta:</strong> ${warning.description || 'Sem descrição'} - <strong>Valor:</strong> <span class="text-bold">R$ ${warning.value || 'N/A'}</span> - <strong>Vencida em:</strong> ${day}/${month}/${year}`;
+        classeCor = 'table-danger';
+        statusTexto = 'Vencido';
       } else if (dateVenciment <= new Date(today.setDate(today.getDate() + 5))) {
         icone = '<i class="fas fa-hourglass-half"></i>';
-        classeCor = 'text-warning';
-        avisoTexto = `${icone} <strong>Conta:</strong> ${warning.description || 'Sem descrição'} - <strong>Valor:</strong> <span class="text-bold">R$ ${warning.value || 'N/A'}</span> - <strong>Vencimento em:</strong> ${day}/${month}/${year}`;
+        classeCor = 'table-warning';
+        statusTexto = 'A vencer';
       } else {
         return;
       }
 
-      const avisoElement = document.createElement('p');
-      avisoElement.className = `${classeCor} mb-2`;
-      avisoElement.innerHTML = avisoTexto;
+      const avisoRow = document.createElement('tr');
+      avisoRow.className = `${classeCor} mb-2`;
 
-      const separador = document.createElement('hr');
-      separador.className = 'my-2';
+      const contaCell = document.createElement('td');
+      contaCell.innerHTML = `${warning.description || 'Sem descrição'}`;
 
-      noticeBoardContainer.appendChild(avisoElement);
-      noticeBoardContainer.appendChild(separador);
+      const valorCell = document.createElement('td');
+      valorCell.innerHTML = `R$ ${warning.value || 'N/A'}`;
+
+      const dataCell = document.createElement('td');
+      dataCell.innerHTML = `${day}/${month}/${year}`;
+
+      const statusCell = document.createElement('td');
+      statusCell.innerHTML = `${icone} ${statusTexto}`;
+
+      avisoRow.appendChild(contaCell);
+      avisoRow.appendChild(valorCell);
+      avisoRow.appendChild(dataCell);
+      avisoRow.appendChild(statusCell);
+      noticeBoardContainer.appendChild(avisoRow);
     });
 
   } catch (error) {
@@ -313,6 +341,7 @@ async function AccessUsers(button) {
     try {
       const responseBodyUser = JSON.parse(responseTextUser);
       showAccessMenuUser(responseBodyUser.menu_user)
+      showAddMenus(responseBodyUser.menu_user)
     } catch (error) {
       showMessage('Erro ao fazer parse do JSON:' + error + responseTextUser, 'error');
     }
@@ -349,5 +378,107 @@ function showAccessMenuUser(userMenus) {
       </div>
     `;
     modalUser.appendChild(card);
+  });
+}
+
+function showAddMenus(userMenus) {
+  const modalUser = document.getElementById('edit-menus-user');
+  modalUser.innerHTML = "";
+
+  const UserIDMenu = userMenus.length > 0 ? userMenus[0].user_id : null;
+  const assignedMenus = userMenus.map(menu => menu.menu);
+  const unassignedMenus = Object.keys(menuMapping).filter(menuKey => !assignedMenus.includes(menuKey));
+
+  if (unassignedMenus.length === 0) {
+    modalUser.innerHTML = "<h1>O usuário já tem acesso a todos os menus.</h1>";
+    return;
+  }
+
+  unassignedMenus.forEach(menuKey => {
+    const card = document.createElement('div');
+    const menuName = menuMapping[menuKey];
+
+    card.classList.add('col-md-4', 'mb-4');
+    card.innerHTML = `
+        <div class="card h-100 text-center shadow">
+            <div class="card-body">
+                <h5 class="card-title">${menuName}</h5>
+                <input type="checkbox" class="form-check-input" id="check-${menuKey}"> 
+                <p class="card-text">Descrição do menu: ${menuName}</p>
+            </div>
+        </div>
+    `;
+    modalUser.appendChild(card);
+  });
+
+  const addButton = document.createElement('button');
+  addButton.classList.add('btn', 'btn-primary', 'mt-3');
+  addButton.textContent = 'Adicionar Menus';
+  addButton.onclick = () => {
+    AddMenuAccess(UserIDMenu);
+  };
+
+  modalUser.appendChild(addButton);
+}
+async function AddMenuAccess(UserIDMenu) {
+  const modalUser = document.getElementById('edit-menus-user');
+  const checkboxes = modalUser.querySelectorAll('input[type="checkbox"]');
+
+  let menusToAdd = [];
+
+  checkboxes.forEach(checkbox => {
+    const menuKey = checkbox.id.replace('check-', '');
+    if (checkbox.checked) {
+      menusToAdd.push(menuKey);
+    }
+  });
+
+  if (menusToAdd.length === 0) {
+    showMessage("Nenhum menu foi selecionado para adicionar.", 'warning');
+    return;
+  }
+
+  // Aqui, você já está pegando a chave em inglês diretamente do menuKey
+  const menusInEnglish = menusToAdd.map(menuKey => {
+    const menuInPortuguese = menuMapping[menuKey];
+    if (!menuInPortuguese) {
+      console.error(`Menu ${menuKey} não encontrado no mapeamento.`);
+    }
+    return menuKey;
+  });
+
+  let responseMenuaccess = {
+    type: 'addaccessmenu',
+    userID: UserIDMenu,
+    menus: menusInEnglish
+  };
+
+  console.log(responseMenuaccess);
+
+  continueMessage("Adicionar menus ao usuário?", "Sim", "Não", async function () {
+    try {
+      let url = `${BASE_CONTROLLERS}registers.php`;
+
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(responseMenuaccess)
+      });
+
+      const responseBody = await response.json();
+
+      if (responseBody.success) {
+        showMessage("Menus adicionados com sucesso!", 'success');
+        setTimeout(() => {
+          location.reload();
+        }, 2000);
+      } else {
+        showMessage("Erro ao adicionar menus: " + responseBody.message, 'error');
+      }
+    } catch (error) {
+      showMessage('Erro na requisição: ' + error.message, 'error');
+    }
   });
 }

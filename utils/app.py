@@ -3,8 +3,7 @@ from flask_cors import CORS
 from files import extract_table_data, insert_into_database 
 
 app = Flask(__name__)
-CORS(app)
-
+CORS(app, supports_credentials=True, resources={r"/upload": {"origins": "http://localhost:3000"}})
 @app.route('/upload', methods=['POST'])
 def upload_file():
     if 'file' not in request.files:

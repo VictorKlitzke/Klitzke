@@ -70,11 +70,11 @@ $users = Controllers::SelectAll('users');
                   <button class="btn btn-danger accessnivel" onclick="DeleteUsers(this)"
                     data-id="<?php echo base64_encode($value['id']); ?>">Deletar
                   </button>
-                  <?php if ($value['disable'] == 1){ ?>
-                  <button class="btn btn-light accessnivel" onclick="AccessUsers(this)"
-                    data-id="<?php echo base64_encode($value['id']); ?>">
-                    Acessos de Menu
-                  </button>
+                  <?php if ($value['disable'] == 1) { ?>
+                    <button class="btn btn-light accessnivel" onclick="AccessUsers(this)"
+                      data-id="<?php echo base64_encode($value['id']); ?>">
+                      Acessos de Menu
+                    </button>
                   <?php } ?>
                 </th>
               </tr>
@@ -86,40 +86,39 @@ $users = Controllers::SelectAll('users');
   </div>
 </div>
 
-
-
 <div class="modal fade" id="menu-access-user" tabindex="-1" aria-hidden="true">
-	<div class="modal-dialog modal-fullscreen">
-		<div class="modal-content">
-			<div class="modal-header">
-				<h5 class="modal-title">Menus de Acesso do Usuário</h5>
-				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-			</div>
-			<div class="modal-body">
-      <ul class="nav nav-tabs" id="myTab" role="tablist">
-					<li class="nav-item" role="presentation">
-						<button class="nav-link active" id="sales-tab" data-bs-toggle="tab" data-bs-target="#sales" type="button"
-							role="tab" aria-controls="sales" aria-selected="true">Remover</button>
-					</li>
-					<li class="nav-item" role="presentation">
-						<button class="nav-link" id="budgets-tab" data-bs-toggle="tab" data-bs-target="#budgets" type="button"
-							role="tab" aria-controls="budgets" aria-selected="false">Adicionar</button>
-					</li>
-				</ul>
-
-				<div class="tab-content" id="myTabContent">
-					<div class="tab-pane fade show active" id="sales" role="tabpanel" aria-labelledby="sales-tab">
-						<div id="remover-menus-user" class="row p-lg-2"></div>
-					</div>
-				<div class="tab-content" id="myTabContent">
-					<div class="tab-pane fade show active" id="sales" role="tabpanel" aria-labelledby="sales-tab">
-						<div id="edit-menus-user" class="row p-lg-2"></div>
-					</div>
+  <div class="modal-dialog modal-fullscreen">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Menus de Acesso do Usuário</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
-			</div>
-			<div class="modal-footer">
-				<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
-			</div>
-		</div>
-	</div>
+      <div class="modal-body">
+        <ul class="nav nav-tabs" id="myTab" role="tablist">
+          <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="sales-tab" data-bs-toggle="tab" data-bs-target="#sales" type="button"
+              role="tab" aria-controls="sales" aria-selected="true">Remover</button>
+          </li>
+          <li class="nav-item" role="presentation">
+            <button class="nav-link" id="budgets-tab" data-bs-toggle="tab" data-bs-target="#budgets" type="button"
+              role="tab" aria-controls="budgets" aria-selected="false">Adicionar</button>
+          </li>
+        </ul>
+
+        <div class="tab-content" id="myTabContent">
+          <div class="tab-pane fade show active" id="sales" role="tabpanel" aria-labelledby="sales-tab">
+            <div id="remover-menus-user" class="row p-lg-2">
+            </div>
+          </div>
+        </div>
+
+        <div class="tab-content" id="myTabContent">
+          <div class="tab-pane fade" id="budgets" role="tabpanel" aria-labelledby="budgets-tab">
+            <div id="edit-menus-user" class="row p-lg-2"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 </div>

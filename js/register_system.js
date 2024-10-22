@@ -1,4 +1,4 @@
-const FilesContent = document.getElementById('file-pdf');
+const filesContent = document.getElementById('file-pdf');
 const checkboxes = document.querySelectorAll('.form-check-input');
 const selects = document.querySelectorAll('.form-select');
 
@@ -75,14 +75,14 @@ async function RegisterUsers() {
 
     const { values, type, inputs, menuaccess } = await FieldsUsers();
 
-    if (values.name == "" || values.password == "" || values.email == "" || values.phone == "" || values.userFunction == "") {
+    if (values.name === "" || values.password === "" || values.email === "" || values.phone === "" || values.userFunction === "") {
         showMessage('Preencha todos os campos!', 'warning',);
 
-        if (values.name == "") inputs.name.classList.add('error');
-        if (values.password == "") inputs.password.classList.add('error');
-        if (values.email == "") inputs.email.classList.add('error');
-        if (values.userFunction == "") inputs.userFunction.classList.add('error');
-        if (values.phone == "") inputs.phone.classList.add('error');
+        if (values.name === "") inputs.name.classList.add('error');
+        if (values.password === "") inputs.password.classList.add('error');
+        if (values.email === "") inputs.email.classList.add('error');
+        if (values.userFunction === "") inputs.userFunction.classList.add('error');
+        if (values.phone === "") inputs.phone.classList.add('error');
         setTimeout(() => {
             inputs.name.classList.remove('error');
             inputs.password.classList.remove('error');
@@ -95,22 +95,22 @@ async function RegisterUsers() {
     }
 
     if (isNaN(values.targetCommission) || isNaN(values.commission) || isNaN(values.phone)) {
-        showMessage('Campos só aceita numeros', 'warning',);
+        showMessage('Campos só aceita numeros', 'warning');
 
         if (!isNaN(values.targetCommission)) inputs.targetCommission.classList.add('error');
         if (!isNaN(values.commission)) inputs.commission.classList.add('error');
         if (!isNaN(values.phone)) inputs.phone.classList.add('error');
         setTimeout(() => {
             inputs.commission.classList.remove('error');
-            inputs.commission.targetCommission.remove('error');
-            inputs.commission.phone.remove('error');
+            inputs.targetCommission.classList.remove('error');
+            inputs.phone.classList.remove('error');
         }, 3000);
 
         return;
     }
 
     if (values.password < 6) {
-        showMessage('Senha tem que ser maior que 6 digitos', 'warning',);
+        showMessage('Senha tem que ser maior que 6 digitos', 'warning');
 
         if (values.password < 6) inputs.password.classList.add('error');
         setTimeout(() => {
@@ -166,8 +166,6 @@ async function RegisterUsers() {
                 });
 
                 const responseBody = await response.json();
-
-                console.log(responseBody);
 
                 if (responseBody.success) {
                     showMessage("Usuário " + values.name + " cadastrado com sucesso!", 'success');
@@ -898,7 +896,7 @@ async function RegisterProducts() {
     }
 
     function parseCurrency(value) {
-        return parseFloat(value.replace(',', '.'));  // Preserva pontos e vírgulas corretamente
+        return parseFloat(value.replace(',', '.'));
     }
 
     async function sendProductData(type, values, imageBase64, quantity, stock_quantity, barcode, cost_value, value_product) {
@@ -1178,7 +1176,7 @@ async function RegisterMultiply() {
 const getFildsFile = () => {
     return {
         values: {
-            fileregister: document.getElementById('files').files[0], // Mude para pegar o arquivo
+            fileregister: document.getElementById('files').files[0],
         },
         inputs: {
             fileregister: document.getElementById('files')
@@ -1204,8 +1202,13 @@ async function RegisterFile() {
         try {
             const response = await fetch('http://localhost:5000/upload', {
                 method: 'POST',
-                body: formData
-            });
+                body: formData,
+                headers: {
+                    'Accept': 'application/json'
+                },
+                mode: 'cors',
+                credentials: 'include'
+            });            
 
             const responseBody = await response.json();
 
@@ -1224,23 +1227,19 @@ async function RegisterFile() {
         showMessage('Registro cancelado', 'warning');
     });
 }
-
 function closeModal() {
-    FilesContent.style.display = 'none';
+    filesContent.style.display = 'none';
     localStorage.setItem('modalState', 'fechado');
 }
-
+function DisplayFiles() {
+    filesContent.style.display = 'block';
+    localStorage.setItem('modalState', 'aberto');
+}
 window.onload = function () {
     const modalState = localStorage.getItem('modalState');
-
-    if (modalState === 'fechado') {
-        FilesContent.style.display = 'none';
-    } else {
-        FilesContent.style.display = 'block';
+    if (modalState === 'aberto') {
+        filesContent.style.display = 'block'; 
+    } else if (modalState === 'fechado'){
+        filesContent.style.display = 'none';   
     }
-}
-
-function DisplayFiles() {
-    FilesContent.style.display = 'block';
-    localStorage.setItem('modalState', 'aberto');
 }

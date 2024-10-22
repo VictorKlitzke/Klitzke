@@ -518,7 +518,7 @@ const getInventaryQuantity = () => {
     }
 }
 async function Inventaryquantity() {
-    const { type, values} = await getInventaryQuantity();
+    const { type, values } = await getInventaryQuantity();
 
     if (isNaN(values.quantityProduct)) {
         showMessage('Campo quantidade tem que ser numerico');
@@ -564,6 +564,148 @@ async function Inventaryquantity() {
                 }, 3000);
             } else {
                 showMessage('Erro ao tentar fazer inventario' + responseInve.message, 'error');
+            }
+
+        } catch (error) {
+            showMessage('Erro ao fazer requisição' + error ,'error')
+        }
+    },function () {
+        showMessage('Operação cancelada', 'warning');
+    });
+}
+
+const getEditProducts = () => {
+    return {
+        type: {
+            type: 'editproducts',
+        },
+        values: {
+            id_products: document.getElementById('id_products').value,
+            product: document.getElementById('product').value,
+            quantity: document.getElementById('quantity').value,
+            stock_quantity: document.getElementById('stock_quantity').value,
+            reference: document.getElementById('reference').value,
+            value_product: document.getElementById('value_product').value,
+            cost_value: document.getElementById('cost_value').value,
+            model: document.getElementById('model').value,
+            barcode: document.getElementById('barcode').value,
+            brand: document.getElementById('brand').value
+        },
+        inputs: {
+            id_products: document.getElementById('id_products'),
+            product: document.getElementById('product'),
+            quantity: document.getElementById('quantity'),
+            stock_quantity: document.getElementById('stock_quantity'),
+            reference: document.getElementById('reference'),
+            value_product: document.getElementById('value_product'),
+            cost_value: document.getElementById('cost_value'),
+            model: document.getElementById('model'),
+            brand: document.getElementById('brand'),
+            barcode: document.getElementById('barcode'),
+        },
+    }
+}
+async function EditProducts() {
+    const { type, values, inputs } = await getEditProducts();
+
+    let InputValueCost = values.cost_value.replace(/^R\$\s?/, "");
+    let InputValueProduct = values.value_product.replace(/^R\$\s?/, "");
+
+    if (values.product == "" || values.cost_value == "" || values.value_product == "" || values.quantity == ""
+        || values.stock_quantity == "") {
+        showMessage('Campos não podem ficar vazios');
+
+        if (values.product === "") inputs.name.classList.add('error');
+        if (values.reference === "") inputs.reference.classList.add('error');
+        if (values.quantity === "") inputs.quantity.classList.add('error');
+        if (values.stock_quantity === "") inputs.stock_quantity.classList.add('error');
+        if (values.cost_value === "") inputs.cost_value.classList.add('error');
+        if (values.value_product === "") inputs.value_product.classList.add('error');
+        setTimeout(() => {
+            inputs.product.classList.remove('error');
+            inputs.quantity.classList.remove('error');
+            inputs.stock_quantity.classList.remove('error');
+            inputs.cost_value.classList.remove('error');
+            inputs.value_product.classList.remove('error');
+        }, 3000);
+
+        return;
+    }
+
+    const quantity = Number(values.quantity);
+    const stock_quantity = Number(values.stock_quantity);
+    const barcode = Number(values.barcode);
+    const cost_value = parseCurrency(InputValueCost);
+    const value_product = parseCurrency(InputValueProduct);
+
+    if (isNaN(quantity) || isNaN(stock_quantity) ||
+        isNaN(barcode) || isNaN(value_product) || isNaN(cost_value)
+    ) {
+        showMessage('Campos não podem ser Strings', 'warning');
+
+        if (isNaN(values.barcode)) inputs.barcode.classList.add('error');
+        if (isNaN(values.quantity)) inputs.quantity.classList.add('error');
+        if (isNaN(values.stock_quantity)) inputs.stock_quantity.classList.add('error');
+        if (isNaN(InputValueCost)) inputs.cost_value.classList.add('error');
+        if (isNaN(InputValueProduct)) inputs.value_product.classList.add('error');
+        setTimeout(() => {
+            inputs.barcode.classList.remove('error');
+            inputs.quantity.classList.remove('error');
+            inputs.stock_quantity.classList.remove('error');
+            inputs.cost_value.classList.remove('error');
+            inputs.value_product.classList.remove('error');
+        }, 3000);
+
+        return;
+    }
+
+    if (values.quantity == null || values.value_product == null) {
+        showMessage('Quantidade ou Valor não podem ser vazios');
+        return;
+    }
+
+    function parseCurrency(value) {
+        return parseFloat(value.replace(',', '.'));
+    }
+
+    let responseEditProduct = {
+        type: type.type,
+        name: values.product,
+        quantity: quantity,
+        stock_quantity: stock_quantity,
+        barcode: barcode,
+        value_product: value_product,
+        cost_value: cost_value,
+        reference: values.reference,
+        model: values.model,
+        brand: values.brand,
+        id_products: values.id_products,
+    }
+
+    console.log(responseEditProduct);
+
+    continueMessage("Deseja editar o produto?", "Sim", "Não", async function () {
+        try {
+
+            let url = `${BASE_CONTROLLERS}edits.php`;
+
+            let response = await fetch(url, {
+                method: "POST",
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(responseEditProduct)
+            });
+
+            const responseProd = await response.json();
+
+            if (responseProd.success) {
+                showMessage('Produto atualizado com sucesso', 'success');
+                setTimeout(() => {
+                    location.reload();
+                }, 3000);
+            } else {
+                showMessage('Erro ao tentar editar produto' + responseProd.message, 'error');
             }
 
         } catch (error) {

@@ -30,7 +30,7 @@ $_SESSION['user_permissions'] = array_fill_keys($user_permissions, 1);
 
 if (isset($_GET['loggout'])) {
     Panel::Loggout();
-} 
+}
 ?>
 
 <!DOCTYPE html>
@@ -191,7 +191,7 @@ if (isset($_GET['loggout'])) {
                                     <?php if (isset($_SESSION['user_permissions']['list-sales'])): ?>
                                         <li>
                                             <a class="dropdown-item" <?php SelectedMenu('list-sales'); ?>
-                                                href="<?php echo INCLUDE_PATH; ?>list-sales">Lista de Vendas 
+                                                href="<?php echo INCLUDE_PATH; ?>list-sales">Lista de Vendas
                                             </a>
                                         </li>
                                     <?php endif; ?>
@@ -259,7 +259,7 @@ if (isset($_GET['loggout'])) {
                                     <?php if (isset($_SESSION['user_permissions']['shopping-request'])): ?>
                                         <li>
                                             <a class="dropdown-item" <?php SelectedMenu('shopping-request'); ?>
-                                                href="<?php echo INCLUDE_PATH; ?>shopping-request"> Solicitação de Compras 
+                                                href="<?php echo INCLUDE_PATH; ?>shopping-request"> Solicitação de Compras
                                             </a>
                                         </li>
                                     <?php endif ?>
@@ -267,7 +267,7 @@ if (isset($_GET['loggout'])) {
                                         <li>
                                             <a class="dropdown-item" <?php SelectedMenu('list-purchase-request'); ?>
                                                 href="<?php echo INCLUDE_PATH; ?>list-purchase-request"> Lista das Solicitações
-                                                de Compras 
+                                                de Compras
                                             </a>
                                         </li>
                                     <?php endif ?>
@@ -281,9 +281,9 @@ if (isset($_GET['loggout'])) {
                                         <?php if ($_SESSION['user_permissions']['financial-control']): ?>
                                             <li>
                                                 <a class="dropdown-item" <?php SelectedMenu('financial-control.php'); ?>
-                                                href="<?php echo INCLUDE_PATH; ?>financial-control"> Visualizar Pagamentos 
-                                            </a>
-                                        </li>
+                                                    href="<?php echo INCLUDE_PATH; ?>financial-control"> Visualizar Pagamentos
+                                                </a>
+                                            </li>
                                         <?php endif; ?>
                                     </ul>
                                 </li>
@@ -322,13 +322,13 @@ if (isset($_GET['loggout'])) {
                                     <a style="color: #fff !important; font-size: 1.3rem" class="nav-link dropdown-toggle"
                                         role="button" data-bs-toggle="dropdown" aria-expanded="false">Administrativo</a>
                                     <ul class="dropdown-menu dropdown-menu-dark">
-                                    <?php if ($_SESSION['user_permissions']['dashboard']): ?>
-                                        <li>
-                                            <a class="dropdown-item" <?php SelectedMenu('dashboard'); ?>
-                                                href="<?php echo INCLUDE_PATH; ?>dashboard"> Dashboard ADM 
-                                            </a>
-                                        </li>
-                                    <?php endif; ?>
+                                        <?php if ($_SESSION['user_permissions']['dashboard']): ?>
+                                            <li>
+                                                <a class="dropdown-item" <?php SelectedMenu('dashboard'); ?>
+                                                    href="<?php echo INCLUDE_PATH; ?>dashboard"> Dashboard ADM
+                                                </a>
+                                            </li>
+                                        <?php endif; ?>
                                     </ul>
                                 </li>
                             <?php endif; ?>
@@ -400,64 +400,82 @@ if (isset($_GET['loggout'])) {
             $exec->execute();
             $result_aprazo = $exec->fetch(PDO::FETCH_ASSOC);
 
+            $exec = $sql->prepare("SELECT SUM(value) value_boxpdv FROM boxpdv WHERE id = :id AND id_users = :id_users");
+            $exec->bindParam(':id', $openBoxId, PDO::PARAM_INT);
+            $exec->bindParam(':id_users', $user_id, PDO::PARAM_INT);
+            $exec->execute();
+            $result_system = $exec->fetch(PDO::FETCH_ASSOC);
+
         }
 
         ?>
 
         <div class="overlay" id="overlay">
-            <div class="close-boxpdv" id="close-boxpdv">
-                <div class="card-header d-flex justify-content-between align-items-center m-2">
-                    <h2 class="text-white">Fechamento do caixa</h2>
-                    <svg id="close-boxpdv-modal" style="cursor: pointer;" fill="#fff" xmlns="http://www.w3.org/2000/svg"
-                        height="24px" viewBox="0 0 24 24" width="24px">
-                        <path d="M0 0h24v24H0z" fill="none" />
-                        <path
-                            d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" />
-                    </svg>
-                </div>
-                <div class="card-body m-2">
-                    <div class="row g-3">
-                        <form class="form" method="POST" enctype="multipart/form-data">
-                            <div class="col-sm-12">
-                                <label class="text-white">Debito</label>
-                                <input id="value_debit" class="form-control" type="text" placeholder="Debito"
-                                    name="value_debit" value="<?php echo $result_debit["total_debit"]; ?>" />
-                            </div>
-                            <div class="col-sm-12">
-                                <label class="text-white">Credito</label>
-                                <input id="value_credit" class="form-control" type="text" placeholder="Credito"
-                                    name="value_credit" value="<?php echo $result_credit["total_credit"]; ?>" />
-                            </div>
-                            <div class="col-sm-12">
-                                <label class="text-white">PIX</label>
-                                <input id="value_pix" class="form-control" type="text" placeholder="PIX"
-                                    name="value_pix" value="<?php echo $result_pix["total_pix"]; ?>">
-                            </div>
-                            <div class="col-sm-12">
-                                <label class="text-white">Dinheiro</label>
-                                <input id="value_money" class="form-control" type="text" placeholder="Dinheiro"
-                                    name="value_money" value="<?php echo $result_money["total_money"]; ?>" />
-                            </div>
-                            <div class="col-sm-12">
-                                <label class="text-white">A Prazo</label>
-                                <input id="value_aprazo" class="form-control" type="text" placeholder="A Prazo"
-                                    name="value_aprazo" value="<?php echo $result_aprazo["total_aprazo"]; ?>" />
-                            </div>
-                            <div class="col-sm-12">
-                                <label class="text-white">Data fechamento</label>
-                                <input id="date_close" class="form-control" type="date" placeholder="Data fechamento"
-                                    name="date_close">
-                            </div>
-                        </form>
-                        <div class="col-12">
-                            <input type="hidden" id="id_boxpdv" name="id_boxpdv">
-                            <button id="finish-sales" onclick="closeBox()" type="button" class="btn btn-primary">Fechar
-                                caixa</button>
+            <div class="modal" id="close-boxpdv" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content bg-dark text-white" style="border-radius: 10px;">
+                        <div class="modal-header">
+                            <h4 class="modal-title" id="modalLabel">Fechamento do Caixa</h4>
+                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                                aria-label="Close" id="close-boxpdv-modal"></button>
+                        </div>
+                        <div class="modal-body">
+                            <form class="form" method="POST" enctype="multipart/form-data">
+                                <div class="mb-3">
+                                    <label for="value_debit" class="form-label">Débito</label>
+                                    <input id="value_debit" class="form-control" type="text" placeholder="Débito"
+                                        name="value_debit" value="<?php echo $result_debit['total_debit']; ?>" />
+                                </div>
+                                <div class="mb-3">
+                                    <label for="value_credit" class="form-label">Crédito</label>
+                                    <input id="value_credit" class="form-control" type="text" placeholder="Crédito"
+                                        name="value_credit" value="<?php echo $result_credit['total_credit']; ?>" />
+                                </div>
+                                <div class="mb-3">
+                                    <label for="value_pix" class="form-label">PIX</label>
+                                    <input id="value_pix" class="form-control" type="text" placeholder="PIX"
+                                        name="value_pix" value="<?php echo $result_pix['total_pix']; ?>" />
+                                </div>
+                                <div class="mb-3">
+                                    <label for="value_money" class="form-label">Dinheiro</label>
+                                    <input id="value_money" class="form-control" type="text" placeholder="Dinheiro"
+                                        name="value_money" value="<?php echo $result_money['total_money']; ?>" />
+                                </div>
+                                <div class="mb-3">
+                                    <label for="value_aprazo" class="form-label">A Prazo</label>
+                                    <input id="value_aprazo" class="form-control" type="text" placeholder="A Prazo"
+                                        name="value_aprazo" value="<?php echo $result_aprazo['total_aprazo']; ?>" />
+                                </div>
+                                <div class="mb-3">
+                                    <label for="value_system" class="form-label">Caixa Sistema</label>
+                                    <input id="value_system" class="form-control" type="text"
+                                        placeholder="Caixa Sistema" name="value_system"
+                                        value="<?php echo $result_system['value_boxpdv']; ?>" />
+                                </div>
+                                <div class="mb-3">
+                                    <label for="value_fisico" class="form-label">Caixa Fisico</label>
+                                    <input id="value_fisico" class="form-control" type="text" placeholder="Caixa Fisico"
+                                        name="value_fisico" oninput="calculateDifference()" />
+                                </div>
+                                <div class="mb-3">
+                                    <label for="value_difference" class="form-label">Diferença</label>
+                                    <input id="value_difference" class="form-control" type="text"
+                                        placeholder="Diferença" name="value_difference" readonly />
+                                </div>
+                                <input type="hidden" id="id_boxpdv" name="id_boxpdv">
+                                <div class="d-grid">
+                                    <button id="finish-sales" onclick="closeBox()" type="button"
+                                        class="btn btn-success">Fechar
+                                        Caixa</button>
+                                </div>
+                            </form>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
+
+
         <div class="message-container" id="message-container"></div>
     </div>
 
@@ -486,8 +504,7 @@ if (isset($_GET['loggout'])) {
     <script language="JavaScript" type="text/javascript" src="<?php echo INCLUDE_JAVASCRIPT; ?>menu.js"></script>
     <script language="JavaScript" type="text/javascript" src="<?php echo INCLUDE_JAVASCRIPT; ?>list_system.js"></script>
     <script language="JavaScript" type="text/javascript" src="<?php echo INCLUDE_JAVASCRIPT; ?>buy_request.js"></script>
-    <script language="JavaScript" type="text/javascript"
-        src="<?php echo INCLUDE_JAVASCRIPT; ?>financial_control.js">
+    <script language="JavaScript" type="text/javascript" src="<?php echo INCLUDE_JAVASCRIPT; ?>financial_control.js">
     </script>
     <script src="<?php echo INCLUDE_JAVASCRIPT; ?>dashboard.js"></script>
     <script src="<?php echo INCLUDE_JAVASCRIPT; ?>querys.js"></script>

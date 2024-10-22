@@ -186,6 +186,8 @@ async function DeleteMenuAccess(menuName, UserIDMenu) {
         UserIDMenu: UserIDMenu
     }
 
+    console.log(responseDeleteMenu);
+
     continueMessage("Deseja realmente deletar menu de acceso?", "Sim", "Não", async function() {
         try {
 
@@ -201,10 +203,12 @@ async function DeleteMenuAccess(menuName, UserIDMenu) {
     
             const result = await response.json();
 
+            console.log(result);
+
             if (result.success) {
                 showMessage('Menu deletado com sucesso', 'success');
             } else {
-                showMessage('Erro ao remover menu de acesso' + result.error, 'erro');
+                showMessage('Erro ao remover menu de acesso' + result.message, 'error');
             }
     
         } catch (error) {

@@ -78,16 +78,30 @@ $count_sales = Controllers::SelectAll('sales');
 <div class="container-fluid card">
   <div class="row">
     <div class="col" style="max-height: 700px; overflow-y: auto; overflow-x: auto;">
-      <h2 class="text-black mb-4">Quadro de Avisos</h2>
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="text-black">Quadro de Avisos</h2>
+        <button id="toggle-btn" class="btn btn-light" onclick="toggleNoticeBoard()" style="border: none;">
+          <i id="toggle-icon" class="fas fa-chevron-down" style="font-size: 1.5rem;"></i>
+        </button>
+      </div>
       <div aria-live="polite" aria-atomic="true" class="d-flex flex-wrap justify-content-start">
-        <table>
-        <div class="notice-board row"></div> 
+        <table class="table table-striped">
+          <thead class="table-dark">
+            <tr>
+              <th scope="col">Conta</th>
+              <th scope="col">Valor</th>
+              <th scope="col">Data</th>
+              <th scope="col">Status</th>
+            </tr>
+          </thead>
+          <tbody id="notice-board" class="notice-board d-none">
+          </tbody>
         </table>
       </div>
     </div>
   </div>
 </div>
-
+  
 <br>
 
 <div class="row">

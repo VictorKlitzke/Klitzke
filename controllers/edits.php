@@ -45,6 +45,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $response_forn = $data;
     $response_account_payable = $data;
     $response_inventory = $data;
+    $response_products = $data;
 
     if (isset($data['type'])) {
         if ($data['type'] == 'edituser') {
@@ -59,6 +60,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             Edit::UpdateAccountsPayable($sql, $response_account_payable, $user_id);
         } else if ($data['type'] == 'editinventaryquantity') {
             Edit::UpdateInventory($response_inventory, $sql, $user_id);
+        } else if ($data['type'] == 'editproducts') {
+            Edit::UpdateProduct($response_products, $sql, $user_id);
         }
     } else {
         Response::json(false, 'Tipo type não encontrado', $today);
@@ -67,7 +70,67 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 class Edit
 {
-    public static function UpdateInventory($response_inventory, $sql, $user_id) {
+    public static function UpdateProduct($response_products, $sql, $user_id)
+    {
+        $today = date('Y-m-d H:i:s');
+
+        $name = filter_var($response_products['name'], FILTER_SANITIZE_STRING);
+        $quantity = filter_var($response_products['quantity'], FILTER_SANITIZE_STRING);
+        $stock_quantity = filter_var($response_products['stock_quantity'], FILTER_SANITIZE_STRING);
+        $barcode = filter_var($response_products['barcode'], FILTER_SANITIZE_STRING);
+        $value_product = filter_var($response_products['value_product'], FILTER_SANITIZE_STRING);
+        $cost_value = filter_var($response_products['cost_value'], FILTER_SANITIZE_STRING);
+        $reference = filter_var($response_products['reference'], FILTER_SANITIZE_STRING);
+        $model = filter_var($response_products['model'], FILTER_SANITIZE_STRING);
+        $brand = filter_var($response_products['brand'], FILTER_SANITIZE_STRING);
+
+        if (!$name || !$quantity || !$value_product || !$cost_value || !$stock_quantity) {
+            Response::json(false, 'Campos Inválidos', $today);
+        }
+
+        $product_id = filter_var($response_products['id_products'], FILTER_SANITIZE_STRING);
+        $product_id = base64_decode($product_id);
+
+        if (!$product_id) {
+            Response::json(false, 'ID do produto não informado', $today);
+        }
+
+        try {
+
+            $sql->BeginTransaction();
+
+            $exec = $sql->prepare("UPDATE products 
+                                SET name = :name, quantity = :quantity, stock_quantity = :stock_quantity, 
+                                    barcode = :barcode, value_product = :value_product, cost_value = :cost_value, 
+                                    reference = :reference, model = :model, brand = :brand  
+                                WHERE id = :id");
+
+            $exec->bindParam(':name', $name);
+            $exec->bindParam(':quantity', $quantity);
+            $exec->bindParam(':stock_quantity', $stock_quantity);
+            $exec->bindParam(':barcode', $barcode);
+            $exec->bindParam(':value_product', $value_product);
+            $exec->bindParam(':cost_value', $cost_value);
+            $exec->bindParam(':reference', $reference);
+            $exec->bindParam(':model', $model);
+            $exec->bindParam(':brand', $brand);
+            $exec->bindParam(':id', $product_id);
+            $exec->execute();
+
+            $sql->commit();
+
+            $message_log = "Produto $name atualizado com sucesso";
+            Panel::LogAction($user_id, 'Editar Produto', $message_log, $today);
+            Response::send(true, 'Produto atualizado com sucesso', $today);
+
+        } catch (Exception $e) {
+            $sql->rollback();
+            http_response_code(500);
+            echo json_encode(['error' => 'Erro no banco de dados: ' . $e->getMessage(), 'code' => $e->getCode()]);
+        }
+    }
+    public static function UpdateInventory($response_inventory, $sql, $user_id)
+    {
 
         $today = date('Y-m-d H:i:s');
         $quantity_product = filter_var($response_inventory['quantityProduct'], FILTER_SANITIZE_STRING);
@@ -102,7 +165,8 @@ class Edit
             echo json_encode(['error' => 'Erro no banco de dados: ' . $e->getMessage(), 'code' => $e->getCode()]);
         }
     }
-    public static function UpdateAccountsPayable($sql, $response_account_payable, $user_id) {
+    public static function UpdateAccountsPayable($sql, $response_account_payable, $user_id)
+    {
 
         $today = date('Y-m-d H:i:s');
 
@@ -337,7 +401,7 @@ class Edit
 
         try {
             $sql->beginTransaction();
-    
+
             $exec = $sql->prepare("UPDATE suppliers SET 
                 company = :name_company, 
                 fantasy_name = :fantasy_name, 
@@ -348,7 +412,7 @@ class Edit
                 state = :state, 
                 cnpjcpf = :cnpjcpf 
                 WHERE id = :id_forn");
-    
+
             $exec->bindParam(':name_company', $name_company);
             $exec->bindParam(':fantasy_name', $fantasy_name);
             $exec->bindParam(':email', $email);
@@ -359,13 +423,13 @@ class Edit
             $exec->bindParam(':cnpjcpf', $cnpjcpf);
             $exec->bindParam(':id_forn', $id_forn, PDO::PARAM_INT);
             $exec->execute();
-    
+
             $sql->commit();
-    
+
             $message_log = "Fornecedor $name_company editado com sucesso";
             Panel::LogAction($user_id, 'Editar Fornecedor', $message_log, $today);
             Response::send(true, 'Fornecedor editado com sucesso', $today);
-    
+
         } catch (Exception $e) {
             http_response_code(500);
             echo json_encode(['error' => 'Erro no banco de dados: ' . $e->getMessage(), 'code' => $e->getCode()]);

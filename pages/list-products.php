@@ -24,13 +24,15 @@ $products = Controllers::SelectAll('products');
                         <tr style="white-space: nowrap;">
                             <th scope="col">Produtos</th>
                             <th scope="col">Quantidade</th>
-                            <th scope="col"> Codigo de barras</th>
+                            <th scope="col">Codigo de barras</th>
+                            <th scope="col">Marca</th>
                             <th scope="col">Valor</th>
                             <th scope="col">Valor Custo</th>
                             <th scope="col">Quantidade em estoque</th>
                             <th scope="col">Referencia</th>
                             <th scope="col">Usuário cadastro</th>
                             <th scope="col">Modelo</th>
+                            <th scope="col">Situação</th>
                             <th scope="col">Ações</th>
                         </tr>
                     </thead>
@@ -46,23 +48,54 @@ $products = Controllers::SelectAll('products');
                                 class="<?php echo $value['status_product'] == 'negativado' ? 'table-warning' : ''; ?>">
                                 <th><?php echo htmlspecialchars($value['name']); ?></th>
                                 <th><?php echo htmlspecialchars($value['quantity']); ?></th>
-                                <th><?php echo htmlspecialchars($value['barcode']); ?></th>
-                                <th>R$ <?php echo htmlspecialchars($value['value_product']); ?></th>
-                                <th>R$ <?php echo htmlspecialchars($value['cost_value']); ?></th>
-                                <th><?php echo htmlspecialchars($value['stock_quantity']); ?></th>
-                                <th><?php echo htmlspecialchars($value['reference']); ?></th>
-                                <th><?php echo htmlspecialchars($value['id_users']); ?></th>
-                                <th><?php echo htmlspecialchars($value['model']); ?></th>
                                 <th>
-                                    <a onclick="ShowOnPage(this)" data-id="<?php echo $value['id']; ?>"
-                                        class="btn btn-dark">
-                                        Mostrar na pagina </a>
-
-                                    <?php if ($value['status_product'] == 'negativado') { ?>
-                                        <button class="btn btn-info">Fazer Solicitação</button>
+                                    <?php if (htmlspecialchars($value['barcode']) == "") { ?>
+                                    <?php echo 'Sem Código de Barras'; ?>
                                     <?php } else { ?>
-                                        <button class="d-none"></button>
+                                    <?php echo htmlspecialchars($value['barcode']); ?>
                                     <?php } ?>
+                                </th>
+                                <th>
+                                    <?php if (htmlspecialchars($value['brand']) == "") { ?>
+                                    <?php echo 'Sem Marca'; ?>
+                                    <?php } else { ?>
+                                    <?php echo htmlspecialchars($value['brand']); ?>
+                                    <?php } ?>
+                                </th>
+                                <th>R$ <?php echo htmlspecialchars($value['value_product']); ?></th>
+                                <th> 
+                                    <?php if (htmlspecialchars($value['cost_value']) == ""){ ?>
+                                    <?php echo 'Sem Valor de custo'; ?>
+                                    <?php } else { ?>
+                                    <?php echo 'R$ ' . htmlspecialchars($value['cost_value']); ?>
+                                    <?php } ?>
+                                </th>
+                                <th><?php echo htmlspecialchars($value['stock_quantity']); ?></th>
+                                <th>
+                                    <?php if (htmlspecialchars($value['reference']) == "") { ?>
+                                    <?php echo 'Sem Referencia'; ?>
+                                    <?php } else { ?>
+                                    <?php echo htmlspecialchars($value['reference']); ?>
+                                    <?php } ?>                          
+                                </th>
+                                <th><?php echo htmlspecialchars($value['id_users']); ?></th>
+                                <th>
+                                    <?php if (htmlspecialchars($value['model']) == "") { ?>
+                                    <?php echo 'Sem modelo'; ?>
+                                    <?php } else { ?>
+                                    <?php echo htmlspecialchars($value['model']) ?>
+                                    <?php } ?>
+                                </th>
+                                <th><?php echo htmlspecialchars($value['status_product']); ?></th>
+                                <th>
+                                    <!-- <button onclick="ShowOnPage(this)" data-id="<?php echo $value['id']; ?>" class="btn btn-dark">
+                                        Mostrar na pagina
+                                    </button> -->
+                                    <?php if ($value['invoice'] == 'nota fiscal'): ?>
+                                        <a class="btn btn-info accessnivel"
+                                            href="<?php echo INCLUDE_PATH ?>edit-products?id=<?php echo base64_encode($value['id']); ?>">Editar
+                                        </a>
+                                    <?php endif; ?>
                                 </th>
                             </tr>
                         </tbody>

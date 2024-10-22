@@ -53,6 +53,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $response_variation = $data;
     $response_financial_control = $data;
     $response_accounts_payable = $data;
+    $response_add_access_menu = $data;
 
     if (isset($data['type'])) {
         if ($data['type'] == 'users') {
@@ -85,6 +86,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             Register::WriteAccountsReceivable($sql, $response_financial_control, $user_id, $today);
         } else if ($data['type'] == 'AccountsPayable') {
             Register::RegisterAccountsPayable($sql, $response_accounts_payable, $user_id, $today);
+        } else if ($data['type'] == 'addaccessmenu') {
+            Register::AddMenuAccess($response_add_access_menu, $user_id, $sql);
         }
     } else {
         Response::json(false, 'Tipo type não encontrado', $today);
@@ -94,6 +97,47 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 class Register
 {
 
+    public static function AddMenuAccess($response_add_access_menu, $user_id, $sql) {
+        $today = date('Y-m-d H:i:s');
+    
+        try {
+            $sql->beginTransaction(); 
+    
+            foreach ($response_add_access_menu['menus'] as $menu) {
+                $check_menu = $sql->prepare("SELECT COUNT(*) FROM menu_access 
+                                            WHERE user_id = :user_id AND menu = :menu");
+                $check_menu->bindParam(':user_id', $response_add_access_menu['userID'], PDO::PARAM_INT);
+                $check_menu->bindParam(':menu', $menu, PDO::PARAM_STR);
+                $check_menu->execute();
+    
+                $menu_exists = $check_menu->fetchColumn();
+    
+                if ($menu_exists == 0) {
+                    $exec_menu = $sql->prepare("INSERT INTO menu_access (user_id, menu, creation_date, released) 
+                                                VALUES (:user_id, :menu, NOW(), :released)");
+                    $exec_menu->bindParam(':user_id', $response_add_access_menu['userID'], PDO::PARAM_INT);
+                    $exec_menu->bindParam(':menu', $menu, PDO::PARAM_STR);
+                    $released = 1;
+                    $exec_menu->bindParam(':released', $released, PDO::PARAM_INT);
+                    $exec_menu->execute();
+                } else {
+                    Response::json(false, 'Usuário já tem acesso a esse menu', $today);
+                    return; 
+                }
+            }
+    
+            $sql->commit(); 
+    
+            $message_log = "Adiciona os menus com sucesso";
+            Panel::LogAction($user_id, 'Adicionar Menu Acesso', $message_log, $today);
+            Response::send(true, 'Menus adicionados com sucesso', $today);
+    
+        } catch (Exception $e) {
+            $sql->rollBack();
+            http_response_code(500);
+            Response::json(false, 'Erro ao adicionar menus: ' . $e->getMessage(), $today);
+        }
+    }    
     public static function RegisterAccountsPayable($sql, $response_accounts_payable, $user_id, $today)
     {
         $dateTransaction = filter_var($response_accounts_payable['dateTransaction'], FILTER_SANITIZE_STRING);
@@ -732,6 +776,7 @@ class Register
     {
         $today = date('Y-m-d H:i:s');
         $show_on_page = 0;
+        $invoice = 'manual';
 
         $name = filter_var($response_products['name'], FILTER_SANITIZE_STRING);
         $quantity = filter_var($response_products['quantity'], FILTER_SANITIZE_STRING);
@@ -759,8 +804,10 @@ class Register
 
             $sql->BeginTransaction();
 
-            $exec = $sql->prepare("INSERT INTO products (name, quantity, stock_quantity, barcode, value_product, cost_value, reference, model, brand, flow, show_on_page, size) 
-                            VALUES (:name, :quantity, :stock_quantity, :barcode, :value_product, :cost_value, :reference, :model, :brand, :flow, :show_on_page, :size)");
+            $exec = $sql->prepare("INSERT INTO products (name, quantity, stock_quantity, barcode, value_product, 
+                                    cost_value, reference, model, brand, flow, show_on_page, size, invoice) 
+                            VALUES (:name, :quantity, :stock_quantity, :barcode, :value_product, :cost_value, 
+                            :reference, :model, :brand, :flow, :show_on_page, :size, :invoice)");
 
             $exec->bindParam(':name', $name);
             $exec->bindParam(':quantity', $quantity);
@@ -774,6 +821,7 @@ class Register
             $exec->bindParam(':flow', $flow);
             $exec->bindParam(':show_on_page', $show_on_page);
             $exec->bindParam(':size', $size);
+            $exec->bindParam(':invoice', $invoice);
             $exec->execute();
 
             $sql->commit();

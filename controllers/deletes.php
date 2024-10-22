@@ -78,7 +78,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'DELETE') {
             Deletes::DeleteClients($today, $sql, $id_clients_delete, $user_id);
         } else if ($data['type'] == 'deleteForn') {
             Deletes::DeleteForn($today, $sql, $id_forn_delete, $user_id);
-        } 
+        } else if ($data['type'] == 'deleteMenuAccess') {
+            Deletes::DeleteMenuUser($response_delete_menu, $user_id, $sql);
+        }
     }
 }
 

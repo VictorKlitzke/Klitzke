@@ -26,15 +26,15 @@ async function closeBox() {
   let valuePIX = parseFloat(document.getElementById('value_pix').value);
   let valueMoney = parseFloat(document.getElementById('value_money').value);
   let value_aprazo = parseFloat(document.getElementById('value_aprazo').value);
-  let closeDate = document.getElementById('date_close').value;
+  // let closeDate = document.getElementById('date_close').value;
 
   let respondeBoxPdv = {
     value_debit: valueDebit,
     value_credit: valueCredit,
     value_pix: valuePIX,
     value_money: valueMoney,
-    value_aprazo: value_aprazo,
-    close_date: closeDate
+    value_aprazo: value_aprazo
+    // close_date: closeDate
   }
 
   continueMessage("Deseja realmente fechar o caixa?", "Sim", "Não", async function () {
@@ -66,17 +66,22 @@ async function closeBox() {
         } else {
           showMessage('Erro ao fechar o caixa. Tente novamente.', 'error');
         }
-      } catch (jsonError) {
-        console.error("Erro ao converter resposta para JSON:", jsonError);
-        console.log("Resposta recebida:", responseText);
-        showMessage('Erro inesperado no servidor. Verifique o console para detalhes.', 'error');
+      } catch (error) {
+        showMessage('Erro inesperado no servidor.', 'error');
       }
 
     } catch (error) {
-      console.error('Erro ao fechar o caixa:', error);
       showMessage('Erro ao fechar o caixa. Tente novamente.', 'error');
     }
   }), function () {
     showMessage('Operação cancelada', 'error');
   }
+}
+
+async function calculateDifference() {
+  let systemValue = parseFloat(document.getElementById('value_system').value) || 0;
+  let fisicoValue = parseFloat(document.getElementById('value_fisico').value) || 0;
+  let difference = systemValue - fisicoValue;
+
+  document.getElementById('value_difference').value = difference.toFixed(2);
 }
