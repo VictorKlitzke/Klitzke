@@ -7,8 +7,6 @@ let Portion;
 let OverlayPortion;
 let portionValues;
 
-const trProduct = document.getElementById("product-result");
-const tdButton = document.getElementById("button-product");
 
 const ModalSalesPortion = document.getElementById('portion-sales');
 const overlayPortion = document.getElementById('overlay-portion');
@@ -27,94 +25,90 @@ document.addEventListener('DOMContentLoaded', function () {
     OverlayPortion = document.querySelector('.overlay-portion');
 });
 
-function AddSelectProducts(index, id, name, stock_quantity, value) {
-    let productAlreadyExists = false;
+async function searchClients(event) {
 
-    for (let i = 0; i < selectedProducts.length; i++) {
-        if (selectedProducts[i].id === id) {
-            let number = selectedProducts[i].stock_quantity + 1;
+    event.preventDefault();
 
-            validateStock(stock_quantity, number, function (isValid) {
-                if (isValid) {
-                    selectedProducts[i].stock_quantity = number;
-                    let productQuantityCell = document.getElementById("product-quantity-" + id);
-                    if (productQuantityCell) {
-                        productQuantityCell.textContent = number;
-                    }
-                    updateProductQuantity(id, number);
-                    calculateTotal();
-                }
-            });
+    try {
 
-            productAlreadyExists = true;
-            break;
-        }
-    }
-
-    if (!productAlreadyExists) {
-        validateStock(stock_quantity, 1, function (isValid) {
-            if (isValid) {
-                let newProduct = {
-                    id: id,
-                    name: name,
-                    stock_quantity: 1,
-                    value: parseFloat(value.replace(',', '.'))
-                };
-
-                selectedProducts.push(newProduct);
-
-                let newRow = trProduct.insertRow();
-                newRow.id = "row-" + id;
-                newRow.className = 'sales-sales';
-                newRow.innerHTML = "<td id='product-id'>" + id + "</td>" +
-                    "<td id='product-name'>" + name + "</td>" +
-                    "<td id='product-quantity-" + id + "'>" + 1 + "</td>" +
-                    "<td id='product-value' class='content-form'>" +
-                    "<input type='text' class='form-control' id='value" + id + "' value='" + value + "' />" +
-                    "</td>" +
-                    "<td style='margin: 6px; padding: 6px;'>" +
-                    "<div>" +
-                    "<button onclick='removeProduct(" + id + ")' id='button-delete-" + id + "' class='btn btn-danger' type='button'>Deletar</button>" +
-                    "<button onclick='editProductValue(" + id + ")' class='btn btn-info' style='margin-left: 5px;' type='button'>Editar Valor</button>" +
-                    "</div>" +
-                    "</td>";
-
-                calculateTotal();
-            }
-        });
+    } catch (error) {
+        showMessage('Erro na requisição', 'error')
     }
 }
 
-function editProductValue(id) {
-    let valueInput = document.getElementById("value" + id);
+async function searchProduct(event) {
+    event.preventDefault();
 
-    if (!valueInput) {
-        console.error('Elemento valueInput não encontrado.');
-        return;
-    }
+    const productSearch = document.getElementById('product-search').value;
+    const xhr = new XMLHttpRequest();
 
-    let promptResult = prompt("Digite o novo valor do produto:", valueInput.value);
+    try {
 
-    if (promptResult !== null && !isNaN(promptResult.trim())) {
-        let editedValue = parseFloat(promptResult.replace(',', '.'));
-
-        if (!isNaN(editedValue)) {
-            valueInput.value = editedValue;
-
-
-            let productIndex = selectedProducts.findIndex(product => product.id === String(id));
-
-            if (productIndex !== -1) {
-                selectedProducts[productIndex].value = editedValue;
-
-            } else {
-                console.error('Produto não encontrado no array selectedProducts.');
+        let url = `${BASE_CONTROLLERS}searchs.php`;
+        xhr.open("POST", url, true);
+        xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState === XMLHttpRequest.DONE) {
+                if (xhr.status === 200) {
+                    document.getElementById('search-results').innerHTML = xhr.responseText;
+                } else {
+                    document.getElementById('search-results').innerHTML = "Erro na busca dos produtos.";
+                }
             }
-        } else {
-            console.error('O valor do produto não é um número válido.');
-        }
+        };
+
+    } catch (error) {
+        showMessage('Erro na requisição', 'error')
     }
-    calculateTotal();
+
+    xhr.send(`product_search=${encodeURIComponent(productSearch)}`);
+}
+
+function addProductToTable(productName, productPrice) {
+    const tbody = document.getElementById('selected-products-body');
+    const newRow = document.createElement('tr');
+
+    newRow.innerHTML = `
+        <td>${productName}</td>
+        <td>
+            <input id="quantity-sales" type="number" value="1" min="1" onchange="updateTotal(this, ${productPrice})">
+        </td>
+        <td> <input type="number" value="${numberFormat(productPrice)}" /> </td>
+        <td class="total-price" id="total-price">R$ ${numberFormat(productPrice)}</td>
+        <td><button class="btn btn-danger" onclick="removeProduct(this)">Remover</button></td>
+    `;
+
+    tbody.appendChild(newRow);
+    updateTotalDisplay(); // Atualiza o total da tabela
+}
+
+function updateTotal(input, price) {
+    const quantity = input.value;
+    const totalPriceCell = document.getElementById('total-price');
+    totalPriceCell.innerText = `R$ ${numberFormat(price * quantity)}`;
+    updateTotalDisplay(); // Atualiza o total da tabela
+}
+
+function removeProduct(button) {
+    const row = button.closest('tr');
+    row.remove();
+    updateTotalDisplay();
+}
+
+function updateTotalDisplay() {
+    const rows = document.querySelectorAll('#selected-products-body tr');
+    let total = 0;
+
+    rows.forEach(row => {
+        const priceCell = row.querySelector('.total-price').innerText.replace('R$ ', '').replace('.', '').replace(',', '.');
+        total += parseFloat(priceCell);
+    });
+
+    document.getElementById('total-display').innerText = `R$ ${numberFormat(total)}`;
+}
+
+function numberFormat(value) {
+    return value.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 }
 
 function openAPrazoModal() {
@@ -604,7 +598,6 @@ async function registerSale(requestData) {
     }
 }
 
-
 function generateQRCode(qrCodeData) {
     const qrCodeContainer = document.getElementById('qrCodeContainer');
 
@@ -631,12 +624,12 @@ function openQRCodeModal() {
     const qrCodeModal = new bootstrap.Modal(document.getElementById('qrCodeModal'));
     qrCodeModal.show();
 }
+
 function CloseQRCodeModal() {
     const qrCodeModal = document.getElementById('qrCodeModal');
     const modalInstance = bootstrap.Modal.getInstance(qrCodeModal);
     modalInstance.hide();
 }
-
 
 async function confirmPayment() {
     return new Promise((resolve) => {
@@ -644,133 +637,6 @@ async function confirmPayment() {
             resolve(true);
         }, 3000);
     });
-}
-
-function updateTotalAmount(total) {
-
-    let totalAmountElement = document.getElementById('totalAmount');
-
-    if (totalAmountElement) {
-        totalAmountElement.textContent = 'R$ ' + total.toFixed(2);
-    }
-}
-
-function calculateTotal() {
-
-    let total = 0;
-
-    selectedProducts.forEach(product => {
-        let quantityElement = document.getElementById('product-quantity-' + product.id);
-        let valueElement = document.getElementById('value' + product.id);
-
-        if (quantityElement && valueElement) {
-            let quantityElementTotal = parseInt(quantityElement.textContent) || 0;
-            let value = parseFloat(valueElement.value) || 0;
-
-            total += quantityElementTotal * value;
-        } else {
-            console.error('Elementos não encontrados para o produto ID:', product.id);
-        }
-    });
-
-    let totalAmountElement = document.getElementById('totalAmount');
-    if (totalAmountElement) {
-        totalAmountElement.textContent = 'R$ ' + total.toFixed(2);
-    }
-
-    updateTotalAmount(total);
-
-    return total.toFixed(2);
-}
-
-function removeProduct(id) {
-
-    let rowToRemove = document.getElementById("row-" + id);
-    if (selectedProducts.length > 0) {
-
-        let productIndex = selectedProducts.findIndex(product => product.id = id);
-        if (productIndex !== -1) {
-
-            let product = selectedProducts[productIndex];
-            let productQuantityCell = document.getElementById("product-quantity-" + id);
-
-            if (productQuantityCell) {
-                let number = product.stock_quantity - 1;
-
-                if (number >= 1) {
-                    product.stock_quantity = number;
-                    productQuantityCell.textContent = number;
-                } else {
-                    selectedProducts.splice(productIndex, 1);
-                    rowToRemove.remove();
-                }
-            }
-        } else {
-            console.error("Produto não encontrado no array.");
-        }
-    } else {
-        console.error("Array de produtos está vazio");
-    }
-    calculateTotal();
-}
-
-document
-    .getElementById("sales-search-form")
-    .addEventListener("submit", function (event) {
-        event.preventDefault();
-
-        let searchInput = document.getElementById("clientSelectedSales").value;
-        let tableRows = document.querySelectorAll(".tbody-selected tr");
-
-        tableRows.forEach(function (row) {
-            let clientName = row
-                .querySelector("td:nth-child(2)")
-                .textContent.toLowerCase();
-            if (clientName.includes(searchInput.toLowerCase())) {
-                row.style.display = "";
-            } else {
-                row.style.display = "none";
-            }
-        });
-    });
-
-document.addEventListener("DOMContentLoaded", function () {
-    let tableRows = document.querySelectorAll(".tbody-selected");
-    tableRows.forEach(function (row) {
-        row.addEventListener("dblclick", function () {
-            let clientName = row.querySelector("th:nth-child(2)").textContent;
-            let salesPageElement = document.getElementById("sales-page");
-
-            selectedClientId = row.querySelector("th:first-child").textContent;
-
-            if (salesPageElement) {
-                let clientSearch = document.getElementById('client-search-sales');
-                let overlay = document.getElementById('overlay');
-
-                clientSearch.style.display = 'none';
-                overlay.style.display = 'none';
-
-                salesPageElement.innerHTML =
-                    "Codigo do cliente: " + selectedClientId + " Nome do cliente: " + clientName;
-            }
-        });
-    });
-});
-
-const finishButton = document.getElementById('finish-sales');
-
-if (finishButton) {
-    finishButton.onclick = finalizeSale;
-}
-
-function updateProductQuantity(id, stock_quantity) {
-
-    for (let i = 0; i < selectedProducts.length; i++) {
-        if (selectedProducts[i].id === id) {
-            selectedProducts[i].stock_quantity = stock_quantity;
-            break;
-        }
-    }
 }
 
 function validateStock(stock_quantity, qnt, callback) {

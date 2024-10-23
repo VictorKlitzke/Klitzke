@@ -370,35 +370,29 @@ if (isset($_GET['loggout'])) {
         if ($openBoxResult) {
             $openBoxId = $openBoxResult['id'];
 
-            $exec = $sql->prepare("SELECT SUM(total_value) as total_pix FROM sales WHERE sales.id_payment_method = 1 AND id_boxpdv = :boxId AND id_users = :id_users");
-            $exec->bindParam(':boxId', $openBoxId, PDO::PARAM_INT);
-            $exec->bindParam(':id_users', $user_id, PDO::PARAM_INT);
-            $exec->execute();
-            $result_pix = $exec->fetch(PDO::FETCH_ASSOC);
+            $exec = $sql->prepare("
+                                    SELECT 
+                                        SUM(CASE WHEN sales.id_payment_method = 1 THEN total_value ELSE 0 END) AS total_pix,
+                                        SUM(CASE WHEN sales.id_payment_method = 2 THEN total_value ELSE 0 END) AS total_debit,
+                                        SUM(CASE WHEN sales.id_payment_method = 3 THEN total_value ELSE 0 END) AS total_credit,
+                                        SUM(CASE WHEN sales.id_payment_method = 4 THEN total_value ELSE 0 END) AS total_money,
+                                        SUM(CASE WHEN sales.id_payment_method = 5 AND sales_aprazo.status = 'paga' THEN total_value ELSE 0 END) AS total_aprazo
+                                    FROM sales
+                                    LEFT JOIN sales_aprazo ON sales_aprazo.sale_id = sales.id AND sales.id_payment_method = 5
+                                    WHERE sales.id_boxpdv = :boxId AND sales.id_users = :id_users
+                                ");
 
-            $exec = $sql->prepare("SELECT SUM(total_value) as total_debit FROM sales WHERE sales.id_payment_method = 2 AND id_boxpdv = :boxId AND id_users = :id_users");
             $exec->bindParam(':boxId', $openBoxId, PDO::PARAM_INT);
             $exec->bindParam(':id_users', $user_id, PDO::PARAM_INT);
             $exec->execute();
-            $result_debit = $exec->fetch(PDO::FETCH_ASSOC);
+            $results = $exec->fetch(PDO::FETCH_ASSOC);
 
-            $exec = $sql->prepare("SELECT SUM(total_value) as total_credit FROM sales WHERE sales.id_payment_method = 3 AND id_boxpdv = :boxId AND id_users = :id_users");
-            $exec->bindParam(':boxId', $openBoxId, PDO::PARAM_INT);
-            $exec->bindParam(':id_users', $user_id, PDO::PARAM_INT);
-            $exec->execute();
-            $result_credit = $exec->fetch(PDO::FETCH_ASSOC);
+            $total_pix = $results['total_pix'];
+            $total_debit = $results['total_debit'];
+            $total_credit = $results['total_credit'];
+            $total_money = $results['total_money'];
+            $total_aprazo = $results['total_aprazo'];
 
-            $exec = $sql->prepare("SELECT SUM(total_value) as total_money FROM sales WHERE sales.id_payment_method = 4 AND id_boxpdv = :boxId AND id_users = :id_users");
-            $exec->bindParam(':boxId', $openBoxId, PDO::PARAM_INT);
-            $exec->bindParam(':id_users', $user_id, PDO::PARAM_INT);
-            $exec->execute();
-            $result_money = $exec->fetch(PDO::FETCH_ASSOC);
-
-            $exec = $sql->prepare("SELECT SUM(total_value) as total_aprazo FROM sales inner join sales_aprazo on `sales_aprazo`.`sale_id` = sales.id WHERE sales.id_payment_method = 5 and sales_aprazo.status = 'paga' AND id_boxpdv = :boxId AND id_users = :id_users");
-            $exec->bindParam(':boxId', $openBoxId, PDO::PARAM_INT);
-            $exec->bindParam(':id_users', $user_id, PDO::PARAM_INT);
-            $exec->execute();
-            $result_aprazo = $exec->fetch(PDO::FETCH_ASSOC);
 
             $exec = $sql->prepare("SELECT SUM(value) value_boxpdv FROM boxpdv WHERE id = :id AND id_users = :id_users");
             $exec->bindParam(':id', $openBoxId, PDO::PARAM_INT);
@@ -412,61 +406,116 @@ if (isset($_GET['loggout'])) {
 
         <div class="overlay" id="overlay">
             <div class="modal" id="close-boxpdv" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
-                <div class="modal-dialog modal-dialog-centered">
-                    <div class="modal-content bg-dark text-white" style="border-radius: 10px;">
-                        <div class="modal-header">
+                <div class="modal-dialog modal-dialog-centered modal-lg">
+                    <div class="modal-content bg-dark text-white rounded-3">
+                        <div class="modal-header bg-dark text-white rounded-top">
                             <h4 class="modal-title" id="modalLabel">Fechamento do Caixa</h4>
-                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
-                                aria-label="Close" id="close-boxpdv-modal"></button>
+                            <button type="button" id="close-boxpdv-modal" class="btn-close btn-close-white"
+                                data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div class="modal-body">
                             <form class="form" method="POST" enctype="multipart/form-data">
-                                <div class="mb-3">
-                                    <label for="value_debit" class="form-label">Débito</label>
-                                    <input id="value_debit" class="form-control" type="text" placeholder="Débito"
-                                        name="value_debit" value="<?php echo $result_debit['total_debit']; ?>" />
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="value_debit" class="form-label">Débito</label>
+                                            <input id="value_debit"
+                                                class="form-control bg-secondary text-white border-light" type="text"
+                                                placeholder="Débito" name="value_debit"
+                                                value="<?php echo $total_debit; ?>" />
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="value_credit" class="form-label">Crédito</label>
+                                            <input id="value_credit"
+                                                class="form-control bg-secondary text-white border-light" type="text"
+                                                placeholder="Crédito" name="value_credit"
+                                                value="<?php echo $total_credit; ?>" />
+                                        </div>
+                                    </div>
                                 </div>
-                                <div class="mb-3">
-                                    <label for="value_credit" class="form-label">Crédito</label>
-                                    <input id="value_credit" class="form-control" type="text" placeholder="Crédito"
-                                        name="value_credit" value="<?php echo $result_credit['total_credit']; ?>" />
+
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="value_pix" class="form-label">PIX</label>
+                                            <input id="value_pix"
+                                                class="form-control bg-secondary text-white border-light" type="text"
+                                                placeholder="PIX" name="value_pix" value="<?php echo $total_pix; ?>" />
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="value_money" class="form-label">Dinheiro</label>
+                                            <input id="value_money"
+                                                class="form-control bg-secondary text-white border-light" type="text"
+                                                placeholder="Dinheiro" name="value_money"
+                                                value="<?php echo $total_money; ?>"/>
+                                        </div>
+                                    </div>
                                 </div>
-                                <div class="mb-3">
-                                    <label for="value_pix" class="form-label">PIX</label>
-                                    <input id="value_pix" class="form-control" type="text" placeholder="PIX"
-                                        name="value_pix" value="<?php echo $result_pix['total_pix']; ?>" />
+
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="value_aprazo" class="form-label">A Prazo</label>
+                                            <input id="value_aprazo"
+                                                class="form-control bg-secondary text-white border-light" type="text"
+                                                placeholder="A Prazo" name="value_aprazo"
+                                                value="<?php echo $total_aprazo; ?>" />
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="value_system" class="form-label">Caixa Sistema</label>
+                                            <input id="value_system"
+                                                class="form-control bg-secondary text-white border-light" type="text"
+                                                placeholder="Caixa Sistema" name="value_system"
+                                                value="<?php echo $result_system['value_boxpdv']; ?>" />
+                                        </div>
+                                    </div>
                                 </div>
-                                <div class="mb-3">
-                                    <label for="value_money" class="form-label">Dinheiro</label>
-                                    <input id="value_money" class="form-control" type="text" placeholder="Dinheiro"
-                                        name="value_money" value="<?php echo $result_money['total_money']; ?>" />
+
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="value_fisico" class="form-label">Caixa Físico</label>
+                                            <input id="value_fisico"
+                                                class="form-control bg-secondary text-white border-light" type="text"
+                                                placeholder="Caixa Físico" name="value_fisico"
+                                                oninput="calculateDifference()" />
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="value_difference" class="form-label">Diferença</label>
+                                            <input id="value_difference"
+                                                class="form-control bg-secondary text-white border-light" type="text"
+                                                placeholder="Diferença" name="value_difference" readonly />
+                                        </div>
+                                    </div>
+
+                                    <div class="col-sm-6">
+                                        <div class="mb-3">
+                                            <label class="text-white">Data fechamento</label>
+                                            <input id="date_close" class="form-control bg-secondary text-white border-light" type="date"
+                                                placeholder="Data fechamento" name="date_close">
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <div class="mb-3">
+                                            <label class="text-white">Soma: Dinheiro + caixa Sistema</label>
+                                            <input id="soma" class="form-control bg-secondary text-white border-light" type="text"
+                                                placeholder="Soma: Dinheiro + caixa Sistema" readonly>
+                                        </div>
+                                    </div>
                                 </div>
-                                <div class="mb-3">
-                                    <label for="value_aprazo" class="form-label">A Prazo</label>
-                                    <input id="value_aprazo" class="form-control" type="text" placeholder="A Prazo"
-                                        name="value_aprazo" value="<?php echo $result_aprazo['total_aprazo']; ?>" />
-                                </div>
-                                <div class="mb-3">
-                                    <label for="value_system" class="form-label">Caixa Sistema</label>
-                                    <input id="value_system" class="form-control" type="text"
-                                        placeholder="Caixa Sistema" name="value_system"
-                                        value="<?php echo $result_system['value_boxpdv']; ?>" />
-                                </div>
-                                <div class="mb-3">
-                                    <label for="value_fisico" class="form-label">Caixa Fisico</label>
-                                    <input id="value_fisico" class="form-control" type="text" placeholder="Caixa Fisico"
-                                        name="value_fisico" oninput="calculateDifference()" />
-                                </div>
-                                <div class="mb-3">
-                                    <label for="value_difference" class="form-label">Diferença</label>
-                                    <input id="value_difference" class="form-control" type="text"
-                                        placeholder="Diferença" name="value_difference" readonly />
-                                </div>
+
                                 <input type="hidden" id="id_boxpdv" name="id_boxpdv">
                                 <div class="d-grid">
                                     <button id="finish-sales" onclick="closeBox()" type="button"
-                                        class="btn btn-success">Fechar
-                                        Caixa</button>
+                                        class="btn btn-success py-2">Fechar Caixa</button>
                                 </div>
                             </form>
                         </div>
@@ -474,6 +523,7 @@ if (isset($_GET['loggout'])) {
                 </div>
             </div>
         </div>
+
 
 
         <div class="message-container" id="message-container"></div>

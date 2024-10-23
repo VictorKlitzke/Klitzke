@@ -18,6 +18,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 
 $search_query = isset($_POST['searchQueryTable']) ? $_POST['searchQueryTable'] : '';
 $search_query_request = isset($_POST['search_query_request']) ? $_POST['search_query_request'] : '';
+$product_search = isset($_POST['product_search']) ? $_POST['product_search'] : '';
 
 $sql = Db::Connection();
 
@@ -29,8 +30,37 @@ if (!empty($search_query_request)) {
     Searchs::searchRequest($search_query_request, $sql);
 }
 
+if (!empty($product_search)) {
+    Searchs::searchProductSales($product_search, $sql);
+}
+
 class Searchs
 {
+
+    public static function searchProductSales($product_search, $sql)
+    {
+        try {
+            $exec = $sql->prepare("SELECT name, id, value_product FROM products WHERE name LIKE :product_search OR id LIKE :product_search");
+            $likeName = '%' . $product_search . '%';
+            $exec->bindParam(':product_search', $likeName, PDO::PARAM_STR);
+            $exec->execute();
+
+            if ($exec->rowCount() > 0) {
+                echo '<ul class="list-group">';
+                while ($product = $exec->fetch(PDO::FETCH_ASSOC)) {
+                    echo '<li class="list-group-item bi-cursor" onclick="addProductToTable(\'' . htmlspecialchars($product['name'], ENT_QUOTES) . '\', ' . $product['value_product'] . ')">'
+                        . '<i class="bi bi-cursor" style="margin-right: 8px;"></i>' // Ícone do cursor
+                        . htmlspecialchars($product['name'], ENT_QUOTES) . ' - R$ ' . number_format($product['value_product'], 2, ',', '.') . '</li>';
+                }
+                echo '</ul>';
+            } else {
+                echo '<p>Nenhum produto encontrado.</p>';
+            }
+
+        } catch (Exception $e) {
+            echo '<p>Erro na execução da consulta: ' . htmlspecialchars($e->getMessage(), ENT_QUOTES) . '</p>';
+        }
+    }
 
     public static function searchTable($search_query, $sql)
     {

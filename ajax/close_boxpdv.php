@@ -26,7 +26,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $value_pix = $requestData['value_pix'] ?? 0;
     $value_money = $requestData['value_money'] ?? 0;
     $value_aprazo = $requestData['value_aprazo'] ?? 0;
-    $date_close = $requestData['close_date'] ?? '';
+    $value_system = $requestData['value_system'] ?? 0;
+    $value_fisico = $requestData['value_fisico'] ?? 0;
+    $value_difference = $requestData['value_difference'] ?? 0;
+    $soma_money_system = $requestData['soma'] ?? 0;
+    $date_close = $requestData['date_close'] ?? '';
 
     try {
 
@@ -48,11 +52,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $value_pix = floatval($value_pix);
             $value_money = floatval($value_money);
             $value_aprazo = floatval($value_aprazo);
+            $value_system = floatval($value_system);
+            $value_fisico = floatval($value_fisico);
+            $value_difference = floatval($value_difference);
+            $soma_money_system = floatval($soma_money_system);
 
             $date_close = date('Y-m-d H:i:s', strtotime($date_close));
 
-            $exec = $sql->prepare("INSERT INTO box_closing (id_boxpdv, value_debit, value_credit, value_pix, value_money, value_aprazo, date_close) 
-                    VALUES (:id_boxpdv, :value_debit, :value_credit, :value_pix, :value_money, :value_aprazo, :date_close)");
+            $exec = $sql->prepare("INSERT INTO box_closing (id_boxpdv, value_debit, value_credit, 
+                                            value_pix, value_money, value_aprazo, date_close, boxpdv_difference, value_fisico, value_system, soma_money_system) 
+                                        VALUES (:id_boxpdv, :value_debit, :value_credit, :value_pix, :value_money, 
+                                            :value_aprazo, :date_close, :boxpdv_difference, :value_fisico, :value_system, :soma_money_system)");
 
             $exec->bindParam(':id_boxpdv', $id_boxpdv, PDO::PARAM_INT);
             $exec->bindParam(':value_debit', $value_debit, PDO::PARAM_STR);
@@ -61,6 +71,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $exec->bindParam(':value_money', $value_money, PDO::PARAM_STR);
             $exec->bindParam(':value_aprazo', $value_aprazo, PDO::PARAM_STR);
             $exec->bindParam(':date_close', $date_close, PDO::PARAM_STR);
+            $exec->bindParam(':boxpdv_difference', $value_difference, PDO::PARAM_STR);
+            $exec->bindParam(':value_fisico', $value_fisico, PDO::PARAM_STR);
+            $exec->bindParam(':value_system', $value_system, PDO::PARAM_STR);
+            $exec->bindParam(':soma_money_system', $soma_money_system, PDO::PARAM_STR);
             $exec->execute();
 
             $exec = $sql->prepare("UPDATE boxpdv SET status = :status_update WHERE id_users = :id_users");
