@@ -110,10 +110,12 @@ function addProductToTable(productId, productName, productPrice) {
         <td>${productId}</td>
         <td>${productName}</td>
         <td>
-            <input id="quantity-sales" type="number" value="1" min="1" onchange="updateTotal(this, ${productPrice})">
+            <input id="quantity-sales" type="number" value="1" min="1" onchange="updateQuantity(this, ${productPrice})">
         </td>
-        <td>R$ ${numberFormat(productPrice)}</td>
-        <td class="total-price">R$ ${numberFormat(productPrice)}</td>
+        <td>R$ 
+            <input id="price-sales" type="number" value="${numberFormat(productPrice)}" onchange="updatePrice(this, 1)">
+        </td>
+        <td id="total-price" class="total-price">R$ ${numberFormat(productPrice)}</td>
         <td><button class="btn btn-danger" onclick="removeProduct(this)">Remover</button></td>
     `;
 
@@ -130,7 +132,22 @@ function addProductToTable(productId, productName, productPrice) {
     updateTotalDisplay();
 }
 
-function updateTotal(input, price) {
+async function updatePrice(input, quantity) {
+    const price = input.value;
+    const row = input.closest('tr');
+    const totalPriceCell = row.querySelector('.total-price');
+
+    if (!price || isNaN(price) || price <= 0) {
+        showMessage('Problema no preço, insira um valor válido', 'warning');
+        return;
+    }
+
+    const totalPrice = price * quantity;
+    totalPriceCell.innerText = `R$ ${numberFormat(totalPrice)}`;
+    updateTotalDisplay();
+}
+
+async function updateQuantity(input, price) {
     const quantity = input.value;
     const row = input.closest('tr');
     const totalPriceCell = row.querySelector('.total-price');
@@ -144,7 +161,8 @@ function updateTotal(input, price) {
     totalPriceCell.innerText = `R$ ${numberFormat(totalPrice)}`;
     updateTotalDisplay();
 }
-function removeProduct(button) {
+
+async function removeProduct(button) {
     const row = button.closest('tr');
     const productId = row.children[0].innerText;
     const quantityInput = row.querySelector('#quantity-sales');
@@ -174,8 +192,7 @@ function removeProduct(button) {
     updateTotalDisplay();
 }
 
-
-function updateTotalDisplay() {
+async function updateTotalDisplay() {
     const rows = document.querySelectorAll('#selected-products-body tr');
     let total = 0;
 
@@ -578,15 +595,23 @@ async function printReceipt(saleDetails) {
 }
 
 async function finalizeSale() {
-    const saleSales = document.querySelector('.sales-sales');
-    let totalAmountElement = document.getElementById('totalAmount');
+    let totalAmountElement = document.getElementById('total-display');
     let totalValue = 0;
 
     if (totalAmountElement) {
         totalValue = parseFloat(totalAmountElement.textContent.replace('R$ ', '')) || 0;
     }
 
-    let selectedPaymentMethod = document.getElementById('id_payment_method').value;
+    let selectedPayment = document.querySelector('input[name="id_payment_method"]:checked');
+    let selectedPaymentMethod = selectedPayment.value;
+
+    if (!selectedPaymentMethod) {
+        showMessage('Selecione uma forma de pagamento', 'warning');
+        return;
+    }
+
+    console.log(selectedPaymentMethod);
+
     let idSalesClient = selectedClientId || '';
 
     let requestData = {
@@ -595,8 +620,6 @@ async function finalizeSale() {
         totalValue: totalValue,
         products: selectedProducts
     };
-
-    console.log(requestData);
 
     if (selectedProducts.length === 0) {
         showMessage('Erro ao registrar venda, nenhum produto selecionado', 'warning');

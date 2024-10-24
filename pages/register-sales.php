@@ -77,9 +77,10 @@ if (!isset($_SESSION['user_permissions'][$page_permission]) || $_SESSION['user_p
                         foreach ($form_payment as $value) {
                             ?>
                             <div class="form-check">
-                                <input class="form-check-input" type="radio" name="id_payment_method"
-                                    id="paymentMethod<?php echo $value['id']; ?>" value="<?php echo $value['id']; ?>" <?php if ($value['id'] == @$_POST['id_payment_method'])
-                                              echo 'checked'; ?>>
+                                <input class="form-check-input" type="radio"
+                                    id="id_payment_method<?php echo $value['id']; ?>" value="<?php echo $value['id']; ?>"
+                                    <?php if ($value['id'] == @$_POST['id_payment_method'])
+                                        echo 'checked'; ?>>
                                 <label class="form-check-label" for="paymentMethod<?php echo $value['id']; ?>">
                                     <?php echo htmlspecialchars($value['name'], ENT_QUOTES, 'UTF-8'); ?>
                                 </label>
