@@ -19,6 +19,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 $search_query = isset($_POST['searchQueryTable']) ? $_POST['searchQueryTable'] : '';
 $search_query_request = isset($_POST['search_query_request']) ? $_POST['search_query_request'] : '';
 $product_search = isset($_POST['product_search']) ? $_POST['product_search'] : '';
+$client_search = isset($_POST['client_search']) ? $_POST['client_search'] : '';
 
 $sql = Db::Connection();
 
@@ -34,8 +35,36 @@ if (!empty($product_search)) {
     Searchs::searchProductSales($product_search, $sql);
 }
 
+if (!empty($client_search)) {
+    Searchs::searchClientsSales($client_search, $sql);
+}
+
 class Searchs
 {
+
+    public static function searchClientsSales($client_search, $sql)
+    {
+        try {
+            $exec = $sql->prepare("SELECT id, name FROM clients WHERE id LIKE :client_search OR name LIKE :client_search");
+            $likeName = '%' . $client_search . '%';
+            $exec->bindParam(':client_search', $likeName, PDO::PARAM_STR);
+            $exec->execute();
+
+            if ($exec->rowCount() > 0) {
+                echo '<ul class="list-group">';
+                while ($client = $exec->fetch(PDO::FETCH_ASSOC)) {
+                    echo '<li class="list-group-item bi-cursor" onclick="addClientSales(\'' . htmlspecialchars($client['id'], ENT_QUOTES) . '\', \' ' . htmlspecialchars($client['name'], ENT_QUOTES) . '\')">';
+                    echo '<i class="bi bi-cursor" style="margin-right: 8px;"></i> ' . htmlspecialchars($client['id'], ENT_QUOTES) . ' - ' . htmlspecialchars($client['name'], ENT_QUOTES);
+                    echo '</li>';
+                }
+                echo '</ul>';
+            } else {
+                echo '<p>Nenhum cliente encontrado.</p>';
+            }
+        } catch (Exception $e) {
+            echo '<p>Erro na execução da consulta: ' . htmlspecialchars($e->getMessage(), ENT_QUOTES) . '</p>';
+        }
+    }
 
     public static function searchProductSales($product_search, $sql)
     {
@@ -48,8 +77,8 @@ class Searchs
             if ($exec->rowCount() > 0) {
                 echo '<ul class="list-group">';
                 while ($product = $exec->fetch(PDO::FETCH_ASSOC)) {
-                    echo '<li class="list-group-item bi-cursor" onclick="addProductToTable(\'' . htmlspecialchars($product['name'], ENT_QUOTES) . '\', ' . $product['value_product'] . ')">'
-                        . '<i class="bi bi-cursor" style="margin-right: 8px;"></i>' // Ícone do cursor
+                    echo '<li class="list-group-item bi-cursor" onclick="addProductToTable(\'' . htmlspecialchars($product['id'], ENT_QUOTES) . '\', \'' . htmlspecialchars($product['name'], ENT_QUOTES) . '\', ' . $product['value_product'] . ')">'
+                    . '<i class="bi bi-cursor" style="margin-right: 8px;"></i>'
                         . htmlspecialchars($product['name'], ENT_QUOTES) . ' - R$ ' . number_format($product['value_product'], 2, ',', '.') . '</li>';
                 }
                 echo '</ul>';

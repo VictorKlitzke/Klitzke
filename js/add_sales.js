@@ -28,13 +28,46 @@ document.addEventListener('DOMContentLoaded', function () {
 async function searchClients(event) {
 
     event.preventDefault();
+    const clientSearch = document.getElementById('client-search').value;
+    const xhr = new XMLHttpRequest();
 
     try {
 
+        let url = `${BASE_CONTROLLERS}searchs.php`;
+        xhr.open("POST", url, true);
+        xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState === XMLHttpRequest.DONE) {
+                if (xhr.status === 200) {
+                    console.log(xhr.response);
+                    document.getElementById('client-results').innerHTML = xhr.responseText;
+                } else {
+                    document.getElementById('client-results').innerHTML = "Erro na busca dos clientes.";
+                }
+            }
+        }
     } catch (error) {
         showMessage('Erro na requisição', 'error')
     }
+
+    xhr.send(`client_search=${encodeURIComponent(clientSearch)}`);
 }
+
+function addClientSales(clientId, clienteName) {
+    const selectedClient = document.getElementById("selected-client");
+
+    if (selectedClient.children.length === 0) {
+        const NewP = document.createElement("p");
+        NewP.innerHTML = `<span><strong>${clientId}</strong> - ${clienteName}</span>`;
+        selectedClient.appendChild(NewP);
+
+        document.getElementById('client-search').value = "";
+        document.getElementById('client-results').innerHTML = "";
+        document.getElementById('client-search').disabled = true;
+        document.querySelector('button[onclick="searchClients(event)"]').disabled = true;
+    }
+}
+
 
 async function searchProduct(event) {
     event.preventDefault();
@@ -64,36 +97,83 @@ async function searchProduct(event) {
     xhr.send(`product_search=${encodeURIComponent(productSearch)}`);
 }
 
-function addProductToTable(productName, productPrice) {
+function addProductToTable(productId, productName, productPrice) {
     const tbody = document.getElementById('selected-products-body');
     const newRow = document.createElement('tr');
 
+    if (typeof productPrice === 'undefined' || isNaN(productPrice)) {
+        showMessage('Produto indefinido ou valor do produto indefinido', 'warning');
+        return;
+    }
+
     newRow.innerHTML = `
+        <td>${productId}</td>
         <td>${productName}</td>
         <td>
             <input id="quantity-sales" type="number" value="1" min="1" onchange="updateTotal(this, ${productPrice})">
         </td>
-        <td> <input type="number" value="${numberFormat(productPrice)}" /> </td>
-        <td class="total-price" id="total-price">R$ ${numberFormat(productPrice)}</td>
+        <td>R$ ${numberFormat(productPrice)}</td>
+        <td class="total-price">R$ ${numberFormat(productPrice)}</td>
         <td><button class="btn btn-danger" onclick="removeProduct(this)">Remover</button></td>
     `;
 
     tbody.appendChild(newRow);
-    updateTotalDisplay(); // Atualiza o total da tabela
+
+    selectedProducts.push({
+        productId: productId,
+        productName: productName,
+        productPrice: productPrice,
+        quantity: 1
+    });
+
+    clearSearch();
+    updateTotalDisplay();
 }
 
 function updateTotal(input, price) {
     const quantity = input.value;
-    const totalPriceCell = document.getElementById('total-price');
-    totalPriceCell.innerText = `R$ ${numberFormat(price * quantity)}`;
-    updateTotalDisplay(); // Atualiza o total da tabela
-}
+    const row = input.closest('tr');
+    const totalPriceCell = row.querySelector('.total-price');
 
-function removeProduct(button) {
-    const row = button.closest('tr');
-    row.remove();
+    if (!quantity || isNaN(quantity)) {
+        showMessage('Problema na quantidade, entre em contato', 'warning');
+        return;
+    }
+
+    const totalPrice = price * quantity;
+    totalPriceCell.innerText = `R$ ${numberFormat(totalPrice)}`;
     updateTotalDisplay();
 }
+function removeProduct(button) {
+    const row = button.closest('tr');
+    const productId = row.children[0].innerText;
+    const quantityInput = row.querySelector('#quantity-sales');
+    let quantity = parseInt(quantityInput.value);
+
+    selectedProducts = selectedProducts.map(product => {
+        if (product.productId === productId) {
+            if (quantity > 1) {
+                product.quantity--;
+                quantityInput.value = product.quantity;
+                return product;
+            } else {
+                return null;
+            }
+        }
+        return product;
+    }).filter(product => product !== null);
+
+    if (quantity === 1) {
+        row.remove();
+    } else {
+        const totalPriceCell = row.querySelector('.total-price');
+        const price = parseFloat(row.querySelector('input[type="number"]').value.replace(',', '.'));
+        totalPriceCell.innerText = `R$ ${numberFormat(price * product.quantity)}`;
+    }
+
+    updateTotalDisplay();
+}
+
 
 function updateTotalDisplay() {
     const rows = document.querySelectorAll('#selected-products-body tr');
@@ -107,8 +187,13 @@ function updateTotalDisplay() {
     document.getElementById('total-display').innerText = `R$ ${numberFormat(total)}`;
 }
 
+function clearSearch() {
+    document.getElementById('product-search').value = "";
+    document.getElementById('search-results').innerHTML = "";
+}
+
 function numberFormat(value) {
-    return value.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    return parseFloat(value).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 }
 
 function openAPrazoModal() {

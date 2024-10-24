@@ -10,96 +10,96 @@ if (!isset($_SESSION['user_permissions'][$page_permission]) || $_SESSION['user_p
 }
 ?>
 
-<div class="container mt-5">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1 class="text-primary">Tela de Vendas</h1>
-        <button class="btn btn-success btn-lg" onclick="finalizeSale()" id="finish-sales" type="button">Fechar
-            Venda</button>
-    </div>
-
-    <div class="card card-custom mb-4">
-        <div class="card-body">
-            <h5 class="card-title">Buscar Produto</h5>
-            <form id="searchForm" class="input-group mb-3" onsubmit="return false;">
-                <input type="text" id="product-search" class="form-control"
-                    placeholder="Digite o nome ou código do produto" required oninput="searchProduct(event)">
-                <button type="button" class="btn btn-primary" onclick="searchProduct(event)">Buscar</button>
-            </form>
-            <div id="search-results" class="mt-3"></div>
+<div class="card">
+    <div class="container-fluid mt-5">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1 class="text-primary">Tela de Vendas</h1>
+            <button class="btn btn-success btn-lg" onclick="finalizeSale()" id="finish-sales" type="button">Fechar
+                Venda</button>
         </div>
-    </div>
 
-    <div class="card card-custom mb-4">
-        <div class="card-body">
-            <h5 class="card-title">Adicionar Cliente</h5>
-            <div class="input-group mb-3">
-                <input type="text" class="form-control form-custom" placeholder="Digite o nome do cliente" required>
-                <button class="btn btn-primary" type="button">Selecionar</button>
+        <div class="card card-custom mb-4">
+            <div class="card-body">
+                <h5 class="card-title">Buscar Produto</h5>
+                <form id="searchForm" class="input-group mb-3" onsubmit="return false;">
+                    <input type="text" id="product-search" class="form-control"
+                        placeholder="Digite o nome ou código do produto" required oninput="searchProduct(event)">
+                    <button type="button" class="btn btn-primary" onclick="searchProduct(event)">Buscar</button>
+                </form>
+                <div id="search-results" class="mt-3"></div>
             </div>
         </div>
-    </div>
 
-    <div class="card card-custom mb-4">
-        <div class="card-body">
-            <h5 class="card-title">Produtos Selecionados</h5>
-            <div class="table-responsive">
-                <table class="table table-striped table-custom" id="selected-products-table">
-                    <thead>
-                        <tr>
-                            <th>Produto</th>
-                            <th>Quantidade</th>
-                            <th>Preço Unitário</th>
-                            <th>Total</th>
-                            <th>Ação</th>
-                        </tr>
-                    </thead>
-                    <tbody id="selected-products-body">
-                    </tbody>
-                </table>
+        <div class="card card-custom mb-4">
+            <div class="card-body">
+                <h5 class="card-title">Adicionar Cliente</h5>
+                <div class="input-group mb-3">
+                    <form class="input-group mb-3" onsubmit="return false;">
+                        <input type="text" class="form-control form-custom" id="client-search"
+                            placeholder="Digite o nome do cliente" required oninput="searchClients(event)">
+                        <button type="button" class="btn btn-primary" onclick="searchClients(event)">Buscar</button>
+                    </form>
+                </div>
+                <div id="client-results" class="mt-3"></div>
+                <div id="selected-client" class="mt-3"></div>
             </div>
         </div>
-    </div>
 
-
-    <div class="row mt-4">
-        <div class="col-md-6">
-            <div class="card h-100">
-                <div class="card-body">
-                    <h5 class="card-title">Formas de Pagamento</h5>
-                    <?php
-                    $form_payment = Controllers::SelectAll("form_payment");
-                    foreach ($form_payment as $value) {
-                        ?>
-                        <div class="form-check">
-                            <input class="form-check-input" type="radio" name="id_payment_method"
-                                id="paymentMethod<?php echo $value['id']; ?>" value="<?php echo $value['id']; ?>" <?php if ($value['id'] == @$_POST['id_payment_method'])
-                                          echo 'checked'; ?>>
-                            <label class="form-check-label" for="paymentMethod<?php echo $value['id']; ?>">
-                                <?php echo htmlspecialchars($value['name'], ENT_QUOTES, 'UTF-8'); ?>
-                            </label>
-                        </div>
-                    <?php } ?>
+        <div class="card card-custom mb-4">
+            <div class="card-body">
+                <h5 class="card-title">Produtos Selecionados</h5>
+                <div class="table-responsive">
+                    <table class="table table-striped table-custom" id="selected-products-table">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Produto</th>
+                                <th>Quantidade</th>
+                                <th>Preço Unitário</th>
+                                <th>Total</th>
+                                <th>Ação</th>
+                            </tr>
+                        </thead>
+                        <tbody id="selected-products-body">
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
 
-        <div class="col-md-6">
-            <div class="card h-100">
-                <div class="card-body">
-                    <h5 class="card-title">Resumo da Venda</h5>
-                    <p>Total: <strong>R$
-                            <?php
-                            $totalGeral = array_reduce($selectedProducts, function ($carry, $item) {
-                                return $carry + ($item['stock_quantity'] * $item['value_product']);
-                            }, 0);
-                            echo number_format($totalGeral, 2, ',', '.');
+        <div class="row mt-4">
+            <div class="col-md-6">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h5 class="card-title">Formas de Pagamento</h5>
+                        <?php
+                        $form_payment = Controllers::SelectAll("form_payment");
+                        foreach ($form_payment as $value) {
                             ?>
-                        </strong></p>
-                    <p>Valor Recebido:
-                        <input type="text" id="amountReceived" class="form-control"
-                            placeholder="Digite o valor recebido" oninput="calculateChange()">
-                    </p>
-                    <p>Troco: <strong id="changeAmount">R$ 0,00</strong></p>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="id_payment_method"
+                                    id="paymentMethod<?php echo $value['id']; ?>" value="<?php echo $value['id']; ?>" <?php if ($value['id'] == @$_POST['id_payment_method'])
+                                              echo 'checked'; ?>>
+                                <label class="form-check-label" for="paymentMethod<?php echo $value['id']; ?>">
+                                    <?php echo htmlspecialchars($value['name'], ENT_QUOTES, 'UTF-8'); ?>
+                                </label>
+                            </div>
+                        <?php } ?>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h5 class="card-title">Resumo da Venda</h5>
+                        <p>Total: <strong id="total-display">R$ 0,00</strong></p>
+                        <p>Valor Recebido:
+                            <input type="text" id="amountReceived" class="form-control"
+                                placeholder="Digite o valor recebido" oninput="calculateChange()">
+                        </p>
+                        <p>Troco: <strong id="changeAmount">R$ 0,00</strong></p>
+                    </div>
                 </div>
             </div>
         </div>
@@ -117,66 +117,6 @@ if (!isset($_SESSION['user_permissions'][$page_permission]) || $_SESSION['user_p
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="overlay" id="overlay">
-        <div class="client-search-sales" id="client-search-sales">
-            <div class="card-header d-flex justify-content-between align-items-center m-2">
-                <h2 class="text-white">Buscar Clientes</h2>
-                <svg id="close-search-client" fill="#fff" xmlns="http://www.w3.org/2000/svg" height="24px"
-                    viewBox="0 0 24 24" width="24px" onclick="closeClientSearch()">
-                    <path d="M0 0h24v24H0z" fill="none" />
-                    <path
-                        d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" />
-                </svg>
-            </div>
-            <div class="card-body m-2">
-                <form class="" method="post" id="sales-search-form">
-                    <div class="input-group mb-3">
-                        <input type="text" class="form-control" id="clientSelectedSales" name="clientSelectedSales"
-                            placeholder="Buscar Clientes" />
-                    </div>
-                </form>
-                <div class="table-responsive m-2">
-                    <table class="table table-hover table-dark">
-                        <thead style="white-space: nowrap;">
-                            <tr>
-                                <th>#</th>
-                                <th>Cliente</th>
-                                <th>Contato</th>
-                                <th>Email</th>
-                                <th>CPF</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <?php
-                            $clientSelectedSales = Controllers::SelectAll("clients");
-
-                            if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['clientSelectedSales'])) {
-                                $searchclient = $_POST['clientSelectedSales'];
-                                $filteredClient = array_filter($clientSelectedSales, function ($clientSelectedSales) use ($searchclient) {
-                                    return stripos($clientSelectedSales['name'], $searchclient) !== false and stripos($clientSelectedSales['id'], $searchclient) !== false;
-                                });
-                                $salesclient = !empty($filteredClient) ? $filteredClient : $clientSelectedSales;
-                            } else {
-                                $salesclient = $clientSelectedSales;
-                            }
-
-                            foreach ($salesclient as $key => $value) {
-                                ?>
-                                <tr class="tbody-selected">
-                                    <th><?php echo $value['id'] ?></th>
-                                    <th><?php echo $value['name'] ?></th>
-                                    <th><?php echo $value['phone'] ?></th>
-                                    <th><?php echo $value['email'] ?></th>
-                                    <th><?php echo $value['cpf'] ?></th>
-                                </tr>
-                            <?php } ?>
-                        </tbody>
-                    </table>
                 </div>
             </div>
         </div>
