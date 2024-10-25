@@ -25,8 +25,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $requestDataPortion = json_decode(file_get_contents('php://input'), true);
 
     $selectedPaymentMethod = $requestDataPortion['idPaymentMethod'] ?? '';
-    $id_sales_client = $requestDataPortion['salesIdClient'] ?? '';
-    $selectedProducts = $requestDataPortion['products'] ?? [];
+    $id_sales_client = $requestDataPortion['selectedClientId'] ?? '';
+    $selectedProducts = $requestDataPortion['selectedProducts'] ?? [];
     $selectedPortion = $requestDataPortion['selectedPortion'] ?? [];
 
     try {
@@ -85,14 +85,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             foreach ($selectedProducts as $product) {
 
-                $product_id = isset($product['id']) ? $product['id'] : null;
+                $product_id = isset($product['productId']) ? $product['productId'] : null;
 
                 if ($product_id === null) {
                     throw new Exception("Erro ao obter ID do produto.");
                 }
 
-                $productQuantity = $product['stock_quantity'];
-                $productValue = floatval($product['value']);
+                $productQuantity = $product['quantity'];
+                $productValue = floatval($product['productPrice']);
 
                 $exec = $sql->prepare("INSERT INTO sales_items (id_sales, id_product, amount, price_sales, status_item) 
                             VALUES (:lastSaleId, :product_id, :productQuantity, :productValue, :status_item)");

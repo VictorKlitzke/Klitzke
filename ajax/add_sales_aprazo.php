@@ -25,8 +25,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $requestDataAPrazo = json_decode(file_get_contents('php://input'), true);
 
     $selectedPaymentMethod = $requestDataAPrazo['idPaymentMethod'] ?? '';
-    $id_sales_client = $requestDataAPrazo['salesIdClient'] ?? '';
-    $selectedProducts = $requestDataAPrazo['products'] ?? [];
+    $id_sales_client = $requestDataAPrazo['selectedClientId'] ?? '';
+    $selectedProducts = $requestDataAPrazo['selectedProducts'] ?? [];
     $selectedAprazo = $requestDataAPrazo['selectedAprazo'] ?? [];
 
     try {
@@ -93,17 +93,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             foreach ($selectedProducts as $product) {
 
-                $product_id = isset($product['id']) ? $product['id'] : null;
+                $product_id = isset($product['productId']) ? $product['productId'] : null;
 
                 if ($product_id === null) {
                     throw new Exception("Erro ao obter ID do produto.");
                 }
 
-                $productQuantity = $product['stock_quantity'];
-                $productValue = isset($product['value']) ? floatval($product['value']) : 0.0;
+                $productQuantity = $product['quantity'];
+                $productValue = isset($product['productPrice']) ? floatval($product['productPrice']) : 0.0;
                 
                 $exec = $sql->prepare("INSERT INTO sales_items (id_sales, id_product, amount, price_sales, status_item) 
-                          VALUES (:lastSaleId, :product_id, :productQuantity, :productValue, :status_item)");
+                        VALUES (:lastSaleId, :product_id, :productQuantity, :productValue, :status_item)");
                 $exec->bindParam(':lastSaleId', $lastSaleId, PDO::PARAM_INT);
                 $exec->bindParam(':product_id', $product_id, PDO::PARAM_INT);
                 $exec->bindParam(':productQuantity', $productQuantity, PDO::PARAM_INT);

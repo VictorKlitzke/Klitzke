@@ -29,8 +29,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $requestData = json_decode(file_get_contents('php://input'), true);
 
     $selectedPaymentMethod = isset($requestData['idPaymentMethod']) ? $requestData['idPaymentMethod'] : '';
-    $id_sales_client = $requestData['salesIdClient'] ?? '';
-    $selectedProducts = $requestData['products'] ?? [];
+    $id_sales_client = $requestData['selectedClientId'] ?? '';
+    $selectedProducts = $requestData['selectedProducts'] ?? [];
     $totalValueSales = $requestData['totalValue'] ?? '';
 
     try {
@@ -81,12 +81,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $lastSaleId = $sql->lastInsertId();
 
             foreach ($selectedProducts as $product) {
-                $productId = isset($product['id']) ? $product['id'] : null;
+                $productId = isset($product['productId']) ? $product['productId'] : null;
                 if ($productId === null) {
                     break;
                 } else {
-                    $productQuantity = $product['stock_quantity'];
-                    $productValue = floatval($product['value']);
+                    $productQuantity = $product['quantity'];
+                    $productValue = floatval($product['productPrice']);
 
                     $exec = $sql->prepare("INSERT INTO sales_items (id_sales, id_product, amount, price_sales, status_item) 
                                 VALUES (:lastSaleId, :productId, :productQuantity, :productValue, :status_item)");

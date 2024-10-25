@@ -17,7 +17,7 @@ const OverlayAPrazo = document.getElementById('overlay-aprazo');
 const saveButton = document.getElementById('button-portion');
 const descPortionTbody = document.getElementById('desc-portion');
 const totalPortionElement = document.getElementById('total-portion-sales');
-const totalAmountElement = document.getElementById('totalAmount');
+const totalAmountElement = document.getElementById('total-display');
 const portionTotalInput = document.getElementById('portion-total');
 
 document.addEventListener('DOMContentLoaded', function () {
@@ -39,7 +39,6 @@ async function searchClients(event) {
         xhr.onreadystatechange = function () {
             if (xhr.readyState === XMLHttpRequest.DONE) {
                 if (xhr.status === 200) {
-                    console.log(xhr.response);
                     document.getElementById('client-results').innerHTML = xhr.responseText;
                 } else {
                     document.getElementById('client-results').innerHTML = "Erro na busca dos clientes.";
@@ -58,8 +57,10 @@ function addClientSales(clientId, clienteName) {
 
     if (selectedClient.children.length === 0) {
         const NewP = document.createElement("p");
-        NewP.innerHTML = `<span><strong>${clientId}</strong> - ${clienteName}</span>`;
+        NewP.innerHTML = `<span><strong id="client-sales">${clientId}</strong> - ${clienteName}</span>`;
         selectedClient.appendChild(NewP);
+
+        selectedClientId = clientId;
 
         document.getElementById('client-search').value = "";
         document.getElementById('client-results').innerHTML = "";
@@ -67,7 +68,6 @@ function addClientSales(clientId, clienteName) {
         document.querySelector('button[onclick="searchClients(event)"]').disabled = true;
     }
 }
-
 
 async function searchProduct(event) {
     event.preventDefault();
@@ -112,12 +112,13 @@ function addProductToTable(productId, productName, productPrice) {
         <td>
             <input id="quantity-sales" type="number" value="1" min="1" onchange="updateQuantity(this, ${productPrice})">
         </td>
-        <td>R$ 
-            <input id="price-sales" type="number" value="${numberFormat(productPrice)}" onchange="updatePrice(this, 1)">
+        <td>
+            <input id="price-sales" type="text" value="${productPrice.toFixed(2).replace('.', ',')}" onchange="updatePrice(this, 1)">
         </td>
         <td id="total-price" class="total-price">R$ ${numberFormat(productPrice)}</td>
         <td><button class="btn btn-danger" onclick="removeProduct(this)">Remover</button></td>
-    `;
+`;
+
 
     tbody.appendChild(newRow);
 
@@ -133,63 +134,20 @@ function addProductToTable(productId, productName, productPrice) {
 }
 
 async function updatePrice(input, quantity) {
-    const price = input.value;
+
+    const price = parseFloat(input.value.replace('R$ ', '').replace('.', '').replace(',', '.'));
     const row = input.closest('tr');
     const totalPriceCell = row.querySelector('.total-price');
 
     if (!price || isNaN(price) || price <= 0) {
         showMessage('Problema no preço, insira um valor válido', 'warning');
+        totalPriceCell.innerText = 'R$ 0,00';
         return;
     }
 
     const totalPrice = price * quantity;
     totalPriceCell.innerText = `R$ ${numberFormat(totalPrice)}`;
-    updateTotalDisplay();
-}
-
-async function updateQuantity(input, price) {
-    const quantity = input.value;
-    const row = input.closest('tr');
-    const totalPriceCell = row.querySelector('.total-price');
-
-    if (!quantity || isNaN(quantity)) {
-        showMessage('Problema na quantidade, entre em contato', 'warning');
-        return;
-    }
-
-    const totalPrice = price * quantity;
-    totalPriceCell.innerText = `R$ ${numberFormat(totalPrice)}`;
-    updateTotalDisplay();
-}
-
-async function removeProduct(button) {
-    const row = button.closest('tr');
-    const productId = row.children[0].innerText;
-    const quantityInput = row.querySelector('#quantity-sales');
-    let quantity = parseInt(quantityInput.value);
-
-    selectedProducts = selectedProducts.map(product => {
-        if (product.productId === productId) {
-            if (quantity > 1) {
-                product.quantity--;
-                quantityInput.value = product.quantity;
-                return product;
-            } else {
-                return null;
-            }
-        }
-        return product;
-    }).filter(product => product !== null);
-
-    if (quantity === 1) {
-        row.remove();
-    } else {
-        const totalPriceCell = row.querySelector('.total-price');
-        const price = parseFloat(row.querySelector('input[type="number"]').value.replace(',', '.'));
-        totalPriceCell.innerText = `R$ ${numberFormat(price * product.quantity)}`;
-    }
-
-    updateTotalDisplay();
+    await updateTotalDisplay();
 }
 
 async function updateTotalDisplay() {
@@ -197,11 +155,53 @@ async function updateTotalDisplay() {
     let total = 0;
 
     rows.forEach(row => {
-        const priceCell = row.querySelector('.total-price').innerText.replace('R$ ', '').replace('.', '').replace(',', '.');
-        total += parseFloat(priceCell);
+        const priceCell = row.querySelector('.total-price').innerText
+            .replace('R$ ', '')
+            .replace('.', '')
+            .replace(',', '.');
+        total += parseFloat(priceCell) || 0;
     });
 
     document.getElementById('total-display').innerText = `R$ ${numberFormat(total)}`;
+}
+
+async function updateQuantity(input, price) {
+    const quantity = parseInt(input.value, 10);
+    const totalPrice1 = document.getElementById('total-price');
+    const totalPriceCell = totalPrice1.textContent.replace('R$ ', '')
+
+    if (!quantity || isNaN(quantity) || quantity <= 0) {
+        showMessage('Problema na quantidade, insira um valor válido', 'warning');
+        totalPriceCell.innerText = 'R$ 0,00'; 
+        await updateTotalDisplay();
+        return;
+    }
+
+    const totalPrice = price * quantity;
+    totalPriceCell.innerText = `R$ ${numberFormat(totalPrice)}`;
+    await updateTotalDisplay();
+}
+
+async function removeProduct(button) {
+    const row = button.closest('tr');
+    const quantityInput = row.querySelector('#quantity-sales');
+    let quantity = parseInt(quantityInput.value);
+
+    selectedProducts = selectedProducts.map(product => {
+        if (quantity > 1) {
+            quantity--;
+            quantityInput.value = quantity;
+            return product;
+        } else if (quantity === 0 || quantity === 1) {
+            row.remove();
+        } else {
+            const totalPriceCell = row.querySelector('.total-price');
+            const price = parseFloat(row.querySelector('input[type="number"]').value.replace(',', '.'));
+            totalPriceCell.innerText = `R$ ${numberFormat(price * quantityInput.value)}`;
+        }
+    }).filter(product => product !== null);
+
+    updateTotalDisplay();
 }
 
 function clearSearch() {
@@ -210,7 +210,7 @@ function clearSearch() {
 }
 
 function numberFormat(value) {
-    return parseFloat(value).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    return value.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 }
 
 function openAPrazoModal() {
@@ -244,21 +244,30 @@ function closeCreditModal() {
 document.addEventListener('DOMContentLoaded', function () {
 
     function checkPaymentMethod() {
-        var selectedPaymentMethod = document.getElementById('id_payment_method').value;
-        if (selectedPaymentMethod === '3') {
-            openCreditModal();
-        } else {
-            closeCreditModal();
-        }
+        let selectedPayment = document.querySelector('input[name="id_payment_method"]:checked');
+        if (selectedPayment) {
+            let selectedPaymentMethod = selectedPayment.value;
 
-        if (selectedPaymentMethod === '5') {
-            openAPrazoModal();
-        } else {
-            closeAPrazoModal();
+            if (selectedPaymentMethod === '3') {
+                openCreditModal();
+            } else {
+                closeCreditModal();
+            }
+
+            if (selectedPaymentMethod === '5') {
+                openAPrazoModal();
+            } else {
+                closeAPrazoModal();
+            }
         }
     }
 
-    document.getElementById('id_payment_method').addEventListener('change', checkPaymentMethod);
+    const paymentRadios = document.querySelectorAll('input[name="id_payment_method"]');
+    paymentRadios.forEach(radio => {
+        radio.addEventListener('change', checkPaymentMethod);
+    });
+
+    checkPaymentMethod();
 
     const finishButtonPortion = document.getElementById('finish-portion');
 
@@ -310,11 +319,12 @@ function calculateInstallments() {
     let numInstallments = parseInt(document.getElementById('aprazo-number').value);
     let daysBetweenInstallments = parseInt(document.getElementById('aprazo-venciment').value);
     let startDate = document.getElementById('aprazo-venciment-date').value;
-
-    let totalAmountElement = document.getElementById('totalAmount');
+    let totalAmountElement = document.getElementById('total-display');
     let totalValuezAPrazo = 0;
+
     if (totalAmountElement) {
-        totalValuezAPrazo = parseFloat(totalAmountElement.textContent.replace('R$ ', '').replace(',', '.')) || 0;
+        let totalText = totalAmountElement.textContent.replace('R$ ', '').replace('.', '').replace(',', '.');
+        totalValuezAPrazo = parseFloat(totalText) || 0;
     }
 
     if (isNaN(numInstallments) || isNaN(daysBetweenInstallments) || isNaN(totalValuezAPrazo) || numInstallments <= 0 ||
@@ -342,7 +352,7 @@ function calculateInstallments() {
                         <td>${i}</td>
                         <td>${formattedDate}</td>
                         <td>R$ ${installmentValue.toFixed(2)}</td>
-                   </tr>`;
+                    </tr>`;
         tableBody.innerHTML += row;
 
         selectedAprazo.push({
@@ -355,29 +365,34 @@ function calculateInstallments() {
 }
 
 async function FinalizeAprazo() {
-    const saleSales = document.querySelector('.sales-sales');
 
-    let totalAmountElement = document.getElementById('totalAmount');
+    let totalAmountElement = document.getElementById('total-display');
     let totalValue = 0;
+
     if (totalAmountElement) {
-        totalValue = parseFloat(totalAmountElement.textContent.replace('R$ ', '')) || 0;
+        let totalText = totalAmountElement.textContent.replace('R$ ', '').replace('.', '').replace(',', '.');
+        totalValue = parseFloat(totalText) || 0;
     }
 
-    let selectedPaymentMethodAprazo = document.getElementById('id_payment_method').value;
-    let idSalesClient = selectedClientId || '';
+    let selectedPayment = document.querySelector('input[name="id_payment_method"]:checked');
+    if (selectedPayment == null) {
+        showMessage('Selecione uma forma de pagamento', 'warning');
+        return;
+    }
+    let selectedPaymentMethodAprazo = selectedPayment.value;
 
     if (selectedPaymentMethodAprazo === '5') {
         openAPrazoModal();
 
         let requestDataAPrazo = {
             idPaymentMethod: selectedPaymentMethodAprazo,
-            salesIdClient: idSalesClient,
+            selectedClientId: selectedClientId,
             totalValue: totalValue,
             selectedAprazo: selectedAprazo,
-            products: selectedProducts
+            selectedProducts: selectedProducts
         };
 
-        if (idSalesClient.length === 0) {
+        if (selectedClientId == 0) {
             showMessage('Erro nenhum cliente informado', 'warning');
             return;
         }
@@ -410,9 +425,9 @@ async function FinalizeAprazo() {
                         date: new Date().toLocaleString(),
                         clientName: idSalesClient,
                         totalValue: totalValue,
-                        products: selectedProducts.map(product => ({
-                            name: product.name,
-                            value: parseFloat(product.value),
+                        selectedProducts: selectedProducts.map(product => ({
+                            productName: product.productName,
+                            productPrice: parseFloat(product.productPrice),
                         }))
                     }
 
@@ -426,8 +441,6 @@ async function FinalizeAprazo() {
 
                     OverlayAPrazo.style.display = 'none';
                     APrazoModal.style.display = 'none';
-                    saleSales.innerHTML = "";
-                    saleSales.innerText = "";
                 } else {
                     showMessage('Erro ao registrar venda:' + responseDataAPrazo.error, 'error');
                 }
@@ -442,29 +455,33 @@ async function FinalizeAprazo() {
 
 async function finalizeSalePortion() {
 
-    const saleSales = document.querySelector('.sales-sales');
-
-    let totalAmountElement = document.getElementById('totalAmount');
+    let totalAmountElement = document.getElementById('total-display');
     let totalValue = 0;
+
     if (totalAmountElement) {
-        totalValue = parseFloat(totalAmountElement.textContent.replace('R$ ', '')) || 0;
+        let totalText = totalAmountElement.textContent.replace('R$ ', '').replace('.', '').replace(',', '.');
+        totalValue = parseFloat(totalText) || 0;
     }
 
-    let selectedPaymentMethodPortion = document.getElementById('id_payment_method').value;
-    let idSalesClient = selectedClientId || '';
+    let selectedPayment = document.querySelector('input[name="id_payment_method"]:checked');
+    if (selectedPayment == null) {
+        showMessage('Selecione uma forma de pagamento', 'warning');
+        return;
+    }
+    let selectedPaymentMethodPortion = selectedPayment.value;
 
     if (selectedPaymentMethodPortion === '3') {
         openCreditModal();
 
         let requestDataPortion = {
             idPaymentMethod: selectedPaymentMethodPortion,
-            salesIdClient: idSalesClient,
+            selectedClientId: selectedClientId,
             totalValue: totalValue,
             selectedPortion: selectedPortion,
-            products: selectedProducts
+            selectedProducts: selectedProducts
         };
 
-        if (selectedProducts.length === 0) {
+        if (selectedProducts == 0) {
 
             showMessage('Erro ao registrar venda, nenhum produto selecionado', 'warning');
 
@@ -489,9 +506,9 @@ async function finalizeSalePortion() {
                         date: new Date().toLocaleString(),
                         clientName: idSalesClient,
                         totalValue: totalValue,
-                        products: selectedProducts.map(product => ({
-                            name: product.name,
-                            value: parseFloat(product.value),
+                        selectedProducts: selectedProducts.map(product => ({
+                            productName: product.productName,
+                            productPrice: parseFloat(product.productPrice),
                         }))
                     }
 
@@ -505,8 +522,6 @@ async function finalizeSalePortion() {
 
                     overlayPortion.style.display = 'none';
                     ModalSalesPortion.style.display = 'none';
-                    saleSales.innerHTML = "";
-                    saleSales.innerText = "";
                 } else {
                     showMessage('Erro ao registrar venda:', responseDataPortion ? responseDataPortion.error : 'Resposta vazia', 'error');
                 }
@@ -570,10 +585,10 @@ async function printReceipt(saleDetails) {
                         <div class="receipt-items">
                             <h5 class="mb-3">Itens</h5>
                             <ul class="list-group">
-                                ${saleDetails.products.map(product => `
+                                ${saleDetails.selectedProducts.map(product => `
                                     <li class="list-group-item d-flex justify-content-between align-items-center receipt-item">
-                                        <span>${product.name}</span>
-                                        <span>R$ ${product.value.toFixed(2)}</span>
+                                        <span>${product.productName}</span>
+                                        <span>R$ ${product.productPrice.toFixed(2)}</span>
                                     </li>
                                 `).join('')}
                             </ul>
@@ -594,31 +609,44 @@ async function printReceipt(saleDetails) {
     printWindow.print();
 }
 
+function calculateChange() {
+    let trocoSales = document.getElementById('change-sale');
+    let quantiyChange = document.getElementById('change-amount');
+    let totalAmountElement = document.getElementById('total-display');
+
+    if (totalAmountElement) {
+        let totalText = totalAmountElement.textContent.replace('R$ ', '').replace('.', '').replace(',', '.');
+        totalValue = parseFloat(totalText) || 0;
+    }
+
+    let receivedValue = parseFloat(trocoSales.value.replace('.', '').replace(',', '.')) || 0;
+    let TotalChange = receivedValue - totalValue;
+
+    quantiyChange.textContent = 'R$ ' + TotalChange.toFixed(2).replace('.', ',');
+}
+
 async function finalizeSale() {
     let totalAmountElement = document.getElementById('total-display');
     let totalValue = 0;
 
     if (totalAmountElement) {
-        totalValue = parseFloat(totalAmountElement.textContent.replace('R$ ', '')) || 0;
+        let totalText = totalAmountElement.textContent.replace('R$ ', '').replace('.', '').replace(',', '.');
+        totalValue = parseFloat(totalText) || 0;
     }
-
+    let quantiyChange = document.getElementById('change-amount').value;
     let selectedPayment = document.querySelector('input[name="id_payment_method"]:checked');
-    let selectedPaymentMethod = selectedPayment.value;
-
-    if (!selectedPaymentMethod) {
+    if (selectedPayment == null) {
         showMessage('Selecione uma forma de pagamento', 'warning');
         return;
     }
-
-    console.log(selectedPaymentMethod);
-
-    let idSalesClient = selectedClientId || '';
+    let selectedPaymentMethod = selectedPayment.value;
 
     let requestData = {
         idPaymentMethod: selectedPaymentMethod,
-        salesIdClient: idSalesClient,
+        selectedClientId: selectedClientId,
         totalValue: totalValue,
-        products: selectedProducts
+        quantiyChange: quantiyChange,
+        selectedProducts: selectedProducts
     };
 
     if (selectedProducts.length === 0) {
@@ -679,11 +707,11 @@ async function registerSale(requestData) {
 
             let printSales = {
                 date: new Date().toLocaleString(),
-                clientName: requestData.salesIdClient,
+                clientName: requestData.selectedClientId,
                 totalValue: requestData.totalValue,
-                products: requestData.products.map(product => ({
-                    name: product.name,
-                    value: parseFloat(product.value),
+                selectedProducts: requestData.selectedProducts.map(product => ({
+                    productName: product.productName,
+                    productPrice: parseFloat(product.productPrice),
                 }))
             };
 
@@ -694,10 +722,6 @@ async function registerSale(requestData) {
                     showMessage('Operação cancelada', 'warning');
                 });
             }, 5000);
-
-            const saleSales = document.querySelector('.sales-sales');
-            saleSales.innerHTML = "";
-            saleSales.innerText = "";
         } else {
             showMessage('Caixa não foi aberto, para essa operação', 'error');
         }
@@ -759,6 +783,7 @@ function validateStock(stock_quantity, qnt, callback) {
         callback(true);
     }
 }
+
 async function closeModalPortion() {
     const portionSalesModal = document.getElementById('portion-sales');
     const overlayModalPortion = document.getElementById('overlay-portion');
