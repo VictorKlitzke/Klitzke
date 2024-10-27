@@ -163,6 +163,8 @@ class lists
         try {
             $salesData = [];
             $financialControlData = [];
+            $AllSales = [];
+            $EntryData = [];
 
             $querySales = "SELECT 
                             s.*,
@@ -202,10 +204,32 @@ class lists
             $stmtFinancial->execute();
             $financialControlData = $stmtFinancial->fetchAll(PDO::FETCH_ASSOC);
 
+            $queryentry = "SELECT * FROM `financial_control` WHERE `type` = 'contas a receber'";
+            $entry = $sql->prepare($queryentry);
+            $entry->execute();
+            $EntryData = $entry->fetchAll(PDO::FETCH_ASSOC);
+
+            $querySales = "SELECT 
+                                clients.name clients,
+                                `form_payment`.`name` form_payment,
+                                sales.total_value,
+                                sales.date_sales,
+                                sales.id
+                            FROM 
+                                `sales` 
+                                LEFT JOIN clients on clients.id = sales.`id_client`
+                                INNER JOIN `form_payment` on `form_payment`.id = sales.`id_payment_method`
+                            WHERE sales.`id_payment_method` in (1,2,3,4) ";
+            $stmtSales = $sql->prepare($querySales);
+            $stmtSales->execute();
+            $AllSales = $stmtSales->fetchAll(PDO::FETCH_ASSOC);
+
             echo json_encode([
                 'success' => true,
                 'salesData' => $salesData,
-                'financialcontrol' => $financialControlData
+                'financialcontrol' => $financialControlData,
+                'AllSales' => $AllSales,
+                'EntryData' => $EntryData
             ]);
 
         } catch (PDOException $e) {

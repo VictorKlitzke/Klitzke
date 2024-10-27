@@ -97,21 +97,22 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 class Register
 {
 
-    public static function AddMenuAccess($response_add_access_menu, $user_id, $sql) {
+    public static function AddMenuAccess($response_add_access_menu, $user_id, $sql)
+    {
         $today = date('Y-m-d H:i:s');
-    
+
         try {
-            $sql->beginTransaction(); 
-    
+            $sql->beginTransaction();
+
             foreach ($response_add_access_menu['menus'] as $menu) {
                 $check_menu = $sql->prepare("SELECT COUNT(*) FROM menu_access 
                                             WHERE user_id = :user_id AND menu = :menu");
                 $check_menu->bindParam(':user_id', $response_add_access_menu['userID'], PDO::PARAM_INT);
                 $check_menu->bindParam(':menu', $menu, PDO::PARAM_STR);
                 $check_menu->execute();
-    
+
                 $menu_exists = $check_menu->fetchColumn();
-    
+
                 if ($menu_exists == 0) {
                     $exec_menu = $sql->prepare("INSERT INTO menu_access (user_id, menu, creation_date, released) 
                                                 VALUES (:user_id, :menu, NOW(), :released)");
@@ -122,22 +123,22 @@ class Register
                     $exec_menu->execute();
                 } else {
                     Response::json(false, 'Usuário já tem acesso a esse menu', $today);
-                    return; 
+                    return;
                 }
             }
-    
-            $sql->commit(); 
-    
+
+            $sql->commit();
+
             $message_log = "Adiciona os menus com sucesso";
             Panel::LogAction($user_id, 'Adicionar Menu Acesso', $message_log, $today);
             Response::send(true, 'Menus adicionados com sucesso', $today);
-    
+
         } catch (Exception $e) {
             $sql->rollBack();
             http_response_code(500);
             Response::json(false, 'Erro ao adicionar menus: ' . $e->getMessage(), $today);
         }
-    }    
+    }
     public static function RegisterAccountsPayable($sql, $response_accounts_payable, $user_id, $today)
     {
         $dateTransaction = filter_var($response_accounts_payable['dateTransaction'], FILTER_SANITIZE_STRING);
@@ -145,44 +146,43 @@ class Register
         $descriptionTransaction = filter_var($response_accounts_payable['descriptionTransaction'], FILTER_SANITIZE_STRING);
         $nameExterno = filter_var($response_accounts_payable['nameExterno'], FILTER_SANITIZE_STRING);
         $numberdoc = filter_var($response_accounts_payable['numberdoc'], FILTER_SANITIZE_STRING);
-
+        $transactionType = filter_var($response_accounts_payable['transactionType'], FILTER_SANITIZE_STRING);
+        $status_aprazo = filter_var($response_accounts_payable['incomeExpense'], FILTER_SANITIZE_STRING);
+    
         if (!$dateTransaction || !$descriptionTransaction || !$valueTransaction) {
             Response::json(false, 'Campo inválido', $today);
             return;
         }
-
-        if (self::UserAccess($sql, $user_id) < 50) {
-            Response::json(false, 'Usuário não tem permissão para executar essa atividade', $today);
-            return;
-        }
-
+    
         try {
-
-            $sql->BeginTransaction();
-
+            if (self::UserAccess($sql, $user_id) < 50) {
+                Response::json(false, 'Usuário não tem permissão para executar essa atividade', $today);
+                return;
+            }
+    
+            $sql->beginTransaction();
+    
             $name_table = 'financial_control';
-            $status_aprazo = 'Despesa';
-            $type = 'contas a pagar';
-
-            $exec = $sql->prepare("INSERT INTO $name_table (value, transaction_date, status_aprazo, type, 
-                                created_at, name_externo, description, number_doc) 
-                            VALUES(:value_aprazo, :dateVenciment, :status_aprazo, :type, NOW(), :nameExterno,
-                                :description, :numberdoc)");
+    
+            $exec = $sql->prepare("INSERT INTO $name_table (value, transaction_date, status_aprazo, 
+                                    created_at, name_externo, description, number_doc, type) 
+                                VALUES(:value_aprazo, :dateVenciment, :status_aprazo, NOW(), :nameExterno,
+                                    :description, :numberdoc, :transactionType)");
             $exec->bindValue(':value_aprazo', $valueTransaction, PDO::PARAM_STR);
             $exec->bindValue(':dateVenciment', $dateTransaction, PDO::PARAM_STR);
             $exec->bindValue(':status_aprazo', $status_aprazo, PDO::PARAM_STR);
             $exec->bindValue(':nameExterno', $nameExterno, PDO::PARAM_STR);
             $exec->bindValue(':description', $descriptionTransaction, PDO::PARAM_STR);
-            $exec->bindValue(':type', $type, PDO::PARAM_STR);
             $exec->bindValue(':numberdoc', $numberdoc, PDO::PARAM_STR);
+            $exec->bindValue(':transactionType', $transactionType, PDO::PARAM_STR);
             $exec->execute();
-
+    
             $sql->commit();
-
-            $message_log = "Baixa no contas a pagar com sucesso";
-            Panel::LogAction($user_id, 'Baixa no contas a pagar com sucesso', $message_log, $today);
-            Response::send(true, 'Baixa no contas a pagar com sucesso', $today);
-
+    
+            $message_log = "Adicionado contas com sucesso";
+            Panel::LogAction($user_id, 'Adicionado contas com sucesso', $message_log, $today);
+            Response::send(true, 'Adicionado contas com sucesso', $today);
+    
         } catch (Exception $e) {
             if ($sql->inTransaction()) {
                 $sql->rollBack();
@@ -190,7 +190,7 @@ class Register
             http_response_code(500);
             echo json_encode(['error' => 'Erro no banco de dados: ' . $e->getMessage(), 'code' => $e->getCode()]);
         }
-    }
+    }    
     public static function WriteAccountsReceivable($sql, $response_financial_control, $user_id, $today)
     {
 
@@ -246,6 +246,9 @@ class Register
 
         } catch (Exception $e) {
             http_response_code(500);
+            if ($sql->inTransaction()) {
+                $sql->rollBack();
+            }
             echo json_encode(['error' => 'Erro no banco de dados: ' . $e->getMessage(), 'code' => $e->getCode()]);
         }
     }
@@ -253,6 +256,8 @@ class Register
     {
 
         try {
+
+            $sql->BeginTransaction();
 
             $exec = $sql->prepare("SELECT access FROM users WHERE ID = :user_id");
             $exec->bindParam(':user_id', $user_id, PDO::PARAM_INT);
@@ -263,6 +268,9 @@ class Register
 
         } catch (Exception $e) {
             http_response_code(500);
+            if ($sql->inTransaction()) {
+                $sql->rollBack();
+            }
             echo json_encode(['error' => 'Erro no banco de dados: ' . $e->getMessage(), 'code' => $e->getCode()]);
         }
 

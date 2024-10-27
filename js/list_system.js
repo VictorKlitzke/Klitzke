@@ -923,54 +923,51 @@ async function ListAPrazo(searchTermFinancialControl = '') {
 
         const data = await response.json();
 
+        console.log(data);
+
         if (data.success) {
             const salesData = data.salesData || [];
             const financialControlData = data.financialcontrol || [];
+            const allsales = data.AllSales || [];
+            const entryData = data.EntryData || [];
 
-            const financialcontrosaleslList = document.getElementById('table-sales').querySelector('tbody');
+            const financialcontrosaleslList = document.getElementById('sales-result');
+            const financialControlList = document.getElementById('result-financial-control');
+            const EntryDataControlList = document.getElementById('result-entry');
+            const allSalesList = document.getElementById('allsales-result');
 
-            const financialcontrolList = document.getElementById('result-financial-control');
-            let tbody = financialcontrolList.querySelector('tbody');
-            if (!tbody) {
-                tbody = document.createElement('tbody');
-                financialcontrolList.appendChild(tbody);
-            }
-
-            tbody.innerHTML = '';
+            allSalesList.innerHTML = '';
             financialcontrosaleslList.innerHTML = '';
+            EntryDataControlList.innerHTML = '';
+            financialControlList.innerHTML = '';
 
             salesData.forEach(f => {
                 const rowSales = document.createElement('tr');
-                if (f.status_aprazo === 'em andamento') {
-                    rowSales.className = 'table-warning';
-                } else if (f.status_aprazo === 'nenhum pagamento') {
-                    rowSales.className = 'table-secondary';
-                } else if (f.status_aprazo === 'paga') {
-                    rowSales.className = 'table-success';
-                }
+                rowSales.className = f.status_aprazo === 'em andamento' ? 'table-warning' :
+                    f.status_aprazo === 'nenhum pagamento' ? 'table-secondary' :
+                        f.status_aprazo === 'paga' ? 'table-success' : '';
 
-                const idCell = document.createElement('th');
-                idCell.textContent = f.id;
-                idCell.className = 'id-financial-control-values';
+                const idCell = document.createElement('td');
+                idCell.textContent = f.id || 'N/A';
                 rowSales.appendChild(idCell);
 
-                const clientCell = document.createElement('th');
-                clientCell.textContent = f.client;
+                const clientCell = document.createElement('td');
+                clientCell.textContent = f.client || 'Sem cliente';
                 rowSales.appendChild(clientCell);
 
-                const formPagamentCell = document.createElement('th');
-                formPagamentCell.textContent = f.formpagament;
+                const formPagamentCell = document.createElement('td');
+                formPagamentCell.textContent = f.formpagament || 'Sem pagamento';
                 rowSales.appendChild(formPagamentCell);
 
-                const portionCell = document.createElement('th');
-                portionCell.textContent = f.portion_aprazo;
+                const portionCell = document.createElement('td');
+                portionCell.textContent = f.portion_aprazo || 'Sem parcelas';
                 rowSales.appendChild(portionCell);
 
-                const statusCell = document.createElement('th');
-                statusCell.textContent = f.status_aprazo;
+                const statusCell = document.createElement('td');
+                statusCell.textContent = f.status_aprazo || 'Sem status';
                 rowSales.appendChild(statusCell);
 
-                const buttonCell = document.createElement('th');
+                const buttonCell = document.createElement('td');
                 const inputButton = document.createElement('button');
                 inputButton.type = 'button';
                 inputButton.className = 'btn btn-info btn-sm';
@@ -988,31 +985,33 @@ async function ListAPrazo(searchTermFinancialControl = '') {
                 const rowFinancialControl = document.createElement('tr');
                 rowFinancialControl.className = 'table-light';
 
-                const idCell = document.createElement('th');
-                idCell.textContent = fc.id;
+                const idCell = document.createElement('td');
+                idCell.textContent = fc.id || 'N/A';
                 rowFinancialControl.appendChild(idCell);
 
-                const descriptionCell = document.createElement('th');
+                const descriptionCell = document.createElement('td');
                 descriptionCell.textContent = fc.description || 'Sem descrição';
                 rowFinancialControl.appendChild(descriptionCell);
 
-                const valueCell = document.createElement('th');
-                valueCell.textContent = fc.value || 'Sem valor';
+                const valueCell = document.createElement('td');
+                valueCell.textContent = `R$ ${parseFloat(fc.value || 0).toFixed(2).replace('.', ',')}`;
                 rowFinancialControl.appendChild(valueCell);
 
-                const dateCell = document.createElement('th');
-                const dateString = fc.transaction_date;
-                const [year, month, day] = dateString.split('-');
-                const formattedDate = `${day}/${month}/${year}`;
-                dateCell.textContent = formattedDate;
+                const dateCell = document.createElement('td');
+                if (fc.transaction_date) {
+                    const [year, month, day] = fc.transaction_date.split('-');
+                    dateCell.textContent = `${day}/${month}/${year}`;
+                } else {
+                    dateCell.textContent = 'Data não disponível';
+                }
                 rowFinancialControl.appendChild(dateCell);
 
-                const typeCell = document.createElement('th');
+                const typeCell = document.createElement('td');
                 typeCell.textContent = fc.type || 'Sem tipo';
                 rowFinancialControl.appendChild(typeCell);
 
+                const actionCell = document.createElement('td');
                 if (fc.pay == null) {
-                    const buttonCell = document.createElement('th');
                     const inputButton = document.createElement('button');
                     inputButton.type = 'button';
                     inputButton.className = 'btn btn-dark btn-sm';
@@ -1020,24 +1019,94 @@ async function ListAPrazo(searchTermFinancialControl = '') {
                     inputButton.onclick = function () {
                         InvoiceAccountsPayable(fc.id);
                     };
-                    buttonCell.appendChild(inputButton);
-                    rowFinancialControl.appendChild(buttonCell);
+                    actionCell.appendChild(inputButton);
                 } else {
-                    const PayCell = document.createElement('th');
-                    PayCell.textContent = fc.pay;
-                    rowFinancialControl.appendChild(PayCell);
+                    actionCell.textContent = fc.pay;
+                }
+                rowFinancialControl.appendChild(actionCell);
+
+                financialControlList.appendChild(rowFinancialControl);
+            });
+
+            entryData.forEach(fb => {
+                const rowEntry = document.createElement('tr');
+                if (fb.status_aprazo === 'Receita') {
+                    rowEntry.className = 'table-success';
                 }
 
-                tbody.appendChild(rowFinancialControl);
+                const idCell = document.createElement('td');
+                idCell.textContent = fb.id || 'N/A';
+                rowEntry.appendChild(idCell);
+
+                const descriptionCell = document.createElement('td');
+                descriptionCell.textContent = fb.description || 'Sem descrição';
+                rowEntry.appendChild(descriptionCell);
+
+                const valueCell = document.createElement('td');
+                valueCell.textContent = `R$ ${parseFloat(fb.value || 0).toFixed(2).replace('.', ',')}`;
+                rowEntry.appendChild(valueCell);
+
+                const dateCell = document.createElement('td');
+                if (fb.transaction_date) {
+                    const [year, month, day] = fb.transaction_date.split('-');
+                    dateCell.textContent = `${day}/${month}/${year}`;
+                } else {
+                    dateCell.textContent = 'Data não disponível';
+                }
+                rowEntry.appendChild(dateCell);
+
+                const typeCell = document.createElement('th');
+                typeCell.textContent = fb.type || 'Sem tipo';
+                rowEntry.appendChild(typeCell);
+
+                const StatusCell = document.createElement('th');
+                typeCell.textContent = fb.status_aprazo || 'Sem Status';
+                rowEntry.appendChild(StatusCell);
+
+                EntryDataControlList.appendChild(rowEntry);
+            });
+
+            allsales.forEach(fs => {
+                const allSalesRow = document.createElement('tr');
+                allSalesRow.className = 'table-light';
+
+                const idCell = document.createElement('td');
+                idCell.textContent = fs.id || 'N/A';
+                allSalesRow.appendChild(idCell);
+
+                const clientCell = document.createElement('td');
+                clientCell.textContent = fs.clients || 'Sem cliente';
+                allSalesRow.appendChild(clientCell);
+
+                const formPagamentCell = document.createElement('td');
+                formPagamentCell.textContent = fs.form_payment || 'Sem pagamento';
+                allSalesRow.appendChild(formPagamentCell);
+
+                const totalValueCell = document.createElement('td');
+                totalValueCell.textContent = `R$ ${parseFloat(fs.total_value || 0).toFixed(2).replace('.', ',')}`;
+                allSalesRow.appendChild(totalValueCell);
+
+                const dateSalesCell = document.createElement('td');
+                if (fs.date_sales) {
+                    const datePart = fs.date_sales.split(' ')[0].split('/')[0];
+                    const [year, month, day] = datePart.split('-');
+                    dateSalesCell.textContent = `${day}/${month}/${year}`;
+                } else {
+                    dateSalesCell.textContent = 'Data não disponível';
+                }
+
+                allSalesRow.appendChild(dateSalesCell);
+
+                allSalesList.appendChild(allSalesRow);
             });
 
         } else {
             showMessage('Erro ao listar solicitações', 'error');
         }
 
+
     } catch (error) {
         console.log('Erro ao fazer requisição: ' + error.message);
-        console.clear();
     }
 }
 async function ListDetailsAprazo(id_detals) {

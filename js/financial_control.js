@@ -66,7 +66,6 @@ async function FinalizeAPrazo() {
     showMessage('Registro cancelado', 'warning')
   })
 }
-
 const getFieldsAccountsPayable = () => {
   return {
     type: {
@@ -78,29 +77,39 @@ const getFieldsAccountsPayable = () => {
       nameExterno: document.getElementById('nameExterno').value,
       descriptionTransaction: document.getElementById('descriptionTransaction').value,
       numberdoc: document.getElementById('numberdoc').value,
+      transactionType: document.getElementById('transactionType').value,
+      incomeExpense: document.getElementById('incomeExpense').value
     },
     inputs: {
       dateTransaction: document.getElementById('dateTransaction'),
       valueTransaction: document.getElementById('valueTransaction'),
       nameExterno: document.getElementById('nameExterno'),
       descriptionTransaction: document.getElementById('descriptionTransaction'),
-      numberdoc: document.getElementById('numberdoc')
+      numberdoc: document.getElementById('numberdoc'),
+      numberdoc: document.getElementById('transactionType'),
+      incomeExpense: document.getElementById('incomeExpense')
     }
   }
 }
 async function RegisterAccountsPayable() {
   const { type, values, inputs } = await getFieldsAccountsPayable();
 
-  if (values.dateTransaction == null || values.valueTransaction == "" || values.descriptionTransaction == "") {
+  if (values.dateTransaction == null || values.valueTransaction == "" || 
+    values.descriptionTransaction == "" || values.transactionType == null ||
+    values.incomeExpense == "") {
     showMessage('Campo não podem ser vazios', 'warning');
 
     if (values.dateTransaction === "") inputs.valueTransaction.classList.add('error');
     if (values.valueTransaction === "") inputs.valueTransaction.classList.add('error');
     if (values.descriptionTransaction === "") inputs.descriptionTransaction.classList.add('error');
+    if (values.transactionType === null) inputs.descriptionTransaction.classList.add('error');
+    if (values.incomeExpense === "") inputs.descriptionTransaction.classList.add('error');
     setTimeout(() => {
       inputs.dateTransaction.classList.remove('error');
       inputs.valueTransaction.classList.remove('error');
       inputs.descriptionTransaction.classList.remove('error');
+      inputs.transactionType.classList.remove('error');
+      inputs.incomeExpense.classList.remove('error');
     }, 3000);
 
     return;
@@ -113,7 +122,9 @@ async function RegisterAccountsPayable() {
     valueTransaction: values.valueTransaction,
     descriptionTransaction: values.descriptionTransaction,
     nameExterno: values.nameExterno,
-    numberdoc: values.numberdoc
+    numberdoc: values.numberdoc,
+    transactionType: values.transactionType,
+    incomeExpense: values.incomeExpense
   }
 
   continueMessage("Deseja realmente cadastrar contas a pagar?", "Sim", "Não", async function () {
@@ -136,9 +147,7 @@ async function RegisterAccountsPayable() {
 
       if (responseBody.success) {
         showMessage('Contas a pagar cadastrada com sucesso', 'success');
-
-        scheduleNotification(values.dateTransaction, `Conta a pagar - Valor: ${values.valueTransaction}`);
-
+        
         setTimeout(() => {
           location.reload();
         }, 2000);
@@ -155,7 +164,6 @@ async function RegisterAccountsPayable() {
     showMessage('Operação cancelada', 'warning');
   })
 }
-
 function ShowModalAddVariation() {
   if (AddVariationForn.style.display === 'block') {
       AddVariationForn.style.display = 'none';
