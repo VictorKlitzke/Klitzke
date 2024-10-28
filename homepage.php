@@ -395,11 +395,25 @@ if (isset($_GET['loggout'])) {
             $total_aprazo = $results['total_aprazo'];
 
 
-            $exec = $sql->prepare("SELECT SUM(value) value_boxpdv FROM boxpdv WHERE id = :id AND id_users = :id_users");
+            $exec = $sql->prepare("
+                                    SELECT 
+                                        SUM(boxpdv.value) - COALESCE(
+                                            (SELECT SUM(s.value) 
+                                            FROM sangria_boxpdv s 
+                                            WHERE s.id_boxpdv = boxpdv.id), 
+                                            0
+                                        ) AS value_boxpdv 
+                                    FROM 
+                                        boxpdv 
+                                    WHERE 
+                                        id = :id 
+                                        AND id_users = :id_users
+                                ");
             $exec->bindParam(':id', $openBoxId, PDO::PARAM_INT);
             $exec->bindParam(':id_users', $user_id, PDO::PARAM_INT);
             $exec->execute();
             $result_system = $exec->fetch(PDO::FETCH_ASSOC);
+
 
         }
 
@@ -452,7 +466,7 @@ if (isset($_GET['loggout'])) {
                                             <input id="value_money"
                                                 class="form-control bg-secondary text-white border-light" type="text"
                                                 placeholder="Dinheiro" name="value_money"
-                                                value="<?php echo $total_money; ?>"/>
+                                                value="<?php echo $total_money; ?>" />
                                         </div>
                                     </div>
                                 </div>
@@ -500,15 +514,16 @@ if (isset($_GET['loggout'])) {
                                     <div class="col-sm-6">
                                         <div class="mb-3">
                                             <label class="text-white">Data fechamento</label>
-                                            <input id="date_close" class="form-control bg-secondary text-white border-light" type="date"
+                                            <input id="date_close"
+                                                class="form-control bg-secondary text-white border-light" type="date"
                                                 placeholder="Data fechamento" name="date_close">
                                         </div>
                                     </div>
                                     <div class="col-sm-6">
                                         <div class="mb-3">
                                             <label class="text-white">Soma: Dinheiro + caixa Sistema</label>
-                                            <input id="soma" class="form-control bg-secondary text-white border-light" type="text"
-                                                placeholder="Soma: Dinheiro + caixa Sistema" readonly>
+                                            <input id="soma" class="form-control bg-secondary text-white border-light"
+                                                type="text" placeholder="Soma: Dinheiro + caixa Sistema" readonly>
                                         </div>
                                     </div>
                                 </div>

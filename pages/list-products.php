@@ -50,40 +50,40 @@ $products = Controllers::SelectAll('products');
                                 <th><?php echo htmlspecialchars($value['quantity']); ?></th>
                                 <th>
                                     <?php if (htmlspecialchars($value['barcode']) == "") { ?>
-                                    <?php echo 'Sem Código de Barras'; ?>
+                                        <?php echo 'Sem Código de Barras'; ?>
                                     <?php } else { ?>
-                                    <?php echo htmlspecialchars($value['barcode']); ?>
+                                        <?php echo htmlspecialchars($value['barcode']); ?>
                                     <?php } ?>
                                 </th>
                                 <th>
                                     <?php if (htmlspecialchars($value['brand']) == "") { ?>
-                                    <?php echo 'Sem Marca'; ?>
+                                        <?php echo 'Sem Marca'; ?>
                                     <?php } else { ?>
-                                    <?php echo htmlspecialchars($value['brand']); ?>
+                                        <?php echo htmlspecialchars($value['brand']); ?>
                                     <?php } ?>
                                 </th>
                                 <th>R$ <?php echo htmlspecialchars($value['value_product']); ?></th>
-                                <th> 
-                                    <?php if (htmlspecialchars($value['cost_value']) == ""){ ?>
-                                    <?php echo 'Sem Valor de custo'; ?>
+                                <th>
+                                    <?php if (htmlspecialchars($value['cost_value']) == "") { ?>
+                                        <?php echo 'Sem Valor de custo'; ?>
                                     <?php } else { ?>
-                                    <?php echo 'R$ ' . htmlspecialchars($value['cost_value']); ?>
+                                        <?php echo 'R$ ' . htmlspecialchars($value['cost_value']); ?>
                                     <?php } ?>
                                 </th>
                                 <th><?php echo htmlspecialchars($value['stock_quantity']); ?></th>
                                 <th>
                                     <?php if (htmlspecialchars($value['reference']) == "") { ?>
-                                    <?php echo 'Sem Referencia'; ?>
+                                        <?php echo 'Sem Referencia'; ?>
                                     <?php } else { ?>
-                                    <?php echo htmlspecialchars($value['reference']); ?>
-                                    <?php } ?>                          
+                                        <?php echo htmlspecialchars($value['reference']); ?>
+                                    <?php } ?>
                                 </th>
                                 <th><?php echo htmlspecialchars($value['id_users']); ?></th>
                                 <th>
                                     <?php if (htmlspecialchars($value['model']) == "") { ?>
-                                    <?php echo 'Sem modelo'; ?>
+                                        <?php echo 'Sem modelo'; ?>
                                     <?php } else { ?>
-                                    <?php echo htmlspecialchars($value['model']) ?>
+                                        <?php echo htmlspecialchars($value['model']) ?>
                                     <?php } ?>
                                 </th>
                                 <th><?php echo htmlspecialchars($value['status_product']); ?></th>
@@ -91,11 +91,9 @@ $products = Controllers::SelectAll('products');
                                     <!-- <button onclick="ShowOnPage(this)" data-id="<?php echo $value['id']; ?>" class="btn btn-dark">
                                         Mostrar na pagina
                                     </button> -->
-                                    <?php if ($value['invoice'] == 'nota fiscal'): ?>
-                                        <a class="btn btn-info accessnivel"
-                                            href="<?php echo INCLUDE_PATH ?>edit-products?id=<?php echo base64_encode($value['id']); ?>">Editar
-                                        </a>
-                                    <?php endif; ?>
+                                    <a class="btn btn-info accessnivel"
+                                        href="<?php echo INCLUDE_PATH ?>edit-products?id=<?php echo base64_encode($value['id']); ?>">Editar
+                                    </a>
                                 </th>
                             </tr>
                         </tbody>

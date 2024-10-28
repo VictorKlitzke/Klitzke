@@ -70,6 +70,7 @@ $boxpdv = Controllers::SelectBoxPdv('boxpdv', $user_filter);
               <th>Observação</th>
               <th>Data abertura</th>
               <th>Retirada</th>
+              <th>Valor Caixa Atual</th>
               <th>Ações</th>
             </tr>
           </thead>
@@ -86,6 +87,7 @@ $boxpdv = Controllers::SelectBoxPdv('boxpdv', $user_filter);
                 <th><?php $date = new DateTime($value['open_date']);
                 echo htmlspecialchars($date->format('d/m/Y')); ?></th>
                 <th><?php echo htmlspecialchars($value['Withdrawal']); ?></th>
+                <th><?php echo htmlspecialchars($value['retiradatotal']); ?></th>
 
                 <th class="gap-2 d-flex">
                   <?php if ($value['status'] == 1) { ?>

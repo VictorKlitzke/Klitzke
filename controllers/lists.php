@@ -305,13 +305,19 @@ class lists
             $exec4->execute();
             $sumfinancial = $exec4->fetchAll(PDO::FETCH_ASSOC);
 
+            $query5 = "select SUM(total_value) TotalTodasVendas from `sales` WHERE sales.`id_payment_method` in (1,2,3,4)";
+            $exec5 = $sql->prepare($query5);
+            $exec5->execute();
+            $result_salesAll = $exec5->fetchAll(PDO::FETCH_ASSOC);
+
             echo json_encode([
                 'success' => true,
                 'result_payable' => $result_payable,
                 'result_control' => $result_control,
                 'result_aprazo' => $result_aprazo,
                 'total_sal' => $total_sal,
-                'sumfinancial' => $sumfinancial
+                'sumfinancial' => $sumfinancial,
+                'result_salesAll' => $result_salesAll
             ]);
 
         } catch (Exception $e) {

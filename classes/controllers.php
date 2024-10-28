@@ -94,11 +94,24 @@ class Controllers
 
         $query = "SELECT
                     boxpdv.*,
-                    users.name users,
-                    COALESCE((SELECT value FROM sangria_boxpdv WHERE sangria_boxpdv.id_boxpdv = boxpdv.id LIMIT 1), 'Sem Retirada') AS Withdrawal            
+                    users.name AS users,
+                    COALESCE(
+                        (SELECT value 
+                        FROM sangria_boxpdv 
+                        WHERE sangria_boxpdv.id_boxpdv = boxpdv.id 
+                        LIMIT 1), 
+                        'Sem Retirada'
+                    ) AS Withdrawal,
+                    boxpdv.value - COALESCE(
+                        (SELECT value 
+                        FROM sangria_boxpdv 
+                        WHERE sangria_boxpdv.id_boxpdv = boxpdv.id 
+                        LIMIT 1), 
+                        0
+                    ) AS retiradatotal
                 FROM
                     $name_table
-                    INNER JOIN users ON users.id = boxpdv.id_users
+                    INNER JOIN users ON users.id = boxpdv.id_users;
         ";
 
         $conditions = [];

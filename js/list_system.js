@@ -20,7 +20,6 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 function showToast(message, id) {
-    console.log("Notificação gerada");
 
     const toastContainer = document.getElementById('toastContainer');
     const toastElement = document.createElement('div');
@@ -61,7 +60,6 @@ function removeNotification(id) {
 }
 function addNotificationToQueue(message, id) {
     showToast(message, id);
-    console.log(`Adicionando notificação para ID ${id}: ${message}`);
 }
 
 async function InativarInvo(button) {
@@ -386,8 +384,6 @@ async function DetailsOrder(button) {
 
         const result = await response.json();
 
-        console.log(result);
-
         if (result.success) {
             const items = result.items;
 
@@ -447,14 +443,11 @@ async function InativarUsers(button) {
                 body: JSON.stringify({ id_users_inativar: id_users_inativar })
             });
 
-            console.log(response);
-
             if (!response.ok) {
                 throw new Error(`Erro HTTP! Status: ${response.status}`);
             }
 
             const responseText = await response.text();
-            console.log("Resposta do servidor (texto bruto):", responseText);
 
             let responseBody;
             try {
@@ -792,7 +785,8 @@ async function ListProducts() {
                 row.appendChild(stockCell);
 
                 const valueCell = document.createElement('th');
-                valueCell.textContent = product.value_product;
+                const value = parseFloat(product.value_product);
+                valueCell.textContent = numberFormat(value);
                 row.appendChild(valueCell);
 
                 const statusCell = document.createElement('th');
@@ -857,37 +851,53 @@ async function calculateTotalsListAPrazo() {
             const total_sal = data.total_sal;
             const sum_saldo = document.getElementById('saldoAtual');
 
+            const result_salesAll = data.result_salesAll;
+            const sum_result_salesAll = document.getElementById('totalAllVendas');
+
             sum_payable.innerHTML = '';
             sum_aprazo.innerHTML = '';
             sum_control.innerHTML = '';
             sum_saldo.innerHTML = '';
+            sum_result_salesAll.innerHTML = '';
 
             total_sal.forEach(ts => {
                 const span = document.createElement('span');
-                span.textContent = ts.TotalSaldo;
+                const valor = parseFloat(ts.TotalSaldo);
+                span.textContent = numberFormat(valor);
                 sum_saldo.appendChild(span);
             });
 
             result_payable.forEach(rp => {
                 const span = document.createElement('span');
-                span.textContent = rp.TotalContasPagar;
+                const valor = parseFloat(rp.TotalContasPagar) || 0;
+                span.textContent = numberFormat(valor);
                 sum_payable.appendChild(span);
             });
 
             result_aprazo.forEach(ra => {
                 const span = document.createElement('span');
-                if (ra.TotalContasNaoRecebidas == null) {
+                const valor = parseFloat(ra.TotalContasNaoRecebidas) || 0;
+                if (valor == null) {
                     span.textContent = 'Todas as contas em dia';
                 } else {
-                    span.textContent = ra.TotalContasNaoRecebidas;
+                    span.textContent = numberFormat(valor);
                 }
                 sum_aprazo.appendChild(span);
             });
 
             result_control.forEach(rc => {
                 const span = document.createElement('span');
-                span.textContent = rc.TotalContasReceber;
+                const valor = parseFloat(rc.TotalContasReceber) || 0;
+                span.textContent = numberFormat(valor);
                 sum_control.appendChild(span);
+            });
+
+            result_salesAll.forEach(sa => {
+                const span = document.createElement('span');
+                const valor = parseFloat(sa.TotalTodasVendas) || 0; 
+                span.textContent = numberFormat(valor);
+            
+                sum_result_salesAll.appendChild(span);
             });
 
         } else {
@@ -922,8 +932,6 @@ async function ListAPrazo(searchTermFinancialControl = '') {
         }
 
         const data = await response.json();
-
-        console.log(data);
 
         if (data.success) {
             const salesData = data.salesData || [];
@@ -994,7 +1002,8 @@ async function ListAPrazo(searchTermFinancialControl = '') {
                 rowFinancialControl.appendChild(descriptionCell);
 
                 const valueCell = document.createElement('td');
-                valueCell.textContent = `R$ ${parseFloat(fc.value || 0).toFixed(2).replace('.', ',')}`;
+                const value = parseFloat(fc.value) || 0;
+                valueCell.textContent = `R$ ${numberFormat(value)}`;
                 rowFinancialControl.appendChild(valueCell);
 
                 const dateCell = document.createElement('td');
@@ -1005,6 +1014,17 @@ async function ListAPrazo(searchTermFinancialControl = '') {
                     dateCell.textContent = 'Data não disponível';
                 }
                 rowFinancialControl.appendChild(dateCell);
+
+                const date_settlementCell = document.createElement('td');
+                if (fc.date_settlement) {
+                    const [datePart, timePart] = fc.date_settlement.split(' ');
+                    const [year, month, day] = datePart.split('-');
+                    const [hour, minute, second] = timePart.split(':');
+                    date_settlementCell.textContent = `${day}/${month}/${year} ${hour}:${minute}:${second}`;
+                } else {
+                    date_settlementCell.textContent = 'Sem Pagamento';
+                }
+                rowFinancialControl.appendChild(date_settlementCell);
 
                 const typeCell = document.createElement('td');
                 typeCell.textContent = fc.type || 'Sem tipo';
@@ -1043,7 +1063,8 @@ async function ListAPrazo(searchTermFinancialControl = '') {
                 rowEntry.appendChild(descriptionCell);
 
                 const valueCell = document.createElement('td');
-                valueCell.textContent = `R$ ${parseFloat(fb.value || 0).toFixed(2).replace('.', ',')}`;
+                const value = parseFloat(fb.value) || 0;
+                valueCell.textContent = `R$ ${numberFormat(value)}`;
                 rowEntry.appendChild(valueCell);
 
                 const dateCell = document.createElement('td');
@@ -1083,7 +1104,8 @@ async function ListAPrazo(searchTermFinancialControl = '') {
                 allSalesRow.appendChild(formPagamentCell);
 
                 const totalValueCell = document.createElement('td');
-                totalValueCell.textContent = `R$ ${parseFloat(fs.total_value || 0).toFixed(2).replace('.', ',')}`;
+                const value = parseFloat(fs.total_value) || 0;
+                totalValueCell.textContent = `R$ ${numberFormat(value)}`;
                 allSalesRow.appendChild(totalValueCell);
 
                 const dateSalesCell = document.createElement('td');
@@ -1103,7 +1125,6 @@ async function ListAPrazo(searchTermFinancialControl = '') {
         } else {
             showMessage('Erro ao listar solicitações', 'error');
         }
-
 
     } catch (error) {
         console.log('Erro ao fazer requisição: ' + error.message);
@@ -1242,6 +1263,9 @@ function formatDate(date) {
     const month = String(date.getMonth() + 1).padStart(2, '0'); // Mês começa do 0, por isso somamos 1
     const year = date.getFullYear();
     return `${day}/${month}/${year}`;
+}
+function numberFormat(value) {
+    return value.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 }
 
 FieldFormBuyRequest.addEventListener('input', async function () {

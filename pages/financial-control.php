@@ -46,6 +46,14 @@ if (!isset($_SESSION['user_permissions'][$page_permission]) || $_SESSION['user_p
         </div>
       </div>
     </div>
+    <div class="col-md-6 col-lg-3 mb-3">
+      <div class="card bg-warning text-dark">
+        <div class="card-body">
+          <h5 class="card-title">Total Vendas</h5>
+          <p class="card-text" id="totalAllVendas"></p>
+        </div>
+      </div>
+    </div>
   </div>
 
   <div class="row mb-4">
@@ -103,6 +111,7 @@ if (!isset($_SESSION['user_permissions'][$page_permission]) || $_SESSION['user_p
               <th>Descrição</th>
               <th>Valor</th>
               <th>Data</th>
+              <th>Data Liquidação</th>
               <th>Tipo</th>
               <th>Ações</th>
             </tr>
@@ -151,14 +160,17 @@ if (!isset($_SESSION['user_permissions'][$page_permission]) || $_SESSION['user_p
   <div class="modal fade" id="detailsModal" tabindex="-1" aria-labelledby="detailsModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg modal-dialog-scrollable">
       <div class="modal-content">
-        <div class="modal-header bg-dark text-white">
+        <!-- Modal Header -->
+        <div class="modal-header bg-primary text-white">
           <h5 class="modal-title" id="detailsModalLabel">Detalhes da Parcela</h5>
           <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
+
+        <!-- Modal Body -->
         <div class="modal-body">
           <div class="table-responsive">
             <table class="table table-hover table-striped table-bordered" id="table-financial-control-detals">
-              <thead class="table-dark">
+              <thead class="table-primary text-center">
                 <tr>
                   <th>Selecionar</th>
                   <th>#</th>
@@ -168,22 +180,28 @@ if (!isset($_SESSION['user_permissions'][$page_permission]) || $_SESSION['user_p
                   <th>Tipo</th>
                 </tr>
               </thead>
-              <tbody id="financial-control-result-detals">
+              <tbody id="financial-control-result-detals" class="text-center">
               </tbody>
             </table>
           </div>
         </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
-          <button type="button" onclick="FinalizeAPrazo()" class="btn btn-primary">Faturar</button>
+
+        <div class="modal-footer justify-content-between">
+          <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+            <i class="fas fa-times"></i> Fechar
+          </button>
+          <button type="button" onclick="FinalizeAPrazo()" class="btn btn-success">
+            <i class="fas fa-check-circle"></i> Faturar
+          </button>
         </div>
       </div>
     </div>
   </div>
+
   <br>
   <div class="card mb-4">
     <div class="card-header">
-      Adicionar Entradas
+      Adicionar Entradas/Saidas
     </div>
     <div class="card-body">
       <form>

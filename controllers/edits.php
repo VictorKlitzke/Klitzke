@@ -182,10 +182,11 @@ class Edit
             }
 
             $exec = $sql->prepare("UPDATE $name_table SET 
-            pay = :pay
+            pay = :pay, date_settlement = :date_settlement
             WHERE id = :id_account AND `type` = 'contas a pagar'");
 
             $exec->bindParam(':pay', $pay, PDO::PARAM_STR);
+            $exec->bindParam(':date_settlement', $today, PDO::PARAM_STR);
             $exec->bindParam(':id_account', $id_account, PDO::PARAM_INT);
             $exec->execute();
 
@@ -197,7 +198,6 @@ class Edit
             http_response_code(500);
             echo json_encode(['error' => 'Erro no banco de dados: ' . $e->getMessage(), 'code' => $e->getCode()]);
         }
-
     }
     public static function UserAccess($sql, $user_id)
     {
