@@ -30,6 +30,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $value_fisico = $requestData['value_fisico'] ?? 0;
     $value_difference = $requestData['value_difference'] ?? 0;
     $soma_money_system = $requestData['soma'] ?? 0;
+    $totalizador_box_all = $requestData['TotalizadorBox'] ?? 0;
     $date_close = $requestData['date_close'] ?? '';
 
     try {
@@ -56,13 +57,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $value_fisico = floatval($value_fisico);
             $value_difference = floatval($value_difference);
             $soma_money_system = floatval($soma_money_system);
+            $totalizador_box_all = str_replace('.', '', $totalizador_box_all); 
+            $totalizador_box_all = str_replace(',', '.', $totalizador_box_all);
 
             $date_close = date('Y-m-d H:i:s', strtotime($date_close));
 
             $exec = $sql->prepare("INSERT INTO box_closing (id_boxpdv, value_debit, value_credit, 
-                                            value_pix, value_money, value_aprazo, date_close, boxpdv_difference, value_fisico, value_system, soma_money_system) 
+                                            value_pix, value_money, value_aprazo, date_close, boxpdv_difference, value_fisico, value_system, 
+                                            soma_money_system, totalizador_box_all) 
                                         VALUES (:id_boxpdv, :value_debit, :value_credit, :value_pix, :value_money, 
-                                            :value_aprazo, :date_close, :boxpdv_difference, :value_fisico, :value_system, :soma_money_system)");
+                                            :value_aprazo, :date_close, :boxpdv_difference, :value_fisico, 
+                                            :value_system, :soma_money_system, :totalizador_box_all)");
 
             $exec->bindParam(':id_boxpdv', $id_boxpdv, PDO::PARAM_INT);
             $exec->bindParam(':value_debit', $value_debit, PDO::PARAM_STR);
@@ -75,6 +80,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $exec->bindParam(':value_fisico', $value_fisico, PDO::PARAM_STR);
             $exec->bindParam(':value_system', $value_system, PDO::PARAM_STR);
             $exec->bindParam(':soma_money_system', $soma_money_system, PDO::PARAM_STR);
+            $exec->bindParam(':totalizador_box_all', $totalizador_box_all, PDO::PARAM_STR);
             $exec->execute();
 
             $exec = $sql->prepare("UPDATE boxpdv SET status = :status_update WHERE id_users = :id_users");

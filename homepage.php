@@ -38,15 +38,7 @@ if (isset($_GET['loggout'])) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="<?php echo INCLUDE_PATH_PANEL; ?>../css/system.css">
-    <link rel="stylesheet" href="<?php echo INCLUDE_PATH_PANEL; ?>../css/modalInvoicing.css">
     <link rel="stylesheet" href="<?php echo INCLUDE_PATH_PANEL; ?>../css/style.css" />
-    <link rel="stylesheet" href="<?php echo INCLUDE_PATH_PANEL; ?>../css/sales.css" />
-    <link rel="stylesheet" href="<?php echo INCLUDE_PATH_PANEL; ?>../css/main.css" />
-    <link rel="stylesheet" href="<?php echo INCLUDE_PATH_PANEL; ?>../css/request.css" />
-    <link rel="stylesheet" href="<?php echo INCLUDE_PATH_PANEL; ?>../css/selectedClients.css" />
-    <link rel="stylesheet" href="<?php echo INCLUDE_PATH_PANEL; ?>../css/modalPortion.css" />
-    <link rel="stylesheet" href="<?php echo INCLUDE_PATH_PANEL; ?>../css/font-awesome.min.css">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://getbootstrap.com/docs/5.3/assets/css/docs.css" rel="stylesheet">
@@ -58,7 +50,7 @@ if (isset($_GET['loggout'])) {
 <body>
 
     <nav class="navbar bg-dark">
-        <div class="container-fluid">
+        <div class="container-fluid shadow-sm">
 
             <button style="background: #fff" id="menu-btn" class="navbar-toggler" type="button"
                 data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar" aria-controls="offcanvasNavbar"
@@ -422,8 +414,8 @@ if (isset($_GET['loggout'])) {
         <div class="overlay" id="overlay">
             <div class="modal" id="close-boxpdv" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
                 <div class="modal-dialog modal-dialog-centered modal-lg">
-                    <div class="modal-content bg-dark text-white rounded-3">
-                        <div class="modal-header bg-dark text-white rounded-top">
+                    <div class="modal-content bg-light text-dark rounded-3 shadow">
+                        <div class="modal-header" style="background-color: #007BFF; color: white;">
                             <h4 class="modal-title" id="modalLabel">Fechamento do Caixa</h4>
                             <button type="button" id="close-boxpdv-modal" class="btn-close btn-close-white"
                                 data-bs-dismiss="modal" aria-label="Close"></button>
@@ -434,19 +426,17 @@ if (isset($_GET['loggout'])) {
                                     <div class="col-md-6">
                                         <div class="mb-3">
                                             <label for="value_debit" class="form-label">Débito</label>
-                                            <input id="value_debit"
-                                                class="form-control bg-secondary text-white border-light" type="text"
+                                            <input id="value_debit" class="form-control" type="text"
                                                 placeholder="Débito" name="value_debit"
-                                                value="<?php echo $total_debit; ?>" />
+                                                value="<?php echo $total_debit; ?>" readonly/>
                                         </div>
                                     </div>
                                     <div class="col-md-6">
                                         <div class="mb-3">
                                             <label for="value_credit" class="form-label">Crédito</label>
-                                            <input id="value_credit"
-                                                class="form-control bg-secondary text-white border-light" type="text"
+                                            <input id="value_credit" class="form-control" type="text"
                                                 placeholder="Crédito" name="value_credit"
-                                                value="<?php echo $total_credit; ?>" />
+                                                value="<?php echo $total_credit; ?>" readonly/>
                                         </div>
                                     </div>
                                 </div>
@@ -455,18 +445,16 @@ if (isset($_GET['loggout'])) {
                                     <div class="col-md-6">
                                         <div class="mb-3">
                                             <label for="value_pix" class="form-label">PIX</label>
-                                            <input id="value_pix"
-                                                class="form-control bg-secondary text-white border-light" type="text"
-                                                placeholder="PIX" name="value_pix" value="<?php echo $total_pix; ?>" />
+                                            <input id="value_pix" class="form-control" type="text" placeholder="PIX"
+                                                name="value_pix" value="<?php echo $total_pix; ?>" readonly/>
                                         </div>
                                     </div>
                                     <div class="col-md-6">
                                         <div class="mb-3">
                                             <label for="value_money" class="form-label">Dinheiro</label>
-                                            <input id="value_money"
-                                                class="form-control bg-secondary text-white border-light" type="text"
+                                            <input id="value_money" class="form-control" type="text"
                                                 placeholder="Dinheiro" name="value_money"
-                                                value="<?php echo $total_money; ?>" />
+                                                value="<?php echo $total_money; ?>" readonly/>
                                         </div>
                                     </div>
                                 </div>
@@ -475,19 +463,17 @@ if (isset($_GET['loggout'])) {
                                     <div class="col-md-6">
                                         <div class="mb-3">
                                             <label for="value_aprazo" class="form-label">A Prazo</label>
-                                            <input id="value_aprazo"
-                                                class="form-control bg-secondary text-white border-light" type="text"
+                                            <input id="value_aprazo" class="form-control" type="text"
                                                 placeholder="A Prazo" name="value_aprazo"
-                                                value="<?php echo $total_aprazo; ?>" />
+                                                value="<?php echo $total_aprazo; ?>" readonly/>
                                         </div>
                                     </div>
                                     <div class="col-md-6">
                                         <div class="mb-3">
                                             <label for="value_system" class="form-label">Caixa Sistema</label>
-                                            <input id="value_system"
-                                                class="form-control bg-secondary text-white border-light" type="text"
+                                            <input id="value_system" class="form-control" type="text"
                                                 placeholder="Caixa Sistema" name="value_system"
-                                                value="<?php echo $result_system['value_boxpdv']; ?>" />
+                                                value="<?php echo $result_system['value_boxpdv']; ?>" readonly/>
                                         </div>
                                     </div>
                                 </div>
@@ -496,8 +482,7 @@ if (isset($_GET['loggout'])) {
                                     <div class="col-md-6">
                                         <div class="mb-3">
                                             <label for="value_fisico" class="form-label">Caixa Físico</label>
-                                            <input id="value_fisico"
-                                                class="form-control bg-secondary text-white border-light" type="text"
+                                            <input id="value_fisico" class="form-control" type="text"
                                                 placeholder="Caixa Físico" name="value_fisico"
                                                 oninput="calculateDifference()" />
                                         </div>
@@ -505,25 +490,29 @@ if (isset($_GET['loggout'])) {
                                     <div class="col-md-6">
                                         <div class="mb-3">
                                             <label for="value_difference" class="form-label">Diferença</label>
-                                            <input id="value_difference"
-                                                class="form-control bg-secondary text-white border-light" type="text"
+                                            <input id="value_difference" class="form-control" type="text"
                                                 placeholder="Diferença" name="value_difference" readonly />
                                         </div>
                                     </div>
 
                                     <div class="col-sm-6">
                                         <div class="mb-3">
-                                            <label class="text-white">Data fechamento</label>
-                                            <input id="date_close"
-                                                class="form-control bg-secondary text-white border-light" type="date"
-                                                placeholder="Data fechamento" name="date_close">
+                                            <label class="text-dark">Data fechamento</label>
+                                            <input id="date_close" class="form-control" type="date" name="date_close" />
                                         </div>
                                     </div>
                                     <div class="col-sm-6">
                                         <div class="mb-3">
-                                            <label class="text-white">Soma: Dinheiro + caixa Sistema</label>
-                                            <input id="soma" class="form-control bg-secondary text-white border-light"
-                                                type="text" placeholder="Soma: Dinheiro + caixa Sistema" readonly>
+                                            <label class="text-dark">Soma: Dinheiro + Abertura de caixa</label>
+                                            <input id="soma" class="form-control" type="text"
+                                                placeholder="Soma: Dinheiro + caixa Sistema" readonly />
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-12">
+                                        <div class="mb-3">
+                                            <label class="text-dark">Soma: Total + Caixa Sistema</label>
+                                            <input id="TotalizadorBox" class="form-control" type="text"
+                                                placeholder="Soma: Total + caixa Sistema" readonly />
                                         </div>
                                     </div>
                                 </div>
@@ -539,8 +528,6 @@ if (isset($_GET['loggout'])) {
                 </div>
             </div>
         </div>
-
-
 
         <div class="message-container" id="message-container"></div>
     </div>

@@ -30,7 +30,7 @@ if (isset($_POST['action'])) {
                 $dateFinal = date('Y-m-d H:i:s', strtotime($dateStart . ' + 15 days'));
 
                 $insertCode = $sql->prepare("INSERT INTO validade_system (code, date_start, date_final, id_users) 
-                                             VALUES(:code, :date_start, :date_final, :id_users)");
+                                            VALUES(:code, :date_start, :date_final, :id_users)");
                 $insertCode->bindValue(':code', $randomCode, PDO::PARAM_STR);
                 $insertCode->bindValue(':date_start', $dateStart, PDO::PARAM_STR);
                 $insertCode->bindValue(':date_final', $dateFinal, PDO::PARAM_STR);
@@ -83,70 +83,41 @@ if (isset($_POST['action'])) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="<?php echo INCLUDE_PATH; ?>css/login.css" />
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://getbootstrap.com/docs/5.3/assets/css/docs.css" rel="stylesheet">
     <link rel="icon" href="<?php echo INCLUDE_PATH; ?>./public/logo/favicon.ico" type="image/x-icon" />
     <title><?php echo $title_login; ?></title>
 </head>
 
 <body>
-    <div class="wrapper">
-        <span class="bg-animate"></span>
-        <span class="bg-animate2"></span>
-
-        <div class="form-box login">
-            <h2 class="animation" style="--i:0;">Login</h2>
-            <form action="#" method="POST">
-                <div class="input-box animation" style="--i:1;">
-                    <input type="text" name="name" required />
-                    <label>Usuario</label>
-                    <i class='bx bxs-user'></i>
+    <div class="container-fluid min-vh-100 d-flex justify-content-center align-items-center bg-light">
+        <div class="row w-100 mx-0" style="max-width: 1000px;">
+            <div
+                class="col-lg-6 p-5 d-none d-lg-flex flex-column justify-content-center bg-primary text-light rounded-start">
+                <h2 class="display-5 fw-bold mb-4">Bem-vindo ao <?php echo $title; ?></h2>
+                <p class="lead">Onde seu negócio toma novos rumos. Acesse sua conta para começar!</p>
+            </div>
+            <div class="col-lg-6 p-5 bg-white rounded-end shadow-lg">
+                <div class="text-center mb-4">
+                    <h3 class="fw-bold">Acesse sua Conta</h3>
+                    <p class="text-muted">Faça login para continuar</p>
                 </div>
-                <div class="input-box animation" style="--i:2;">
-                    <input type="password" name="password" required />
-                    <label>Senha</label>
-                    <i class='bx bxs-lock-alt'></i>
-                </div>
-                <div>
-                    <button type="submit" name="action" class="btn animation" style="--i:3;">Login</button>
-                    <!-- <div class="logreg-link animation" style="--i:4;">
-                        <p>Não tem uma Conta ?<a href="#" class="register-link">Registrar-me</a></p>
-                    </div> -->
-                </div>
-            </form>
-        </div>
-        <div class="info-text login">
-            <h3 class="animation" style="--i:0; font-size: 32px;">Bem vindo ao <?php echo $title; ?></h3>
-            <p class="animation" style="--i:1;">Onde seu negocio toma novos rumos</p>
-        </div>
-        <div class="form-box register">
-            <h2 class="animation" style="--i:17;">Registrar-me</h2>
-            <form action="#" method="POST">
-                <div class="input-box animation" style="--i:18;">
-                    <input type="text" name="name" required />
-                    <label>Usuario</label>
-                    <i class='bx bxs-user'></i>
-                </div>
-                <div class="input-box animation" style="--i:19;">
-                    <input type="text" name="name" required />
-                    <label>Email</label>
-                    <i class='bx bxs-envelope'></i>
-                </div>
-                <div class="input-box animation" style="--i:20;">
-                    <input type="password" name="password" required />
-                    <label>Senha</label>
-                    <i class='bx bxs-lock-alt'></i>
-                </div>
-                <div>
-                    <button type="submit" name="action" class="btn animation" style="--i:21;">Registrar</button>
-                    <div class="logreg-link animation" style="--i:22;">
-                        <p>Já tem uma Conta ?<a href="#" class="login-link">Entrar</a></p>
+                <form method="POST">
+                    <div class="form-floating mb-4">
+                        <input type="text" class="form-control" name="name" id="usernameLogin" placeholder="Usuário" required>
+                        <label for="usernameLogin">Usuário</label>
                     </div>
+                    <div class="form-floating mb-4">
+                        <input type="password" class="form-control" name="password" id="passwordLogin" placeholder="Senha" required>
+                        <label for="passwordLogin">Senha</label>
+                    </div>
+                    <button type="submit" name="action" class="btn btn-primary w-100 py-2 fs-5">Login</button>
+                </form>
+                <div class="text-center mt-4">
+                    <a class="text-decoration-none text-primary">Esqueceu sua senha?</a>
                 </div>
-            </form>
-        </div>
-        <div class="info-text register">
-            <h2 class="animation" style="--i:17;">Bem vindo de volta !</h2>
-            <p class="animation" style="--i:18;">Onde seu negocio toma novos rumos</p>
+            </div>
         </div>
     </div>
 </body>

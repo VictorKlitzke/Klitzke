@@ -5,6 +5,7 @@ const overlay = document.getElementById("overlay");
 
 document.addEventListener('DOMContentLoaded', () => {
   calculateMoneySystem();
+  calculateTotalizadoAll();
 });
 
 OpenBoxpdv.addEventListener("click", async (e) => {
@@ -44,6 +45,7 @@ async function closeBox() {
   let value_system = parseFloat(document.getElementById('value_system').value);
   let close_date = document.getElementById('date_close').value;
   let soma = document.getElementById('soma').value;
+  let TotalizadorBox = document.getElementById('TotalizadorBox').value;
 
   if (value_system == "" || value_fisico == "") {
     showMessage('Valor sistema ou valor fisico sem valor', 'warning');
@@ -60,7 +62,8 @@ async function closeBox() {
     value_fisico: value_fisico,
     value_difference: value_difference,
     close_date: close_date,
-    soma: soma
+    soma: soma,
+    TotalizadorBox: TotalizadorBox
   }
 
   continueMessage("Deseja realmente fechar o caixa?", "Sim", "Não", async function () {
@@ -96,6 +99,7 @@ async function closeBox() {
             <p><strong>Total do Sistema:</strong> R$ ${value_system.toFixed(2)}</p>
             <p><strong>Total Físico:</strong> R$ ${value_fisico.toFixed(2)}</p>
             <p><strong>Diferença:</strong> R$ ${value_difference.toFixed(2)}</p>
+            <p><strong>Diferença:</strong> R$ ${TotalizadorBox.toFixed(2)}</p>
           `;
 
           CloseBoxpdv.style.display = 'none';
@@ -140,10 +144,27 @@ function calculateMoneySystem() {
   let value_system = parseFloat(document.getElementById('value_system').value) || 0;
   let value_money = parseFloat(document.getElementById('value_money').value) || 0;
 
-  let soma = value_system + value_money;  
+  let soma = value_system + value_money;
 
   const somaField = document.getElementById('soma');
   if (somaField) {
     somaField.value = soma.toFixed(2);
+  }
+}
+function calculateTotalizadoAll() {
+  const values = [
+    parseFloat(document.getElementById('value_debit').value) || 0,
+    parseFloat(document.getElementById('value_credit').value) || 0,
+    parseFloat(document.getElementById('value_pix').value) || 0,
+    parseFloat(document.getElementById('value_money').value) || 0,
+    parseFloat(document.getElementById('value_aprazo').value) || 0,
+    parseFloat(document.getElementById('value_system').value) || 0,
+  ];
+
+  const totalAll = values.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
+
+  const TotalizadoBox = document.getElementById('TotalizadorBox');
+  if (TotalizadoBox) {
+    TotalizadoBox.value = numberFormat(totalAll); 
   }
 }

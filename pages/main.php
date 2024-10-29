@@ -61,32 +61,33 @@ $count_sales = Controllers::SelectAll('sales');
 
 ?>
 
-<div class="box-content">
-  <div class="row">
-    <div class="col">
-      <h1 class="text-white">
-        Ola,
-        <?php echo $_SESSION['name']; ?>
+<div class="bg-primary text-light p-4">
+  <div class="row justify-content-between align-items-center">
+    <div class="col-lg-6 text-start">
+      <h1 class="display-5 fw-bold mb-3" style="text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);">
+        Olá, <?php echo htmlspecialchars($_SESSION['name']); ?>
       </h1>
-      <p class="text-white">
-        Aqui esta tudo que aconteceu até o momento!
+      <p class="lead mb-0" style="opacity: 0.9;">
+        Aqui está tudo o que aconteceu até o momento!
       </p>
     </div>
   </div>
 </div>
 
-<div class="container-fluid card">
+<br>
+
+<div class="container-fluid card bg-light p-4 rounded-3 shadow-sm">
   <div class="row">
-    <div class="col" style="max-height: 700px; overflow-y: auto; overflow-x: auto;">
+    <div class="col" style="max-height: 700px; overflow-y: auto;">
       <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 class="text-black">Quadro de Avisos</h2>
-        <button id="toggle-btn" class="btn btn-light" onclick="toggleNoticeBoard()" style="border: none;">
+        <h2 class="text-primary fw-bold">Quadro de Avisos</h2>
+        <button id="toggle-btn" class="btn btn-outline-primary" onclick="toggleNoticeBoard()">
           <i id="toggle-icon" class="fas fa-chevron-down" style="font-size: 1.5rem;"></i>
         </button>
       </div>
-      <div aria-live="polite" aria-atomic="true" class="d-flex flex-wrap justify-content-start">
-        <table class="table table-striped">
-          <thead class="table-dark">
+      <div aria-live="polite" aria-atomic="true">
+        <table class="table table-hover align-middle">
+          <thead class="table-primary">
             <tr>
               <th scope="col">Conta</th>
               <th scope="col">Valor</th>
@@ -96,54 +97,59 @@ $count_sales = Controllers::SelectAll('sales');
           </thead>
           <tbody id="notice-board" class="notice-board d-none">
           </tbody>
+          <tbody class="d-none" id="no-data">
+            <tr>
+              <td colspan="4" class="text-center text-muted">Nenhum aviso disponível</td>
+            </tr>
+          </tbody>
         </table>
       </div>
     </div>
   </div>
 </div>
-  
+
 <br>
 
-<div class="row">
-  <div class="col-sm-6 mb-3">
-    <div class="card border-primary shadow">
-      <div class="card-body">
-        <h4 class="card-title text-primary">Produtos em Estoque</h4>
-        <h2 class="display-5 fw-bold text-center">
+<div class="row g-4">
+  <div class="col-sm-6">
+    <div class="card border-light shadow-sm rounded-3">
+      <div class="card-body text-center">
+        <h4 class="card-title text-primary fw-bold">Produtos em Estoque</h4>
+        <h2 class="display-5 fw-bold text-primary mb-0">
           <?php echo $result['stock_quantity']; ?>
         </h2>
       </div>
     </div>
   </div>
 
-  <div class="col-sm-6 mb-3">
-    <div class="card border-success shadow">
-      <div class="card-body">
-        <h4 class="card-title text-success">Clientes</h4>
-        <h2 class="display-5 fw-bold text-center">
+  <div class="col-sm-6">
+    <div class="card border-light shadow-sm rounded-3">
+      <div class="card-body text-center">
+        <h4 class="card-title text-success fw-bold">Clientes</h4>
+        <h2 class="display-5 fw-bold text-success mb-0">
           <?php echo count($count_clients); ?>
         </h2>
       </div>
     </div>
   </div>
 
-  <div class="col-sm-6 mb-3">
-    <div class="card border-info shadow">
-      <div class="card-body">
-        <h4 class="card-title text-info">Vendas</h4>
-        <h2 class="display-5 fw-bold text-center">
+  <div class="col-sm-6">
+    <div class="card border-light shadow-sm rounded-3">
+      <div class="card-body text-center">
+        <h4 class="card-title text-info fw-bold">Vendas</h4>
+        <h2 class="display-5 fw-bold text-info mb-0">
           <?php echo count($count_sales); ?>
         </h2>
       </div>
     </div>
   </div>
 
-  <div class="col-sm-6 mb-3">
-    <div class="card border-warning shadow">
-      <div class="card-body">
-        <h4 class="card-title text-warning">Produto + Vendido</h4>
-        <h2 class="display-5 fw-bold text-center">
-          <?php echo $result_prod['name_product']; ?>
+  <div class="col-sm-6">
+    <div class="card border-light shadow-sm rounded-3">
+      <div class="card-body text-center">
+        <h4 class="card-title text-warning fw-bold">Produto Mais Vendido</h4>
+        <h2 class="display-5 fw-bold text-warning mb-0">
+          <?php echo htmlspecialchars($result_prod['name_product']); ?>
         </h2>
       </div>
     </div>
@@ -151,6 +157,7 @@ $count_sales = Controllers::SelectAll('sales');
 </div>
 
 <br>
+
 <?php
 
 $sql = Db::Connection();
@@ -161,13 +168,13 @@ $status_product = $products->fetchAll();
 
 ?>
 
-<div class="box-content">
+<div class="container-fluid card bg-light shadow-sm p-4 rounded-4">
   <div class="row">
     <div class="col">
-      <h2 class="text-white mb-4">Produtos Negativados</h2>
-      <div class="table-responsive">
-        <table class="table table-dark table-hover">
-          <thead>
+      <h2 class="text-primary mt-2" style="text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);">Produtos Negativados</h2>
+      <div class="mt-4">
+        <table class="table table-hover align-middle">
+          <thead class="table-primary">
             <tr>
               <th scope="col">Nome</th>
               <th scope="col">Quantidade</th>
@@ -175,13 +182,16 @@ $status_product = $products->fetchAll();
             </tr>
           </thead>
           <tbody>
-            <?php
-            foreach ($status_product as $row => $value) {
-              ?>
+            <?php foreach ($status_product as $row => $value) { ?>
               <tr>
-                <th scope="row"><?php echo $value['product']; ?></th>
-                <td><?php echo $value['product_stock_quantity']; ?></td>
-                <td><?php echo $value['status_product']; ?></td>
+                <th scope="row" class="text-dark"><?php echo $value['product']; ?></th>
+                <td class="text-dark"><?php echo $value['product_stock_quantity']; ?></td>
+                <td class="text-dark">
+                  <span class="badge 
+                      <?php echo ($value['status_product'] === 'Ativo') ? 'bg-success' : 'bg-danger'; ?>">
+                    <?php echo $value['status_product']; ?>
+                  </span>
+                </td>
               </tr>
             <?php } ?>
           </tbody>
@@ -191,100 +201,51 @@ $status_product = $products->fetchAll();
   </div>
 </div>
 
-<div class="box-content">
+<br>
+
+<div class="container-fluid card bg-light shadow-sm p-4 rounded-4">
   <div class="row">
-    <div class="col" style="max-height: 700px;">
-      <h2 class="text-white mb-4">Lista das 10 ultimas vendas</h2>
-      <div class="table-responsive" style="max-height: 700px; overflow-y: auto; overflow-x: auto;">
-        <table class="table table-dark table-hover">
-          <thead style="white-space: nowrap;">
-            <th scope="col">#</th>
-            <th scope="col">Usuario</th>
-            <th scope="col">Cliente</th>
-            <th scope="col">Forma de Pagamento</th>
-            <th scope="col">Status Venda</th>
-            <th scope="col">Valor Total</th>
-            <th scope="col">Data</th>
-            <th scope="col">Ações</th>
+    <div class="col">
+      <h2 class="text-primary mt-2" style="text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);">Lista das 10 Últimas Vendas
+      </h2>
+      <div class="mt-4" style="max-height: 700px; overflow-y: auto;">
+        <table class="table table-hover align-middle">
+          <thead class="table-primary">
+            <tr>
+              <th scope="col">#</th>
+              <th scope="col">Usuário</th>
+              <th scope="col">Cliente</th>
+              <th scope="col">Forma de Pagamento</th>
+              <th scope="col">Status Venda</th>
+              <th scope="col">Valor Total</th>
+              <th scope="col">Data</th>
+              <th scope="col">Ações</th>
+            </tr>
           </thead>
-
-          <?php
-
-          foreach ($result_sales as $key => $value) {
-
-            ?>
-
-            <tbody style="white-space: nowrap;">
-
+          <tbody style="white-space: nowrap;">
+            <?php foreach ($result_sales as $key => $value): ?>
               <tr>
                 <th scope="row"><?php echo htmlspecialchars($value['id']); ?></th>
-                <th> <?php echo htmlspecialchars($value['users']); ?></th>
-
-                <?php if (htmlspecialchars($value['clients']) == null) {
-                  echo '<td><p>' . 'Cliente consumidor final' . '</p></td>';
-                } else {
-                  echo '<td><p>' . htmlspecialchars($value['clients']) . '</p></td>';
-                }
-                ?>
-                <th><?php echo htmlspecialchars($value['form_payment']); ?></th>
-                <th><?php echo htmlspecialchars($value['status_sales']); ?></th>
-                <th><?php echo htmlspecialchars($value['total_value']); ?></th>
-                <th><?php echo htmlspecialchars($value['date_sales']); ?></th>
-
-                <th>
-                  <?php
-
-                  if ($value['status'] == 2) {
-
-                    ?>
-
-                    <button onclick="ReopenSales(this)" type="button" data-id="<?php echo $value['id'] ?>"
-                      class="btn btn-info accessnivel">Reabrir venda
-                    </button>
-
-                  <?php } else { ?>
-
+                <td><?php echo htmlspecialchars($value['users']); ?></td>
+                <td><?php echo htmlspecialchars($value['clients'] ?? 'Cliente consumidor final'); ?></td>
+                <td><?php echo htmlspecialchars($value['form_payment']); ?></td>
+                <td><?php echo htmlspecialchars($value['status_sales']); ?></td>
+                <td><?php echo htmlspecialchars($value['total_value']); ?></td>
+                <td><?php echo htmlspecialchars($value['date_sales']); ?></td>
+                <td>
+                  <?php if ($value['status'] == 2): ?>
+                    <button onclick="ReopenSales(this)" type="button" data-id="<?php echo $value['id']; ?>"
+                      class="btn btn-info">Reabrir venda</button>
+                  <?php else: ?>
                     <button onclick="CancelSales(this)" data-id="<?php echo $value['id']; ?>" type="button"
-                      class="btn btn-danger accessnivel">Cancelar venda
-                    </button>
-
-                  <?php } ?>
-
-                  <!-- <button onclick="Details(this)" data-id="<?php echo $value['id']; ?>" type="button"
-                      class="btn btn-primary">
-                      Mais detalhes
-                    </button> -->
-                </th>
+                      class="btn btn-danger">Cancelar venda</button>
+                  <?php endif; ?>
+                </td>
               </tr>
-            </tbody>
-
-          <?php } ?>
-
+            <?php endforeach; ?>
+          </tbody>
         </table>
       </div>
-    </div>
-  </div>
-</div>
-
-<div class="overlay-details" id="overlay-details">
-  <div id="modal-print" class="modal">
-    <div class="modal-content-details" id="modal-content-details">
-      <span class="close-details" onclick="CloseModalInfo()" id="close-details">&times;</span>
-      <h1>Venda ID: <span id="saleId"></span></h1>
-      <table id="modalTable" border="1">
-        <thead>
-          <tr>
-            <th>Cliente</th>
-            <th>Status</th>
-            <th>Produto</th>
-            <th>Quantidade</th>
-            <th>Valor</th>
-            <th>Forma de pagamento</th>
-            <th>Usuario</th>
-          </tr>
-        </thead>
-        <tbody></tbody>
-      </table>
     </div>
   </div>
 </div>

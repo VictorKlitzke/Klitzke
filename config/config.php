@@ -41,6 +41,9 @@ function VerificationAccess($par) {
 function VerificationAccessADM() {
     return isset($_SESSION['access']) && $_SESSION['access'] >= 50;
 }
+function numberFormat($value) {
+    return 'R$ ' . number_format($value, 2, ',', '.');
+}
 
 function VerificationMenu()
 {
