@@ -645,7 +645,7 @@ async function ListVariationValues(searchTermVariation = '') {
                 const inputCell = document.createElement('th');
                 const inputValues = document.createElement('input');
                 inputValues.type = 'number';
-                inputValues.className = 'form-control input-variation-values';
+                inputValues.className = 'form-control border-dark input-variation-values';
                 inputCell.addEventListener('change', AddVariationValues)
                 inputCell.appendChild(inputValues);
                 row.appendChild(inputCell);

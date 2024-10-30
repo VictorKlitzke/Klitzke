@@ -22,48 +22,42 @@ $boxpdv = Controllers::SelectBoxPdv('boxpdv', $user_filter);
 
 ?>
 
-<div class="box-content">
-  <div class="card bg-dark text-white shadow-lg rounded">
-    <div class="card-header bg-secondary text-white rounded-top">
+<div class="container-fluid p-4 bg-light border rounded-4 shadow-lg">
+  <div class="card bg-light rounded">
+    <div class="card-header text-dark rounded-top">
       <h2 class="mb-0">Filtros</h2>
     </div>
     <div class="card-body">
-      <div class="row">
-        <div class="col-md-4">
-          <form method="post">
-            <div class="form-group mb-4">
-              <div class="row">
-                <div class="col-md-6 mb-3">
-                  <label for="startDate" class="form-label">
-                    <i class="fas fa-calendar-alt me-2"></i>Data Início
-                  </label>
-                  <input type="date" name="startDate" id="startDate"
-                    class="form-control bg-dark text-white border-secondary rounded-pill">
-                </div>
-                <div class="col-md-6 mb-3">
-                  <label for="endDate" class="form-label">
-                    <i class="fas fa-calendar-alt me-2"></i>Data Final
-                  </label>
-                  <input type="date" name="endDate" id="endDate"
-                    class="form-control bg-dark text-white border-secondary rounded-pill">
-                </div>
-              </div>
-            </div>
-            <button class="btn btn-secondary w-100 rounded-pill" type="button">
-              <i class="fas fa-filter me-2"></i>Filtrar
-            </button>
-          </form>
+      <form method="post">
+        <div class="row">
+          <div class="col-md-6 mb-4">
+            <label for="startDate" class="form-label">
+              <i class="fas fa-calendar-alt me-2"></i>Data Início
+            </label>
+            <input type="date" name="startDate" id="startDate"
+              class="form-control bg-white text-dark border-secondary rounded-pill" placeholder="dd/mm/yyyy">
+          </div>
+          <div class="col-md-6 mb-4">
+            <label for="endDate" class="form-label">
+              <i class="fas fa-calendar-alt me-2"></i>Data Final
+            </label>
+            <input type="date" name="endDate" id="endDate"
+              class="form-control bg-white text-dark border-secondary rounded-pill" placeholder="dd/mm/yyyy">
+          </div>
         </div>
-      </div>
+        <button class="btn btn-dark w-100 rounded-pill" type="submit">
+          <i class="fas fa-filter me-2"></i>Filtrar
+        </button>
+      </form>
     </div>
   </div>
   <br>
-  <h2 class="text-white mb-4">Lista de Caixas</h2>
+  <h2 class="text-dark mb-4">Lista de Caixas</h2>
   <div class="row">
     <div class="col">
       <div class="table-responsive" style="max-height: 400px; overflow-y: auto; overflow-x: auto;">
-        <table class="table table-dark table-hover">
-          <thead>
+        <table class="table table-striped table-hover align-middle text-center bg-white rounded-3 shadow-sm">
+          <thead class="table-dark text-light">
             <tr>
               <th>Usuario</th>
               <th>Valor</th>

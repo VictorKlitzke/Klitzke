@@ -15,53 +15,53 @@ if (!isset($_SESSION['user_permissions'][$page_permission]) || $_SESSION['user_p
 
 ?>
 
-<div class="box-content">
-  <h2 class="text-white mt-4">Editar Cliente</h2>
+<div class="container-fluid p-4 shadow-lg border rounded-4 bg-light">
+  <h2 class="text-dark mt-4">Editar Cliente</h2>
   <div class="row g-3">
     <div class="col-sm-6">
-      <label class="text-white">Nome</label>
+      <label class="text-dark">Nome</label>
       <input type="hidden" id="id_client" value="<?php echo base64_encode($update['id']); ?>" />
-      <input type="text" class="form-control" id="name" value="<?php echo $update['name']; ?>" />
+      <input type="text" class="form-control border-dark" id="name" value="<?php echo $update['name']; ?>" />
       <span id="error" class="error-message">Campo está invalido, Ajuste se possivel.</span>
     </div>
     <div class="col-sm-6">
-      <label class="text-white">CPF</label>
-      <input type="text" class="form-control" id="cpf" value="<?php echo $update['cpf']; ?>" />
+      <label class="text-dark">CPF</label>
+      <input type="text" class="form-control border-dark" id="cpf" value="<?php echo $update['cpf']; ?>" />
       <span id="error" class="error-message">Campo está invalido, Ajuste se possivel.</span>
     </div>
     <div class="col-sm-6">
-      <label class="text-white">Nome fantasia</label>
-      <input type="text" class="form-control" id="social_reason" value="<?php echo $update['social_reason']; ?>">
+      <label class="text-dark">Nome fantasia</label>
+      <input type="text" class="form-control border-dark" id="social_reason" value="<?php echo $update['social_reason']; ?>">
       <span id="error" class="error-message">Campo está invalido, Ajuste se possivel.</span>
     </div>
     <div class="col-sm-6">
-      <label class="text-white">Email</label>
-      <input type="text" class="form-control" id="email" value="<?php echo $update['email']; ?>" />
+      <label class="text-dark">Email</label>
+      <input type="text" class="form-control border-dark" id="email" value="<?php echo $update['email']; ?>" />
       <span id="error" class="error-message">Campo está invalido, Ajuste se possivel.</span>
     </div>
     <div class="col-sm-6">
-      <label class="text-white">Contato</label>
-      <input type="text" class="form-control" id="phone" value="<?php echo $update['phone']; ?>" />
+      <label class="text-dark">Contato</label>
+      <input type="text" class="form-control border-dark" id="phone" value="<?php echo $update['phone']; ?>" />
       <span id="error" class="error-message">Campo está invalido, Ajuste se possivel.</span>
     </div>
     <div class="col-sm-6">
-      <label class="text-white">CEP</label>
-      <input type="text" class="form-control" id="cep" value="<?php echo $update['cep']; ?>" />
+      <label class="text-dark">CEP</label>
+      <input type="text" class="form-control border-dark" id="cep" value="<?php echo $update['cep']; ?>" />
       <span id="error" class="error-message">Campo está invalido, Ajuste se possivel.</span>
     </div>
     <div class="col-sm-6">
-      <label class="text-white">Cidade</label>
-      <input type="text" class="form-control" id="city" value="<?php echo $update['city']; ?>" />
+      <label class="text-dark">Cidade</label>
+      <input type="text" class="form-control border-dark" id="city" value="<?php echo $update['city']; ?>" />
       <span id="error" class="error-message">Campo está invalido, Ajuste se possivel.</span>
     </div>
     <div class="col-sm-6">
-      <label class="text-white">Endereço</label>
-      <input type="text" class="form-control" id="address" value="<?php echo $update['address']; ?>" />
+      <label class="text-dark">Endereço</label>
+      <input type="text" class="form-control border-dark" id="address" value="<?php echo $update['address']; ?>" />
       <span id="error" class="error-message">Campo está invalido, Ajuste se possivel.</span>
     </div>
     <div class="col-sm-12">
-      <label class="text-white">Bairro</label>
-      <input type="text" class="form-control" id="neighborhood" value="<?php echo $update['neighborhood']; ?>" />
+      <label class="text-dark">Bairro</label>
+      <input type="text" class="form-control border-dark" id="neighborhood" value="<?php echo $update['neighborhood']; ?>" />
       <span id="error" class="error-message">Campo está invalido, Ajuste se possivel.</span>
     </div>
     <div class="col-12">

@@ -12,11 +12,12 @@ if (!isset($_SESSION['user_permissions'][$page_permission]) || $_SESSION['user_p
 
 ?>
 
-<div class="box-content">
+<div class="container-fluid bg-light p-4 rounded-4 border shadow-lg">
     <div class="row g-3">
+        <h2 class="text-dark mt-4">Cadastrar Comanda</h2>
         <div class="col-md-4">
-            <label class="form-label text-white">Numero da mesa</label>
-            <input type="text" id="name_table" class="form-control">
+            <label class="form-label text-dark">Comanda</label>
+            <input type="text" id="name_table" class="form-control border-dark" placeholder="Numero da comanda">
             <span id="error" class="error-message">Campo está invalido, Ajuste se possivel.</span>
         </div>
         <div class="col-12">

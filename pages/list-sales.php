@@ -3,18 +3,18 @@
 if (!isset($_SESSION['id'])) {
     header("Location: login.php");
     exit();
-  }
-  $page_permission = 'list-sales';
-  if (!isset($_SESSION['user_permissions'][$page_permission]) || $_SESSION['user_permissions'][$page_permission] !== 1) {
+}
+$page_permission = 'list-sales';
+if (!isset($_SESSION['user_permissions'][$page_permission]) || $_SESSION['user_permissions'][$page_permission] !== 1) {
     header("Location: " . INCLUDE_PATH . "access-denied.php");
     exit();
-  }
+}
 
 $user_id = isset($_SESSION['id']) ? $_SESSION['id'] : null;
 $userFilter = isset($_POST['userFilter']) ? intval($_POST['userFilter']) : $user_id;
 $form_payment = isset($_POST['form_filter']) ? intval($_POST['form_filter']) : null;
 
-$date_end = isset($_POST['endDate']) ? $_POST['endDate'] : null; 
+$date_end = isset($_POST['endDate']) ? $_POST['endDate'] : null;
 $date_start = isset($_POST['startDate']) ? $_POST['startDate'] : null;
 $date_start1 = !empty($date_start) ? date('Y-m-d', strtotime($date_start)) : null;
 $date_end1 = !empty($date_end) ? date('Y-m-d', strtotime($date_end)) : null;
@@ -22,9 +22,9 @@ $date_end1 = !empty($date_end) ? date('Y-m-d', strtotime($date_end)) : null;
 $sales = Controllers::SelectSales('sales', $userFilter, $form_payment, $date_start1, $date_end1);
 ?>
 
-<div class="box-content">
-    <div class="card bg-dark text-white">
-        <div class="card-header bg-secondary text-white">
+<div class="container-fluid bg-light p-4 rounded-4 border shadow-lg">
+    <div class="card text-dark">
+        <div class="card-header text-dark">
             <h2>Filtros</h2>
         </div>
         <div class="card-body">
@@ -90,12 +90,12 @@ $sales = Controllers::SelectSales('sales', $userFilter, $form_payment, $date_sta
         </div>
     </div>
     <br>
-    <h2 class="text-white mb-4">Lista de Vendas</h2>
+    <h2 class="text-dark mb-4">Lista de Vendas</h2>
     <div class="row">
         <div class="col">
             <div class="table-responsive" style="max-height: 400px; overflow-y: auto; overflow-x: auto;">
-                <table class="table table-dark table-hover">
-                    <thead>
+                <table class="table table-striped table-hover align-middle text-center bg-white rounded-3 shadow-sm">
+                    <thead class="table-dark text-light">
                         <tr style="white-space: nowrap;">
 
                             <th scope="col">#</th>
@@ -114,7 +114,7 @@ $sales = Controllers::SelectSales('sales', $userFilter, $form_payment, $date_sta
 
                     foreach ($sales as $key => $value) {
 
-                    ?>
+                        ?>
 
                         <tbody>
                             <tr style="white-space: nowrap;">

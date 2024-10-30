@@ -14,17 +14,17 @@ $clients = Controllers::SelectAll('clients');
 
 ?>
 
-<div class="box-content">
+<div class="contaneir-fluid p-4 shadow-lg bg-light border rounded-4">
 	<div class="d-flex justify-content-between align-items-center mb-3">
-		<h2 class="text-white mb-4">Lista de Clientes</h2>
+		<h2 class="text-dark mb-4">Lista de Clientes</h2>
 		<a class="btn btn-success" <?php SelectedMenu('register-clients'); ?>
-			href="<?php echo INCLUDE_PATH; ?>register-clients">Novo Cliente</a>
+			href="<?php echo INCLUDE_PATH; ?>register-clients">+ Novo Cliente</a>
 	</div>
 	<div class="row">
 		<div class="col">
 			<div class="table-responsive" style="max-height: 400px; overflow-y: auto; overflow-x: auto;">
-				<table class="table table-dark table-hover">
-					<thead>
+				<table class="table table-striped table-hover align-middle text-center bg-white rounded-3 shadow-sm">
+					<thead class="table-dark text-light">
 						<tr style="white-space: nowrap;">
 							<th scope="col">Cliente</th>
 							<th scope="col">Nome social</th>
@@ -51,28 +51,35 @@ $clients = Controllers::SelectAll('clients');
 								<th><?php echo htmlspecialchars($value['cpf']); ?></th>
 								<th><?php echo htmlspecialchars($value['neighborhood']); ?>
 								</th>
-								<th class="gap-2 d-flex align-items-center">
-									<?php if ($value['disable'] != 1) { ?>
-										<a class="btn btn-info accessnivel btn-sm w-100"
-											href="<?php echo INCLUDE_PATH ?>edit-clients?id=<?php echo base64_encode($value['id']); ?>">Editar
-										</a>
+								<th class="gap-2 d-flex align-items-center justify-content-center">
+									<?php if ($value['disable'] == 1) { ?>
+										<a class="btn btn-info btn-sm fw-bold"
+											href="<?php echo INCLUDE_PATH ?>edit-clients?id=<?php echo base64_encode($value['id']); ?>">Editar</a>
 									<?php } else { ?>
-										<a></a>
+										<span class="text-muted"></span>
 									<?php } ?>
-									<button class="btn btn-warning btn-sm w-100" href="<?php echo INCLUDE_PATH ?>">
+									<!-- <button class="btn btn-warning btn-sm fw-bold" onclick="InativarClients(this)"
+										data-id="<?php echo base64_encode($value['id']); ?>">
 										Desativar
-									</button>
-									<button class="btn btn-danger accessnivel btn-sm w-100" onclick="deleteClients(this)"
+									</button> -->
+									<button class="btn btn-danger btn-sm fw-bold" onclick="deleteClients(this)"
 										data-id="<?php echo base64_encode($value['id']); ?>">
 										Deletar
 									</button>
-									<button class="btn btn-primary btn-sm w-100" onclick="MoreDetailsClient(this)"
-										data-id="<?php echo base64_encode($value['id']); ?>">Mais Detalhes</button>
+									<?php if ($value['disable'] == 1) { ?>
+										<button class="btn btn-primary btn-sm fw-bold" onclick="MoreDetailsClient(this)"
+											data-id="<?php echo base64_encode($value['id']); ?>">
+											Mais Detalhes
+										</button>
+									<?php } else { ?>
+										<span class="text-muted"></span>
+									<?php } ?>
+
 								</th>
 							</tr>
 						<?php } ?>
 					</tbody>
-				</table>
+					</>
 			</div>
 		</div>
 	</div>

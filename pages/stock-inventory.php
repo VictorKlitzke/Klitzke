@@ -1,6 +1,7 @@
-<div class="container-fluid">
-  <div class="box-content bg-dark p-4 rounded">
-    <h2 class="text-white">Inventário de Produtos</h2>
+<div class="container-fluid shadow-lg border rounded-4 p-4 bg-light">
+  <div class="container-fluid bg-light">
+    <h2 class="text-dark">Inventário de Produtos</h2>
+    <hr class="border-bottom">
   </div>
 
   <!-- Formulário de Adição de Produtos -->
@@ -43,23 +44,30 @@
 
   <!-- Tabela de Produtos -->
   <div class="card mt-4">
-    <div class="card-header bg-dark text-white">
+    <div class="card-header text-dark">
       Lista de Produtos
     </div>
     <div class="card-body">
-      <table class="table table-striped table-hover">
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Nome do Produto</th>
-            <th>Quantidade</th>
-            <th>Preço</th>
-            <th>Ações</th>
-          </tr>
-        </thead>
-        <tbody id="productTable">
-        </tbody>
-      </table>
+      <div class="mb-3">
+        <input type="text" id="searchInput" class="form-control" placeholder="Buscar produtos..."
+          onkeyup="searchProducts()">
+      </div>
+      <div class="table-responsive" style="max-height: 400px; overflow-y: auto; overflow-x: auto;">
+        <table class="table table-striped table-hover align-middle text-center bg-white rounded-3 shadow-sm">
+          <thead class="table-dark text-light">
+            <tr>
+              <th>ID</th>
+              <th>Nome do Produto</th>
+              <th>Quantidade</th>
+              <th>Preço</th>
+              <th>Ações</th>
+            </tr>
+          </thead>
+          <tbody id="productTable">
+            <!-- Os produtos serão inseridos aqui -->
+          </tbody>
+        </table>
+      </div>
     </div>
   </div>
 </div>

@@ -1,14 +1,14 @@
-<div class="box-content">
-    <h2 class="text-white mb-4">Abrir caixa</h2>
+<div class="container-fluid p-4 shadow-lg border rounded-4 bg-light">
+    <h2 class="text-dark mb-4">Abertura do Caixa</h2>
     <div class="row g-3">
         <div class="col-md-6">
-            <label class="text-white form-label">Valor</label>
-            <input class="form-control" type="text" id="value" oninput="formmaterReal(this)" placeholder="R$ 0,00">
+            <label class="text-dark form-label">Valor</label>
+            <input class="form-control border-dark" type="text" id="value" oninput="formmaterReal(this)" placeholder="R$ 0,00">
             <span id="value-error" class="error-message">Campo está invalido, Ajuste se possivel.</span>
         </div>
         <div class="col-md-6">
-            <label class="text-white form-label">Observação</label>
-            <input class="form-control" type="text" id="observation" placeholder="Observação">
+            <label class="text-dark form-label">Observação</label>
+            <input class="form-control border-dark" type="text" id="observation" placeholder="Observação">
             <span id="observation-error" class="error-message">Campo está invalido, Ajuste se possivel.</span>
         </div>
         <div class="col-12">

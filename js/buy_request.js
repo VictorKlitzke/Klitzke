@@ -41,12 +41,17 @@ function updateSelectedProductsTable() {
     nameCell.textContent = product.name;
     row.appendChild(nameCell);
 
-    const quantityCell = document.createElement('th');
-    quantityCell.textContent = product.quantity;
+    const quantityCell = document.createElement('td');
+    const inputValues = document.createElement('input');
+    inputValues.type = 'number';
+    inputValues.className = 'form-control border-dark';
+    inputValues.value = product.quantity;
+    inputValues.min = 1;
+    quantityCell.appendChild(inputValues);
     row.appendChild(quantityCell);
 
-    const actionCell = document.createElement('th');
 
+    const actionCell = document.createElement('th');
     const buttonRemove = document.createElement('button');
     buttonRemove.className = 'btn btn-danger';
     buttonRemove.textContent = 'Remover';

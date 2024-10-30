@@ -20,48 +20,48 @@ if (!isset($_SESSION['user_permissions'][$page_permission]) || $_SESSION['user_p
 
 ?>
 
-<div class="box-content">
-  <h2 class="text-white mt-4">Editar Fornecedor</h2>
+<div class="container-fluid p-4 shadow-lg border rounded-4 bg-light">
+  <h2 class="text-dark mt-4">Editar Fornecedor</h2>
   <div class="row g-3">
     <div class="col-sm-6">
-      <label class="text-white">Fornecedor</label>
+      <label class="text-dark">Fornecedor</label>
       <input type="hidden" id="id_forn" value="<?php echo base64_encode($update['id']); ?>">
-      <input type="text" class="form-control" id="name_company" value="<?php echo $update['company']; ?>" />
+      <input type="text" class="form-control border-dark" id="name_company" value="<?php echo $update['company']; ?>" />
     </div>
     <div class="col-sm-6">
-      <label class="text-white">cnpjcpf</label>
-      <input type="text" class="form-control" id="cnpjcpf" value="<?php echo $update['cnpjcpf']; ?>" />
+      <label class="text-dark">cnpjcpf</label>
+      <input type="text" class="form-control border-dark" id="cnpjcpf" value="<?php echo $update['cnpjcpf']; ?>" />
       <span id="error" class="error-message">Campo está invalido, Ajuste se possivel.</span>
     </div>
     <div class="col-sm-6">
-      <label class="text-white">Nome fantasia</label>
-      <input type="text" class="form-control" id="fantasy_name" value="<?php echo $update['fantasy_name']; ?>">
+      <label class="text-dark">Nome fantasia</label>
+      <input type="text" class="form-control border-dark" id="fantasy_name" value="<?php echo $update['fantasy_name']; ?>">
       <span id="error" class="error-message">Campo está invalido, Ajuste se possivel.</span>
     </div>
     <div class="col-sm-6">
-      <label class="text-white">Email</label>
-      <input type="text" class="form-control" id="email" value="<?php echo $update['email']; ?>" />
+      <label class="text-dark">Email</label>
+      <input type="text" class="form-control border-dark" id="email" value="<?php echo $update['email']; ?>" />
       <span id="error" class="error-message">Campo está invalido, Ajuste se possivel.</span>
     </div>
     <div class="col-sm-6">
-      <label class="text-white">Contato</label>
-      <input type="text" class="form-control" id="phone" value="<?php echo $update['phone']; ?>" />
+      <label class="text-dark">Contato</label>
+      <input type="text" class="form-control border-dark" id="phone" value="<?php echo $update['phone']; ?>" />
       <span id="error" class="error-message">Campo está invalido, Ajuste se possivel.</span>
     </div>
     <div class="col-sm-6">
-      <label class="text-white">Cidade</label>
-      <input type="text" class="form-control" id="city" value="<?php echo $update['city']; ?>" />
+      <label class="text-dark">Cidade</label>
+      <input type="text" class="form-control border-dark" id="city" value="<?php echo $update['city']; ?>" />
       <span id="error" class="error-message">Campo está invalido, Ajuste se possivel.</span>
 
     </div>
     <div class="col-sm-6">
-      <label class="text-white">Endereço</label>
-      <input type="text" class="form-control" id="address" value="<?php echo $update['address']; ?>" />
+      <label class="text-dark">Endereço</label>
+      <input type="text" class="form-control border-dark" id="address" value="<?php echo $update['address']; ?>" />
       <span id="error" class="error-message">Campo está invalido, Ajuste se possivel.</span>
     </div>
     <div class="col-sm-6">
-      <label class="text-white">Estado</label>
-      <input type="text" class="form-control" id="state" value="<?php echo $update['state']; ?>" />
+      <label class="text-dark">Estado</label>
+      <input type="text" class="form-control border-dark" id="state" value="<?php echo $update['state']; ?>" />
       <span id="error" class="error-message">Campo está invalido, Ajuste se possivel.</span>
     </div>
     <div class="col-12">

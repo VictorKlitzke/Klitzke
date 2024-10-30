@@ -33,6 +33,7 @@ function printBoxReport(content) {
   printWindow.document.close();
   printWindow.print();
 }
+
 async function closeBox() {
 
   let valueDebit = parseFloat(document.getElementById('value_debit').value);
@@ -133,6 +134,7 @@ async function closeBox() {
     showMessage('Operação cancelada', 'error');
   }
 }
+
 function calculateDifference() {
   let systemValue = parseFloat(document.getElementById('value_system').value) || 0;
   let fisicoValue = parseFloat(document.getElementById('value_fisico').value) || 0;
@@ -140,6 +142,7 @@ function calculateDifference() {
 
   document.getElementById('value_difference').value = difference.toFixed(2);
 }
+
 function calculateMoneySystem() {
   let value_system = parseFloat(document.getElementById('value_system').value) || 0;
   let value_money = parseFloat(document.getElementById('value_money').value) || 0;
@@ -151,6 +154,7 @@ function calculateMoneySystem() {
     somaField.value = soma.toFixed(2);
   }
 }
+
 function calculateTotalizadoAll() {
   const values = [
     parseFloat(document.getElementById('value_debit').value) || 0,

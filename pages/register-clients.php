@@ -12,52 +12,52 @@ if (!isset($_SESSION['user_permissions'][$page_permission]) || $_SESSION['user_p
 
 ?>
 
-<div class="box-content">
-  <h2 class="text-white mb-4">Cadastrar Clientes</h2>
+<div class="container-fluid shadow-lg p-4 border rounded-4 bg-light">
+  <h2 class="text-dark mb-4">Cadastrar Clientes</h2>
   <div class="row g-3">
     <div class="col-md-6">
-      <label class="form-label text-white">Nome</label>
-      <input type="text" id="name" class="form-control" placeholder="Nome" />
+      <label class="form-label text-dark">Nome</label>
+      <input type="text" id="name" class="form-control border-dark" placeholder="Nome" />
       <span id="name-error" class="error-message">Campo está invalido, Ajuste se possivel.</span>
     </div>
     <div class="col-md-6">
-      <label class="form-label text-white">Email</label>
-      <input type="email" id="email" class="form-control" placeholder="Email" />
+      <label class="form-label text-dark">Email</label>
+      <input type="email" id="email" class="form-control border-dark" placeholder="Email" />
       <span id="email-error" class="error-message">Campo está invalido, Ajuste se possivel.</span>
     </div>
     <div class="col-md-6">
-      <label class="form-label text-white">Nome Social</label>
-      <input type="text" id="social_reason" class="form-control" placeholder="Nome Social" />
+      <label class="form-label text-dark">Nome Social</label>
+      <input type="text" id="social_reason" class="form-control border-dark" placeholder="Nome Social" />
       <span id="social_reason-error" class="error-message">Campo está invalido, Ajuste se possivel.</span>
     </div>
     <div ref="cpf" class="col-md-6">
-      <label class="form-label text-white">CPF</label>
-      <input type="text" id="cpf" maxlength="14" placeholder="000.000.000-00" class="form-control" />
+      <label class="form-label text-dark">CPF</label>
+      <input type="text" id="cpf" maxlength="14" placeholder="000.000.000-00" class="form-control border-dark" />
       <span id="cpf-error" class="error-message">Campo está invalido, Ajuste se possivel.</span>
     </div>
     <div class="col-md-6">
-      <label class="form-label text-white">Telefone</label>
-      <input type="text" id="phone" class="form-control" placeholder="Telefone" />
+      <label class="form-label text-dark">Telefone</label>
+      <input type="text" id="phone" class="form-control border-dark" placeholder="Telefone" />
       <span id="phone-error" class="error-message">Campo está invalido, Ajuste se possivel.</span>
     </div>
     <div class="col-md-6">
-      <label class="form-label text-white">Endereco</label>
-      <input type="text" id="address" class="form-control" placeholder="Endereço" />
+      <label class="form-label text-dark">Endereco</label>
+      <input type="text" id="address" class="form-control border-dark" placeholder="Endereço" />
       <span id="address-error" class="error-message">Campo está invalido, Ajuste se possivel.</span>
     </div>
     <div class="col-md-4">
-      <label class="form-label text-white">Cidade</label>
-      <input type="text" id="city" class="form-control" placeholder="Cidade" />
+      <label class="form-label text-dark">Cidade</label>
+      <input type="text" id="city" class="form-control border-dark" placeholder="Cidade" />
       <span id="city-error" class="error-message">Campo está invalido, Ajuste se possivel.</span>
     </div>
     <div class="col-md-4">
-      <label class="form-label text-white">CEP</label>
-      <input type="text" id="cep" class="form-control" placeholder="CEP" />
+      <label class="form-label text-dark">CEP</label>
+      <input type="text" id="cep" class="form-control border-dark" placeholder="CEP" />
       <span id="cep-error" class="error-message">Campo está invalido, Ajuste se possivel.</span>
     </div>
     <div class="col-md-4">
-      <label class="form-label text-white">Bairro</label>
-      <input type="text" id="neighborhood" class="form-control" placeholder="Bairro" />
+      <label class="form-label text-dark">Bairro</label>
+      <input type="text" id="neighborhood" class="form-control border-dark" placeholder="Bairro" />
       <span id="neighborhood-error" class="error-message">Campo está invalido, Ajuste se possivel.</span>
     </div>
     <div class="col-12">

@@ -482,3 +482,26 @@ async function AddMenuAccess(UserIDMenu) {
     }
   });
 }
+
+function searchProducts() {
+  const input = document.getElementById('searchInput');
+  const filter = input.value.toLowerCase();
+  const table = document.getElementById('productTable');
+  const rows = table.getElementsByTagName('tr');
+
+  for (let i = 0; i < rows.length; i++) {
+    const cells = rows[i].getElementsByTagName('td');
+    let match = false;
+
+    for (let j = 0; j < cells.length; j++) {
+      if (cells[j]) {
+        const cellValue = cells[j].textContent || cells[j].innerText;
+        if (cellValue.toLowerCase().indexOf(filter) > -1) {
+          match = true;
+          break;
+        }
+      }
+    }
+    rows[i].style.display = match ? "" : "none";
+  }
+}

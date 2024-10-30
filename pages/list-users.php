@@ -16,18 +16,18 @@ $users = Controllers::SelectAll('users');
 
 ?>
 
-<div class="box-content">
+<div class="container-fluid shadow-lg rounded-4 border p-4 bg-light">
   <div class="d-flex justify-content-between align-items-center mb-3">
-    <h2 class="text-white mb-4">Lista de Usuários</h2>
-    <a class="btn btn-success" <?php SelectedMenu('register-users') ?>
-      href="<?php echo INCLUDE_PATH; ?>register-users">Novo Usuário</a>
+    <h2 class="text-dark fw-bold">Lista de Usuários</h2>
+    <a class="btn btn-success fw-bold px-4" <?php SelectedMenu('register-users') ?>
+      href="<?php echo INCLUDE_PATH; ?>register-users">+ Novo Usuário</a>
   </div>
   <div class="row">
     <div class="col">
-      <div class="table-responsive" style="max-height: 400px; overflow-y: auto; overflow-x: auto;">
-        <table class="table table-dark table-hover">
-          <thead>
-            <tr style="white-space: nowrap;">
+      <div class="table-responsive" style="max-height: 400px; overflow-y: auto;">
+        <table class="table table-striped table-hover align-middle text-center bg-white rounded-3 shadow-sm">
+          <thead class="table-dark text-light">
+            <tr>
               <th scope="col">Usuário</th>
               <th scope="col">Email</th>
               <th scope="col">Contato</th>
@@ -41,42 +41,42 @@ $users = Controllers::SelectAll('users');
           </thead>
           <tbody>
             <?php foreach ($users as $key => $value) { ?>
-              <tr style="white-space: nowrap;" class="<?php echo $value['disable'] != 1 ? 'table-danger' : ''; ?>">
-                <th><?php echo htmlspecialchars($value['name']); ?></th>
-                <th><?php echo htmlspecialchars($value['email']); ?></th>
-                <th><?php echo htmlspecialchars($value['phone']); ?></th>
-                <th><?php echo htmlspecialchars($value['function']); ?></th>
-                <th><?php echo htmlspecialchars($value['commission']); ?> %</th>
-                <th><?php echo htmlspecialchars($value['target_commission']); ?> %</th>
-                <th>
-                  <?php echo $value['access'] == 10 ? 'Padrão' : ($value['access'] == 50 ? 'Moderado' : ($value['access'] == 100 ? 'Administrador' : '')); ?>
-                </th>
-                <th><?php echo htmlspecialchars($value['type_users']); ?></th>
-                <th class="d-flex gap-2 align-items-center">
+              <tr class="<?php echo $value['disable'] != 1 ? 'table-danger' : ''; ?>">
+                <td><?php echo htmlspecialchars($value['name']); ?></td>
+                <td><?php echo htmlspecialchars($value['email']); ?></td>
+                <td><?php echo htmlspecialchars($value['phone']); ?></td>
+                <td><?php echo htmlspecialchars($value['function']); ?></td>
+                <td><?php echo htmlspecialchars($value['commission']); ?>%</td>
+                <td><?php echo htmlspecialchars($value['target_commission']); ?>%</td>
+                <td>
+                  <?php echo $value['access'] == 10 ? 'Padrão' : ($value['access'] == 50 ? 'Moderado' : 'Admin'); ?>
+                </td>
+                <td><?php echo htmlspecialchars($value['type_users']); ?></td>
+                <td class="d-flex justify-content-center align-items-center gap-2"
+                  title="<?php echo $value['disable'] != 1 ? 'Este usuário está desativado.' : ''; ?>">
                   <?php if ($value['disable'] == 2) { ?>
-                    <a></a>
+                    <span></span>
                   <?php } else { ?>
-                    <a class="btn btn-info accessnivel btn-sm w-100"
-                      href="<?php echo INCLUDE_PATH ?>edit-users?id=<?php echo base64_encode($value['id']); ?>">Editar
-                    </a>
+                    <a class="btn btn-info btn-sm fw-bold"
+                      href="<?php echo INCLUDE_PATH ?>edit-users?id=<?php echo base64_encode($value['id']); ?>">Editar</a>
                   <?php } ?>
+
                   <?php if ($value['disable'] == 1) { ?>
                     <button onclick="InativarUsers(this)" type="button" data-id="<?php echo $value['id']; ?>"
-                      class="btn btn-warning w-100">Desativar
-                    </button>
+                      class="btn btn-warning btn-sm fw-bold">Desativar</button>
                   <?php } else { ?>
-                    <button class="btn btn-secondarybtn btn-sm w-100" disabled>Desativado</button>
+                    <button class="btn btn-secondary btn-sm fw-bold" disabled>Desativado</button>
                   <?php } ?>
-                  <button class="btn btn-danger accessnivel btn-sm w-100" onclick="DeleteUsers(this)"
-                    data-id="<?php echo base64_encode($value['id']); ?>">Deletar
-                  </button>
+
+                  <button class="btn btn-danger btn-sm fw-bold" onclick="DeleteUsers(this)"
+                    data-id="<?php echo base64_encode($value['id']); ?>">Deletar</button>
+
                   <?php if ($value['disable'] == 1) { ?>
-                    <button class="btn btn-light accessnivel btn-sm w-100" onclick="AccessUsers(this)"
-                      data-id="<?php echo base64_encode($value['id']); ?>">
-                      Acessos de Menu
-                    </button>
+                    <button class="btn btn-outline-light btn-sm fw-bold text-dark" onclick="AccessUsers(this)"
+                      data-id="<?php echo base64_encode($value['id']); ?>">Acessos</button>
                   <?php } ?>
-                </th>
+                </td>
+
               </tr>
             <?php } ?>
           </tbody>

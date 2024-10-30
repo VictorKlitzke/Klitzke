@@ -888,7 +888,7 @@ async function RegisterProducts() {
             await sendProductData(type, values, imageBase64, quantity, stock_quantity, barcode, cost_value, value_product);
         };
         reader.onerror = (error) => {
-            showMessage("Erro ao ler o arquivo", 'error');
+            showMessage("Erro ao ler o arquivo" + error, 'error');
         };
         reader.readAsDataURL(values.flow);
     } else {
@@ -937,7 +937,7 @@ async function RegisterProducts() {
                     }, 2000);
 
                 } else {
-                    showMessage(responseBody.message || 'Erro ao cadastrar produto', 'error');
+                    showMessage('Erro ao cadastrar produto' + responseBody.message, 'error');
                 }
 
             } catch (error) {

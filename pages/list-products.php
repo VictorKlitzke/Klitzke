@@ -14,13 +14,13 @@ $products = Controllers::SelectAll('products');
 
 ?>
 
-<div class="box-content">
-    <h2 class="text-white mb-4">Lista de Produtos</h2>
+<div class="container-fluid p-4 shadow-lg border rounded-4 bg-light">
+    <h2 class="text-dark mb-4">Lista de Produtos</h2>
     <div class="row">
         <div class="col">
             <div class="table-responsive" style="max-height: 400px; overflow-y: auto; overflow-x: auto;">
-                <table class="table table-dark table-hover">
-                    <thead>
+                <table class="table table-striped table-hover align-middle text-center bg-white rounded-3 shadow-sm">
+                    <thead class="table-dark text-light">
                         <tr style="white-space: nowrap;">
                             <th scope="col">Produtos</th>
                             <th scope="col">Quantidade</th>
@@ -126,30 +126,37 @@ $value_product = number_format($result_value_product['value_product'], 2, ',', '
 $cost_value_product = number_format($result_cost_value_product['cost_value'], 2, ',', '.');
 ?>
 
-<div class="row mt-4">
+<br>
+
+<div class="row">
     <div class="col-md-4">
-        <div class="card text-white bg-dark mb-3">
-            <div class="card-header">Quantidade total de itens</div>
-            <div class="card-body">
-                <h5 class="card-title"><?php echo $result_quantity_product['quantity']; ?></h5>
+        <div class="card text-white bg-primary mb-3 shadow-lg rounded">
+            <div class="card-header fw-bold">
+                <i class="fas fa-box-open me-2"></i>Quantidade total de itens
+            </div>
+            <div class="card-body text-center">
+                <h5 class="card-title display-6"><?php echo $result_quantity_product['quantity']; ?></h5>
             </div>
         </div>
     </div>
     <div class="col-md-4">
-        <div class="card text-white bg-dark mb-3">
-            <div class="card-header">Total valores produtos</div>
-            <div class="card-body">
-                <h5 class="card-title"><?php echo $value_product; ?> Reais</h5>
+        <div class="card text-white bg-success mb-3 shadow-lg rounded">
+            <div class="card-header fw-bold">
+                <i class="fas fa-dollar-sign me-2"></i>Total valores produtos
+            </div>
+            <div class="card-body text-center">
+                <h5 class="card-title display-6"><?php echo $value_product; ?> Reais</h5>
             </div>
         </div>
     </div>
     <div class="col-md-4">
-        <div class="card text-white bg-dark mb-3">
-            <div class="card-header">Total valores de custo</div>
-            <div class="card-body">
-                <h5 class="card-title"><?php echo $cost_value_product; ?> Reais</h5>
+        <div class="card text-white bg-danger mb-3 shadow-lg rounded">
+            <div class="card-header fw-bold">
+                <i class="fas fa-tags me-2"></i>Total valores de custo
+            </div>
+            <div class="card-body text-center">
+                <h5 class="card-title display-6"><?php echo $cost_value_product; ?> Reais</h5>
             </div>
         </div>
     </div>
-</div>
 </div>

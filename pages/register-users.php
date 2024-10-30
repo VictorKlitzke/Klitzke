@@ -12,72 +12,73 @@ if (!isset($_SESSION['user_permissions'][$page_permission]) || $_SESSION['user_p
 
 ?>
 
-<div class="box-content">
-  <h2 class="text-white mb-4">Cadastrar Usuario</h2>
+<div class="container-fluid p-4 shadow-lg border rounded-4 bg-light">
+  <h2 class="text-dark mb-4">Cadastrar Usuário</h2>
   <div class="row g-3">
     <div class="col-md-6">
-      <label class="text-white" for="">Nome</label>
+      <label class="text-dark" for="name">Nome</label>
       <div class="input-group">
         <div class="input-group-text">@</div>
-        <input type="text" id="name" id="specificSizeInputGroupUsername" class="form-control">
+        <input type="text" id="name" class="form-control border border-dark" placeholder="Digite o nome">
       </div>
-      <span id="name-error" class="error-message">Campo está invalido, Ajuste se possivel.</span>
+      <span id="name-error" class="error-message text-danger">Campo está inválido, ajuste se possível.</span>
     </div>
     <div class="col-md-6">
-      <label class="text-white" for="">Email</label>
-      <input type="text" id="email" class="form-control">
-      <span id="email-error" class="error-message">Campo está invalido, Ajuste se possivel.</span>
+      <label class="text-dark" for="email">Email</label>
+      <input type="email" id="email" class="form-control border border-dark" placeholder="Digite o email">
+      <span id="email-error" class="error-message text-danger">Campo está inválido, ajuste se possível.</span>
     </div>
     <div class="col-12">
-      <label class="text-white" for="">Senha</label>
-      <input type="password" id="password" class="form-control">
-      <span id="password-error" class="error-message">Campo está invalido, Ajuste se possivel.</span>
+      <label class="text-dark" for="password">Senha</label>
+      <input type="password" id="password" class="form-control border border-dark" placeholder="Digite a senha">
+      <span id="password-error" class="error-message text-danger">Campo está inválido, ajuste se possível.</span>
     </div>
     <div class="col-md-6">
-      <label class="text-white" for="">Função</label>
-      <input type="text" id="function" class="form-control">
-      <span id="function-error" class="error-message">Campo está invalido, Ajuste se possivel.</span>
-
+      <label class="text-dark" for="function">Função</label>
+      <input type="text" id="function" class="form-control border border-dark" placeholder="Digite a função">
+      <span id="function-error" class="error-message text-danger">Campo está inválido, ajuste se possível.</span>
     </div>
     <div class="col-md-6">
-      <label class="text-white" for="">Telefone</label>
-      <input type="text" id="phone" class="form-control">
-      <span id="phone-error" class="error-message">Campo está invalido, Ajuste se possivel.</span>
+      <label class="text-dark" for="phone">Telefone</label>
+      <input type="text" id="phone" class="form-control border border-dark" placeholder="Digite o telefone">
+      <span id="phone-error" class="error-message text-danger">Campo está inválido, ajuste se possível.</span>
     </div>
     <div class="col-md-4">
-      <label class="text-white" for="">Comissao</label>
-      <input type="number" id="commission" class="form-control">
-      <span id="commission-error" class="error-message">Campo está invalido, Ajuste se possivel.</span>
+      <label class="text-dark" for="commission">Comissão</label>
+      <input type="number" id="commission" class="form-control border border-dark" placeholder="Digite a comissão">
+      <span id="commission-error" class="error-message text-danger">Campo está inválido, ajuste se possível.</span>
     </div>
     <div class="col-md-4">
-      <label class="text-white" for="">Commisao por meta</label>
-      <input type="number" id="target_commission" class="form-control">
-      <span id="target_commission-error" class="error-message">Campo está invalido, Ajuste se possivel.</span>
+      <label class="text-dark" for="target_commission">Comissão por Meta</label>
+      <input type="number" id="target_commission" class="form-control border border-dark" placeholder="Digite a comissão por meta">
+      <span id="target_commission-error" class="error-message text-danger">Campo está inválido, ajuste se possível.</span>
     </div>
     <div class="col-md-4">
-      <label class="text-white" for="">Nivel de acesso</label>
-      <select id="access" class="form-select form-select-sm">
+      <label class="text-dark" for="access">Nível de Acesso</label>
+      <select id="access" class="form-select form-select-sm border border-dark">
         <option value="100">Administrador</option>
         <option value="50">Moderado</option>
         <option value="10">Padrão</option>
       </select>
-      <span id="access-error" class="error-message">Campo está invalido, Ajuste se possivel.</span>
+      <span id="access-error" class="error-message text-danger">Campo está inválido, ajuste se possível.</span>
     </div>
     <div class="col-md-12">
-      <label class="text-white">Selecione o tipo de usuário</label>
-      <select id="user-type" name="user-type" class="form-select">
+      <label class="text-dark" for="user-type">Selecione o Tipo de Usuário</label>
+      <select id="user-type" name="user-type" class="form-select border border-dark">
         <option value="vendedor">Vendedor</option>
         <option value="financeiro">Financeiro</option>
         <option value="estoquista">Estoquista</option>
         <option value="comprador">Comprador</option>
         <option value="suporte">Usuário de Suporte</option>
       </select>
-      <span id="error" class="error-message">Campo está invalido, Ajuste se possivel.</span>
+      <span id="error" class="error-message text-danger">Campo está inválido, ajuste se possível.</span>
     </div>
   </div>
 </div>
 
-<div class="container-fluid card">
+<br>
+
+<div class="container-fluid card shadow-lg p-4 border rounded-4 bg-light">
   <h2 class="text-black mt-4">Menus de Acesso</h2>
   <hr>
   <div class="row g-3">

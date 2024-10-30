@@ -14,17 +14,17 @@ $suppliers = Controllers::SelectAll('suppliers');
 
 ?>
 
-<div class="box-content">
+<div class="container-fluid shadow-lg p-4 border rounded-4 bg-light">
   <div class="d-flex justify-content-between align-items-center mb-3">
-    <h2 class="text-white mb-4">Lista de Fornecedores</h2>
+    <h2 class="text-dark mb-4">Lista de Fornecedores</h2>
     <a class="btn btn-success" <?php SelectedMenu('register-suppliers'); ?>
-      href="<?php echo INCLUDE_PATH; ?>register-suppliers">Novo Fornecedor</a>
+      href="<?php echo INCLUDE_PATH; ?>register-suppliers">+ Novo Fornecedor</a>
   </div>
   <div class="row">
     <div class="com">
       <div class="table-responsive" style="max-height: 400px; overflow-y: auto; overflow-x: auto;">
-        <table class="table table-dark table-hover">
-          <thead>
+        <table class="table table-striped table-hover align-middle text-center bg-white rounded-3 shadow-sm">
+          <thead class="table-dark text-light">
             <tr style="white-space: nowrap;">
               <th scope="col">Fornecedor</th>
               <th scope="col">Nome Fantasia</th>

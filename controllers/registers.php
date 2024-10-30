@@ -785,6 +785,7 @@ class Register
         $today = date('Y-m-d H:i:s');
         $show_on_page = 0;
         $invoice = 'manual';
+        $type_movements = 'Entrada';
 
         $name = filter_var($response_products['name'], FILTER_SANITIZE_STRING);
         $quantity = filter_var($response_products['quantity'], FILTER_SANITIZE_STRING);
@@ -831,6 +832,17 @@ class Register
             $exec->bindParam(':size', $size);
             $exec->bindParam(':invoice', $invoice);
             $exec->execute();
+
+            $lastSaleId = $sql->lastInsertId();
+
+
+            $exec1 = $sql->prepare("INSERT INTO product_movements (product_id, quantity, type, value, date)
+                                    VALUES (:product_id, :quantity, :type, :value, NOW())");
+            $exec1->BindParam(':product_id', $lastSaleId);
+            $exec1->BindParam(':quantity', $stock_quantity);
+            $exec1->BindParam(':type', $type_movements);
+            $exec1->BindParam(':value', $value_product);
+            $exec1->execute();
 
             $sql->commit();
 

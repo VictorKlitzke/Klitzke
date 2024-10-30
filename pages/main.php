@@ -61,10 +61,10 @@ $count_sales = Controllers::SelectAll('sales');
 
 ?>
 
-<div class="bg-primary text-light p-4">
+<div class="container-fluid p-4 bg-light shadow-lg rounded-4 border">
   <div class="row justify-content-between align-items-center">
     <div class="col-lg-6 text-start">
-      <h1 class="display-5 fw-bold mb-3" style="text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);">
+      <h1 class="display-5 mb-3">
         Olá, <?php echo htmlspecialchars($_SESSION['name']); ?>
       </h1>
       <p class="lead mb-0" style="opacity: 0.9;">
@@ -76,18 +76,18 @@ $count_sales = Controllers::SelectAll('sales');
 
 <br>
 
-<div class="container-fluid card bg-light p-4 rounded-3 shadow-sm">
+<div class="container-fluid card bg-light p-4 shadow-lg rounded-4 border">
   <div class="row">
     <div class="col" style="max-height: 700px; overflow-y: auto;">
       <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 class="text-primary fw-bold">Quadro de Avisos</h2>
+        <h2 class="text-dark mt-4">Quadro de Avisos</h2>
         <button id="toggle-btn" class="btn btn-outline-primary" onclick="toggleNoticeBoard()">
           <i id="toggle-icon" class="fas fa-chevron-down" style="font-size: 1.5rem;"></i>
         </button>
       </div>
       <div aria-live="polite" aria-atomic="true">
-        <table class="table table-hover align-middle">
-          <thead class="table-primary">
+        <table class="table table-striped table-hover align-middle text-center bg-white rounded-3 shadow-sm">
+          <thead class="table-dark text-light">
             <tr>
               <th scope="col">Conta</th>
               <th scope="col">Valor</th>
@@ -112,7 +112,7 @@ $count_sales = Controllers::SelectAll('sales');
 
 <div class="row g-4">
   <div class="col-sm-6">
-    <div class="card border-light shadow-sm rounded-3">
+    <div class="card border-light shadow-lg rounded-4 border">
       <div class="card-body text-center">
         <h4 class="card-title text-primary fw-bold">Produtos em Estoque</h4>
         <h2 class="display-5 fw-bold text-primary mb-0">
@@ -123,7 +123,7 @@ $count_sales = Controllers::SelectAll('sales');
   </div>
 
   <div class="col-sm-6">
-    <div class="card border-light shadow-sm rounded-3">
+    <div class="card border-light shadow-lg rounded-4 border">
       <div class="card-body text-center">
         <h4 class="card-title text-success fw-bold">Clientes</h4>
         <h2 class="display-5 fw-bold text-success mb-0">
@@ -134,7 +134,7 @@ $count_sales = Controllers::SelectAll('sales');
   </div>
 
   <div class="col-sm-6">
-    <div class="card border-light shadow-sm rounded-3">
+    <div class="card border-light shadow-lg rounded-4 border">
       <div class="card-body text-center">
         <h4 class="card-title text-info fw-bold">Vendas</h4>
         <h2 class="display-5 fw-bold text-info mb-0">
@@ -145,7 +145,7 @@ $count_sales = Controllers::SelectAll('sales');
   </div>
 
   <div class="col-sm-6">
-    <div class="card border-light shadow-sm rounded-3">
+    <div class="card border-light shadow-lg rounded-4 border">
       <div class="card-body text-center">
         <h4 class="card-title text-warning fw-bold">Produto Mais Vendido</h4>
         <h2 class="display-5 fw-bold text-warning mb-0">
@@ -168,13 +168,13 @@ $status_product = $products->fetchAll();
 
 ?>
 
-<div class="container-fluid card bg-light shadow-sm p-4 rounded-4">
+<div class="container-fluid card bg-light p-4 shadow-lg rounded-4 border">
   <div class="row">
     <div class="col">
-      <h2 class="text-primary mt-2" style="text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);">Produtos Negativados</h2>
+      <h2 class="text-dark mt-4">Produtos Negativados</h2>
       <div class="mt-4">
-        <table class="table table-hover align-middle">
-          <thead class="table-primary">
+        <table class="table table-striped table-hover align-middle text-center bg-white rounded-3 shadow-sm">
+          <thead class="table-dark text-light">
             <tr>
               <th scope="col">Nome</th>
               <th scope="col">Quantidade</th>
@@ -203,14 +203,15 @@ $status_product = $products->fetchAll();
 
 <br>
 
-<div class="container-fluid card bg-light shadow-sm p-4 rounded-4">
+<div class="container-fluid card bg-light p-4 shadow-lg rounded-4 border">
   <div class="row">
     <div class="col">
-      <h2 class="text-primary mt-2" style="text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);">Lista das 10 Últimas Vendas
+      <h2 class="text-dark mt-4">
+        Lista das 10 Últimas Vendas
       </h2>
       <div class="mt-4" style="max-height: 700px; overflow-y: auto;">
-        <table class="table table-hover align-middle">
-          <thead class="table-primary">
+        <table class="table table-striped table-hover align-middle text-center bg-white rounded-3 shadow-sm">
+          <thead class="table-dark text-light">
             <tr>
               <th scope="col">#</th>
               <th scope="col">Usuário</th>

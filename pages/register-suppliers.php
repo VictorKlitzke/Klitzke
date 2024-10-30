@@ -12,47 +12,47 @@ if (!isset($_SESSION['user_permissions'][$page_permission]) || $_SESSION['user_p
 
 ?>
 
-<div class="box-content">
-  <h2 class="text-white mb-4">Cadastrar Fornecedor</h2>
+<div class="container-fluid p-4 shadow-lg border rounded-4 bg-light">
+  <h2 class="text-dark mb-4">Cadastrar Fornecedor</h2>
   <div class="row g-3">
     <div class="col-md-6">
-      <label class="form-label text-white">Fornecedor</label>
-      <input class="form-control" type="text" id="name_company" placeholder="Fornecedor">
+      <label class="form-label text-dark">Fornecedor</label>
+      <input class="form-control border-dark" type="text" id="name_company" placeholder="Fornecedor">
       <span id="company-error" class="error-message">Campo está invalido, Ajuste se possivel.</span>
     </div>
     <div class="col-md-6">
-      <label class="form-label text-white">Nome Fantasia</label>
-      <input class="form-control" type="text" id="fantasy_name" placeholder="Nome Fantasia">
+      <label class="form-label text-dark">Nome Fantasia</label>
+      <input class="form-control border-dark" type="text" id="fantasy_name" placeholder="Nome Fantasia">
       <span id="fantasy_name-error" class="error-message">Campo está invalido, Ajuste se possivel.</span>
     </div>
     <div class="col-md-6">
-      <label class="form-label text-white">Email</label>
-      <input class="form-control" type="email" id="email" placeholder="Email">
+      <label class="form-label text-dark">Email</label>
+      <input class="form-control border-dark" type="email" id="email" placeholder="Email">
       <span id="email-error" class="error-message">Campo está invalido, Ajuste se possivel.</span>
     </div>
     <div class="col-md-6">
-      <label class="form-label text-white">Telefone</label>
-      <input class="form-control text-dark" type="text" id="phone" placeholder="Telefone" />
+      <label class="form-label text-dark">Telefone</label>
+      <input class="form-control border-dark text-dark" type="text" id="phone" placeholder="Telefone" />
       <span id="phone-error" class="error-message">Campo está invalido, Ajuste se possivel.</span>
     </div>
     <div class="col-md-6">
-      <label class="form-label text-white">Endereco</label>
-      <input class="form-control" type="text" id="address" placeholder="Endereço">
+      <label class="form-label text-dark">Endereco</label>
+      <input class="form-control border-dark" type="text" id="address" placeholder="Endereço">
       <span id="address-error" class="error-message">Campo está invalido, Ajuste se possivel.</span>
     </div>
     <div class="col-md-6">
-      <label class="form-label text-white">Cidade</label>
-      <input class="form-control" type="text" id="city" placeholder="Cidade">
+      <label class="form-label text-dark">Cidade</label>
+      <input class="form-control border-dark" type="text" id="city" placeholder="Cidade">
       <span id="city-error" class="error-message">Campo está invalido, Ajuste se possivel.</span>
     </div>
     <div class="col-md-6">
-      <label class="form-label text-white">Estado</label>
-      <input class="form-control" type="text" id="state" placeholder="Estado">
+      <label class="form-label text-dark">Estado</label>
+      <input class="form-control border-dark" type="text" id="state" placeholder="Estado">
       <span id="state-error" class="error-message">Campo está invalido, Ajuste se possivel.</span>
     </div>
     <div class="col-md-6">
-      <label class="form-label text-white">CNPJ</label>
-      <input class="form-control text-dark" type="text" id="cnpj" placeholder="00.000.000/0000-00" maxlength="14">
+      <label class="form-label text-dark">CNPJ</label>
+      <input class="form-control border-dark text-dark" type="text" id="cnpj" placeholder="00.000.000/0000-00" maxlength="14">
       <span id="cnpj-error" class="error-message">Campo está invalido, Ajuste se possivel.</span>
     </div>
     <div class="col-12">

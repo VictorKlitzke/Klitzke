@@ -19,43 +19,43 @@
   
 ?>
 
-<div class="box-content">
-  <h2 class="text-white mt-4">Editar Usuário</h2>
+<div class="container-fluid p-4 shadow-lg border rounded-4 bg-light">
+  <h2 class="text-dark mt-4">Editar Usuário</h2>
   <div class="row g-3">
     <div class="col-sm-6">
-      <label class="text-white">Nome</label>
+      <label class="text-dark">Nome</label>
       <input type="hidden" id="id_user" value="<?php echo base64_encode($update['id']); ?>" />
-      <input type="text" class="form-control" id="name" value="<?php echo $update['name']; ?>" />
+      <input type="text" class="form-control border-dark" id="name" value="<?php echo $update['name']; ?>" />
       <span id="error" class="error-message">Campo está invalido, Ajuste se possivel.</span>
     </div>
     <div class="col-sm-6">
-      <label class="text-white">Email</label>
-      <input type="text" class="form-control" id="email" value="<?php echo $update['email']; ?>" />
+      <label class="text-dark">Email</label>
+      <input type="text" class="form-control border-dark" id="email" value="<?php echo $update['email']; ?>" />
       <span id="error" class="error-message">Campo está invalido, Ajuste se possivel.</span>
     </div>
     <div class="col-sm-6">
-      <label class="text-white">Login</label>
-      <input type="text" class="form-control" id="login" value="<?php echo $update['name']; ?>" />
+      <label class="text-dark">Login</label>
+      <input type="text" class="form-control border-dark" id="login" value="<?php echo $update['name']; ?>" />
       <span id="error" class="error-message">Campo está invalido, Ajuste se possivel.</span>
     </div>
     <div class="col-sm-6">
-      <label class="text-white">Contato</label>
-      <input type="text" id="phone" class="form-control" value="<?php echo $update['phone']; ?>" />
+      <label class="text-dark">Contato</label>
+      <input type="text" id="phone" class="form-control border-dark" value="<?php echo $update['phone']; ?>" />
       <span id="error" class="error-message">Campo está invalido, Ajuste se possivel.</span>
     </div>
     <div class="col-sm-6">
-      <label class="text-white">Função</label>
-      <input type="text" id="function" class="form-control" value="<?php echo $update['function']; ?>" />
+      <label class="text-dark">Função</label>
+      <input type="text" id="function" class="form-control border-dark" value="<?php echo $update['function']; ?>" />
       <span id="error" class="error-message">Campo está invalido, Ajuste se possivel.</span>
     </div>
     <div class="col-sm-6">
-      <label class="text-white">Comissão</label>
-      <input type="text" id="commission" class="form-control" value="<?php echo $update['commission']; ?>" />
+      <label class="text-dark">Comissão</label>
+      <input type="text" id="commission" class="form-control border-dark" value="<?php echo $update['commission']; ?>" />
       <span id="error" class="error-message">Campo está invalido, Ajuste se possivel.</span>
     </div>
     <div class="col-sm-12">
-      <label class="text-white">Comissão por venda</label>
-      <input type="text" id="target_commission" class="form-control" value="<?php echo $update['target_commission']; ?>" />
+      <label class="text-dark">Comissão por venda</label>
+      <input type="text" id="target_commission" class="form-control border-dark" value="<?php echo $update['target_commission']; ?>" />
       <span id="error" class="error-message">Campo está invalido, Ajuste se possivel.</span>
     </div>
     <div class="col-12">
