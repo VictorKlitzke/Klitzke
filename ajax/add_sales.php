@@ -100,18 +100,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 }
             }
 
-            $checkStock = $sql->prepare("SELECT id FROM products WHERE id = :productId AND stock_quantity - :productQuantity < 0");
+            $checkStock = $sql->prepare("SELECT product_id FROM product_movements WHERE product_id = :productId AND quantity - :productQuantity < 0");
             $checkStock->bindParam(':productId', $productId, PDO::PARAM_INT);
             $checkStock->bindParam(':productQuantity', $productQuantity, PDO::PARAM_INT);
             $checkStock->execute();
 
             if ($checkStock->rowCount() > 0) {
-                $updateStatus = $sql->prepare("UPDATE products SET stock_quantity = stock_quantity - :productQuantity, status_product = 'negativado' WHERE id = :productId");
+                $updateStatus = $sql->prepare("UPDATE product_movements SET quantity = quantity - :productQuantity, status_product = 'negativado' WHERE product_id = :productId");
                 $updateStatus->bindParam(':productId', $productId, PDO::PARAM_INT);
                 $updateStatus->bindParam(':productQuantity', $productQuantity, PDO::PARAM_INT);
                 $updateStatus->execute();
             } else {
-                $updateStock = $sql->prepare("UPDATE products SET stock_quantity = stock_quantity - :productQuantity, status_product = 'Em estoque' WHERE id = :productId");
+                $updateStock = $sql->prepare("UPDATE product_movements SET quantity = quantity - :productQuantity, status_product = 'Em estoque' WHERE product_id = :productId");
                 $updateStock->bindParam(':productId', $productId, PDO::PARAM_INT);
                 $updateStock->bindParam(':productQuantity', $productQuantity, PDO::PARAM_INT);
                 $updateStock->execute();

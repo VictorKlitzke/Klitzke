@@ -20,6 +20,8 @@ const totalPortionElement = document.getElementById('total-portion-sales');
 const totalAmountElement = document.getElementById('total-display');
 const portionTotalInput = document.getElementById('portion-total');
 
+const RowProducts = document.getElementById('selected-products-body');
+
 document.addEventListener('DOMContentLoaded', function () {
     Portion = document.querySelector('.portion-sales');
     OverlayPortion = document.querySelector('.overlay-portion');
@@ -135,8 +137,8 @@ function addProductToTable(productId, productName, productPrice) {
 async function updatePrice(input) {
     const price = parseFloat(input.value.replace('R$ ', '').replace('.', '').replace(',', '.'));
     const row = input.closest('tr');
-    const quantityInput = row.querySelector('#quantity-sales'); 
-    const quantity = parseInt(quantityInput.value) || 1; 
+    const quantityInput = row.querySelector('#quantity-sales');
+    const quantity = parseInt(quantityInput.value) || 1;
     const totalPriceCell = row.querySelector('.total-price');
 
     if (!price || isNaN(price) || price <= 0) {
@@ -722,6 +724,12 @@ async function registerSale(requestData) {
                     showMessage('Operação cancelada', 'warning');
                 });
             }, 5000);
+
+            setTimeout(() => {
+                location.reload();
+            }, 8000);
+
+
         } else {
             showMessage('Caixa não foi aberto, para essa operação', 'error');
         }
