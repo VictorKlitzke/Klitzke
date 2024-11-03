@@ -17,7 +17,8 @@ $company = Controllers::SelectAll('company');
 	<div class="d-flex justify-content-between align-items-center mb-3">
 		<h2 class="text-dark mt-4">Suas Empresas</h2>
 		<a class="btn btn-success" <?php SelectedMenu('register-companys'); ?>
-			href="<?php echo INCLUDE_PATH; ?>register-companys">Empresa Filial</a>
+			href="<?php echo INCLUDE_PATH; ?>register-companys">Empresa Filial
+		</a>
 	</div>
 	<div class="list">
 		<div class="col">

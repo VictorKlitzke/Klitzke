@@ -112,13 +112,13 @@ function addProductToTable(productId, productName, productPrice) {
         <td>${productId}</td>
         <td>${productName}</td>
         <td>
-            <input class="quantity-sales" id="quantity-sales" type="number" value="1" min="1" onchange="updateQuantity(this, ${productPrice})">
+            <input class="quantitySales" id="quantitySales" value="1" type="number" onchange="updateQuantity(this, ${productPrice})">
         </td>
         <td>
             <input id="price-sales" type="text" value="${productPrice.toFixed(2).replace('.', ',')}" onchange="updatePrice(this, 1)">
         </td>
         <td class="total-price">R$ ${numberFormat(productPrice)}</td>
-        <td><button class="btn btn-danger" onclick="removeProduct(this)">Remover</button></td>
+        <td><button class="btn" onclick="removeProduct(this)">🗑️</button></td>
     `;
 
     tbody.appendChild(newRow);
@@ -127,7 +127,7 @@ function addProductToTable(productId, productName, productPrice) {
         productId: productId,
         productName: productName,
         productPrice: productPrice,
-        quantity: 1
+        quantity: 0
     });
 
     clearSearch();
@@ -137,7 +137,7 @@ function addProductToTable(productId, productName, productPrice) {
 async function updatePrice(input) {
     const price = parseFloat(input.value.replace('R$ ', '').replace('.', '').replace(',', '.'));
     const row = input.closest('tr');
-    const quantityInput = row.querySelector('#quantity-sales');
+    const quantityInput = row.querySelector('#quantitySales');
     const quantity = parseInt(quantityInput.value) || 1;
     const totalPriceCell = row.querySelector('.total-price');
 
@@ -152,21 +152,20 @@ async function updatePrice(input) {
     await updateTotalDisplay();
 }
 
-async function updateQuantity(input, price) {
-    const quantity = parseInt(input.value);
-    const row = input.closest('tr');
-    const totalPriceCell = row.querySelector('.total-price');
+function updateQuantity(inputElement, productPrice) {
 
-    if (!quantity || isNaN(quantity) || quantity <= 0) {
-        showMessage('Problema na quantidade, insira um valor válido', 'warning');
-        totalPriceCell.innerText = 'R$ 0,00';
-        await updateTotalDisplay();
-        return;
+    const quantity = parseInt(inputElement.value) || 0;
+
+    const row = inputElement.closest('tr');
+    const productId = row.cells[0].innerText;
+
+    const productIndex = selectedProducts.findIndex(product => product.productId === productId);
+    if (productIndex !== -1) {
+        selectedProducts[productIndex].quantity = quantity;
     }
 
-    const totalPrice = price * quantity;
-    totalPriceCell.innerText = `R$ ${numberFormat(totalPrice)}`;
-    await updateTotalDisplay();
+    const totalPrice = quantity * productPrice;
+    row.querySelector('.total-price').innerText = `R$ ${totalPrice.toFixed(2).replace('.', ',')}`;
 }
 
 async function updateTotalDisplay() {
@@ -186,7 +185,7 @@ async function updateTotalDisplay() {
 
 async function removeProduct(button) {
     const row = button.closest('tr');
-    const quantityInput = row.querySelector('#quantity-sales');
+    const quantityInput = row.querySelector('#quantitySales');
     let quantity = parseInt(quantityInput.value);
 
     selectedProducts = selectedProducts.map(product => {

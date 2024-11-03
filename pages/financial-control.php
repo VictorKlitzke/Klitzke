@@ -11,7 +11,7 @@ if (!isset($_SESSION['user_permissions'][$page_permission]) || $_SESSION['user_p
 }
 
 ?>
-<div class="container-fluid bg-light p-4 shadow-lg rounded-4 border-">
+<div class="container-fluid bg-light p-4 shadow-lg rounded-4 border">
   <h2 class="text-dark">Controle Financeiro</h2>
   <hr class="border-bottom">
   <div class="row mb-4">

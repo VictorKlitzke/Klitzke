@@ -159,37 +159,69 @@ $count_sales = Controllers::SelectAll('sales');
 <br>
 
 <?php
-
-$sql = Db::Connection();
-
-$products = $sql->prepare("SELECT name as product, stock_quantity as product_stock_quantity, status_product FROM products WHERE status_product = 'negativado'");
-$products->execute();
-$status_product = $products->fetchAll();
+$stock = $sql->prepare("
+                      SELECT 
+                        pm.product_id, 
+                        SUM(CASE 
+                                WHEN pm.type = 'Entrada' THEN pm.quantity 
+                                WHEN pm.type = 'Inventario' THEN pm.quantity_inventary 
+                                ELSE 0 
+                            END) AS total_entry,
+                        SUM(CASE WHEN pm.type = 'Saida' THEN pm.quantity ELSE 0 END) AS total_exit,
+                        (SUM(CASE 
+                              WHEN pm.type = 'Entrada' THEN pm.quantity 
+                              WHEN pm.type = 'Inventario' THEN pm.quantity_inventary 
+                              ELSE 0 
+                            END) +
+                        SUM(CASE WHEN pm.type = 'Saida' THEN pm.quantity ELSE 0 END)) AS stock_difference,
+                        p.name,
+                        p.stock_quantity,
+                        CASE 
+                            WHEN (SUM(CASE WHEN pm.type = 'Saida' THEN pm.quantity ELSE 0 END) > p.stock_quantity 
+                                  + SUM(CASE WHEN pm.type = 'Inventario' THEN pm.quantity_inventary ELSE 0 END)) 
+                            THEN 'Negativado'
+                            ELSE 'Ativo' 
+                        END AS status_product
+                      FROM 
+                          product_movements pm
+                      INNER JOIN 
+                          products p ON p.id = pm.product_id
+                      GROUP BY 
+                          pm.product_id, p.name, p.stock_quantity
+                      ");
+$stock->execute();
+$status_product = $stock->fetchAll(PDO::FETCH_ASSOC);
 
 ?>
 
 <div class="container-fluid card bg-light p-4 shadow-lg rounded-4 border">
   <div class="row">
     <div class="col">
-      <h2 class="text-dark mt-4">Produtos Negativados</h2>
+      <h2 class="text-dark mt-4">Quantidade Estoque</h2>
       <div class="mt-4">
         <table class="table table-striped table-hover align-middle text-center bg-white rounded-3 shadow-sm">
           <thead class="table-dark text-light">
             <tr>
               <th scope="col">Nome</th>
-              <th scope="col">Quantidade</th>
+              <th scope="col">Estoque Atual</th>
+              <th scope="col">Entrada</th>
+              <th scope="col">Saída</th>
+              <th scope="col">Diferença</th>
               <th scope="col">Status</th>
             </tr>
           </thead>
           <tbody>
-            <?php foreach ($status_product as $row => $value) { ?>
+            <?php foreach ($status_product as $value) { ?>
               <tr>
-                <th scope="row" class="text-dark"><?php echo $value['product']; ?></th>
-                <td class="text-dark"><?php echo $value['product_stock_quantity']; ?></td>
+                <th scope="row" class="text-dark"><?php echo htmlspecialchars($value['name']); ?></th>
+                <td class="text-dark"><?php echo htmlspecialchars($value['stock_quantity']); ?></td>
+                <td class="text-dark"><?php echo htmlspecialchars($value['total_entry']); ?></td>
+                <td class="text-dark"><?php echo htmlspecialchars($value['total_exit']); ?></td>
+                <td class="text-dark"><?php echo htmlspecialchars($value['stock_difference']); ?></td>
                 <td class="text-dark">
                   <span class="badge 
-                      <?php echo ($value['status_product'] === 'Ativo') ? 'bg-success' : 'bg-danger'; ?>">
-                    <?php echo $value['status_product']; ?>
+                    <?php echo ($value['status_product'] === 'Ativo') ? 'bg-success' : 'bg-danger'; ?>">
+                    <?php echo ($value['status_product'] === 'Ativo') ? 'Ativo' : 'Negativado'; ?>
                   </span>
                 </td>
               </tr>

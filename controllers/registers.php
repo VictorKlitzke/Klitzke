@@ -54,6 +54,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $response_financial_control = $data;
     $response_accounts_payable = $data;
     $response_add_access_menu = $data;
+    $response_inventary = $data;
+    $response_intentary_itens = $data;
 
     if (isset($data['type'])) {
         if ($data['type'] == 'users') {
@@ -88,6 +90,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             Register::RegisterAccountsPayable($sql, $response_accounts_payable, $user_id, $today);
         } else if ($data['type'] == 'addaccessmenu') {
             Register::AddMenuAccess($response_add_access_menu, $user_id, $sql);
+        } else if ($data['type'] == 'createinventary') {
+            Register::RegisterCreateInventary($response_inventary, $sql, $user_id, $today);
+        } else if ($data['type'] === 'createinventaryitens') {
+            Register::RegisterUpdateInventary($response_intentary_itens, $sql, $user_id, $today);
         }
     } else {
         Response::json(false, 'Tipo type não encontrado', $today);
@@ -96,6 +102,105 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 class Register
 {
+
+    public static function RegisterCreateInventary($response_inventary, $sql, $user_id, $today)
+    {
+
+        $inventaryDate = filter_var($response_inventary['inventaryDate'], FILTER_SANITIZE_STRING);
+        $inventaryStatus = filter_var($response_inventary['inventaryStatus'], FILTER_SANITIZE_STRING);
+        $inventaryObs = filter_var($response_inventary['inventaryObs'], FILTER_SANITIZE_STRING);
+
+        try {
+
+            $sql->BeginTransaction();
+
+            if (!empty($inventaryDate) || !empty($inventaryStatus) || !empty($inventaryObs)) {
+                $exec = $sql->prepare("INSERT INTO inventary (date, user_id, status, observation, created_at) 
+            VALUES(NOW(), :user_id, :status, :inventaryObs, :created_at)");
+                $exec->bindValue(':user_id', $user_id, PDO::PARAM_INT);
+                $exec->bindValue(':status', $inventaryStatus, PDO::PARAM_STR);
+                $exec->bindValue(':inventaryObs', $inventaryObs, PDO::PARAM_STR);
+                $exec->bindValue(':created_at', $inventaryDate, PDO::PARAM_STR);
+                $exec->execute();
+            }
+
+            $id_inventary = $sql->lastInsertId();
+            $sql->commit();
+
+            $message_log = "Inventario criado com sucesso";
+            Panel::LogAction($user_id, 'Inventario criado Acesso', $message_log, $today);
+            Response::send(true, 'Inventario criado com sucesso', [
+                'id' => $id_inventary,
+                'date' => $today
+            ]);
+
+        } catch (Exception $e) {
+            $sql->rollBack();
+            http_response_code(500);
+            Response::json(false, 'Erro ao adicionar Inventario: ' . $e->getMessage(), $today);
+        }
+    }
+    public static function RegisterUpdateInventary($response_intentary_itens, $sql, $user_id, $today)
+    {
+        $id_inventary = filter_var($response_intentary_itens['id_inventary'], FILTER_SANITIZE_NUMBER_INT);
+        $status_itens_invantary = 'Ajustado';
+        $status_inventary = 'Concluido';
+
+        try {
+            $sql->BeginTransaction();
+
+            if (!empty($response_intentary_itens['SelectedProductsRows']) && is_array($response_intentary_itens['SelectedProductsRows'])) {
+                foreach ($response_intentary_itens['SelectedProductsRows'] as $productItens) {
+                    $product_id = $productItens['product_id'];
+                    $counted_quantity = $productItens['quantity_updated'];
+                    $stock_difference = $productItens['stock_difference'];
+
+                    $exec = $sql->prepare("INSERT INTO inventary_items (inventary_id, product_id, counted_quantity, system_quantity, status, created_at)
+                                        VALUES (:inventary_id, :product_id, :counted_quantity, :system_quantity, :status1, NOW())");
+                    $exec->bindParam(':inventary_id', $id_inventary, PDO::PARAM_INT);
+                    $exec->bindParam(':product_id', $product_id, PDO::PARAM_INT);
+                    $exec->bindParam(':counted_quantity', $counted_quantity, PDO::PARAM_STR);
+                    $exec->bindParam(':system_quantity', $stock_difference, PDO::PARAM_STR);
+                    $exec->bindParam(':status1', $status_itens_invantary, PDO::PARAM_STR);
+                    $exec->execute();
+
+                    $new_quantity = $counted_quantity;
+                    $update_product = $sql->prepare("UPDATE products SET stock_quantity = :new_quantity WHERE id = :product_id");
+                    $update_product->bindParam(':new_quantity', $new_quantity, PDO::PARAM_INT);
+                    $update_product->bindParam(':product_id', $product_id, PDO::PARAM_INT);
+                    $update_product->execute();
+
+                    $product_movement_type = 'inventário'; 
+                    $exec_mov = $sql->prepare("INSERT INTO product_movements (product_id, type, quantity, date, description, quantity_inventary)
+                            VALUES (:product_id, :movement_type, :quantity, NOW(), :description, :quantity_inventary)");
+                    $exec_mov->bindParam(':product_id', $product_id, PDO::PARAM_INT);
+                    $exec_mov->bindParam(':movement_type', $product_movement_type, PDO::PARAM_STR);
+                    $exec_mov->bindParam(':quantity', abs($stock_difference), PDO::PARAM_INT);
+                    $description = "Ajuste de estoque realizado no inventário ID: $id_inventary";
+                    $exec_mov->bindParam(':description', $description, PDO::PARAM_STR);
+                    $exec_mov->bindParam(':quantity_inventary', $counted_quantity, PDO::PARAM_INT);
+                    $exec_mov->execute();
+
+                }
+            }
+
+            $exec1 = $sql->prepare("UPDATE inventary SET status = :status WHERE id = :id");
+            $exec1->bindParam('id', $id_inventary, PDO::PARAM_INT);
+            $exec1->bindParam('status', $status_inventary, PDO::PARAM_STR);
+            $exec1->execute();
+
+            $sql->commit();
+
+            $message_log = "Itens do inventário criado com sucesso";
+            Panel::LogAction($user_id, 'Itens do inventário criado Acesso', $message_log, $today);
+            Response::send(true, 'Itens do inventário criado com sucesso', $today);
+
+        } catch (Exception $e) {
+            $sql->rollBack();
+            http_response_code(500);
+            Response::json(false, 'Erro ao adicionar Inventário: ' . $e->getMessage(), $today);
+        }
+    }
 
     public static function AddMenuAccess($response_add_access_menu, $user_id, $sql)
     {
@@ -148,22 +253,22 @@ class Register
         $numberdoc = filter_var($response_accounts_payable['numberdoc'], FILTER_SANITIZE_STRING);
         $transactionType = filter_var($response_accounts_payable['transactionType'], FILTER_SANITIZE_STRING);
         $status_aprazo = filter_var($response_accounts_payable['incomeExpense'], FILTER_SANITIZE_STRING);
-    
+
         if (!$dateTransaction || !$descriptionTransaction || !$valueTransaction) {
             Response::json(false, 'Campo inválido', $today);
             return;
         }
-    
+
         try {
             if (self::UserAccess($sql, $user_id) < 50) {
                 Response::json(false, 'Usuário não tem permissão para executar essa atividade', $today);
                 return;
             }
-    
+
             $sql->beginTransaction();
-    
+
             $name_table = 'financial_control';
-    
+
             $exec = $sql->prepare("INSERT INTO $name_table (value, transaction_date, status_aprazo, 
                                     created_at, name_externo, description, number_doc, type) 
                                 VALUES(:value_aprazo, :dateVenciment, :status_aprazo, NOW(), :nameExterno,
@@ -176,13 +281,13 @@ class Register
             $exec->bindValue(':numberdoc', $numberdoc, PDO::PARAM_STR);
             $exec->bindValue(':transactionType', $transactionType, PDO::PARAM_STR);
             $exec->execute();
-    
+
             $sql->commit();
-    
+
             $message_log = "Adicionado contas com sucesso";
             Panel::LogAction($user_id, 'Adicionado contas com sucesso', $message_log, $today);
             Response::send(true, 'Adicionado contas com sucesso', $today);
-    
+
         } catch (Exception $e) {
             if ($sql->inTransaction()) {
                 $sql->rollBack();
@@ -190,7 +295,7 @@ class Register
             http_response_code(500);
             echo json_encode(['error' => 'Erro no banco de dados: ' . $e->getMessage(), 'code' => $e->getCode()]);
         }
-    }    
+    }
     public static function WriteAccountsReceivable($sql, $response_financial_control, $user_id, $today)
     {
 
@@ -462,7 +567,7 @@ class Register
         $menu_register_products = filter_var($response_users['registerProducts'], FILTER_SANITIZE_STRING);
         $menu_register_Inventory = filter_var($response_users['registerInventory'], FILTER_SANITIZE_STRING);
 
-        $menu_dashboard = filter_var($response_users['listProducts'], FILTER_SANITIZE_STRING);
+        $menu_dashboard = filter_var($response_users['dashboard'], FILTER_SANITIZE_STRING);
 
         $menu_my_company = filter_var($response_users['registerProducts'], FILTER_SANITIZE_STRING);
 
@@ -498,6 +603,7 @@ class Register
             'list-products' => ($menu_list_products === 'sim') ? 1 : 0,
             'register-stockcontrol' => ($menu_register_products === 'sim') ? 1 : 0,
             'stock-inventory' => ($menu_register_Inventory === 'sim') ? 1 : 0,
+            'list-inventary' => ($menu_register_Inventory === 'sim') ? 1 : 0,
 
             'dashboard' => ($menu_dashboard === 'sim') ? 1 : 0,
 
@@ -1000,7 +1106,7 @@ class Register
             $id_boxpdv = $exec->fetch(PDO::FETCH_ASSOC);
 
             if (!$id_boxpdv['id']) {
-                Response::json(false, 'Nenhuma caixa aberta encontrada', $today);
+                Response::json(false, 'Nenhuma caixa aberto encontrado', $today);
             }
 
             if ($value > $id_boxpdv['value']) {
@@ -1008,7 +1114,7 @@ class Register
             }
 
             $exec = $sql->prepare("INSERT INTO sangria_boxpdv (id_users, id_boxpdv, value, observation, withdrawa_date) 
-                                   VALUES (:user_id, :id_boxpdv, :value, :observation, :withdrawa_date)");
+                                    VALUES (:user_id, :id_boxpdv, :value, :observation, :withdrawa_date)");
             $exec->bindParam(':user_id', $user_id, PDO::PARAM_INT);
             $exec->bindParam(':id_boxpdv', $id_boxpdv['id'], PDO::PARAM_INT);
             $exec->bindParam(':value', $value);
@@ -1016,6 +1122,23 @@ class Register
             $exec->bindParam(':withdrawa_date', $today);
             $exec->execute();
             $sql->commit();
+
+            $type_withdrawal = 'contas a pagar';
+            $status_withdrawal = 'Despesa';
+            $withdrawal = 1;
+            $pay = 'paga';
+
+            $exec1 = $sql->prepare("INSERT INTO financial_control (type, value, transaction_date, status_aprazo, description, withdrawal, pay, date_settlement)
+                                    VALUES (:type, :value, :transaction_date, :status_aprazo, :description, :withdrawal, :pay, :date_settlement)");
+            $exec1->bindParam(':type', $type_withdrawal, PDO::PARAM_STR);
+            $exec1->bindParam(':value', $value, PDO::PARAM_STR);
+            $exec1->bindParam(':transaction_date', $today, PDO::PARAM_STR);
+            $exec1->bindParam(':status_aprazo', $status_withdrawal, PDO::PARAM_STR);
+            $exec1->bindParam(':description', $observation, PDO::PARAM_STR);
+            $exec1->bindParam(':withdrawal', $withdrawal, PDO::PARAM_INT);
+            $exec1->bindParam(':pay', $pay, PDO::PARAM_STR);
+            $exec1->bindParam(':date_settlement', $today, PDO::PARAM_STR);
+            $exec1->execute();
 
             $message_log = "Retirada realizada com sucesso no valor de $value";
             Panel::LogAction($user_id, 'Retirada do Caixa', $message_log, $today);

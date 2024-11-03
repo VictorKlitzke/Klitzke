@@ -2,6 +2,22 @@ const filesContent = document.getElementById('file-pdf');
 const checkboxes = document.querySelectorAll('.form-check-input');
 const selects = document.querySelectorAll('.form-select');
 
+const InventarYScreen = document.getElementById('inventory-screen');
+const idInventary = document.getElementById('idInventary');
+
+localStorage.setItem('modalAberto', 'true');
+
+document.addEventListener("DOMContentLoaded", () => {
+    idInventary.textContent = "Código do Inventário";
+
+    const modalAberto = localStorage.getItem('modalAberto');
+});
+
+function ClearLocalStorage() {
+    localStorage.removeItem('idInventary');
+    idInventary.textContent = "Código do Inventário";
+}
+
 checkboxes.forEach(checkbox => {
     checkbox.addEventListener('change', function () {
         const cardBody = this.closest('.card-body');
@@ -1208,7 +1224,7 @@ async function RegisterFile() {
                 },
                 mode: 'cors',
                 credentials: 'include'
-            });            
+            });
 
             const responseBody = await response.json();
 
@@ -1227,19 +1243,90 @@ async function RegisterFile() {
         showMessage('Registro cancelado', 'warning');
     });
 }
-function closeModal() {
-    filesContent.style.display = 'none';
-    localStorage.setItem('modalState', 'fechado');
-}
-function DisplayFiles() {
-    filesContent.style.display = 'block';
-    localStorage.setItem('modalState', 'aberto');
-}
-window.onload = function () {
-    const modalState = localStorage.getItem('modalState');
-    if (modalState === 'aberto') {
-        filesContent.style.display = 'block'; 
-    } else if (modalState === 'fechado'){
-        filesContent.style.display = 'none';   
+
+const getFieldCreateInventary = () => {
+    return {
+        type: {
+            type: 'createinventary',
+        },
+        values: {
+            inventaryDate: document.getElementById('inventaryDate').value,
+            inventaryStatus: document.getElementById('inventaryStatus').value,
+            inventaryObs: document.getElementById('inventaryObs').value
+        },
+        inputs: {
+            inventaryDate: document.getElementById('inventaryDate'),
+            inventaryStatus: document.getElementById('inventaryStatus'),
+            inventaryObs: document.getElementById('inventaryObs')
+        }
     }
+}
+async function Inventaryquantity() {
+    const { type, values, inputs } = await getFieldCreateInventary();
+
+    if (values.inventaryStatus == null || values.inventaryDate == null) {
+        showMessage('Campos não podem ser vazio', 'warning');
+
+        inputs.inventaryStatus.classList.add('error');
+        inputs.inventaryDate.classList.add('error');
+        setTimeout(() => {
+            inputs.inventaryStatus.classList.remove('error');
+            inputs.inventaryDate.classList.remove('error');
+        }, 3000);
+
+        return;
+    }
+
+    let responseInventary = {
+        inventaryStatus: values.inventaryStatus,
+        inventaryDate: values.inventaryDate,
+        inventaryObs: values.inventaryObs,
+        type: type.type
+    }
+
+    continueMessage("Deseja realmente criar um novo inventario?", "Sim", "Não", async function () {
+        try {
+
+            let url = `${BASE_CONTROLLERS}registers.php`;
+
+            let response = await fetch(url, {
+                method: "POST",
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(responseInventary)
+            });
+
+            if (!response.ok) {
+                showMessage('Erro ao conectar com servidor, contate o suporte' + response.status, 'error');
+            }
+
+            const responseInve = await response.text();
+            let responseParse;
+            try {
+                responseParse = JSON.parse(responseInve);
+
+            } catch (error) {
+                showMessage('Erro ao fazer requisição: Resposta inválida do servidor', 'error');
+                return;
+            }
+
+            if (responseParse && responseParse.success) {
+                showMessage('Inventário realizado com sucesso', 'success');
+
+                Inventaryid = responseParse.data.id;
+                localStorage.setItem('Inventaryid', Inventaryid)
+
+                idInventary.textContent = Inventaryid;
+                document.getElementById('AdjustInventary').style.display = 'block';
+                document.getElementById('InventaryListProduct').style.display = 'block';
+            } else {
+                showMessage('Erro ao tentar fazer inventário: ' + (responseParse ? responseParse.message : 'Resposta vazia'), 'error');
+            }
+        } catch (error) {
+            showMessage('Erro ao fazer requisição' + error, 'error')
+        }
+    }, function () {
+        showMessage('Operação cancelada', 'warning');
+    });
 }

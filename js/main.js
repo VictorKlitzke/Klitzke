@@ -82,8 +82,6 @@ async function closeBox() {
 
       const responseText = await response.text();
 
-      console.log(responseText);
-
       try {
         const data = JSON.parse(responseText);
 

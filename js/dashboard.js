@@ -221,6 +221,37 @@ async function createChartsDateMaisSales() {
   });
 }
 
+async function fetchBoxClosing() {
+  let responseClosing = {
+    type: 'sumclosingbox'
+  }
+
+  try {
+
+    let url = `${BASE_CONTROLLERS}lists.php`;
+
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(responseClosing)
+    });
+    const data = await response.json();
+
+    if (data.success) {
+      data.sumboxclosing
+    } else {
+      console.error(data.message);
+      return [];
+    }
+
+  } catch (error) {
+    console.error('Erro ao buscar dados:', error);
+    return [];
+  }
+}
+
 async function fetchFinacialControl() {
   let responseType = {
     type: 'sumcontrolfinancial'

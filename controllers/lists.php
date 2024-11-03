@@ -37,11 +37,76 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         lists::SumFinancialControl($sql);
     } else if ($type === 'sumUsersSales') {
         lists::UsersSumSales($sql);
+    } else if ($type === 'listinventary') {
+        lists::ListInventary($sql);
+    } else if ($type === 'inventaryitens') {
+        lists::ListInventaryItens($sql, $input);
+    } else if ($type === 'sumclosingbox') {
+        lists::SumBoxClosing($sql);
     }
 }
 
 class lists
 {
+    public static function SumBoxClosing($sql) {
+        try {
+
+        } catch (Exception $e) {
+
+        }
+    }
+    public static function ListInventaryItens($sql, $input){
+        $idInventary = isset($input['idInventary']) ? $input['idInventary'] : null;
+
+        try {
+
+            $exec = $sql->prepare("SELECT 
+                                    i.id, 
+                                    i.status, 
+                                    i.observation, 
+                                    i.created_at,
+                                    p.name product,
+                                    ii.`counted_quantity`,
+                                    ii.`system_quantity`,
+                                    ii.`status`
+                                    
+                                FROM 
+                                    inventary i 
+                                    INNER JOIN `inventary_items` ii ON ii.`inventary_id` = i.id
+                                    INNER JOIN products p ON p.id = ii.`product_id`
+                                WHERE i.id = :id");
+            $exec->bindParam(':id', $idInventary, PDO::PARAM_INT);
+            $exec->execute();
+            $result_itens = $exec->fetchAll(PDO::FETCH_ASSOC);
+
+            echo json_encode([
+                'success' => 'true',
+                'result_itens' => $result_itens
+            ]);
+
+        } catch (Exception $e) {
+            http_response_code(500);
+            echo json_encode(['error' => 'Erro no banco de dados: ' . $e->getMessage(), 'code' => $e->getCode()]);
+        }
+    }
+    public static function ListInventary($sql)
+    {
+        try {
+
+            $exec = $sql->prepare("SELECT i.id, i.status, i.observation, i.created_at, u.name user FROM inventary i INNER JOIN users u ON u.id = i.user_id");
+            $exec->execute();
+            $result_inventary = $exec->fetchAll(PDO::FETCH_ASSOC);
+
+            echo json_encode([
+                'success' => true,
+                'result_inventary' => $result_inventary
+            ]);
+
+        } catch (Exception $e) {
+            http_response_code(500);
+            echo json_encode(['error' => 'Erro no banco de dados: ' . $e->getMessage(), 'code' => $e->getCode()]);
+        }
+    }
     public static function ListProducts($sql)
     {
 

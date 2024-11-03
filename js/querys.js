@@ -7,24 +7,25 @@ const menuMapping = {
   "list-clients": "Listar Clientes",
   "register-clients": "Registrar Clientes",
   "edit-clients": "Editar Clientes",
-  "list-suppliers": "Listar Fornecedores",
+  "list-suppliers": "Lista Fornecedores",
   "register-suppliers": "Registrar Fornecedores",
   "edit-suppliers": "Editar Fornecedores",
   "register-sales": "Registrar Vendas",
-  "list-sales": "Listar Vendas",
+  "list-sales": "Lista Vendas",
   "register-request": "Registrar Pedido",
-  "list-request": "Listar Pedidos",
+  "list-request": "Lista Pedidos",
   "register-table": "Registrar Mesa",
   "register-boxpdv": "Registrar Caixa PDV",
-  "list-boxpdv": "Listar Caixa PDV",
+  "list-boxpdv": "Lista Caixa PDV",
   "shopping-request": "Solicitação de Compra",
-  "list-purchase-request": "Listar Solicitações de Compra",
-  "list-products": "Listar Produtos",
+  "list-purchase-request": "Lista Solicitações de Compra",
+  "list-products": "Lista Produtos",
   "register-stockcontrol": "Registrar Controle de Estoque",
   "stock-inventory": "Inventario de Estoque",
   "dashboard": "Painel de Controle",
-  "list-companys": "Listar Empresas",
-  "financial-control": "Controle Financeiro"
+  "list-companys": "Lista Empresas",
+  "financial-control": "Controle Financeiro",
+  "list-inventary": "Lista Inventario"
 };
 
 window.onload = function () {
@@ -52,24 +53,28 @@ async function QueryListProducts() {
       const row = document.createElement('tr');
 
       const idCell = document.createElement('td');
-      idCell.textContent = product.id;
+      idCell.textContent = product.product_id;
       row.appendChild(idCell);
 
       const nameCell = document.createElement('td');
-      nameCell.textContent = product.name;
+      nameCell.textContent = product.product_name;
       row.appendChild(nameCell);
 
-      const stockCell = document.createElement('td');
-      stockCell.textContent = product.stock_quantity;
-      row.appendChild(stockCell);
+      const stockEntryCell = document.createElement('td');
+      stockEntryCell.textContent = product.total_entry;
+      row.appendChild(stockEntryCell);
+
+      const stockExitCell = document.createElement('td');
+      stockExitCell.textContent = product.total_exit;
+      row.appendChild(stockExitCell);
 
       const valueCell = document.createElement('td');
-      valueCell.textContent = product.value_product;
+      valueCell.textContent = product.stock_difference;
       row.appendChild(valueCell);
 
       const actionsCell = document.createElement('td');
       actionsCell.innerHTML = `
-        <button class="btn btn-warning btn-sm" onclick="SelectedProduct('${product.id}', '${product.name}', ${product.stock_quantity}, '${product.value_product}')">Selecionar</button>
+        <button class="btn btn-warning btn-sm" onclick="SelectedProduct('${product.product_id}', '${product.product_name}', ${product.stock_difference})">Selecionar</button>
       `;
       row.appendChild(actionsCell);
 
@@ -80,12 +85,6 @@ async function QueryListProducts() {
   }
 }
 
-function SelectedProduct(id, name, stock_quantity, value_product) {
-  document.getElementById('productID').value = id;
-  document.getElementById('productName').value = name;
-  document.getElementById('productQuantity').value = stock_quantity;
-  document.getElementById('productPrice').value = value_product;
-}
 
 function toggleNoticeBoard() {
   let noticeBoard = document.getElementById('notice-board');
@@ -366,16 +365,20 @@ function showAccessMenuUser(userMenus) {
     card.classList.add('col-md-4', 'mb-4');
 
     card.innerHTML = `
-      <div class="card h-100 text-center shadow">
-        <div class="card-body">
-          <h5 class="card-title">${menuName}</h5>
+    <div class="card h-100 text-center shadow">
+      <div class="card-body d-flex flex-column align-items-center">
+        <h5 class="card-title">${menuName}</h5>
+        <div class="form-check mb-3">
           <input type="checkbox" class="form-check-input" id="check-${access.menu}" ${access.released === "1" ? 'checked' : ''} disabled>
-          <p class="card-text">Descrição do menu: ${menuName}</p>
+          <label class="form-check-label" for="check-${access.menu}"></label>
         </div>
-        <button onclick="DeleteMenuAccess('${OriginalMenuUser}', ${UserIDMenu})" class="btn btn-danger">
-          <i class="fas fa-trash-alt"></i>
-        </button>
+        <p class="card-text">Descrição do menu: ${menuName}</p>
       </div>
+      <button onclick="DeleteMenuAccess('${OriginalMenuUser}', ${UserIDMenu})" class="btn btn-danger mt-2">
+        <i class="fas fa-trash-alt"></i>
+      </button>
+    </div>
+
     `;
     modalUser.appendChild(card);
   });
@@ -403,7 +406,9 @@ function showAddMenus(userMenus) {
         <div class="card h-100 text-center shadow">
             <div class="card-body">
                 <h5 class="card-title">${menuName}</h5>
-                <input type="checkbox" class="form-check-input" id="check-${menuKey}"> 
+                <div class="form-check mb-3">
+                  <input type="checkbox" class="form-check-input" id="check-${menuKey}"> 
+                </div>
                 <p class="card-text">Descrição do menu: ${menuName}</p>
             </div>
         </div>
@@ -452,8 +457,6 @@ async function AddMenuAccess(UserIDMenu) {
     userID: UserIDMenu,
     menus: menusInEnglish
   };
-
-  console.log(responseMenuaccess);
 
   continueMessage("Adicionar menus ao usuário?", "Sim", "Não", async function () {
     try {

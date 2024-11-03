@@ -45,8 +45,6 @@ async function FinalizeAPrazo() {
 
       const responseBody = await response.json();
 
-      console.log(responseBody);
-
       if (responseBody.success) {
         showMessage('Baixa no contas a receber com sucesso ', 'success');
 
@@ -142,8 +140,6 @@ async function RegisterAccountsPayable() {
       });
 
       const responseBody = await response.json();
-
-      console.log(responseBody);
 
       if (responseBody.success) {
         showMessage('Contas a pagar cadastrada com sucesso', 'success');

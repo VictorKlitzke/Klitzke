@@ -13,6 +13,7 @@ window.onload = ListVariationValues();
 window.onload = loadValuesFromLocalStorage;
 window.onload = AddVariationValues();
 window.onload = calculateTotalsListAPrazo();
+window.onload = ListInventary();
 
 document.addEventListener('DOMContentLoaded', function () {
     ListDetailsAprazo();
@@ -894,9 +895,9 @@ async function calculateTotalsListAPrazo() {
 
             result_salesAll.forEach(sa => {
                 const span = document.createElement('span');
-                const valor = parseFloat(sa.TotalTodasVendas) || 0; 
+                const valor = parseFloat(sa.TotalTodasVendas) || 0;
                 span.textContent = numberFormat(valor);
-            
+
                 sum_result_salesAll.appendChild(span);
             });
 
@@ -1008,8 +1009,10 @@ async function ListAPrazo(searchTermFinancialControl = '') {
 
                 const dateCell = document.createElement('td');
                 if (fc.transaction_date) {
-                    const [year, month, day] = fc.transaction_date.split('-');
-                    dateCell.textContent = `${day}/${month}/${year}`;
+                    const [dateTransaction, timeTransaction] = fc.transaction_date.split(' ');
+                    const [year, month, day] = dateTransaction.split('-');
+                    const [hour, minute, second] = timeTransaction.split(':');
+                    dateCell.textContent = `${day}/${month}/${year} ${hour}:${minute}:${second}`;
                 } else {
                     dateCell.textContent = 'Data não disponível';
                 }
@@ -1031,7 +1034,7 @@ async function ListAPrazo(searchTermFinancialControl = '') {
                 rowFinancialControl.appendChild(typeCell);
 
                 const actionCell = document.createElement('td');
-                if (fc.pay == null) {
+                if (fc.pay == null && fc.withdrawal == null) {
                     const inputButton = document.createElement('button');
                     inputButton.type = 'button';
                     inputButton.className = 'btn btn-dark btn-sm';
@@ -1257,6 +1260,171 @@ async function InvoiceAccountsPayable(id_account) {
     }, function () {
         showMessage('Operação cancelada', 'warning')
     })
+}
+async function ListInventary() {
+
+    try {
+
+        let url = `${BASE_CONTROLLERS}lists.php`;
+
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ type: 'listinventary' })
+        });
+
+        const data = await response.json()
+
+        if (data.success) {
+
+            const result_inventary = data.result_inventary;
+
+            if (!Array.isArray(result_inventary)) {
+                throw new Error('result_inventary is not an array');
+            }
+
+            const inventaryList = document.getElementById('list-inventary').querySelector('tbody');
+
+            inventaryList.innerHTML = '';
+
+            result_inventary.forEach(ri => {
+                const row = document.createElement('tr');
+
+                const idCell = document.createElement('th');
+                idCell.textContent = ri.id;
+                row.appendChild(idCell);
+
+                const UserCell = document.createElement('th');
+                UserCell.textContent = ri.user;
+                row.appendChild(UserCell);
+
+                const ObsCell = document.createElement('th');
+                ObsCell.textContent = ri.observation;
+                row.appendChild(ObsCell);
+
+                const statusCell = document.createElement('th');
+                statusCell.textContent = ri.status;
+                row.appendChild(statusCell);
+
+                const created_atCell = document.createElement('th');
+                const dateString = ri.created_at;
+                const [year, month, day] = dateString.split('-');
+                const formattedDate = `${day}/${month}/${year}`;
+                created_atCell.textContent = formattedDate;
+                row.appendChild(created_atCell);
+
+                const buttonCell = document.createElement('th');
+                buttonCell.style.justifyContent = 'center';
+
+                const buttonRequest = document.createElement('button');
+                buttonRequest.className = 'btn btn-info';
+                buttonRequest.textContent = 'Mais Detalhes';
+                buttonRequest.onclick = () => handleInventaryItensClick(ri.id);
+                buttonCell.appendChild(buttonRequest);
+
+                row.appendChild(buttonCell);
+
+                inventaryList.appendChild(row);
+            });
+        } else {
+            showMessage('Erro ao buscar lista de inventario', 'error')
+        }
+
+    } catch (error) {
+        showMessage('Erro ao fazer requisição' + error, 'error');
+    }
+}
+async function handleInventaryItensClick(idInventary) {
+
+    if (!idInventary) {
+        showMessage('Código do inventário não encontrado', 'warning');
+        return;
+    }
+
+    let responseInventaryItens = {
+        idInventary: idInventary,
+        type: 'inventaryitens'
+    }
+
+    try {
+        let url = `${BASE_CONTROLLERS}lists.php`;
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(responseInventaryItens)
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+            const detailsHtml = `
+        <div class="modal-body">
+            <div class="mb-4 d-flex justify-content-between">
+                <div class="flex-fill me-3">
+                    <h6 class="text-primary fw-bold">Observação:</h6>
+                    <p class="text-muted">${data.result_itens[0].observation}</p>
+                </div>
+                <div class="flex-fill me-3">
+                    <h6 class="text-primary fw-bold">Status:</h6>
+                    <p class="badge rounded-pill bg-${data.result_itens[0].status === 'ativo' ? 'success' : 'danger'} text-uppercase">${data.result_itens[0].status}</p>
+                </div>
+                <div class="flex-fill">
+                    <h6 class="text-primary fw-bold">Criado em:</h6>
+                    <p class="text-muted">${new Date(data.result_itens[0].created_at).toLocaleDateString('pt-BR')}</p>
+                </div>
+            </div>
+            <hr class="border-bottom" />
+                <div class="mb-4">
+                    <h6 class="text-primary fw-bold">Itens do Inventário:</h6>
+                    <ul class="list-group">
+                        ${data.result_itens.map(item => `
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h6 class="my-0 fw-bold">${item.product}</h6>
+                                    <small class="text-muted">Quantidade Contada: <strong>${item.counted_quantity}</strong></small>
+                                </div>
+                                <span class="badge rounded-pill bg-secondary">${item.system_quantity} (Sistema)</span>
+                            </li>`).join('')}
+                    </ul>
+                </div>
+        </div>
+        `;
+            document.getElementById('modalContent').innerHTML = detailsHtml;
+            const detailsModal = new bootstrap.Modal(document.getElementById('detailsModal'));
+            detailsModal.show();
+        } else {
+            showMessage('Erro ao buscar detalhes do inventário', 'error');
+        }
+
+    } catch (error) {
+        showMessage('Erro ao fazer a requisição.' + error, 'error');
+    }
+}
+
+function filterInventary() {
+    const input = document.getElementById('searchInput');
+    const filter = input.value.toLowerCase();
+    const table = document.getElementById('list-inventary');
+    const rows = table.getElementsByTagName('tr');
+
+    for (let i = 1; i < rows.length; i++) {
+        const cells = rows[i].getElementsByTagName('th');
+        let match = false;
+        for (let j = 0; j < cells.length; j++) {
+            if (cells[j]) {
+                const cellText = cells[j].textContent || cells[j].innerText;
+                if (cellText.toLowerCase().includes(filter)) {
+                    match = true;
+                    break;
+                }
+            }
+        }
+        rows[i].style.display = match ? '' : 'none';
+    }
 }
 function formatDate(date) {
     const day = String(date.getDate()).padStart(2, '0');

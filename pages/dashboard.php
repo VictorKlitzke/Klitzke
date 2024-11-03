@@ -1,5 +1,6 @@
-<div class="container-fluid p-4">
+<div class="container-fluid p-4 bg-light border rounded-4">
   <h2>Dashboard</h2>
+  <hr class="border-bottom" />
   <br>
   <div class="row">
     <div class="col-lg-12 mb-4">
@@ -42,6 +43,23 @@
         <div class="card-body">
           <div id="best-month"></div>
           <canvas id="total-date-sales"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-lg-12 mb-4">
+      <div class="card shadow-sm">
+        <div class="card-header bg-info text-white">
+          <h4 class="card-title mb-0">Fechamento de caixa</h4>
+        </div>
+        <div class="card-body">
+          <div id="box_closing">
+            <p>Total em Caixa: <span id="totalCaixa">R$ 0,00</span></p>
+            <p>Total de Vendas: <span id="totalVendas">R$ 0,00</span></p>
+            <p>Total de Despesas: <span id="totalDespesas">R$ 0,00</span></p>
+          </div>
+          <canvas id="totais_closing"></canvas>
         </div>
       </div>
     </div>

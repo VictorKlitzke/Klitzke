@@ -300,6 +300,13 @@ if (isset($_GET['loggout'])) {
                                                 </a>
                                             </li>
                                         <?php endif; ?>
+                                        <?php if ($_SESSION['user_permissions']['list-inventary']): ?>
+                                            <li>
+                                                <a class="dropdown-item" <?php SelectedMenu('list-inventary'); ?>
+                                                    href="<?php echo INCLUDE_PATH; ?>list-inventary">Lista de Iventarios
+                                                </a>
+                                            </li>
+                                        <?php endif; ?>
                                         <?php if ($_SESSION['user_permissions']['stock-inventory']): ?>
                                             <li>
                                                 <a class="dropdown-item" <?php SelectedMenu('stock-inventory'); ?>
@@ -470,7 +477,7 @@ if (isset($_GET['loggout'])) {
                                     </div>
                                     <div class="col-md-6">
                                         <div class="mb-3">
-                                            <label for="value_system" class="form-label">Caixa Sistema</label>
+                                            <label for="value_system" class="form-label">Abertura de Caixa</label>
                                             <input id="value_system" class="form-control" type="text"
                                                 placeholder="Caixa Sistema" name="value_system"
                                                 value="<?php echo $result_system['value_boxpdv']; ?>" readonly/>
@@ -503,14 +510,14 @@ if (isset($_GET['loggout'])) {
                                     </div>
                                     <div class="col-sm-6">
                                         <div class="mb-3">
-                                            <label class="text-dark">Soma: Dinheiro + Abertura de caixa</label>
+                                            <label class="text-dark">Soma: Dinheiro + Abertura de Caixa</label>
                                             <input id="soma" class="form-control" type="text"
                                                 placeholder="Soma: Dinheiro + caixa Sistema" readonly />
                                         </div>
                                     </div>
                                     <div class="col-sm-12">
                                         <div class="mb-3">
-                                            <label class="text-dark">Soma: Total + Caixa Sistema</label>
+                                            <label class="text-dark">Soma: Total + Abertura de Caixa</label>
                                             <input id="TotalizadorBox" class="form-control" type="text"
                                                 placeholder="Soma: Total + caixa Sistema" readonly />
                                         </div>
@@ -545,13 +552,16 @@ if (isset($_GET['loggout'])) {
             </div> -->
 
     <script language="JavaScript" type="text/javascript"
-        src="<?php echo INCLUDE_JAVASCRIPT; ?>const_globais.js"></script>
+        src="<?php echo INCLUDE_JAVASCRIPT; ?>const_globais.js">
+    </script>
     <script language="JavaScript" type="text/javascript" src="<?php echo INCLUDE_JAVASCRIPT; ?>alert.js"></script>
     <script language="JavaScript" type="text/javascript" src="<?php echo INCLUDE_JAVASCRIPT; ?>main.js"></script>
     <script language="JavaScript" type="text/javascript"
-        src="<?php echo INCLUDE_JAVASCRIPT; ?>register_system.js"></script>
+        src="<?php echo INCLUDE_JAVASCRIPT; ?>register_system.js">
+    </script>
     <script language="JavaScript" type="text/javascript"
-        src="<?php echo INCLUDE_JAVASCRIPT; ?>delete_system.js"></script>
+        src="<?php echo INCLUDE_JAVASCRIPT; ?>delete_system.js">
+    </script>
     <script language="JavaScript" type="text/javascript" src="<?php echo INCLUDE_JAVASCRIPT; ?>edit_system.js"></script>
     <script language="JavaScript" type="text/javascript" src="<?php echo INCLUDE_JAVASCRIPT; ?>values.js"></script>
     <script language="JavaScript" type="text/javascript" src="<?php echo INCLUDE_JAVASCRIPT; ?>menu.js"></script>
@@ -561,6 +571,7 @@ if (isset($_GET['loggout'])) {
     </script>
     <script src="<?php echo INCLUDE_JAVASCRIPT; ?>dashboard.js"></script>
     <script src="<?php echo INCLUDE_JAVASCRIPT; ?>querys.js"></script>
+    <script src="<?php echo INCLUDE_JAVASCRIPT; ?>inventary.js"></script>
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>

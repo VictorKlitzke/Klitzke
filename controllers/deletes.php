@@ -113,7 +113,6 @@ class Deletes
         $menu_access = isset($response_delete_menu['menu']) ? $response_delete_menu['menu'] : null;
         $user_id = isset($response_delete_menu['UserIDMenu']) ? $response_delete_menu['UserIDMenu'] : null;
 
-        var_dump($user_id, $menu_access);
         try {
 
             if (self::UserAccess($sql, $user_id) < 100) {

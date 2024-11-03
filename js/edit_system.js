@@ -505,75 +505,6 @@ async function EditForn() {
 
 }
 
-const getInventaryQuantity = () => {
-    return {
-        type: {
-            type: 'editinventaryquantity',
-        },
-        values: {
-            quantityProduct: document.getElementById('productQuantity').value,
-            productID: document.getElementById('productID').value,
-            valueProduct: document.getElementById('productPrice').value
-        }
-    }
-}
-async function Inventaryquantity() {
-    const { type, values } = await getInventaryQuantity();
-
-    if (isNaN(values.quantityProduct)) {
-        showMessage('Campo quantidade tem que ser numerico');
-        return;
-    }
-
-    if (values.quantityProduct < 0) {
-        showMessage('Quantidade não pode ser nagativo');
-        return;
-    }
-
-    if (values.quantityProduct == null || values.valueProduct == null) {
-        showMessage('Quantidade ou Valor não podem ser vazios');
-        return;
-    }
-
-    let responseInventary = {
-        quantityProduct: values.quantityProduct,
-        valueProduct: values.valueProduct,
-        productID: values.productID,
-        type: type.type
-    }
-
-    continueMessage("Deseja realizar inventario do produto?", "Sim", "Não", async function () {
-        try {
-
-            let url = `${BASE_CONTROLLERS}edits.php`;
-
-            let response = await fetch(url, {
-                method: "POST",
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(responseInventary)
-            });
-
-            const responseInve = await response.json();
-
-            if (responseInve.success) {
-                showMessage('Inventario realizado com sucesso', 'success');
-                setTimeout(() => {
-                    location.reload();
-                }, 3000);
-            } else {
-                showMessage('Erro ao tentar fazer inventario' + responseInve.message, 'error');
-            }
-
-        } catch (error) {
-            showMessage('Erro ao fazer requisição' + error ,'error')
-        }
-    },function () {
-        showMessage('Operação cancelada', 'warning');
-    });
-}
-
 const getEditProducts = () => {
     return {
         type: {
@@ -681,8 +612,6 @@ async function EditProducts() {
         brand: values.brand,
         id_products: values.id_products,
     }
-
-    console.log(responseEditProduct);
 
     continueMessage("Deseja editar o produto?", "Sim", "Não", async function () {
         try {

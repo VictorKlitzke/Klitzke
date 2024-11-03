@@ -41,7 +41,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $response['menu_user'] = $menu_access_response['menu_user'];
         }
 
-    }else {
+    } else {
         $response['error'] = 'Parâmetros inválidos ou incompletos.';
     }
 
@@ -66,7 +66,8 @@ echo json_encode($response);
 
 class Querys
 {
-    public static function MenuAccessEditRemove($id_user_menu, $sql) {
+    public static function MenuAccessEditRemove($id_user_menu, $sql)
+    {
         try {
 
             $exec = $sql->prepare("SELECT menu, released, user_id FROM menu_access WHERE user_id = :user_id");
@@ -147,10 +148,27 @@ class Querys
             return ['error' => 'Erro no banco de dados: ' . $e->getMessage(), 'code' => $e->getCode()];
         }
     }
-    public static function QueryListProduct($sql) {
+    public static function QueryListProduct($sql)
+    {
         try {
 
-            $exec = $sql->prepare("SELECT id, name, stock_quantity, value_product FROM products");
+            $exec = $sql->prepare("SELECT 
+                                        pm.product_id, 
+                                        p.name AS product_name,
+                                        p.stock_quantity AS quantity,
+                                        SUM(CASE WHEN pm.type = 'Entrada' THEN pm.quantity ELSE 0 END) AS total_entry,
+                                        SUM(CASE WHEN pm.type = 'Saida' THEN pm.quantity ELSE 0 END) AS total_exit,
+                                        (SUM(CASE WHEN pm.type = 'Entrada' THEN pm.quantity ELSE 0 END) +
+                                        SUM(CASE WHEN pm.type = 'Saida' THEN pm.quantity ELSE 0 END)) AS stock_difference
+                                    FROM 
+                                        product_movements pm
+                                    INNER JOIN 
+                                        products p ON p.id = pm.product_id
+                                    GROUP BY 
+                                        pm.product_id,
+                                        p.name,
+                                        p.stock_quantity
+                                    ");
             $exec->execute();
             $list_products = $exec->fetchAll(PDO::FETCH_ASSOC);
             return $list_products;

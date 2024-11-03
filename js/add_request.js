@@ -342,7 +342,6 @@ async function addItemCard() {
 		existingCardOrder = createNewCard(currentCommandId);
 		document.body.appendChild(existingCardOrder);
 	} else if (existingCardOrder.dataset.commandId === currentCommandId) {
-		console.log("functionando!!")
 	}
 
 	const destinationTable = existingCardOrder.querySelector('.destination-table');
@@ -486,10 +485,6 @@ function calculateTotal() {
 		if (quantityElement && valueElement) {
 			let quantityText = quantityElement.textContent.trim();
 			let valueText = valueElement.textContent.trim();
-
-			console.log('Texto de quantidade:', quantityText);
-			console.log('Texto de valor:', valueText);
-
 			let quantityValue = parseInt(quantityText, 10) || 0;
 			let valueAmount = parseFloat(valueText.replace(',', '.')) || 0;
 
@@ -738,7 +733,6 @@ function ModalFaturamento(commandId) {
 			ButtonSelected.push(buttonPed);
 
 			calculateDifference(totalcardValue);
-			console.log(totalcardValue);
 		});
 
 		button.addEventListener("dblclick", function () {

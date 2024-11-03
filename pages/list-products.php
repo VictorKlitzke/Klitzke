@@ -15,7 +15,11 @@ $products = Controllers::SelectAll('products');
 ?>
 
 <div class="container-fluid p-4 shadow-lg border rounded-4 bg-light">
-    <h2 class="text-dark mb-4">Lista de Produtos</h2>
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2 class="text-dark mb-4">Lista de Produtos</h2>
+        <a class="btn btn-success fw-bold px-4" <?php SelectedMenu('register-users') ?>
+            href="<?php echo INCLUDE_PATH; ?>register-stockcontrol">+ Novo Produto</a>
+    </div>
     <div class="row">
         <div class="col">
             <div class="table-responsive" style="max-height: 400px; overflow-y: auto; overflow-x: auto;">

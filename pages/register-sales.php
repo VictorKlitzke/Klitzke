@@ -10,7 +10,7 @@ if (!isset($_SESSION['user_permissions'][$page_permission]) || $_SESSION['user_p
 }
 ?>
 
-<div class="card">
+<div class="container-fluid shadow-lg border rounded-4 bg-light p-2">
     <div class="container-fluid mt-5">
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h1 class="text-primary">Tela de Vendas</h1>

@@ -184,37 +184,43 @@ async function DeleteMenuAccess(menuName, UserIDMenu) {
         type: 'deleteMenuAccess',
         menu: menuName,
         UserIDMenu: UserIDMenu
-    }
+    };
 
-    console.log(responseDeleteMenu);
-
-    continueMessage("Deseja realmente deletar menu de acceso?", "Sim", "Não", async function() {
+    continueMessage("Deseja realmente deletar menu de acesso?", "Sim", "Não", async function() {
         try {
-
             let url = `${BASE_CONTROLLERS}deletes.php`;
-    
+
             const response = await fetch(url, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify(responseDeleteMenu)
-            })
-    
-            const result = await response.json();
+            });
 
-            console.log(result);
+            const contentType = response.headers.get('content-type');
 
-            if (result.success) {
-                showMessage('Menu deletado com sucesso', 'success');
+            if (contentType && contentType.includes('application/json')) {
+                const resultParse = await response.json();
+
+                if (resultParse?.success) {
+                    showMessage('Menu deletado com sucesso', 'success');
+
+                    setTimeout(() => {
+                        location.reload();
+                    }, 3000);
+
+                } else {
+                    showMessage('Erro ao remover menu de acesso: ' + (resultParse?.message || 'Erro desconhecido'), 'error');
+                }
             } else {
-                showMessage('Erro ao remover menu de acesso' + result.message, 'error');
+                throw new Error('A resposta da API não é um JSON válido');
             }
-    
+
         } catch (error) {
-            showMessage('Erro ao tentar remover Menu do usuário', 'error')
+            showMessage('Erro ao tentar remover Menu do usuário: ' + error.message, 'error');
         }
     }, function () {
-        showMessage('Operação cancelada', 'warning')
-    })
+        showMessage('Operação cancelada', 'warning');
+    });
 }
