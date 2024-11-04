@@ -48,22 +48,42 @@
     </div>
   </div>
   <div class="row">
-    <div class="col-lg-12 mb-4">
+    <div class="col-lg-12">
       <div class="card shadow-sm">
         <div class="card-header bg-info text-white">
-          <h4 class="card-title mb-0">Fechamento de caixa</h4>
+          <h4 class="card-title mb-0">Fechamento de Caixa - Visão Geral</h4>
         </div>
         <div class="card-body">
-          <div id="box_closing">
-            <p>Total em Caixa: <span id="totalCaixa">R$ 0,00</span></p>
-            <p>Total de Vendas: <span id="totalVendas">R$ 0,00</span></p>
-            <p>Total de Despesas: <span id="totalDespesas">R$ 0,00</span></p>
+          <div class="row">
+            <!-- Gráfico de barras -->
+            <div class="mb-4 col-lg-6">
+              <h5 class="text-center">Comparativo de Tipos de Pagamento</h5>
+              <canvas id="chartBar"></canvas>
+            </div>
+            <!-- Gráfico de linhas -->
+            <div class="mb-4 col-lg-6">
+              <h5 class="text-center">Evolução de Valores no Sistema e Físico</h5>
+              <canvas id="chartLine"></canvas>
+            </div>
           </div>
-          <canvas id="totais_closing"></canvas>
+          <div class="row">
+            <!-- Gráfico de pizza -->
+            <div class="mb-4 col-lg-6">
+              <h5 class="text-center">Proporção de Tipos de Pagamento</h5>
+              <canvas id="chartPie"></canvas>
+            </div>
+            <!-- Gráfico de barras empilhadas -->
+            <div class="mb-4 col-lg-6">
+              <h5 class="text-center">Soma e Diferença no Fechamento</h5>
+              <canvas id="chartStacked"></canvas>
+            </div>
+          </div>
         </div>
       </div>
     </div>
   </div>
+
+</div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>

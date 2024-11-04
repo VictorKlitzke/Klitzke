@@ -1,6 +1,7 @@
 import pdfplumber
 import re
 from services import connect  
+from decimal import Decimal
 
 def extract_quantity(qty_string):
     match = re.match(r'[\d.,]+', qty_string)
@@ -92,6 +93,18 @@ def insert_into_database(products):
                 current_quantity = result[0]
                 new_quantity = current_quantity + qtde
                 
+                selected_query = """SELECT multiply FROM config_multiply_product ORDER BY id DESC LIMIT 1"""
+                cursor.execute(selected_query)
+                last_value_result = cursor.fetchone()
+                vl_unitario = Decimal(vl_unitario)
+                
+                if last_value_result:
+                    last_value = Decimal(last_value_result[0]) / Decimal(100)  
+                    value_product = vl_unitario * (1 + last_value) 
+                else:
+                    print("Nenhum valor encontrado em config_multiply_product. Usando vl_unitario.")
+                    value_product = vl_unitario 
+                
                 update_query = "UPDATE products SET quantity = %s, stock_quantity = %s WHERE id = %s"
                 cursor.execute(update_query, (new_quantity, new_quantity, product['id']))
                 print(f"Produto {product['id']} atualizado para a nova quantidade: {new_quantity}")
@@ -102,11 +115,25 @@ def insert_into_database(products):
                 """
                 cursor.execute(movement_query, (product['id'], 'Entrada', qtde, vl_unitario, 'Em estoque'))
             
-            else:  
-                values = (product['descricao'], vl_unitario, qtde, qtde, show_on_page, invoice)  
+            else:                  
+                selected_query = """SELECT multiply FROM config_multiply_product ORDER BY id DESC LIMIT 1"""
+                cursor.execute(selected_query)
+                last_value_result = cursor.fetchone()
+                
+                vl_unitario = Decimal(vl_unitario) 
+
+                if last_value_result:
+                    last_value = Decimal(last_value_result[0]) / Decimal(100)  
+                    value_product = vl_unitario * (1 + last_value)  
+                else:
+                    print("Nenhum valor encontrado em config_multiply_product. Usando vl_unitario.")
+                    value_product = vl_unitario
+                    
+                values = (product['descricao'], vl_unitario, value_product, qtde, qtde, show_on_page, invoice)  
+
                 insert_query = """
-                INSERT INTO products (id, name, value_product, quantity, stock_quantity, show_on_page, invoice) 
-                VALUES (%s, %s, %s, %s, %s, %s, %s)
+                INSERT INTO products (id, name, cost_value, value_product, quantity, stock_quantity, show_on_page, invoice) 
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
                 """
                 cursor.execute(insert_query, (product['id'],) + values)
                 print(f"Produto {product['id']} inserido com sucesso.")
@@ -118,6 +145,7 @@ def insert_into_database(products):
                 cursor.execute(movement_query, (product['id'], 'Entrada', qtde, vl_unitario, 'Em estoque'))
                 connection.commit()
                 print("Dados inseridos/atualizados com sucesso!")
+
         
     except Exception as e:
         print(f"Ocorreu um erro: {e}")

@@ -98,7 +98,7 @@ async function closeBox() {
             <p><strong>Total do Sistema:</strong> R$ ${value_system.toFixed(2)}</p>
             <p><strong>Total Físico:</strong> R$ ${value_fisico.toFixed(2)}</p>
             <p><strong>Diferença:</strong> R$ ${value_difference.toFixed(2)}</p>
-            <p><strong>Diferença:</strong> R$ ${TotalizadorBox.toFixed(2)}</p>
+            <p><strong>Diferença:</strong> R$ ${TotalizadorBox}</p>
           `;
 
           CloseBoxpdv.style.display = 'none';

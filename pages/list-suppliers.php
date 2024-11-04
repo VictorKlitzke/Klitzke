@@ -34,7 +34,7 @@ $suppliers = Controllers::SelectAll('suppliers');
               <th scope="col">Cidade</th>
               <th scope="col">Estado</th>
               <th scope="col">CNPJ</th>
-              <th scope="col">Ações</th>
+              <th class="accessnivel" scope="col">Ações</th>
             </tr>
           </thead>
 
@@ -55,11 +55,11 @@ $suppliers = Controllers::SelectAll('suppliers');
                 <th><?php echo htmlspecialchars($value['state']); ?></th>
                 <th><?php echo htmlspecialchars($value['cnpjcpf']); ?></th>
 
-                <th class="gap-2">
-                  <a class="btn btn-info accessnivel"
+                <th class="gap-2 d-flex accessnivel">
+                  <a class="btn btn-info"
                     href="<?php echo INCLUDE_PATH; ?>edit-suppliers?id=<?php echo base64_encode($value['id']); ?>">Editar</a>
 
-                  <button class="btn btn-danger accessnivel" onclick="DeleteForn(this)"
+                  <button class="btn btn-danger" onclick="DeleteForn(this)"
                     data-id="<?php echo base64_encode($value['id']); ?>">Deletar</button>
                 </th>
               </tr>

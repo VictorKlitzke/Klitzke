@@ -53,7 +53,7 @@ $clients = Controllers::SelectAll('clients');
 								</th>
 								<th class="gap-2 d-flex align-items-center justify-content-center">
 									<?php if ($value['disable'] == 1) { ?>
-										<a class="btn btn-info btn-sm fw-bold"
+										<a class="btn btn-info btn-sm fw-bold accessnivel"
 											href="<?php echo INCLUDE_PATH ?>edit-clients?id=<?php echo base64_encode($value['id']); ?>">Editar</a>
 									<?php } else { ?>
 										<span class="text-muted"></span>

@@ -84,8 +84,6 @@ async function QueryListProducts() {
     console.log('Erro na requisição: ' + error);
   }
 }
-
-
 function toggleNoticeBoard() {
   let noticeBoard = document.getElementById('notice-board');
   let toggleIcon = document.getElementById('toggle-icon');
@@ -383,7 +381,6 @@ function showAccessMenuUser(userMenus) {
     modalUser.appendChild(card);
   });
 }
-
 function showAddMenus(userMenus) {
   const modalUser = document.getElementById('edit-menus-user');
   modalUser.innerHTML = "";
@@ -443,7 +440,6 @@ async function AddMenuAccess(UserIDMenu) {
     return;
   }
 
-  // Aqui, você já está pegando a chave em inglês diretamente do menuKey
   const menusInEnglish = menusToAdd.map(menuKey => {
     const menuInPortuguese = menuMapping[menuKey];
     if (!menuInPortuguese) {
@@ -485,7 +481,6 @@ async function AddMenuAccess(UserIDMenu) {
     }
   });
 }
-
 function searchProducts() {
   const input = document.getElementById('searchInput');
   const filter = input.value.toLowerCase();
@@ -507,4 +502,63 @@ function searchProducts() {
     }
     rows[i].style.display = match ? "" : "none";
   }
+}
+function setBoxID(button) {
+  const boxId = button.getAttribute('data-id');
+  document.getElementById('boxId').value = boxId;
+}
+const getFieldReopen = () => {
+  return {
+    values: {
+      reason: document.getElementById('reopenReason').value,
+      boxId: document.getElementById('boxId').value
+    },
+    type: {
+      type: 'submitReaopenBoxPdv',
+    }
+  }
+}
+async function submitReopenReason() {
+  const { values, type } = await getFieldReopen();
+
+  if (values.reason == "") {
+    showMessage("Campo vazio, por favor preencha", "warning");
+    return;
+  }
+
+  let responseReopenBox = {
+    boxId: values.boxId,
+    reason: values.reason,
+    type: type.type
+  }
+
+  console.log(responseReopenBox);
+
+  continueMessage("Deseja realmente reabrir o caixa?", "Sim", "Não", async function () {
+    try {
+      let url = `${BASE_CONTROLLERS}registers.php`;
+
+      const response = await fetch(url, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/"
+        },
+        body: JSON.stringify(responseReopenBox)
+      })
+
+      const responseBody = await response.json();
+
+        if (responseBody.success) {
+          showMessage("Caixa aberto novamente", "success");
+        } else {
+          showMessage("Erro ao reabrir o caixa: " + responseBody.message, "error");
+        }
+
+
+    } catch (error) {
+      console.error("Erro ao fazer requisição" + error.message)
+    }
+  }, function () {
+    showMessage("Operação cancelada", "warning");
+  })
 }

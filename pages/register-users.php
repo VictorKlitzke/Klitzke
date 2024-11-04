@@ -251,7 +251,7 @@ if (!isset($_SESSION['user_permissions'][$page_permission]) || $_SESSION['user_p
         <div class="card-body">
           <h5 class="card-title">
             Controle Estoque
-            <input type="checkbox" class="form-check-input" id="check-product-stock">
+            <input type="checkbox" class="form-check-input m-2" id="check-product-stock">
           </h5>
           <p class="card-text">Mantenha o controle do seu estoque facilmente.</p>
           <div class="col">

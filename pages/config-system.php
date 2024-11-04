@@ -1,18 +1,18 @@
 <div class="container-fluid p-4 bg-light shadow-lg border rounded-4">
     <div class="row g-3">
-        <h2 class="text-dark">Porcetagem do Cálculo por Produtos</h2>
+        <h2 class="text-dark">Porcentagem do Cálculo por Produtos</h2>
         <div class="col-sm-12 mb-3">
-            <label class="text-dark" for="multiply">Número a ser multiplicado</label>
-            <input class="form-control border-dark" id="multiply" type="text"
-                placeholder="Digite o número">
+            <label class="text-dark" for="multiply">Porcentagem a ser multiplicada (%)</label>
+            <input class="form-control border-dark" id="multiply" type="number" min="0" max="100"
+                placeholder="Digite a porcentagem" required>
             <span id="multiply-error" class="text-warning mt-1" style="font-size: 0.9rem; display: none;">
                 Campo está inválido, ajuste se possível.
             </span>
         </div>
         <div class="col-12 d-flex justify-content-start">
-            <button class="btn btn-primary px-4 py-2 shadow-sm"
-                onclick="RegisterMultiply()" type="button" style="transition: 0.3s;">
-                Fazer Retirada
+            <button class="btn btn-primary px-4 py-2 shadow-sm" onclick="RegisterMultiply()" type="button"
+                style="transition: 0.3s;">
+                Registrar
             </button>
         </div>
     </div>
@@ -57,8 +57,7 @@
             <span id="error" class="error-message">Campo está invalido, Ajuste se possivel.</span>
         </div>
         <div class="col-12 d-flex justify-content-start">
-            <button class="btn btn-primary px-4 py-2 shadow-sm"
-                onclick="RegisterAccount()" type="button">Cadastrar
+            <button class="btn btn-primary px-4 py-2 shadow-sm" onclick="RegisterAccount()" type="button">Cadastrar
             </button>
         </div>
     </div>

@@ -128,6 +128,7 @@ $result_cost_value_product = $exec->fetch(PDO::FETCH_ASSOC);
 
 $value_product = number_format($result_value_product['value_product'], 2, ',', '.');
 $cost_value_product = number_format($result_cost_value_product['cost_value'], 2, ',', '.');
+$result_quantity_product = number_format($result_quantity_product['quantity'], 2, ',', '.');
 ?>
 
 <br>
@@ -139,7 +140,7 @@ $cost_value_product = number_format($result_cost_value_product['cost_value'], 2,
                 <i class="fas fa-box-open me-2"></i>Quantidade total de itens
             </div>
             <div class="card-body text-center">
-                <h5 class="card-title display-6"><?php echo $result_quantity_product['quantity']; ?></h5>
+                <h5 class="card-title display-6"><?php echo $result_quantity_product['quantity']; ?>0</h5>
             </div>
         </div>
     </div>

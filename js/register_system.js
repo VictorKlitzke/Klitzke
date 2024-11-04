@@ -9,8 +9,6 @@ localStorage.setItem('modalAberto', 'true');
 
 document.addEventListener("DOMContentLoaded", () => {
     idInventary.textContent = "Código do Inventário";
-
-    const modalAberto = localStorage.getItem('modalAberto');
 });
 
 function ClearLocalStorage() {
@@ -125,10 +123,10 @@ async function RegisterUsers() {
         return;
     }
 
-    if (values.password < 6) {
+    if (values.password.length < 6) {
         showMessage('Senha tem que ser maior que 6 digitos', 'warning');
 
-        if (values.password < 6) inputs.password.classList.add('error');
+        if (values.password.length < 6) inputs.password.classList.add('error');
         setTimeout(() => {
             inputs.password.classList.remove('error');
         }, 3000);
@@ -181,17 +179,22 @@ async function RegisterUsers() {
                     body: JSON.stringify(responseFields)
                 });
 
-                const responseBody = await response.json();
+                const responseBody = await response.text();
+                try {
+                    const ResponseParseUser = JSON.parse(responseBody);
 
-                if (responseBody.success) {
-                    showMessage("Usuário " + values.name + " cadastrado com sucesso!", 'success');
-
-                    setTimeout(() => {
-                        location.reload();
-                    }, 2000);
-
-                } else {
-                    showMessage("Erro ao fazer cadastro: " + responseBody.message, 'error');
+                    if (ResponseParseUser.success && ResponseParseUser) {
+                        showMessage("Usuário " + values.name + " cadastrado com sucesso!", 'success');
+    
+                        setTimeout(() => {
+                            location.reload();
+                        }, 2000);
+    
+                    } else {
+                        showMessage("Erro ao fazer cadastro: " + responseBody.message, 'error');
+                    }
+                } catch (error) {
+                    showMessage("Erro ao fazer requisição: " + error, 'error');
                 }
 
             } catch (error) {

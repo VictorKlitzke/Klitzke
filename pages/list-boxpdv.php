@@ -65,7 +65,7 @@ $boxpdv = Controllers::SelectBoxPdv('boxpdv', $user_filter);
               <th>Data abertura</th>
               <th>Retirada</th>
               <th>Valor Caixa Atual</th>
-              <th>Ações</th>
+              <th class="accessnivel">Ações</th>
             </tr>
           </thead>
 
@@ -83,14 +83,19 @@ $boxpdv = Controllers::SelectBoxPdv('boxpdv', $user_filter);
                 <th><?php echo htmlspecialchars($value['Withdrawal']); ?></th>
                 <th><?php echo htmlspecialchars($value['retiradatotal']); ?></th>
 
-                <th class="gap-2 d-flex">
+                <th class="gap-2 d-flex accessnivel">
                   <?php if ($value['status'] == 1) { ?>
                     <a class="btn btn-info w-100"
-                      href="<?php echo INCLUDE_PATH ?>boxpdv-sangria?id=<?php echo base64_encode($value['id']); ?>">Retirar</a>
+                      href="<?php echo INCLUDE_PATH ?>boxpdv-sangria?id=<?php echo base64_encode($value['id']); ?>">Retirar
+                    </a>
                   <?php } else { ?>
                     <button class="btn btn-secondary w-100">Fechado</button>
                   <?php } ?>
-                  <button class="btn btn-light w-100" data-id="<?php echo json_encode($value['id']); ?>">Reabrir</button>
+                <?php if ($value['status'] =! 1) {?>
+                  <button class="btn btn-light w-100 accessnivel" id="reopen-boxpdv"  data-id="<?php echo base64_encode($value['id']); ?>"
+                    data-bs-toggle="modal" data-bs-target="#reopenModal" onclick="setBoxID(this)">Reabrir
+                  </button>
+                <?php } ?>
                 </th>
               </tr>
             </tbody>
@@ -100,4 +105,26 @@ $boxpdv = Controllers::SelectBoxPdv('boxpdv', $user_filter);
     </div>
   </div>
 </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="reopenModal" tabindex="-1" aria-labelledby="reopenModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="reopenModalLabel">Reabrir Caixa</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <label for="reopenReason" class="form-label">Motivo para reabrir:</label>
+        <textarea id="reopenReason" name="reopenReason" placeholder="Digite o motivo" class="form-control"
+          rows="4"></textarea>
+        <input type="hidden" id="boxId" name="boxId">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+        <button type="button" class="btn btn-primary" onclick="submitReopenReason()">Confirmar</button>
+      </div>
+    </div>
+  </div>
 </div>

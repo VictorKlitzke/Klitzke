@@ -56,6 +56,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $response_add_access_menu = $data;
     $response_inventary = $data;
     $response_intentary_itens = $data;
+    $response_reopen_boxpdv = $data;
 
     if (isset($data['type'])) {
         if ($data['type'] == 'users') {
@@ -94,6 +95,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             Register::RegisterCreateInventary($response_inventary, $sql, $user_id, $today);
         } else if ($data['type'] === 'createinventaryitens') {
             Register::RegisterUpdateInventary($response_intentary_itens, $sql, $user_id, $today);
+        } else if ($data['type'] === 'submitReaopenBoxPdv') {
+            Register::RegisterReopenBox($response_reopen_boxpdv, $sql, $user_id, $today);
         }
     } else {
         Response::json(false, 'Tipo type não encontrado', $today);
@@ -103,6 +106,67 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 class Register
 {
 
+    public static function RegisterReopenBox($response_reopen_boxpdv, $sql, $user_id, $today) {
+
+        $reason = filter_var($response_reopen_boxpdv['reason'], FILTER_SANITIZE_STRING);
+        $boxId1 = base64_decode($response_reopen_boxpdv['boxId']);
+        $boxId = filter_var($boxId1, FILTER_SANITIZE_NUMBER_INT);
+        
+        $status = 1;
+        $status_closing = 'Reativado';
+
+        if (!$boxId) {
+            Response::json(false, 'Não foi encontrado o ID do caixa', $today);
+            return;
+        }
+
+        try {
+
+            if (self::UserAccess($sql, $user_id) < 50) {
+                Response::json(false, 'Usuário não tem permissão para executar essa atividade', $today);
+                return;
+            }
+        
+            $query = $sql->prepare("SELECT * FROM boxpdv WHERE id = :boxId");
+            $query->bindParam(':boxId', $boxId, PDO::PARAM_INT);
+            $query->execute();
+            $result_query = $query->fetch(PDO::FETCH_ASSOC); 
+        
+            if ($result_query && $result_query['status'] == 1) {
+                Response::json(false, 'Caixa não foi fechado', $today);
+                return;
+            }
+        
+            $sql->beginTransaction();
+
+            $exec = $sql->prepare("UPDATE boxpdv SET status = :status WHERE id = :boxId");
+            $exec->bindParam(':status', $status, PDO::PARAM_INT);
+            $exec->bindParam(':boxId', $boxId, PDO::PARAM_INT);
+            $exec->execute();
+        
+            $exec1 = $sql->prepare("INSERT INTO boxpdv_reopen (boxpdv_id, reason, created_at) VALUES (:boxpdv_id, :reason, :created_at)");
+            $exec1->bindParam(':boxpdv_id', $boxId, PDO::PARAM_INT);
+            $exec1->bindParam(':reason', $reason, PDO::PARAM_STR);
+            $exec1->bindParam(':created_at', $today, PDO::PARAM_STR);
+            $exec1->execute();
+        
+            $exec2 = $sql->prepare("UPDATE box_closing SET status = :status WHERE id_boxpdv = :id_boxpdv");
+            $exec2->bindParam(':id_boxpdv', $boxId, PDO::PARAM_INT);
+            $exec2->bindParam(':status', $status_closing, PDO::PARAM_STR);
+            $exec2->execute();
+        
+            $sql->commit();
+
+            $message_log = "Caixa reativado com sucesso";
+            Panel::LogAction($user_id, 'Caixa reativado', $message_log, $today);
+            Response::send(true, 'Caixa reativado com sucesso', $today);
+
+        } catch (PDOException $e) {
+            $sql->rollBack();
+            Response::json(false, 'Erro ao executar transação: ' . $e->getMessage(), $today);
+        }
+
+    }
     public static function RegisterCreateInventary($response_inventary, $sql, $user_id, $today)
     {
 
@@ -201,7 +265,6 @@ class Register
             Response::json(false, 'Erro ao adicionar Inventário: ' . $e->getMessage(), $today);
         }
     }
-
     public static function AddMenuAccess($response_add_access_menu, $user_id, $sql)
     {
         $today = date('Y-m-d H:i:s');
@@ -567,9 +630,9 @@ class Register
         $menu_register_products = filter_var($response_users['registerProducts'], FILTER_SANITIZE_STRING);
         $menu_register_Inventory = filter_var($response_users['registerInventory'], FILTER_SANITIZE_STRING);
 
-        $menu_dashboard = filter_var($response_users['dashboard'], FILTER_SANITIZE_STRING);
+        $menu_dashboard = filter_var($response_users['dashboardADM'], FILTER_SANITIZE_STRING);
 
-        $menu_my_company = filter_var($response_users['registerProducts'], FILTER_SANITIZE_STRING);
+        $menu_my_company = filter_var($response_users['myCompany'], FILTER_SANITIZE_STRING);
 
         $menu_financial_control = filter_var($response_users['financialControl'], FILTER_SANITIZE_STRING);
 

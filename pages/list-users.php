@@ -35,8 +35,7 @@ $users = Controllers::SelectAll('users');
               <th scope="col">Comissão</th>
               <th scope="col">Comissão por venda</th>
               <th scope="col">Acessos</th>
-              <th scope="col">Tipo de Usuário</th>
-              <th scope="col">Ações</th>
+              <th class="accessnivel" scope="col">Ações</th>
             </tr>
           </thead>
           <tbody>
@@ -51,8 +50,7 @@ $users = Controllers::SelectAll('users');
                 <td>
                   <?php echo $value['access'] == 10 ? 'Padrão' : ($value['access'] == 50 ? 'Moderado' : 'Admin'); ?>
                 </td>
-                <td><?php echo htmlspecialchars($value['type_users']); ?></td>
-                <td class="d-flex justify-content-center align-items-center gap-2"
+                <td class="gap-2 d-flex accessnivel"
                   title="<?php echo $value['disable'] != 1 ? 'Este usuário está desativado.' : ''; ?>">
                   <?php if ($value['disable'] == 2) { ?>
                     <span></span>

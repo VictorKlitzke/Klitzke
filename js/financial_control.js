@@ -92,7 +92,7 @@ const getFieldsAccountsPayable = () => {
 async function RegisterAccountsPayable() {
   const { type, values, inputs } = await getFieldsAccountsPayable();
 
-  if (values.dateTransaction == null || values.valueTransaction == "" || 
+  if (values.dateTransaction == null || values.valueTransaction == "" ||
     values.descriptionTransaction == "" || values.transactionType == null ||
     values.incomeExpense == "") {
     showMessage('Campo não podem ser vazios', 'warning');
@@ -143,7 +143,7 @@ async function RegisterAccountsPayable() {
 
       if (responseBody.success) {
         showMessage('Contas a pagar cadastrada com sucesso', 'success');
-        
+
         setTimeout(() => {
           location.reload();
         }, 2000);
@@ -162,8 +162,21 @@ async function RegisterAccountsPayable() {
 }
 function ShowModalAddVariation() {
   if (AddVariationForn.style.display === 'block') {
-      AddVariationForn.style.display = 'none';
+    AddVariationForn.style.display = 'none';
   } else {
-      AddVariationForn.style.display = 'block';
+    AddVariationForn.style.display = 'block';
+  }
+}
+
+function SelectFinancial() {
+  const categorys = document.getElementById('categorys').value;
+  const StatusCategory = document.getElementById('status-category');
+
+  console.log(categorys);
+
+  if (categorys === 'contas a pagar') {
+    StatusCategory.value = 'Despesa';
+  } else if (categorys === 'contas a receber') {
+    StatusCategory.value = 'Receita';
   }
 }

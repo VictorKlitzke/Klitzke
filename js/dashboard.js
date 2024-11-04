@@ -237,10 +237,16 @@ async function fetchBoxClosing() {
       },
       body: JSON.stringify(responseClosing)
     });
+
+    if (!response.ok) {
+      console.error('Erro na resposta do servidor:', response.status, response.statusText);
+      return;
+    }
+
     const data = await response.json();
 
     if (data.success) {
-      data.sumboxclosing
+      return data.result_box_closing
     } else {
       console.error(data.message);
       return [];
@@ -251,6 +257,96 @@ async function fetchBoxClosing() {
     return [];
   }
 }
+async function createChartsBoxClosing() {
+  const data = await fetchBoxClosing();
+  if (data.length === 0) return;
+
+  const labels = data.map(item => item.date_close);
+  const valueDebit = data.map(item => item.value_debit);
+  const valueCredit = data.map(item => item.value_credit);
+  const valuePix = data.map(item => item.value_pix);
+  const valueMoney = data.map(item => item.value_money);
+  const valueSystem = data.map(item => item.value_system);
+  const valueFisico = data.map(item => item.value_fisico);
+  const boxDifference = data.map(item => item.boxpdv_difference);
+  const somaMoneySystem = data.map(item => item.soma_money_system);
+
+  console.log(valueCredit, valueDebit, valuePix, valueMoney);
+
+  new Chart(document.getElementById('chartBar').getContext('2d'), {
+    type: 'bar',
+    data: {
+      labels: labels,
+      datasets: [
+        { label: 'Débito', data: valueDebit, backgroundColor: 'rgba(75, 192, 192, 0.5)' },
+        { label: 'Crédito', data: valueCredit, backgroundColor: 'rgba(153, 102, 255, 0.5)' },
+        { label: 'PIX', data: valuePix, backgroundColor: 'rgba(255, 159, 64, 0.5)' },
+        { label: 'Dinheiro', data: valueMoney, backgroundColor: 'rgba(255, 99, 132, 0.5)' }
+      ]
+    },
+    options: {
+      responsive: true,
+      scales: {
+        y: { beginAtZero: true }
+      }
+    }
+  });
+
+  new Chart(document.getElementById('chartLine').getContext('2d'), {
+    type: 'line',
+    data: {
+      labels: labels,
+      datasets: [
+        { label: 'Sistema', data: valueSystem, borderColor: 'rgba(75, 192, 192, 1)', fill: false },
+        { label: 'Físico', data: valueFisico, borderColor: 'rgba(255, 99, 132, 1)', fill: false }
+      ]
+    },
+    options: {
+      responsive: true,
+      scales: {
+        y: { beginAtZero: true }
+      }
+    }
+  });
+
+  new Chart(document.getElementById('chartPie').getContext('2d'), {
+    type: 'pie',
+    data: {
+      labels: ['Débito', 'Crédito', 'PIX', 'Dinheiro'],
+      datasets: [{
+        data: [
+          valueDebit.reduce((sum, val) => sum + val, 0),
+          valueCredit.reduce((sum, val) => sum + val, 0),
+          valuePix.reduce((sum, val) => sum + val, 0),
+          valueMoney.reduce((sum, val) => sum + val, 0)
+        ],
+        backgroundColor: ['rgba(75, 192, 192, 0.7)', 'rgba(153, 102, 255, 0.7)', 'rgba(255, 159, 64, 0.7)', 'rgba(255, 99, 132, 0.7)']
+      }]
+    },
+    options: {
+      responsive: true
+    }
+  });
+
+  new Chart(document.getElementById('chartStacked').getContext('2d'), {
+    type: 'bar',
+    data: {
+      labels: labels,
+      datasets: [
+        { label: 'Soma Dinheiro + Sistema', data: somaMoneySystem, backgroundColor: 'rgba(54, 162, 235, 0.5)' },
+        { label: 'Diferença', data: boxDifference, backgroundColor: 'rgba(255, 206, 86, 0.5)' }
+      ]
+    },
+    options: {
+      responsive: true,
+      scales: {
+        x: { stacked: true },
+        y: { stacked: true, beginAtZero: true }
+      }
+    }
+  });
+}
+
 
 async function fetchFinacialControl() {
   let responseType = {
@@ -348,8 +444,8 @@ document.addEventListener('DOMContentLoaded', function () {
     createChartSalesDate();
     createChartsDateMaisSales();
     createChartsFinacialControl();
+    createChartsBoxClosing();
   } catch (error) {
     console.error(error);
-    console.clear();
   }
 });

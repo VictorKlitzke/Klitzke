@@ -48,14 +48,35 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 class lists
 {
-    public static function SumBoxClosing($sql) {
+    public static function SumBoxClosing($sql)
+    {
         try {
+            $exec = $sql->prepare("SELECT 
+                                    bp.`open_date`,
+                                    bp.value,
+                                    u.name,
+                                    bc.* 
+                                FROM 
+                                    boxpdv bp 
+                                    INNER JOIN box_closing bc ON bc.`id_boxpdv` = bp.id
+                                    INNER JOIN users u ON u.id = bp.`id_users`");
+            $exec->execute();
+            $result_box_closing = $exec->fetchAll(PDO::FETCH_ASSOC);
 
+            echo json_encode([
+                'success' => 'true',
+                'result_box_closing' => $result_box_closing
+            ]);
         } catch (Exception $e) {
-
+            http_response_code(500);
+            echo json_encode([
+                'success' => false,
+                'message' => 'Erro no banco de dados: ' . $e->getMessage()
+            ]);
         }
     }
-    public static function ListInventaryItens($sql, $input){
+    public static function ListInventaryItens($sql, $input)
+    {
         $idInventary = isset($input['idInventary']) ? $input['idInventary'] : null;
 
         try {
@@ -350,7 +371,7 @@ class lists
             $exec->execute();
             $result_payable = $exec->fetchAll(PDO::FETCH_ASSOC);
 
-            $query1 = "select SUM(value) TotalContasReceber from `financial_control` where type = 'contas a receber'";
+            $query1 = "select SUM(value) TotalContasReceber from `financial_control`";
             $exec1 = $sql->prepare($query1);
             $exec1->execute();
             $result_control = $exec1->fetchAll(PDO::FETCH_ASSOC);

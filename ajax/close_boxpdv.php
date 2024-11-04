@@ -38,6 +38,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $sql->beginTransaction();
         $status_update = 2;
         $status_current = 1;
+        $status_closing = 'Fechado';
 
         $checkBoxOpen = $sql->prepare("SELECT id FROM boxpdv WHERE status = :status_current AND id_users = :id_users");
         $checkBoxOpen->bindParam(':status_current', $status_current, PDO::PARAM_INT);
@@ -64,10 +65,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             $exec = $sql->prepare("INSERT INTO box_closing (id_boxpdv, value_debit, value_credit, 
                                             value_pix, value_money, value_aprazo, date_close, boxpdv_difference, value_fisico, value_system, 
-                                            soma_money_system, totalizador_box_all) 
+                                            soma_money_system, totalizador_box_all, status) 
                                         VALUES (:id_boxpdv, :value_debit, :value_credit, :value_pix, :value_money, 
                                             :value_aprazo, :date_close, :boxpdv_difference, :value_fisico, 
-                                            :value_system, :soma_money_system, :totalizador_box_all)");
+                                            :value_system, :soma_money_system, :totalizador_box_all, :status_closing)");
 
             $exec->bindParam(':id_boxpdv', $id_boxpdv, PDO::PARAM_INT);
             $exec->bindParam(':value_debit', $value_debit, PDO::PARAM_STR);
@@ -81,6 +82,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $exec->bindParam(':value_system', $value_system, PDO::PARAM_STR);
             $exec->bindParam(':soma_money_system', $soma_money_system, PDO::PARAM_STR);
             $exec->bindParam(':totalizador_box_all', $totalizador_box_all, PDO::PARAM_STR);
+            $exec->bindParam(':status_closing', $status_closing, PDO::PARAM_STR);
             $exec->execute();
 
             $exec = $sql->prepare("UPDATE boxpdv SET status = :status_update WHERE id_users = :id_users");

@@ -45,7 +45,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $negative = 'Negativado';
 
         if (!$boxpdv_open) {
-            throw new Exception('O caixa está fechado. Não é possível registrar a venda.');
+            Response::json(false, 'O caixa está fechado. Não é possível registrar a venda.', $today);
         } else {
 
             $user_id = isset($_SESSION['id']) ? $_SESSION['id'] : null;
@@ -56,7 +56,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $id_boxpdv = $checkBoxOpen->fetchColumn();
 
             if (!$id_boxpdv) {
-                echo json_encode(['error' => 'Nenhum caixa aberto']);
+                Response::json(false, 'Nenhum caixa aberto', $today);
                 return;
             }
 
@@ -66,7 +66,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $result = $exec->fetchAll(PDO::FETCH_ASSOC);
 
             if (!$user_id) {
-                echo json_encode(['error' => 'Nenhum usuário logado']);
+                Response::json(false, 'Nenhum usuário logado', $today);
                 return;
             }
 
@@ -90,7 +90,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $productValue = floatval($product['productPrice']);
             
                 if ($product_id === null) {
-                    throw new Exception("Erro ao obter ID do produto.");
+                    Response::json(false, 'Erro ao obter ID do produto.', $today);
                 }
             
                 $exec = $sql->prepare("INSERT INTO sales_items (id_sales, id_product, amount, price_sales, status_item) 

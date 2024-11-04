@@ -51,10 +51,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $checkBoxOpen->execute();
             $id_boxpdv = $checkBoxOpen->fetchColumn();
 
+            if (!$id_boxpdv) {
+                Response::json(false, 'Nenhum caixa aberto', $today);
+                return;
+            }
+
             $exec = $sql->prepare("SELECT * FROM sales WHERE id_users = :user_id");
             $exec->bindParam(':user_id', $user_id, PDO::PARAM_INT);
             $exec->execute();
             $result = $exec->fetchAll(PDO::FETCH_ASSOC);
+
+            if (!$user_id) {
+                Response::json(false, 'Nenhum usuário logado', $today);
+                return;
+            }
 
             $exec = $sql->prepare("INSERT INTO sales (id_payment_method, id_client, id_boxpdv, id_users, date_sales, status) 
                                             VALUES (:paymentMethod, :salesClient, :id_boxpdv, :id_users, NOW(), :status)");
@@ -101,7 +111,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $productValue = floatval($product['productPrice']);
             
                 if ($product_id === null) {
-                    throw new Exception("Erro ao obter ID do produto.");
+                    Response::json(false, 'Erro ao obter ID do produto.', $today);
                 }
             
                 $exec = $sql->prepare("INSERT INTO sales_items (id_sales, id_product, amount, price_sales, status_item) 
