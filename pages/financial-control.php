@@ -105,11 +105,11 @@ if (!isset($_SESSION['user_permissions'][$page_permission]) || $_SESSION['user_p
     <!-- Aba de Financeiro -->
     <div class="tab-pane fade" id="financial" role="tabpanel" aria-labelledby="financial-tab">
       <div class="mt-2">
-        <input type="text" id="searchInputControl" placeholder="Buscar por saídas..." class="form-control"
-          onkeyup="searchControl()">
+        <input type="text" id="searchInputControl" onkeyup="searchControl()" placeholder="Buscar por saídas..."
+          class="form-control" />
       </div>
       <div class="table-responsive mt-2" style="max-height: 400px; overflow-y: auto;">
-        <table class="table table-dark table-hover table-striped table-bordered">
+        <table class="table table-dark table-hover table-striped table-bordered" id="table-control-financial">
           <thead>
             <tr style="white-space: nowrap;">
               <th>#</th>
@@ -129,11 +129,11 @@ if (!isset($_SESSION['user_permissions'][$page_permission]) || $_SESSION['user_p
     <!-- Aba de Entradas -->
     <div class="tab-pane fade" id="entry" role="tabpanel" aria-labelledby="entry-tab">
       <div class="mt-2">
-        <input type="text" id="searchControlEntry" placeholder="Buscar por entradas..." class="form-control"
-          onkeyup="searchControlEntry()">
+        <input type="text" id="searchcontrolEntry" oninput="searchControlEntry()" class="form-control"
+          placeholder="Buscar por entradas...">
       </div>
       <div class="table-responsive mt-2" style="max-height: 400px; overflow-y: auto;">
-        <table class="table table-dark table-hover table-striped table-bordered">
+        <table class="table table-dark table-hover table-striped table-bordered" id="table-entry">
           <thead>
             <tr style="white-space: nowrap;">
               <th>#</th>
@@ -152,11 +152,11 @@ if (!isset($_SESSION['user_permissions'][$page_permission]) || $_SESSION['user_p
     <!-- Aba de Todas as Vendas -->
     <div class="tab-pane fade" id="allsales" role="tabpanel" aria-labelledby="allsales-tab">
       <div class="mt-2">
-        <input type="text" id="searchInputSalesAll" placeholder="Buscar por vendas..." class="form-control"
-          onkeyup="searchSalesAll()">
+        <input type="text" id="searchInputSalesAll" onkeyup="searchSalesAll()" placeholder="Buscar por vendas..."
+          class="form-control" />
       </div>
       <div class="table-responsive mt-2" style="max-height: 400px; overflow-y: auto;">
-        <table class="table table-dark table-hover table-striped table-bordered">
+        <table class="table table-dark table-hover table-striped table-bordered" id="sales-all">
           <thead>
             <tr style="white-space: nowrap;">
               <th>#</th>

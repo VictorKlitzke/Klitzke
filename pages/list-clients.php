@@ -51,7 +51,7 @@ $clients = Controllers::SelectAll('clients');
 								<th><?php echo htmlspecialchars($value['cpf']); ?></th>
 								<th><?php echo htmlspecialchars($value['neighborhood']); ?>
 								</th>
-								<th class="gap-2 d-flex align-items-center justify-content-center">
+								<th class="gap-2 d-flex">
 									<?php if ($value['disable'] == 1) { ?>
 										<a class="btn btn-info btn-sm fw-bold accessnivel"
 											href="<?php echo INCLUDE_PATH ?>edit-clients?id=<?php echo base64_encode($value['id']); ?>">Editar</a>
@@ -62,7 +62,7 @@ $clients = Controllers::SelectAll('clients');
 										data-id="<?php echo base64_encode($value['id']); ?>">
 										Desativar
 									</button> -->
-									<button class="btn btn-danger btn-sm fw-bold" onclick="deleteClients(this)"
+									<button class="btn btn-danger btn-sm fw-bold accessnivel" onclick="deleteClients(this)"
 										data-id="<?php echo base64_encode($value['id']); ?>">
 										Deletar
 									</button>

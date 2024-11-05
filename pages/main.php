@@ -252,7 +252,7 @@ $status_product = $stock->fetchAll(PDO::FETCH_ASSOC);
               <th scope="col">Status Venda</th>
               <th scope="col">Valor Total</th>
               <th scope="col">Data</th>
-              <th scope="col">Ações</th>
+              <th class="accessnivel" scope="col">Ações</th>
             </tr>
           </thead>
           <tbody style="white-space: nowrap;">
@@ -265,7 +265,7 @@ $status_product = $stock->fetchAll(PDO::FETCH_ASSOC);
                 <td><?php echo htmlspecialchars($value['status_sales']); ?></td>
                 <td><?php echo htmlspecialchars($value['total_value']); ?></td>
                 <td><?php echo htmlspecialchars($value['date_sales']); ?></td>
-                <td>
+                <td class="accessnivel">
                   <?php if ($value['status'] == 2): ?>
                     <button onclick="ReopenSales(this)" type="button" data-id="<?php echo $value['id']; ?>"
                       class="btn btn-info">Reabrir venda</button>

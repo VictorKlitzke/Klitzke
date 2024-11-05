@@ -1074,11 +1074,11 @@ async function ListAPrazo(searchTermFinancialControl = '') {
                 }
                 rowEntry.appendChild(dateCell);
 
-                const typeCell = document.createElement('th');
+                const typeCell = document.createElement('td');
                 typeCell.textContent = fb.type || 'Sem tipo';
                 rowEntry.appendChild(typeCell);
 
-                const StatusCell = document.createElement('th');
+                const StatusCell = document.createElement('td');
                 typeCell.textContent = fb.status_aprazo || 'Sem Status';
                 rowEntry.appendChild(StatusCell);
 
@@ -1328,7 +1328,8 @@ async function ListInventary() {
         }
 
     } catch (error) {
-        showMessage('Erro ao fazer requisição' + error, 'error');
+        console.log('Erro ao fazer requisição' + error);
+        console.clear();
     }
 }
 async function handleInventaryItensClick(idInventary) {

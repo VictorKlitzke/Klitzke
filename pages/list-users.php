@@ -35,7 +35,7 @@ $users = Controllers::SelectAll('users');
               <th scope="col">Comissão</th>
               <th scope="col">Comissão por venda</th>
               <th scope="col">Acessos</th>
-              <th class="accessnivel" scope="col">Ações</th>
+              <th scope="col">Ações</th>
             </tr>
           </thead>
           <tbody>
@@ -50,8 +50,8 @@ $users = Controllers::SelectAll('users');
                 <td>
                   <?php echo $value['access'] == 10 ? 'Padrão' : ($value['access'] == 50 ? 'Moderado' : 'Admin'); ?>
                 </td>
-                <td class="gap-2 d-flex accessnivel"
-                  title="<?php echo $value['disable'] != 1 ? 'Este usuário está desativado.' : ''; ?>">
+                <td class="gap-2 d-flex"
+                title="<?php echo $value['disable'] != 1 ? 'Este usuário está desativado.' : ''; ?>">
                   <?php if ($value['disable'] == 2) { ?>
                     <span></span>
                   <?php } else { ?>
@@ -61,16 +61,16 @@ $users = Controllers::SelectAll('users');
 
                   <?php if ($value['disable'] == 1) { ?>
                     <button onclick="InativarUsers(this)" type="button" data-id="<?php echo $value['id']; ?>"
-                      class="btn btn-warning btn-sm fw-bold">Desativar</button>
+                      class="btn btn-warning btn-sm fw-bold accessnivel">Desativar</button>
                   <?php } else { ?>
                     <button class="btn btn-secondary btn-sm fw-bold" disabled>Desativado</button>
                   <?php } ?>
 
-                  <button class="btn btn-danger btn-sm fw-bold" onclick="DeleteUsers(this)"
+                  <button class="btn btn-danger btn-sm fw-bold accessnivel" onclick="DeleteUsers(this)"
                     data-id="<?php echo base64_encode($value['id']); ?>">Deletar</button>
 
                   <?php if ($value['disable'] == 1) { ?>
-                    <button class="btn btn-outline-light btn-sm fw-bold text-dark" onclick="AccessUsers(this)"
+                    <button class="btn btn-outline-light btn-sm fw-bold text-dark accessnivel" onclick="AccessUsers(this)"
                       data-id="<?php echo base64_encode($value['id']); ?>">Acessos</button>
                   <?php } ?>
                 </td>

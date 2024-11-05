@@ -204,7 +204,7 @@ function searchSales() {
 function searchcontrol() {
   const input = document.getElementById('searchInputControl');
   const filter = input.value.toLowerCase();
-  const table = document.getElementById('result-financial-control');
+  const table = document.getElementById('table-control-financial');
   const rows = table.getElementsByTagName('tr');
 
   for (let i = 1; i < rows.length; i++) {
@@ -223,10 +223,10 @@ function searchcontrol() {
     rows[i].style.display = match ? "" : "none";
   }
 }
-function searchcontrolEntry() {
+function searchControlEntry() {
   const input = document.getElementById('searchcontrolEntry');
   const filter = input.value.toLowerCase();
-  const table = document.getElementById('result-entry');
+  const table = document.getElementById('table-entry');
   const rows = table.getElementsByTagName('tr');
 
   for (let i = 1; i < rows.length; i++) {
@@ -248,7 +248,7 @@ function searchcontrolEntry() {
 function searchSalesAll() {
   const input = document.getElementById('searchInputSalesAll');
   const filter = input.value.toLowerCase();
-  const table = document.getElementById('allsales-result');
+  const table = document.getElementById('sales-all');
   const rows = table.getElementsByTagName('tr');
 
   for (let i = 1; i < rows.length; i++) {
