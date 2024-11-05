@@ -4,12 +4,12 @@ let selectedPagamentalControl = [];
 const AddVariationForn = document.getElementById('add-variation-forn');
 
 async function finalizeAPrazoControl() {
-  document.querySelectorAll('#table-financial-control-detals input[type="checkbox"]:checked').forEach(checkbox => {
+  document.querySelectorAll('#table-financial-control-details input[type="checkbox"]:checked').forEach(checkbox => {
     selectedFinacialControl.push(checkbox.value);
 
     const row = checkbox.closest('tr');
-    const dateVenciment = row.querySelector('th:nth-child(3)').textContent;
-    const value_aprazo = row.querySelector('th:nth-child(4)').textContent;
+    const dateVenciment = row.querySelector('td:nth-child(3)').textContent;
+    const value_aprazo = row.querySelector('td:nth-child(4)').textContent;
 
     selectedPagamentalControl.push({
       dateVenciment: dateVenciment,
@@ -181,89 +181,89 @@ function SelectFinancial() {
 }
 function searchSales() {
   const input = document.getElementById('searchInput');
-  const filter = input.value.toLowerCase(); 
+  const filter = input.value.toLowerCase();
   const table = document.getElementById('table-sales');
-  const rows = table.getElementsByTagName('tr'); 
+  const rows = table.getElementsByTagName('tr');
 
   for (let i = 1; i < rows.length; i++) {
-      const cells = rows[i].getElementsByTagName('td'); 
-      let match = false; 
+    const cells = rows[i].getElementsByTagName('td');
+    let match = false;
 
-      for (let j = 0; j < cells.length; j++) {
-          if (cells[j]) {
-              const cellValue = cells[j].textContent || cells[j].innerText; 
-              if (cellValue.toLowerCase().indexOf(filter) > -1) {
-                  match = true; 
-                  break;
-              }
-          }
+    for (let j = 0; j < cells.length; j++) {
+      if (cells[j]) {
+        const cellValue = cells[j].textContent || cells[j].innerText;
+        if (cellValue.toLowerCase().indexOf(filter) > -1) {
+          match = true;
+          break;
+        }
       }
-      rows[i].style.display = match ? "" : "none"; 
+    }
+    rows[i].style.display = match ? "" : "none";
   }
 }
 function searchcontrol() {
   const input = document.getElementById('searchInputControl');
-  const filter = input.value.toLowerCase(); 
+  const filter = input.value.toLowerCase();
   const table = document.getElementById('result-financial-control');
-  const rows = table.getElementsByTagName('tr'); 
+  const rows = table.getElementsByTagName('tr');
 
   for (let i = 1; i < rows.length; i++) {
-      const cells = rows[i].getElementsByTagName('td'); 
-      let match = false; 
+    const cells = rows[i].getElementsByTagName('td');
+    let match = false;
 
-      for (let j = 0; j < cells.length; j++) {
-          if (cells[j]) {
-              const cellValue = cells[j].textContent || cells[j].innerText; 
-              if (cellValue.toLowerCase().indexOf(filter) > -1) {
-                  match = true; 
-                  break;
-              }
-          }
+    for (let j = 0; j < cells.length; j++) {
+      if (cells[j]) {
+        const cellValue = cells[j].textContent || cells[j].innerText;
+        if (cellValue.toLowerCase().indexOf(filter) > -1) {
+          match = true;
+          break;
+        }
       }
-      rows[i].style.display = match ? "" : "none"; 
+    }
+    rows[i].style.display = match ? "" : "none";
   }
 }
 function searchcontrolEntry() {
   const input = document.getElementById('searchcontrolEntry');
-  const filter = input.value.toLowerCase(); 
+  const filter = input.value.toLowerCase();
   const table = document.getElementById('result-entry');
-  const rows = table.getElementsByTagName('tr'); 
+  const rows = table.getElementsByTagName('tr');
 
   for (let i = 1; i < rows.length; i++) {
-      const cells = rows[i].getElementsByTagName('td'); 
-      let match = false; 
+    const cells = rows[i].getElementsByTagName('td');
+    let match = false;
 
-      for (let j = 0; j < cells.length; j++) {
-          if (cells[j]) {
-              const cellValue = cells[j].textContent || cells[j].innerText; 
-              if (cellValue.toLowerCase().indexOf(filter) > -1) {
-                  match = true; 
-                  break;
-              }
-          }
+    for (let j = 0; j < cells.length; j++) {
+      if (cells[j]) {
+        const cellValue = cells[j].textContent || cells[j].innerText;
+        if (cellValue.toLowerCase().indexOf(filter) > -1) {
+          match = true;
+          break;
+        }
       }
-      rows[i].style.display = match ? "" : "none"; 
+    }
+    rows[i].style.display = match ? "" : "none";
   }
 }
 function searchSalesAll() {
   const input = document.getElementById('searchInputSalesAll');
-  const filter = input.value.toLowerCase(); 
+  const filter = input.value.toLowerCase();
   const table = document.getElementById('allsales-result');
-  const rows = table.getElementsByTagName('tr'); 
+  const rows = table.getElementsByTagName('tr');
 
   for (let i = 1; i < rows.length; i++) {
-      const cells = rows[i].getElementsByTagName('td'); 
-      let match = false; 
+    const cells = rows[i].getElementsByTagName('td');
+    let match = false;
 
-      for (let j = 0; j < cells.length; j++) {
-          if (cells[j]) {
-              const cellValue = cells[j].textContent || cells[j].innerText; 
-              if (cellValue.toLowerCase().indexOf(filter) > -1) {
-                  match = true; 
-                  break;
-              }
-          }
+    for (let j = 0; j < cells.length; j++) {
+      if (cells[j]) {
+        const cellValue = cells[j].textContent || cells[j].innerText;
+        if (cellValue.toLowerCase().indexOf(filter) > -1) {
+          match = true;
+          break;
+        }
       }
-      rows[i].style.display = match ? "" : "none"; 
+    }
+    rows[i].style.display = match ? "" : "none";
   }
 }

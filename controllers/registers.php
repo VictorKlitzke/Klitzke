@@ -106,12 +106,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 class Register
 {
 
-    public static function RegisterReopenBox($response_reopen_boxpdv, $sql, $user_id, $today) {
+    public static function RegisterReopenBox($response_reopen_boxpdv, $sql, $user_id, $today)
+    {
 
         $reason = filter_var($response_reopen_boxpdv['reason'], FILTER_SANITIZE_STRING);
         $boxId1 = base64_decode($response_reopen_boxpdv['boxId']);
         $boxId = filter_var($boxId1, FILTER_SANITIZE_NUMBER_INT);
-        
+
         $status = 1;
         $status_closing = 'Reativado';
 
@@ -126,35 +127,35 @@ class Register
                 Response::json(false, 'Usuário não tem permissão para executar essa atividade', $today);
                 return;
             }
-        
+
             $query = $sql->prepare("SELECT * FROM boxpdv WHERE id = :boxId");
             $query->bindParam(':boxId', $boxId, PDO::PARAM_INT);
             $query->execute();
-            $result_query = $query->fetch(PDO::FETCH_ASSOC); 
-        
+            $result_query = $query->fetch(PDO::FETCH_ASSOC);
+
             if ($result_query && $result_query['status'] == 1) {
                 Response::json(false, 'Caixa não foi fechado', $today);
                 return;
             }
-        
+
             $sql->beginTransaction();
 
             $exec = $sql->prepare("UPDATE boxpdv SET status = :status WHERE id = :boxId");
             $exec->bindParam(':status', $status, PDO::PARAM_INT);
             $exec->bindParam(':boxId', $boxId, PDO::PARAM_INT);
             $exec->execute();
-        
+
             $exec1 = $sql->prepare("INSERT INTO boxpdv_reopen (boxpdv_id, reason, created_at) VALUES (:boxpdv_id, :reason, :created_at)");
             $exec1->bindParam(':boxpdv_id', $boxId, PDO::PARAM_INT);
             $exec1->bindParam(':reason', $reason, PDO::PARAM_STR);
             $exec1->bindParam(':created_at', $today, PDO::PARAM_STR);
             $exec1->execute();
-        
+
             $exec2 = $sql->prepare("UPDATE box_closing SET status = :status WHERE id_boxpdv = :id_boxpdv");
             $exec2->bindParam(':id_boxpdv', $boxId, PDO::PARAM_INT);
             $exec2->bindParam(':status', $status_closing, PDO::PARAM_STR);
             $exec2->execute();
-        
+
             $sql->commit();
 
             $message_log = "Caixa reativado com sucesso";
@@ -234,7 +235,7 @@ class Register
                     $update_product->bindParam(':product_id', $product_id, PDO::PARAM_INT);
                     $update_product->execute();
 
-                    $product_movement_type = 'inventário'; 
+                    $product_movement_type = 'inventário';
                     $exec_mov = $sql->prepare("INSERT INTO product_movements (product_id, type, quantity, date, description, quantity_inventary)
                             VALUES (:product_id, :movement_type, :quantity, NOW(), :description, :quantity_inventary)");
                     $exec_mov->bindParam(':product_id', $product_id, PDO::PARAM_INT);
@@ -364,12 +365,12 @@ class Register
 
         try {
 
-            $sql->BeginTransaction();
-
             if (self::UserAccess($sql, $user_id) < 50) {
                 Response::json(false, 'Usuário não tem permissão para executar essa atividade', $today);
                 return;
             }
+
+            $sql->beginTransaction();
 
             foreach ($response_financial_control['selectedFinacialControl'] as $sales_prazoID) {
                 foreach ($response_financial_control['selectedPagamentalControl'] as $financial_control) {
@@ -408,15 +409,15 @@ class Register
                 }
             }
 
+            $sql->commit();
+
             $message_log = "Baixa no contas a receber com sucesso";
             Panel::LogAction($user_id, 'Baixa no contas a receber com sucesso ' . $financial_control['value_aprazo'], $message_log, $today);
             Response::send(true, 'Baixa no contas a receber com sucesso', $today);
 
         } catch (Exception $e) {
+            $sql->rollBack();
             http_response_code(500);
-            if ($sql->inTransaction()) {
-                $sql->rollBack();
-            }
             echo json_encode(['error' => 'Erro no banco de dados: ' . $e->getMessage(), 'code' => $e->getCode()]);
         }
     }

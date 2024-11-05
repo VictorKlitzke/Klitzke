@@ -202,7 +202,7 @@ if (!isset($_SESSION['user_permissions'][$page_permission]) || $_SESSION['user_p
           <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
             <i class="fas fa-times"></i> Fechar
           </button>
-          <button type="button" onclick="finalizeAPrazo()" class="btn btn-success">
+          <button type="button" onclick="finalizeAPrazoControl()" class="btn btn-success">
             <i class="fas fa-check-circle"></i> Faturar
           </button>
         </div>
