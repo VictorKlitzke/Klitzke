@@ -237,5 +237,4 @@ if (!isset($_SESSION['user_permissions'][$page_permission]) || $_SESSION['user_p
     </div>
 
 
-    <script src="<?php echo INCLUDE_PATH_PANEL; ?>../js/selected_clients.js"></script>
     <script src="<?php echo INCLUDE_PATH_PANEL; ?>../js/add_sales.js"></script>

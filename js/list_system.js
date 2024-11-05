@@ -518,7 +518,6 @@ async function ListForn() {
         }
     } catch (error) {
         console.log('Erro ao fazer requisição: ' + error.message)
-        console.clear();
     }
 }
 async function ListBuyRequest(searchTerm = '') {
@@ -585,7 +584,6 @@ async function ListBuyRequest(searchTerm = '') {
         }
     } catch (error) {
         console.log('Erro ao fazer requisição: ' + error.message);
-        console.clear();
     }
 }
 async function ListVariationValues(searchTermVariation = '') {
@@ -659,7 +657,6 @@ async function ListVariationValues(searchTermVariation = '') {
 
     } catch (error) {
         console.log('Erro ao fazer requisição: ' + error.message);
-        console.clear();
     }
 
 }
@@ -715,7 +712,6 @@ async function AddVariationValues() {
         }
     } catch (error) {
         console.log('Erro ao fazer requisição: ' + error.message);
-        console.clear();
     }
 }
 function saveValuesToLocalStorage(variations) {
@@ -812,7 +808,6 @@ async function ListProducts() {
 
     } catch (error) {
         console.log('Erro ao fazer requisição: ' + error.message);
-        console.clear();
     }
 }
 async function calculateTotalsListAPrazo() {
@@ -1162,22 +1157,22 @@ async function ListDetailsAprazo(id_detals) {
 
         if (data.success) {
             const financialcontroldetals = data.financialcontroldetals;
-            const financialcontrolDetalsList = document.getElementById('table-financial-control-detals').querySelector('tbody');
-
+            const financialcontrolDetalsList = document.querySelector('.table-financial-control-detals');
+    
             financialcontrolDetalsList.innerHTML = '';
-
+    
             if (!Array.isArray(financialcontroldetals)) {
                 throw new Error('financialcontrol não é um array');
             }
-
+    
             financialcontroldetals.forEach(fp => {
                 const row = document.createElement('tr');
-
+    
                 if (fp.status === 'paga') {
-                    row.className = 'table-success';
+                    row.classList.add('table-success');
                 }
-
-                const selectCell = document.createElement('th');
+    
+                const selectCell = document.createElement('td');
                 const checkbox = document.createElement('input');
                 checkbox.type = 'checkbox';
                 checkbox.className = 'form-check-input';
@@ -1185,33 +1180,33 @@ async function ListDetailsAprazo(id_detals) {
                 checkbox.dataset.id = fp.sale_id;
                 selectCell.appendChild(checkbox);
                 row.appendChild(selectCell);
-
-                const idCell = document.createElement('th');
+    
+                const idCell = document.createElement('td');
                 idCell.textContent = fp.id;
                 row.appendChild(idCell);
-
-                const DateVencimentCell = document.createElement('th');
+    
+                const DateVencimentCell = document.createElement('td');
                 const dateString = fp.date_venciment;
                 const [year, month, day] = dateString.split('-');
                 const formattedDate = `${day}/${month}/${year}`;
                 DateVencimentCell.textContent = formattedDate;
                 row.appendChild(DateVencimentCell);
-
-                const ValuePagamentCell = document.createElement('th');
+    
+                const ValuePagamentCell = document.createElement('td');
                 ValuePagamentCell.textContent = fp.value_aprazo;
                 row.appendChild(ValuePagamentCell);
-
-                const StatusCell = document.createElement('th');
+    
+                const StatusCell = document.createElement('td');
                 StatusCell.textContent = fp.status;
                 row.appendChild(StatusCell);
-
-                const TypeCell = document.createElement('th');
+    
+                const TypeCell = document.createElement('td');
                 TypeCell.textContent = fp.type;
                 row.appendChild(TypeCell);
-
+    
                 financialcontrolDetalsList.appendChild(row);
             });
-
+    
         } else {
             showMessage('Erro ao listar solicitações', 'error');
         }

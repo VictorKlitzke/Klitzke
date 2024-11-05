@@ -3,7 +3,7 @@ let selectedPagamentalControl = [];
 
 const AddVariationForn = document.getElementById('add-variation-forn');
 
-async function FinalizeAPrazo() {
+async function finalizeAPrazoControl() {
   document.querySelectorAll('#table-financial-control-detals input[type="checkbox"]:checked').forEach(checkbox => {
     selectedFinacialControl.push(checkbox.value);
 
@@ -167,7 +167,6 @@ function ShowModalAddVariation() {
     AddVariationForn.style.display = 'block';
   }
 }
-
 function SelectFinancial() {
   const categorys = document.getElementById('categorys').value;
   const StatusCategory = document.getElementById('status-category');
@@ -178,5 +177,93 @@ function SelectFinancial() {
     StatusCategory.value = 'Despesa';
   } else if (categorys === 'contas a receber') {
     StatusCategory.value = 'Receita';
+  }
+}
+function searchSales() {
+  const input = document.getElementById('searchInput');
+  const filter = input.value.toLowerCase(); 
+  const table = document.getElementById('table-sales');
+  const rows = table.getElementsByTagName('tr'); 
+
+  for (let i = 1; i < rows.length; i++) {
+      const cells = rows[i].getElementsByTagName('td'); 
+      let match = false; 
+
+      for (let j = 0; j < cells.length; j++) {
+          if (cells[j]) {
+              const cellValue = cells[j].textContent || cells[j].innerText; 
+              if (cellValue.toLowerCase().indexOf(filter) > -1) {
+                  match = true; 
+                  break;
+              }
+          }
+      }
+      rows[i].style.display = match ? "" : "none"; 
+  }
+}
+function searchcontrol() {
+  const input = document.getElementById('searchInputControl');
+  const filter = input.value.toLowerCase(); 
+  const table = document.getElementById('result-financial-control');
+  const rows = table.getElementsByTagName('tr'); 
+
+  for (let i = 1; i < rows.length; i++) {
+      const cells = rows[i].getElementsByTagName('td'); 
+      let match = false; 
+
+      for (let j = 0; j < cells.length; j++) {
+          if (cells[j]) {
+              const cellValue = cells[j].textContent || cells[j].innerText; 
+              if (cellValue.toLowerCase().indexOf(filter) > -1) {
+                  match = true; 
+                  break;
+              }
+          }
+      }
+      rows[i].style.display = match ? "" : "none"; 
+  }
+}
+function searchcontrolEntry() {
+  const input = document.getElementById('searchcontrolEntry');
+  const filter = input.value.toLowerCase(); 
+  const table = document.getElementById('result-entry');
+  const rows = table.getElementsByTagName('tr'); 
+
+  for (let i = 1; i < rows.length; i++) {
+      const cells = rows[i].getElementsByTagName('td'); 
+      let match = false; 
+
+      for (let j = 0; j < cells.length; j++) {
+          if (cells[j]) {
+              const cellValue = cells[j].textContent || cells[j].innerText; 
+              if (cellValue.toLowerCase().indexOf(filter) > -1) {
+                  match = true; 
+                  break;
+              }
+          }
+      }
+      rows[i].style.display = match ? "" : "none"; 
+  }
+}
+function searchSalesAll() {
+  const input = document.getElementById('searchInputSalesAll');
+  const filter = input.value.toLowerCase(); 
+  const table = document.getElementById('allsales-result');
+  const rows = table.getElementsByTagName('tr'); 
+
+  for (let i = 1; i < rows.length; i++) {
+      const cells = rows[i].getElementsByTagName('td'); 
+      let match = false; 
+
+      for (let j = 0; j < cells.length; j++) {
+          if (cells[j]) {
+              const cellValue = cells[j].textContent || cells[j].innerText; 
+              if (cellValue.toLowerCase().indexOf(filter) > -1) {
+                  match = true; 
+                  break;
+              }
+          }
+      }
+      rows[i].style.display = match ? "" : "none"; 
   }
 }

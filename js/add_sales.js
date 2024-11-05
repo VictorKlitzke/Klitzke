@@ -166,6 +166,7 @@ function updateQuantity(inputElement, productPrice) {
 
     const totalPrice = quantity * productPrice;
     row.querySelector('.total-price').innerText = `R$ ${totalPrice.toFixed(2).replace('.', ',')}`;
+    updateTotalDisplay();
 }
 
 async function updateTotalDisplay() {
@@ -393,7 +394,7 @@ async function FinalizeAprazo() {
             selectedProducts: selectedProducts
         };
 
-        if (selectedClientId == 0) {
+        if (selectedClientId == 0 || selectedClientId == null) {
             showMessage('Erro nenhum cliente informado', 'warning');
             return;
         }
@@ -424,7 +425,7 @@ async function FinalizeAprazo() {
 
                     let printSales = {
                         date: new Date().toLocaleString(),
-                        clientName: idSalesClient,
+                        selectedClientId: selectedClientId,
                         totalValue: totalValue,
                         selectedProducts: selectedProducts.map(product => ({
                             productName: product.productName,
@@ -439,6 +440,10 @@ async function FinalizeAprazo() {
                             showMessage('Operação cancelada', 'warning')
                         })
                     }, 5000);
+
+                    setTimeout(() => {
+                        location.reload();
+                    }, 8000);
 
                     OverlayAPrazo.style.display = 'none';
                     APrazoModal.style.display = 'none';
@@ -505,7 +510,7 @@ async function finalizeSalePortion() {
 
                     let printSales = {
                         date: new Date().toLocaleString(),
-                        clientName: idSalesClient,
+                        selectedClientId: selectedClientId,
                         totalValue: totalValue,
                         selectedProducts: selectedProducts.map(product => ({
                             productName: product.productName,
@@ -520,6 +525,10 @@ async function finalizeSalePortion() {
                             showMessage('Operação cancelada', 'warning')
                         })
                     }, 5000);
+
+                    setTimeout(() => {
+                        location.reload();
+                    }, 8000);
 
                     overlayPortion.style.display = 'none';
                     ModalSalesPortion.style.display = 'none';
@@ -677,6 +686,9 @@ async function finalizeSale() {
                 }, function () {
                     showMessage('Operação cancelada', 'error');
                 })
+                setTimeout(() => {
+                    location.reload();
+                }, 8000);
             } else {
                 showMessage('Erro ao gerar QR Code: ' + responseBodyQr.message, 'error');
             }
@@ -727,7 +739,6 @@ async function registerSale(requestData) {
             setTimeout(() => {
                 location.reload();
             }, 8000);
-
 
         } else {
             showMessage('Caixa não foi aberto, para essa operação', 'error');

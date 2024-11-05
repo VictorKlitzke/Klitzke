@@ -57,13 +57,6 @@ if (!isset($_SESSION['user_permissions'][$page_permission]) || $_SESSION['user_p
     </div>
   </div>
 
-  <div class="row mb-4">
-    <div class="col-md-12">
-      <input class="form-control" id="input-financial-control" type="search" placeholder="Pesquisar"
-        aria-label="Pesquisar">
-    </div>
-  </div>
-
   <ul class="nav nav-tabs" id="myTab" role="tablist">
     <li class="nav-item" role="presentation">
       <a class="nav-link active" id="sales-tab" data-bs-toggle="tab" href="#sales" role="tab" aria-controls="sales"
@@ -85,8 +78,14 @@ if (!isset($_SESSION['user_permissions'][$page_permission]) || $_SESSION['user_p
 
   <!-- Conteúdo das abas -->
   <div class="tab-content" id="myTabContent">
+
+    <!-- Aba de Vendas -->
     <div class="tab-pane fade show active" id="sales" role="tabpanel" aria-labelledby="sales-tab">
-      <div class="table-responsive" style="max-height: 400px; overflow-y: auto; overflow-x: auto;">
+      <div class="mt-2">
+        <input type="text" id="searchInput" placeholder="Buscar por clientes..." class="form-control"
+          onkeyup="searchSales()">
+      </div>
+      <div class="table-responsive mt-2" style="max-height: 400px; overflow-y: auto;">
         <table class="table table-dark table-hover table-striped table-bordered" id="table-sales">
           <thead>
             <tr style="white-space: nowrap;">
@@ -103,8 +102,13 @@ if (!isset($_SESSION['user_permissions'][$page_permission]) || $_SESSION['user_p
       </div>
     </div>
 
+    <!-- Aba de Financeiro -->
     <div class="tab-pane fade" id="financial" role="tabpanel" aria-labelledby="financial-tab">
-      <div class="table-responsive" style="max-height: 400px; overflow-y: auto; overflow-x: auto;">
+      <div class="mt-2">
+        <input type="text" id="searchInputControl" placeholder="Buscar por saídas..." class="form-control"
+          onkeyup="searchControl()">
+      </div>
+      <div class="table-responsive mt-2" style="max-height: 400px; overflow-y: auto;">
         <table class="table table-dark table-hover table-striped table-bordered">
           <thead>
             <tr style="white-space: nowrap;">
@@ -122,8 +126,13 @@ if (!isset($_SESSION['user_permissions'][$page_permission]) || $_SESSION['user_p
       </div>
     </div>
 
+    <!-- Aba de Entradas -->
     <div class="tab-pane fade" id="entry" role="tabpanel" aria-labelledby="entry-tab">
-      <div class="table-responsive" style="max-height: 400px; overflow-y: auto; overflow-x: auto;">
+      <div class="mt-2">
+        <input type="text" id="searchControlEntry" placeholder="Buscar por entradas..." class="form-control"
+          onkeyup="searchControlEntry()">
+      </div>
+      <div class="table-responsive mt-2" style="max-height: 400px; overflow-y: auto;">
         <table class="table table-dark table-hover table-striped table-bordered">
           <thead>
             <tr style="white-space: nowrap;">
@@ -140,8 +149,13 @@ if (!isset($_SESSION['user_permissions'][$page_permission]) || $_SESSION['user_p
       </div>
     </div>
 
+    <!-- Aba de Todas as Vendas -->
     <div class="tab-pane fade" id="allsales" role="tabpanel" aria-labelledby="allsales-tab">
-      <div class="table-responsive" style="max-height: 400px; overflow-y: auto; overflow-x: auto;">
+      <div class="mt-2">
+        <input type="text" id="searchInputSalesAll" placeholder="Buscar por vendas..." class="form-control"
+          onkeyup="searchSalesAll()">
+      </div>
+      <div class="table-responsive mt-2" style="max-height: 400px; overflow-y: auto;">
         <table class="table table-dark table-hover table-striped table-bordered">
           <thead>
             <tr style="white-space: nowrap;">
@@ -156,21 +170,20 @@ if (!isset($_SESSION['user_permissions'][$page_permission]) || $_SESSION['user_p
         </table>
       </div>
     </div>
+
   </div>
 
+  <!-- Modal de Detalhes -->
   <div class="modal fade" id="detailsModal" tabindex="-1" aria-labelledby="detailsModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg modal-dialog-scrollable">
       <div class="modal-content">
-        <!-- Modal Header -->
         <div class="modal-header bg-primary text-white">
           <h5 class="modal-title" id="detailsModalLabel">Detalhes da Parcela</h5>
           <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
-
-        <!-- Modal Body -->
         <div class="modal-body">
           <div class="table-responsive">
-            <table class="table table-hover table-striped table-bordered" id="table-financial-control-detals">
+            <table class="table table-hover table-striped table-bordered" id="table-financial-control-details">
               <thead class="table-primary text-center">
                 <tr>
                   <th>Selecionar</th>
@@ -181,17 +194,15 @@ if (!isset($_SESSION['user_permissions'][$page_permission]) || $_SESSION['user_p
                   <th>Tipo</th>
                 </tr>
               </thead>
-              <tbody id="financial-control-result-detals" class="text-center">
-              </tbody>
+              <tbody id="" class="text-center table-financial-control-detals"></tbody>
             </table>
           </div>
         </div>
-
         <div class="modal-footer justify-content-between">
           <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
             <i class="fas fa-times"></i> Fechar
           </button>
-          <button type="button" onclick="FinalizeAPrazo()" class="btn btn-success">
+          <button type="button" onclick="finalizeAPrazo()" class="btn btn-success">
             <i class="fas fa-check-circle"></i> Faturar
           </button>
         </div>
