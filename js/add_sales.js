@@ -544,69 +544,78 @@ async function finalizeSalePortion() {
     }
 }
 
+let printSales = {
+    date: new Date().toLocaleString(),
+    selectedClientId: selectedClientId,
+    totalValue: totalValue,
+    selectedProducts: selectedProducts.map(product => ({
+        productName: product.productName,
+        productPrice: parseFloat(product.productPrice),
+    }))
+};
+
 async function printReceipt(saleDetails) {
-    let printWindow = window.open('', '_blank', 'width=800,height=600');
+    let printWindow = window.open('', '_blank', 'width=300,height=600');
 
     let receiptContent = `
         <html>
             <head>
                 <title>Comprovante de Venda</title>
-                <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/5.3.0/css/bootstrap.min.css">
                 <style>
-                    .receipt-container {
-                        border: 1px solid #dee2e6;
-                        padding: 20px;
-                        max-width: 400px;
-                        margin: 0 auto;
+                    @media print {
+                        body, html {
+                            margin: 0;
+                            padding: 0;
+                            width: 58mm; /* Largura comum para papel térmico */
+                        }
+                        .receipt-container {
+                            max-width: 58mm;
+                            padding: 5px;
+                            margin: 0;
+                            text-align: center;
+                        }
                     }
-                    .receipt-header {
-                        background-color: #f8f9fa;
-                        padding: 15px;
-                        border-bottom: 1px solid #dee2e6;
-                    }
-                    .receipt-footer {
-                        border-top: 1px solid #dee2e6;
-                        padding-top: 15px;
-                        margin-top: 20px;
+                    .receipt-header, .receipt-footer {
+                        border-bottom: 1px dashed #000;
+                        margin-bottom: 5px;
+                        padding-bottom: 5px;
                     }
                     .receipt-items {
-                        border-bottom: 1px solid #dee2e6;
-                        padding-bottom: 15px;
-                        margin-bottom: 15px;
+                        border-bottom: 1px dashed #000;
+                        padding-bottom: 5px;
                     }
                     .receipt-item {
-                        font-size: 14px;
+                        display: flex;
+                        justify-content: space-between;
+                        font-size: 12px;
                     }
                     .receipt-total {
-                        font-size: 18px;
                         font-weight: bold;
+                        font-size: 14px;
+                        margin-top: 5px;
                     }
                 </style>
             </head>
             <body>
-                <div class="container mt-5">
-                    <div class="receipt-container shadow-sm rounded">
-                        <div class="receipt-header text-center mb-3">
-                            <h3>Comprovante de Venda</h3>
-                            <p><strong>Data:</strong> ${saleDetails.date}</p>
-                            <p><strong>Cliente:</strong> ${saleDetails.clientName || 'N/A'}</p>
-                        </div>
+                <div class="receipt-container">
+                    <div class="receipt-header">
+                        <h3>Comprovante de Venda</h3>
+                        <p>Data: ${saleDetails.date}</p>
+                        <p>Cliente: ${saleDetails.clientName || 'N/A'}</p>
+                    </div>
 
-                        <div class="receipt-items">
-                            <h5 class="mb-3">Itens</h5>
-                            <ul class="list-group">
-                                ${saleDetails.selectedProducts.map(product => `
-                                    <li class="list-group-item d-flex justify-content-between align-items-center receipt-item">
-                                        <span>${product.productName}</span>
-                                        <span>R$ ${product.productPrice.toFixed(2)}</span>
-                                    </li>
-                                `).join('')}
-                            </ul>
-                        </div>
+                    <div class="receipt-items">
+                        <h5>Itens</h5>
+                        ${saleDetails.selectedProducts.map(product => `
+                            <div class="receipt-item">
+                                <span>${product.productName}</span>
+                                <span>R$ ${product.productPrice.toFixed(2)}</span>
+                            </div>
+                        `).join('')}
+                    </div>
 
-                        <div class="receipt-footer text-end">
-                            <p class="receipt-total">Total: R$ ${saleDetails.totalValue.toFixed(2)}</p>
-                        </div>
+                    <div class="receipt-footer">
+                        <p class="receipt-total">Total: R$ ${saleDetails.totalValue.toFixed(2)}</p>
                     </div>
                 </div>
             </body>

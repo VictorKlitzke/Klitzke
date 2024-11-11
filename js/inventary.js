@@ -88,6 +88,12 @@ async function RegisterUpdateInventaryItens() {
         ClearLocalStorage();
         document.getElementById('AdjustInventary').style.display = 'none';
         document.getElementById('InventaryListProduct').style.display = 'none';
+
+
+        setTimeout(() => {
+          location.reload();
+        }, 4000);
+
       } else {
         showMessage('Erro ao realizar Inventario' + responseParse.message, 'error');
       }

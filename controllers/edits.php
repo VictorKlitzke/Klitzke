@@ -74,21 +74,21 @@ class Edit
     {
         $today = date('Y-m-d H:i:s');
 
-        $name = filter_var($response_products['name'], FILTER_SANITIZE_STRING);
-        $quantity = filter_var($response_products['quantity'], FILTER_SANITIZE_STRING);
-        $stock_quantity = filter_var($response_products['stock_quantity'], FILTER_SANITIZE_STRING);
-        $barcode = filter_var($response_products['barcode'], FILTER_SANITIZE_STRING);
-        $value_product = filter_var($response_products['value_product'], FILTER_SANITIZE_STRING);
-        $cost_value = filter_var($response_products['cost_value'], FILTER_SANITIZE_STRING);
-        $reference = filter_var($response_products['reference'], FILTER_SANITIZE_STRING);
-        $model = filter_var($response_products['model'], FILTER_SANITIZE_STRING);
-        $brand = filter_var($response_products['brand'], FILTER_SANITIZE_STRING);
+        $name = filter_var($response_products['name'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+        $quantity = filter_var($response_products['quantity'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+        $stock_quantity = filter_var($response_products['stock_quantity'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+        $barcode = filter_var($response_products['barcode'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+        $value_product = filter_var($response_products['value_product'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+        $cost_value = filter_var($response_products['cost_value'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+        $reference = filter_var($response_products['reference'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+        $model = filter_var($response_products['model'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+        $brand = filter_var($response_products['brand'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
 
         if (!$name || !$quantity || !$value_product || !$cost_value || !$stock_quantity) {
             Response::json(false, 'Campos Inválidos', $today);
         }
 
-        $product_id = filter_var($response_products['id_products'], FILTER_SANITIZE_STRING);
+        $product_id = filter_var($response_products['id_products'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
         $product_id = base64_decode($product_id);
 
         if (!$product_id) {
@@ -133,8 +133,8 @@ class Edit
     {
 
         $today = date('Y-m-d H:i:s');
-        $quantity_product = filter_var($response_inventory['quantityProduct'], FILTER_SANITIZE_STRING);
-        $value_product = filter_var($response_inventory['valueProduct'], FILTER_SANITIZE_STRING);
+        $quantity_product = filter_var($response_inventory['quantityProduct'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+        $value_product = filter_var($response_inventory['valueProduct'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
         $product_id = filter_var($response_inventory['productID'], FILTER_SANITIZE_NUMBER_INT);
 
         try {
@@ -225,11 +225,11 @@ class Edit
         $today = date('Y-m-d H:i:s');
 
         $id = filter_var(base64_decode($response_users['id_user']), FILTER_SANITIZE_NUMBER_INT);
-        $name = filter_var($response_users['name'], FILTER_SANITIZE_STRING);
+        $name = filter_var($response_users['name'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
         $email = filter_var($response_users['email'], FILTER_VALIDATE_EMAIL);
-        $login = filter_var($response_users['login'], FILTER_SANITIZE_STRING);
-        $phone = filter_var($response_users['phone'], FILTER_SANITIZE_STRING);
-        $function = filter_var($response_users['function'], FILTER_SANITIZE_STRING);
+        $login = filter_var($response_users['login'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+        $phone = filter_var($response_users['phone'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+        $function = filter_var($response_users['function'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
         $commission = filter_var($response_users['commission'], FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION);
         $target_commission = filter_var($response_users['target_commission'], FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION);
 
@@ -273,15 +273,15 @@ class Edit
     {
         $today = date("Y-m-d H:i:s");
         $id_client = filter_var(base64_decode($response_clients['id_client']), FILTER_VALIDATE_INT);
-        $name = isset($response_clients['name']) ? filter_var($response_clients['name'], FILTER_SANITIZE_STRING) : '';
+        $name = isset($response_clients['name']) ? filter_var($response_clients['name'], FILTER_SANITIZE_FULL_SPECIAL_CHARS) : '';
         $email = isset($response_clients['email']) ? filter_var($response_clients['email'], FILTER_VALIDATE_EMAIL) : '';
-        $social_reason = isset($response_clients['social_reason']) ? filter_var($response_clients['social_reason'], FILTER_SANITIZE_STRING) : '';
+        $social_reason = isset($response_clients['social_reason']) ? filter_var($response_clients['social_reason'], FILTER_SANITIZE_FULL_SPECIAL_CHARS) : '';
         $cpf = isset($response_clients['cpf']) ? filter_var($response_clients['cpf'], FILTER_SANITIZE_NUMBER_FLOAT) : '';
-        $phone = isset($response_clients['phone']) ? filter_var($response_clients['phone'], FILTER_SANITIZE_STRING) : '';
-        $address = isset($response_clients['address']) ? filter_var($response_clients['address'], FILTER_SANITIZE_STRING) : '';
-        $city = isset($response_clients['city']) ? filter_var($response_clients['city'], FILTER_SANITIZE_STRING) : '';
+        $phone = isset($response_clients['phone']) ? filter_var($response_clients['phone'], FILTER_SANITIZE_FULL_SPECIAL_CHARS) : '';
+        $address = isset($response_clients['address']) ? filter_var($response_clients['address'], FILTER_SANITIZE_FULL_SPECIAL_CHARS) : '';
+        $city = isset($response_clients['city']) ? filter_var($response_clients['city'], FILTER_SANITIZE_FULL_SPECIAL_CHARS) : '';
         $cep = isset($response_clients['cep']) ? filter_var($response_clients['cep'], FILTER_VALIDATE_INT) : '';
-        $neighborhood = isset($response_clients['neighborhood']) ? filter_var($response_clients['neighborhood'], FILTER_SANITIZE_STRING) : '';
+        $neighborhood = isset($response_clients['neighborhood']) ? filter_var($response_clients['neighborhood'], FILTER_SANITIZE_FULL_SPECIAL_CHARS) : '';
 
         if ($name == "" || $social_reason == "" || $cpf == "") {
             Response::json(false, 'Campos invalidos', $today);
@@ -335,7 +335,7 @@ class Edit
         $id_company = filter_var(base64_decode($response_company['id_company']), FILTER_VALIDATE_INT);
         $name = filter_var($response_company['name'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
         $email = filter_var($response_company['email'], FILTER_VALIDATE_EMAIL);
-        $cnpj = filter_var($response_company['cnpj'], FILTER_SANITIZE_STRING);
+        $cnpj = filter_var($response_company['cnpj'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
         $state_registration = filter_var($response_company['state_registration'], FILTER_SANITIZE_NUMBER_INT);
         $address = filter_var($response_company['address'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
         $city = filter_var($response_company['city'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
@@ -385,14 +385,14 @@ class Edit
         $today = date('Y-m-d H:i:s');
 
         $id_forn = filter_var(base64_decode($response_forn['id_forn']), FILTER_VALIDATE_INT);
-        $name_company = filter_var($response_forn['name_company'], FILTER_SANITIZE_STRING);
-        $fantasy_name = filter_var($response_forn['fantasy_name'], FILTER_SANITIZE_STRING);
+        $name_company = filter_var($response_forn['name_company'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+        $fantasy_name = filter_var($response_forn['fantasy_name'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
         $email = filter_var($response_forn['email'], FILTER_VALIDATE_EMAIL);
-        $phone = filter_var($response_forn['phone'], FILTER_SANITIZE_STRING);
-        $address = filter_var($response_forn['address'], FILTER_SANITIZE_STRING);
-        $city = filter_var($response_forn['city'], FILTER_SANITIZE_STRING);
-        $state = filter_var($response_forn['state'], FILTER_SANITIZE_STRING);
-        $cnpjcpf = filter_var($response_forn['cnpj'], FILTER_SANITIZE_STRING);
+        $phone = filter_var($response_forn['phone'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+        $address = filter_var($response_forn['address'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+        $city = filter_var($response_forn['city'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+        $state = filter_var($response_forn['state'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+        $cnpjcpf = filter_var($response_forn['cnpj'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
 
         if (empty($name_company) || empty($fantasy_name) || empty($email) || empty($phone) || empty($address) || empty($city) || empty($state) || empty($cnpjcpf)) {
             Response::json(false, 'Todos os campos são obrigatórios', $today);

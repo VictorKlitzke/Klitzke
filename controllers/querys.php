@@ -27,6 +27,9 @@ $response['query_warnings'] = $query_warnings;
 $list_products = Querys::QueryListProduct($sql);
 $response['list_products'] = $list_products;
 
+$list_portion = Querys::QueryListPortionProduct($sql);
+$response['list_portion'] = $list_portion;
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $data = json_decode(file_get_contents('php://input'), true);
 
@@ -148,6 +151,17 @@ class Querys
             return ['error' => 'Erro no banco de dados: ' . $e->getMessage(), 'code' => $e->getCode()];
         }
     }
+    public static function QueryListPortionProduct($sql) {
+        try {
+
+            $exec = $sql->prepare("SELECT id,name,stock_quantity FROM products");
+            $exec->execute();
+            return $exec->fetchAll(PDO::FETCH_ASSOC);
+
+        } catch (Exception $e) {
+            return ['error' => 'Erro no banco de dados: ' . $e->getMessage(), 'code' => $e->getCode()];
+        }
+    }
     public static function QueryListProduct($sql)
     {
         try {
@@ -156,7 +170,8 @@ class Querys
                                         pm.product_id, 
                                         p.name AS product_name,
                                         p.stock_quantity AS quantity,
-                                        SUM(CASE WHEN pm.type = 'Entrada' THEN pm.quantity ELSE 0 END) AS total_entry,
+                                        SUM(CASE WHEN pm.type = 'Entrada' THEN pm.quantity ELSE 0 END) + 
+                                        SUM(CASE WHEN pm.type = 'Inventario' THEN pm.quantity_inventary ELSE 0 END) AS total_entry,
                                         SUM(CASE WHEN pm.type = 'Saida' THEN pm.quantity ELSE 0 END) AS total_exit,
                                         (SUM(CASE WHEN pm.type = 'Entrada' THEN pm.quantity ELSE 0 END) +
                                         SUM(CASE WHEN pm.type = 'Saida' THEN pm.quantity ELSE 0 END)) AS stock_difference

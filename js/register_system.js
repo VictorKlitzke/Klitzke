@@ -76,12 +76,14 @@ const FieldsUsers = () => {
             listProducts: document.getElementById("controle-estoque-submenu-lista").value,
             registerProducts: document.getElementById("controle-estoque-submenu-produtos").value,
             registerInventory: document.getElementById("controle-estoque-submenu-inventory").value,
+            registerPortion: document.getElementById("controle-estoque-submenu-open-portion"),
 
             dashboardADM: document.getElementById("administrativo-submenu-dashboards").value,
 
             financialControl: document.getElementById("controle-financeiro-submenu-pagamentos").value,
 
             myCompany: document.getElementById("minha-empresa-submenu").value
+
         }
     };
 }
@@ -161,6 +163,7 @@ async function RegisterUsers() {
         listProducts: menuaccess.listProducts,
         registerProducts: menuaccess.registerProducts,
         registerInventory: menuaccess.registerInventory,
+        registerPortion: menuaccess.registerPortion,
         dashboardADM: menuaccess.dashboardADM,
         financialControl: menuaccess.financialControl,
         myCompany: menuaccess.myCompany
@@ -185,11 +188,11 @@ async function RegisterUsers() {
 
                     if (ResponseParseUser.success && ResponseParseUser) {
                         showMessage("Usuário " + values.name + " cadastrado com sucesso!", 'success');
-    
+
                         setTimeout(() => {
                             location.reload();
                         }, 2000);
-    
+
                     } else {
                         showMessage("Erro ao fazer cadastro: " + responseBody.message, 'error');
                     }
@@ -1192,61 +1195,6 @@ async function RegisterMultiply() {
     })
 }
 
-const getFildsFile = () => {
-    return {
-        values: {
-            fileregister: document.getElementById('files').files[0],
-        },
-        inputs: {
-            fileregister: document.getElementById('files')
-        }
-    }
-}
-async function RegisterFile() {
-    const { values, inputs } = await getFildsFile();
-
-    if (!values.fileregister) {
-        showMessage('Campo vazio', 'warning');
-        inputs.fileregister.classList.add('error');
-        setTimeout(() => {
-            inputs.fileregister.classList.remove('error');
-        }, 3000);
-        return;
-    }
-
-    let formData = new FormData();
-    formData.append('file', values.fileregister);
-
-    continueMessage("Deseja realmente cadastrar por esse método?", "Sim", "Não", async function () {
-        try {
-            const response = await fetch('http://localhost:5000/upload', {
-                method: 'POST',
-                body: formData,
-                headers: {
-                    'Accept': 'application/json'
-                },
-                mode: 'cors',
-                credentials: 'include'
-            });
-
-            const responseBody = await response.json();
-
-            if (responseBody.success) {
-                showMessage('Cadastro de produto realizado com sucesso ', 'success');
-                setTimeout(() => {
-                    location.reload();
-                }, 2000);
-            } else {
-                showMessage(responseBody.message || 'Erro ao cadastrar produto ', 'error');
-            }
-        } catch (error) {
-            showMessage('Erro na requisição: ' + error.message, 'error');
-        }
-    }, function () {
-        showMessage('Registro cancelado', 'warning');
-    });
-}
-
 const getFieldCreateInventary = () => {
     return {
         type: {
@@ -1295,7 +1243,7 @@ async function Inventaryquantity() {
             let response = await fetch(url, {
                 method: "POST",
                 headers: {
-                    'Content-Type': 'application/json',
+                    'Content-Type': 'multipart/form-data',
                 },
                 body: JSON.stringify(responseInventary)
             });
@@ -1308,6 +1256,8 @@ async function Inventaryquantity() {
             let responseParse;
             try {
                 responseParse = JSON.parse(responseInve);
+
+                console.log(responseParse);
 
             } catch (error) {
                 showMessage('Erro ao fazer requisição: Resposta inválida do servidor', 'error');

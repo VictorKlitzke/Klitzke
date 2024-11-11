@@ -67,8 +67,11 @@
                 <div class="container-fluid p-4 shadow-lg border bg-light rounded-4">
                     <div class="row">
                         <div class="col">
+                            <h2>Selecionar Fornecedor</h2>
                             <div class="table-responsive">
-                                <table class="table table-dark table-hover" id="table-forn" border="4">
+                                <table
+                                    class="table table-striped table-hover align-middle text-center bg-white rounded-3 shadow-sm"
+                                    id="table-forn">
                                     <thead>
                                         <tr style="white-space: nowrap;">
                                             <th id="selected-forn" scope="col">Selecionar</th>
@@ -85,8 +88,6 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-success" onclick="SendRequestWhatsApp()">Enviar pelo
-                    WhatsApp</button>
                 <button type="button" class="btn btn-primary" onclick="SendRequestEmail()"
                     id="confirmSupplierSelection">Enviar pelo e-mail</button>
             </div>

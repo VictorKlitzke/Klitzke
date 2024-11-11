@@ -1,5 +1,13 @@
 <?php
 
+// require 'libs/PHPMailer/src/PHPMailer.php';
+include_once '../libs/PHPMailer/src/PHPMailer.php';
+include_once '../libs/PHPMailer/src/SMTP.php';
+include_once '../libs/PHPMailer/src/Exception.php';
+
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
+
 include_once '../config/config.php';
 include_once '../services/db.php';
 include_once '../classes/panel.php';
@@ -9,6 +17,7 @@ include_once '../helpers/response.php';
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
+
 
 header("Access-Control-Allow-Origin: *");
 header("Content-Type: application/json");
@@ -57,6 +66,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $response_inventary = $data;
     $response_intentary_itens = $data;
     $response_reopen_boxpdv = $data;
+    $response_portion = $data;
+    $response_portion_product = $data;
 
     if (isset($data['type'])) {
         if ($data['type'] == 'users') {
@@ -79,8 +90,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             Register::RegisterSangria($sql, $response_sangria, $user_id);
         } else if ($data['type'] == 'multiply') {
             Register::RegisterMultiply($sql, $response_multiply, $user_id);
-        } else if ($data['type'] == 'RequestPurchase') {
-            Register::SendRequestWhatsApp($sql, $response_whatsapp, $user_id);
         } else if ($data['type'] == 'RequestEmail') {
             Register::SendRequestEmail($sql, $response_email, $user_id);
         } else if ($data['type'] == 'variation') {
@@ -97,6 +106,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             Register::RegisterUpdateInventary($response_intentary_itens, $sql, $user_id, $today);
         } else if ($data['type'] === 'submitReaopenBoxPdv') {
             Register::RegisterReopenBox($response_reopen_boxpdv, $sql, $user_id, $today);
+        } else if ($data['type'] === 'createportion') {
+            Register::RegisterPortion($response_portion, $sql, $user_id, $today);
+        } else if ($data['type'] === 'createproductsportion') {
+            Register::RegisterPortionProduct($response_portion_product, $sql, $user_id, $today);
         }
     } else {
         Response::json(false, 'Tipo type não encontrado', $today);
@@ -106,10 +119,97 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 class Register
 {
 
+    public static function RegisterPortionProduct($response_portion_product, $sql, $user_id, $today) {
+
+        $PortionID = filter_var($response_portion_product['PortionID'], FILTER_SANITIZE_NUMBER_INT);
+
+        if (empty($PortionID)) {
+            Response::json(false, 'Porção com id invalido', $today);
+            return;
+        }
+        try {
+
+            $sql->beginTransaction();
+
+            foreach ($response_portion_product['SelectedProductPortion'] as $productItens) {
+                $product_id = $productItens['productId'];
+                $counted_quantity = $productItens['productQuantity'];
+
+                $exec = $sql->prepare("INSERT INTO portion_itens (portion_id, product_id, quatity, created_at)
+                                        VALUES (:inventary_id, :product_id, :counted_quantity, NOW())");
+
+                $exec->bindParam(':inventary_id', $PortionID, PDO::PARAM_INT);
+                $exec->bindParam(':product_id', $product_id, PDO::PARAM_INT);
+                $exec->bindParam(':counted_quantity', $counted_quantity, PDO::PARAM_STR);
+                $exec->execute();
+
+            }
+
+            $sql->commit();
+
+            $message_log = "Produtos da porção criado com sucesso";
+            Panel::LogAction($user_id, 'Produtos da porção criado Acesso', $message_log, $today);
+            Response::send(true, 'Produtos da porção criado com sucesso', $today);
+
+        } catch (Exception $e) {
+            $sql->rollBack();
+            http_response_code(500);
+            Response::json(false, 'Erro ao adicionar Inventário: ' . $e->getMessage(), $today);
+        }
+
+    }
+    public static function RegisterPortion($response_portion, $sql, $user_id, $today)
+    {
+
+        $namePortion = filter_var($response_portion['namePortion'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+        $obsportion = filter_var($response_portion['obsportion'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+
+        try {
+
+            $exec1 = $sql->prepare("SELECT id, status FROM portion WHERE name_portion = :name_portion");
+            $exec1->bindParam(':name_portion', $namePortion, PDO::PARAM_STR);
+            $exec1->execute();
+            $result_query = $exec1->fetch(PDO::FETCH_ASSOC);
+
+            if ($result_query) {
+                $updateStatus = $sql->prepare("UPDATE portion SET status = 2 WHERE id = :id");
+                $updateStatus->bindParam(':id', $result_query['id'], PDO::PARAM_INT);
+                $updateStatus->execute();
+
+                Response::json(true, 'Porção existente. Status atualizado para 2', $today);
+                return;
+            }
+
+            $sql->beginTransaction();
+
+            $status = 1;
+            $exec = $sql->prepare("INSERT INTO portion (name_portion, obs_portion, created_at, status) 
+                        VALUES (:name_portion, :obs_portion, NOW(), :status)");
+            $exec->bindParam(':name_portion', $namePortion, PDO::PARAM_STR);
+            $exec->bindParam(':obs_portion', $obsportion, PDO::PARAM_STR);
+            $exec->bindValue(':status', $status, PDO::PARAM_INT); 
+            $exec->execute();
+
+            $id_portion = $sql->lastInsertId();
+            $sql->commit();
+
+
+            $message_log = "Porção criada com sucesso";
+            Panel::LogAction($user_id, 'Porção criada Acesso', $message_log, $today);
+            Response::send(true, 'Porção criada com sucesso', [
+                'id' => $id_portion,
+                'date' => $today
+            ]);
+
+        } catch (Exception $e) {
+            $sql->rollBack();
+            Response::json(false, 'Erro ao executar transação: ' . $e->getMessage(), $today);
+        }
+    }
     public static function RegisterReopenBox($response_reopen_boxpdv, $sql, $user_id, $today)
     {
 
-        $reason = filter_var($response_reopen_boxpdv['reason'], FILTER_SANITIZE_STRING);
+        $reason = filter_var($response_reopen_boxpdv['reason'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
         $boxId1 = base64_decode($response_reopen_boxpdv['boxId']);
         $boxId = filter_var($boxId1, FILTER_SANITIZE_NUMBER_INT);
 
@@ -171,9 +271,9 @@ class Register
     public static function RegisterCreateInventary($response_inventary, $sql, $user_id, $today)
     {
 
-        $inventaryDate = filter_var($response_inventary['inventaryDate'], FILTER_SANITIZE_STRING);
-        $inventaryStatus = filter_var($response_inventary['inventaryStatus'], FILTER_SANITIZE_STRING);
-        $inventaryObs = filter_var($response_inventary['inventaryObs'], FILTER_SANITIZE_STRING);
+        $inventaryDate = filter_var($response_inventary['inventaryDate'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+        $inventaryStatus = filter_var($response_inventary['inventaryStatus'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+        $inventaryObs = filter_var($response_inventary['inventaryObs'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
 
         try {
 
@@ -221,7 +321,8 @@ class Register
                     $stock_difference = $productItens['stock_difference'];
 
                     $exec = $sql->prepare("INSERT INTO inventary_items (inventary_id, product_id, counted_quantity, system_quantity, status, created_at)
-                                        VALUES (:inventary_id, :product_id, :counted_quantity, :system_quantity, :status1, NOW())");
+                                            VALUES (:inventary_id, :product_id, :counted_quantity, :system_quantity, :status1, NOW())");
+
                     $exec->bindParam(':inventary_id', $id_inventary, PDO::PARAM_INT);
                     $exec->bindParam(':product_id', $product_id, PDO::PARAM_INT);
                     $exec->bindParam(':counted_quantity', $counted_quantity, PDO::PARAM_STR);
@@ -236,16 +337,17 @@ class Register
                     $update_product->execute();
 
                     $product_movement_type = 'inventário';
+                    $quantity_abs = abs($stock_difference);
                     $exec_mov = $sql->prepare("INSERT INTO product_movements (product_id, type, quantity, date, description, quantity_inventary)
                             VALUES (:product_id, :movement_type, :quantity, NOW(), :description, :quantity_inventary)");
+
                     $exec_mov->bindParam(':product_id', $product_id, PDO::PARAM_INT);
                     $exec_mov->bindParam(':movement_type', $product_movement_type, PDO::PARAM_STR);
-                    $exec_mov->bindParam(':quantity', abs($stock_difference), PDO::PARAM_INT);
+                    $exec_mov->bindParam(':quantity', $quantity_abs, PDO::PARAM_INT);
                     $description = "Ajuste de estoque realizado no inventário ID: $id_inventary";
                     $exec_mov->bindParam(':description', $description, PDO::PARAM_STR);
                     $exec_mov->bindParam(':quantity_inventary', $counted_quantity, PDO::PARAM_INT);
                     $exec_mov->execute();
-
                 }
             }
 
@@ -310,13 +412,13 @@ class Register
     }
     public static function RegisterAccountsPayable($sql, $response_accounts_payable, $user_id, $today)
     {
-        $dateTransaction = filter_var($response_accounts_payable['dateTransaction'], FILTER_SANITIZE_STRING);
-        $valueTransaction = filter_var($response_accounts_payable['valueTransaction'], FILTER_SANITIZE_STRING);
-        $descriptionTransaction = filter_var($response_accounts_payable['descriptionTransaction'], FILTER_SANITIZE_STRING);
-        $nameExterno = filter_var($response_accounts_payable['nameExterno'], FILTER_SANITIZE_STRING);
-        $numberdoc = filter_var($response_accounts_payable['numberdoc'], FILTER_SANITIZE_STRING);
-        $transactionType = filter_var($response_accounts_payable['transactionType'], FILTER_SANITIZE_STRING);
-        $status_aprazo = filter_var($response_accounts_payable['incomeExpense'], FILTER_SANITIZE_STRING);
+        $dateTransaction = filter_var($response_accounts_payable['dateTransaction'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+        $valueTransaction = filter_var($response_accounts_payable['valueTransaction'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+        $descriptionTransaction = filter_var($response_accounts_payable['descriptionTransaction'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+        $nameExterno = filter_var($response_accounts_payable['nameExterno'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+        $numberdoc = filter_var($response_accounts_payable['numberdoc'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+        $transactionType = filter_var($response_accounts_payable['transactionType'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+        $status_aprazo = filter_var($response_accounts_payable['incomeExpense'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
 
         if (!$dateTransaction || !$descriptionTransaction || !$valueTransaction) {
             Response::json(false, 'Campo inválido', $today);
@@ -493,56 +595,6 @@ class Register
             echo json_encode(['error' => 'Erro no banco de dados: ' . $e->getMessage(), 'code' => $e->getCode()]);
         }
     }
-    public static function SendRequestWhatsApp($sql, $response_whatsapp, $user_id)
-    {
-
-        $today = date("Y-m-d H:i:s");
-        $status = 2;
-        $message = 'Enviar Solicitação via whatsapp!';
-
-        try {
-
-            foreach ($response_whatsapp['selectedForn'] as $forn_id) {
-                foreach ($response_whatsapp['SendSelectedProduct'] as $product) {
-
-                    $exec = $sql->prepare("
-                            INSERT INTO request_buy_product (
-                                forn_id, 
-                                product_id, 
-                                quantity, 
-                                date_request, 
-                                status, 
-                                message
-                            ) VALUES (
-                                :forn_id, 
-                                :product_id, 
-                                :quantity, 
-                                :date_request, 
-                                :status, 
-                                :message
-                            )
-                        ");
-
-                    $exec->bindParam(':forn_id', $forn_id);
-                    $exec->bindParam(':product_id', $product['id']);
-                    $exec->bindParam(':quantity', $product['quantity']);
-                    $exec->bindParam(':date_request', $today);
-                    $exec->bindParam(':status', $status);
-                    $exec->bindParam(':message', $message);
-                    $exec->execute();
-
-                }
-            }
-
-            $message_log = "Solicitação cadastrada via Whatsapp";
-            Panel::LogAction($user_id, 'Solicitação cadastrada via Whatsapp', $message_log, $today);
-            Response::send(true, 'Solicitação cadastrada via Whatsapp', $today);
-
-        } catch (Exception $e) {
-            http_response_code(500);
-            echo json_encode(['error' => 'Erro no banco de dados: ' . $e->getMessage(), 'code' => $e->getCode()]);
-        }
-    }
     public static function SendRequestEmail($sql, $response_email, $user_id)
     {
         $today = date('Y-m-d H:i:s');
@@ -550,27 +602,66 @@ class Register
         $message = 'Enviar solicitação via email';
 
         try {
+            $companyStmt = $sql->prepare("SELECT email FROM company LIMIT 1");
+            $companyStmt->execute();
+            $company = $companyStmt->fetch(PDO::FETCH_ASSOC);
+
+            if (!$company || empty($company['email'])) {
+                Response::json(false, "E-mail da empresa não encontrado.", $today);
+                return;
+            }
+
+            $companyEmail = $company['email'];
 
             foreach ($response_email['selectedForn'] as $forn_id) {
-                foreach ($response_email['SendSelectedProduct'] as $product) {
+
+                $stmt = $sql->prepare("SELECT email FROM suppliers WHERE id = :forn_id");
+                $stmt->bindParam(':forn_id', $forn_id);
+                $stmt->execute();
+                $suppliers = $stmt->fetch(PDO::FETCH_ASSOC);
+
+                if (!$suppliers || empty($suppliers['email'])) {
+                    Response::json(false, 'E-mail do fornecedor não encontrado', $today);
+                    continue;
+                }
+
+                $suppliers_email = $suppliers['email'];
+                $products = $response_email['SendSelectedProduct'];
+
+                $csvFilePath = dirname(__DIR__) . '/temp/solicitacao_' . $forn_id . '_' . time() . '.csv';
+                $csvFile = fopen($csvFilePath, 'w');
+
+                foreach ($products as $product) {
+
+                    $productStmt = $sql->prepare("SELECT name FROM products WHERE id = :product_id");
+                    $productStmt->bindParam(':product_id', $product['id']);
+                    $productStmt->execute();
+                    $productData = $productStmt->fetch(PDO::FETCH_ASSOC);
+
+                    if (!$productData) {
+                        Response::json(false, "Produto com ID " . $product['id'] . " não encontrado.", $today);
+                        continue;
+                    }
+
+                    $productName = $productData['name'];
 
                     $exec = $sql->prepare("
-                        INSERT INTO request_buy_product (
-                            forn_id, 
-                            product_id, 
-                            quantity, 
-                            date_request, 
-                            status, 
-                            message
-                        ) VALUES (
-                            :forn_id, 
-                            :product_id, 
-                            :quantity, 
-                            :date_request, 
-                            :status, 
-                            :message
-                        )
-                    ");
+                    INSERT INTO request_buy_product (
+                        forn_id, 
+                        product_id, 
+                        quantity, 
+                        date_request, 
+                        status, 
+                        message
+                    ) VALUES (
+                        :forn_id, 
+                        :product_id, 
+                        :quantity, 
+                        :date_request, 
+                        :status, 
+                        :message
+                    )
+                ");
 
                     $exec->bindParam(':forn_id', $forn_id);
                     $exec->bindParam(':product_id', $product['id']);
@@ -580,6 +671,38 @@ class Register
                     $exec->bindParam(':message', $message);
                     $exec->execute();
 
+                    fputcsv($csvFile, [
+                        $product['id'],
+                        $productName,
+                        $product['quantity'],
+                        $today
+                    ]);
+                }
+                fclose($csvFile);
+                $mail = new PHPMailer(true);
+                try {
+                    $mail->isSMTP();
+                    $mail->Host = 'mail.klitzkesoftware.com.br';
+                    $mail->Port = 465;
+                    $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
+                    $mail->SMTPAuth = true;
+                    $mail->Username = 'victor.klitzke@klitzkesoftware.com.br';
+                    $mail->Password = 'klitzke1235500!';
+
+                    $mail->setFrom($companyEmail, 'Nome da Empresa');
+                    $mail->addAddress($suppliers_email);
+
+                    $mail->isHTML(false);
+                    $mail->Subject = "Solicitação de Produtos - " . $today;
+                    $mail->Body = "Prezado fornecedor,\n\nSegue em anexo a lista de produtos solicitados.\n\nAtenciosamente,\nSua Empresa";
+
+                    $mail->addAttachment($csvFilePath, 'solicitacao.csv');
+
+                    $mail->send();
+                    unlink($csvFilePath);
+                } catch (Exception $e) {
+                    Response::json(false, "Erro ao enviar e-mail: {$mail->ErrorInfo}", $today);
+                    return;
                 }
             }
 
@@ -598,44 +721,45 @@ class Register
         $disable = 1;
         $today = date("Y-m-d H:i:s");
 
-        $name = filter_var($response_users['name'], FILTER_SANITIZE_STRING);
+        $name = filter_var($response_users['name'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
         $email = filter_var($response_users['email'], FILTER_VALIDATE_EMAIL);
         $password = $response_users['password'];
-        $login = filter_var($response_users['name'], FILTER_SANITIZE_STRING);
-        $phone = filter_var($response_users['phone'], FILTER_SANITIZE_STRING);
-        $function = filter_var($response_users['userFunction'], FILTER_SANITIZE_STRING);
+        $login = filter_var($response_users['name'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+        $phone = filter_var($response_users['phone'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+        $function = filter_var($response_users['userFunction'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
         $commission = filter_var($response_users['commission'], FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION);
         $target_commission = filter_var($response_users['targetCommission'], FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION);
         $access = filter_var($response_users['access'], FILTER_SANITIZE_NUMBER_INT);
         $type_users = filter_var($response_users['typeUsers'], FILTER_SANITIZE_NUMBER_INT);
 
-        $menu_register_user = filter_var($response_users['registerusers'], FILTER_SANITIZE_STRING);
-        $menu_register_clients = filter_var($response_users['registerclients'], FILTER_SANITIZE_STRING);
-        $menu_register_forn = filter_var($response_users['registerforn'], FILTER_SANITIZE_STRING);
+        $menu_register_user = filter_var($response_users['registerusers'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+        $menu_register_clients = filter_var($response_users['registerclients'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+        $menu_register_forn = filter_var($response_users['registerforn'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
 
-        $menu_sales = filter_var($response_users['sales'], FILTER_SANITIZE_STRING);
-        $menu_list_sales = filter_var($response_users['listSales'], FILTER_SANITIZE_STRING);
+        $menu_sales = filter_var($response_users['sales'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+        $menu_list_sales = filter_var($response_users['listSales'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
 
-        $menu_orders = filter_var($response_users['orders'], FILTER_SANITIZE_STRING);
-        $menu_list_orders = filter_var($response_users['listOrders'], FILTER_SANITIZE_STRING);
-        $menu_register_tables = filter_var($response_users['registerTables'], FILTER_SANITIZE_STRING);
+        $menu_orders = filter_var($response_users['orders'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+        $menu_list_orders = filter_var($response_users['listOrders'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+        $menu_register_tables = filter_var($response_users['registerTables'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
 
-        $menu_register_boxpdv = filter_var($response_users['registerBoxPdv'], FILTER_SANITIZE_STRING);
-        $menu_list_boxpdv = filter_var($response_users['listBoxPdv'], FILTER_SANITIZE_STRING);
-        // $menu_reports_boxpdv = filter_var($response_users['reportsBoxPdv'], FILTER_SANITIZE_STRING);
+        $menu_register_boxpdv = filter_var($response_users['registerBoxPdv'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+        $menu_list_boxpdv = filter_var($response_users['listBoxPdv'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+        // $menu_reports_boxpdv = filter_var($response_users['reportsBoxPdv'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
 
-        $menu_request_purchase = filter_var($response_users['requestPurchase'], FILTER_SANITIZE_STRING);
-        $menu_list_request_purchase = filter_var($response_users['listrequestPurchase'], FILTER_SANITIZE_STRING);
+        $menu_request_purchase = filter_var($response_users['requestPurchase'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+        $menu_list_request_purchase = filter_var($response_users['listrequestPurchase'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
 
-        $menu_list_products = filter_var($response_users['listProducts'], FILTER_SANITIZE_STRING);
-        $menu_register_products = filter_var($response_users['registerProducts'], FILTER_SANITIZE_STRING);
-        $menu_register_Inventory = filter_var($response_users['registerInventory'], FILTER_SANITIZE_STRING);
+        $menu_list_products = filter_var($response_users['listProducts'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+        $menu_register_products = filter_var($response_users['registerProducts'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+        $menu_register_Inventory = filter_var($response_users['registerInventory'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+        $menu_register_portion = filter_var($response_users['registerPortion'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
 
-        $menu_dashboard = filter_var($response_users['dashboardADM'], FILTER_SANITIZE_STRING);
+        $menu_dashboard = filter_var($response_users['dashboardADM'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
 
-        $menu_my_company = filter_var($response_users['myCompany'], FILTER_SANITIZE_STRING);
+        $menu_my_company = filter_var($response_users['myCompany'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
 
-        $menu_financial_control = filter_var($response_users['financialControl'], FILTER_SANITIZE_STRING);
+        $menu_financial_control = filter_var($response_users['financialControl'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
 
         $menu_access = [
             'list-users' => ($menu_register_user === 'sim') ? 1 : 0,
@@ -668,6 +792,7 @@ class Register
             'register-stockcontrol' => ($menu_register_products === 'sim') ? 1 : 0,
             'stock-inventory' => ($menu_register_Inventory === 'sim') ? 1 : 0,
             'list-inventary' => ($menu_register_Inventory === 'sim') ? 1 : 0,
+            'register-portions' => ($menu_register_portion === 'sim') ? 1 : 0,
 
             'dashboard' => ($menu_dashboard === 'sim') ? 1 : 0,
 
@@ -737,15 +862,15 @@ class Register
         $name_table = 'clients';
         $disable = 1;
 
-        $name = isset($response_clients['name']) ? filter_var($response_clients['name'], FILTER_SANITIZE_STRING) : '';
+        $name = isset($response_clients['name']) ? filter_var($response_clients['name'], FILTER_SANITIZE_FULL_SPECIAL_CHARS) : '';
         $email = isset($response_clients['email']) ? filter_var($response_clients['email'], FILTER_VALIDATE_EMAIL) : '';
-        $social_reason = isset($response_clients['social_reason']) ? filter_var($response_clients['social_reason'], FILTER_SANITIZE_STRING) : '';
+        $social_reason = isset($response_clients['social_reason']) ? filter_var($response_clients['social_reason'], FILTER_SANITIZE_FULL_SPECIAL_CHARS) : '';
         $cpf = isset($response_clients['cpf']) ? filter_var($response_clients['cpf'], FILTER_SANITIZE_NUMBER_FLOAT) : '';
-        $phone = isset($response_clients['phone']) ? filter_var($response_clients['phone'], FILTER_SANITIZE_STRING) : '';
-        $address = isset($response_clients['address']) ? filter_var($response_clients['address'], FILTER_SANITIZE_STRING) : '';
-        $city = isset($response_clients['city']) ? filter_var($response_clients['city'], FILTER_SANITIZE_STRING) : '';
+        $phone = isset($response_clients['phone']) ? filter_var($response_clients['phone'], FILTER_SANITIZE_FULL_SPECIAL_CHARS) : '';
+        $address = isset($response_clients['address']) ? filter_var($response_clients['address'], FILTER_SANITIZE_FULL_SPECIAL_CHARS) : '';
+        $city = isset($response_clients['city']) ? filter_var($response_clients['city'], FILTER_SANITIZE_FULL_SPECIAL_CHARS) : '';
         $cep = isset($response_clients['cep']) ? filter_var($response_clients['cep'], FILTER_VALIDATE_INT) : '';
-        $neighborhood = isset($response_clients['neighborhood']) ? filter_var($response_clients['neighborhood'], FILTER_SANITIZE_STRING) : '';
+        $neighborhood = isset($response_clients['neighborhood']) ? filter_var($response_clients['neighborhood'], FILTER_SANITIZE_FULL_SPECIAL_CHARS) : '';
 
         if ($name == "" || $social_reason == "" || $cpf == "") {
             Response::json(false, 'Campos invalidos', $today);
@@ -802,7 +927,7 @@ class Register
 
         $name = filter_var($response_company['name'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
         $email = filter_var($response_company['email'], FILTER_VALIDATE_EMAIL);
-        $cnpj = filter_var($response_company['cnpj'], FILTER_SANITIZE_STRING);
+        $cnpj = filter_var($response_company['cnpj'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
         $state_registration = filter_var($response_company['state_registration'], FILTER_SANITIZE_NUMBER_INT);
         $address = filter_var($response_company['address'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
         $city = filter_var($response_company['city'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
@@ -849,7 +974,7 @@ class Register
 
         $status = 0;
         $today = date('Y-m-d H:i:s');
-        $number = filter_var($response_table['name'], FILTER_SANITIZE_STRING);
+        $number = filter_var($response_table['name'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
         $name_table = "table_requests";
 
         if (!$number) {
@@ -896,12 +1021,12 @@ class Register
         }
         $company = $id_company['id'];
 
-        $name_holder = filter_var($response_account['name_holder'], FILTER_SANITIZE_STRING);
-        $bank = filter_var($response_account['bank'], FILTER_SANITIZE_STRING);
-        $pix = filter_var($response_account['pix'], FILTER_SANITIZE_STRING);
-        $agency = filter_var($response_account['agency'], FILTER_SANITIZE_STRING);
+        $name_holder = filter_var($response_account['name_holder'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+        $bank = filter_var($response_account['bank'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+        $pix = filter_var($response_account['pix'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+        $agency = filter_var($response_account['agency'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
         $account_type = filter_var($response_account['typeAccount'], FILTER_SANITIZE_NUMBER_INT);
-        $account_number = filter_var($response_account['account_number'], FILTER_SANITIZE_STRING);
+        $account_number = filter_var($response_account['account_number'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
 
         $name_table = "bank_account";
 
@@ -957,15 +1082,15 @@ class Register
         $invoice = 'manual';
         $type_movements = 'Entrada';
 
-        $name = filter_var($response_products['name'], FILTER_SANITIZE_STRING);
-        $quantity = filter_var($response_products['quantity'], FILTER_SANITIZE_STRING);
-        $stock_quantity = filter_var($response_products['stock_quantity'], FILTER_SANITIZE_STRING);
-        $barcode = filter_var($response_products['barcode'], FILTER_SANITIZE_STRING);
-        $value_product = filter_var($response_products['value_product'], FILTER_SANITIZE_STRING);
-        $cost_value = filter_var($response_products['cost_value'], FILTER_SANITIZE_STRING);
-        $reference = filter_var($response_products['reference'], FILTER_SANITIZE_STRING);
-        $model = filter_var($response_products['model'], FILTER_SANITIZE_STRING);
-        $brand = filter_var($response_products['brand'], FILTER_SANITIZE_STRING);
+        $name = filter_var($response_products['name'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+        $quantity = filter_var($response_products['quantity'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+        $stock_quantity = filter_var($response_products['stock_quantity'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+        $barcode = filter_var($response_products['barcode'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+        $value_product = filter_var($response_products['value_product'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+        $cost_value = filter_var($response_products['cost_value'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+        $reference = filter_var($response_products['reference'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+        $model = filter_var($response_products['model'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+        $brand = filter_var($response_products['brand'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
         $size = filter_var($response_products['size'], FILTER_SANITIZE_NUMBER_INT);
 
         if (!$name || !$quantity || !$value_product || !$cost_value || !$stock_quantity) {
@@ -1043,14 +1168,14 @@ class Register
         $today = date('Y-m-d H:i:s');
         $name_table = 'suppliers';
 
-        $name_company = filter_var($response_forn['name_company'], FILTER_SANITIZE_STRING);
-        $fantasy_name = filter_var($response_forn['fantasy_name'], FILTER_SANITIZE_STRING);
+        $name_company = filter_var($response_forn['name_company'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+        $fantasy_name = filter_var($response_forn['fantasy_name'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
         $email = filter_var($response_forn['email'], FILTER_VALIDATE_EMAIL);
-        $phone = filter_var($response_forn['phone'], FILTER_SANITIZE_STRING);
-        $address = filter_var($response_forn['address'], FILTER_SANITIZE_STRING);
-        $city = filter_var($response_forn['city'], FILTER_SANITIZE_STRING);
-        $state = filter_var($response_forn['state'], FILTER_SANITIZE_STRING);
-        $cnpj = filter_var($response_forn['cnpj'], FILTER_SANITIZE_STRING);
+        $phone = filter_var($response_forn['phone'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+        $address = filter_var($response_forn['address'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+        $city = filter_var($response_forn['city'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+        $state = filter_var($response_forn['state'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+        $cnpj = filter_var($response_forn['cnpj'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
 
         if (empty($name_company) || empty($fantasy_name) || empty($email) || empty($phone) || empty($address) || empty($city) || empty($state) || empty($cnpj)) {
             Response::json(false, 'Todos os campos são obrigatórios', $today);
@@ -1102,8 +1227,8 @@ class Register
         $today = date('Y-m-d H:i:s');
         $status = 1;
 
-        $value = filter_var($response_boxpdv['value'], FILTER_SANITIZE_STRING);
-        $observation = filter_var($response_boxpdv['observation'], FILTER_SANITIZE_STRING);
+        $value = filter_var($response_boxpdv['value'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+        $observation = filter_var($response_boxpdv['observation'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
 
         if (!$value || !$observation) {
             Response::json(false, 'Campos estão inválidos', $today);
@@ -1154,7 +1279,7 @@ class Register
 
         $value = str_replace('R$', '', $response_sangria['value']);
         $value = floatval($value);
-        $observation = filter_var($response_sangria['observation'], FILTER_SANITIZE_STRING);
+        $observation = filter_var($response_sangria['observation'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
 
         if ($value == "" || $observation == "") {
             Response::json(false, 'Campos estão inválidos', $today);
@@ -1219,7 +1344,7 @@ class Register
 
         $today = date('Y-m-d H:i:s');
         $status = 1;
-        $multiply = filter_var($response_multiply['multiply'], FILTER_SANITIZE_STRING);
+        $multiply = filter_var($response_multiply['multiply'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
         $name_table = "config_multiply_product";
 
         if (!$multiply) {
@@ -1247,5 +1372,3 @@ class Register
 
     }
 }
-
-?>

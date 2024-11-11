@@ -279,6 +279,15 @@ if (!isset($_SESSION['user_permissions'][$page_permission]) || $_SESSION['user_p
               </select>
             </div>
           </div>
+          <div class="col">
+            <label for="controle-estoque-submenu-portion" class="mt-2">Criar Porções</label>
+            <div class="col">
+              <select id="controle-estoque-submenu-open-portion" class="form-select">
+                <option value="sim">Sim</option>
+                <option value="nao" selected>Não</option>
+              </select>
+            </div>
+          </div>
         </div>
       </div>
     </div>

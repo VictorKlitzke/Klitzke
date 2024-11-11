@@ -25,7 +25,8 @@ const menuMapping = {
   "dashboard": "Painel de Controle",
   "list-companys": "Lista Empresas",
   "financial-control": "Controle Financeiro",
-  "list-inventary": "Lista Inventario"
+  "list-inventary": "Lista Inventario",
+  "register-portions": "Criar Porção"
 };
 
 window.onload = function () {
@@ -138,8 +139,11 @@ async function NoticeBoard() {
     const today = new Date();
 
     query_warnings.forEach(warning => {
-      const [year, month, day] = warning.transaction_date.split('-');
-      const dateVenciment = new Date(`${year}-${month}-${day}`);
+      const [datePart, timePart] = warning.transaction_date.split(' ');
+      const [year, month, day] = datePart.split('-');
+      const [hour, minute, second] = timePart.split(':');
+      const dateVenciment = new Date(`${year}-${month}-${day}T${hour}:${minute}:${second}`);
+
 
       if (isNaN(dateVenciment)) {
         showMessage('Data inválida: ' + warning.transaction_date, 'warning');
@@ -177,7 +181,7 @@ async function NoticeBoard() {
       valorCell.innerHTML = `R$ ${warning.value || 'N/A'}`;
 
       const dataCell = document.createElement('td');
-      dataCell.innerHTML = `${day}/${month}/${year}`;
+      dataCell.innerHTML = `${day}/${month}/${year} ${hour}:${minute}:${second}`;
 
       const statusCell = document.createElement('td');
       statusCell.innerHTML = `${icone} ${statusTexto}`;
@@ -548,11 +552,11 @@ async function submitReopenReason() {
 
       const responseBody = await response.json();
 
-        if (responseBody.success) {
-          showMessage("Caixa aberto novamente", "success");
-        } else {
-          showMessage("Erro ao reabrir o caixa: " + responseBody.message, "error");
-        }
+      if (responseBody.success) {
+        showMessage("Caixa aberto novamente", "success");
+      } else {
+        showMessage("Erro ao reabrir o caixa: " + responseBody.message, "error");
+      }
 
 
     } catch (error) {

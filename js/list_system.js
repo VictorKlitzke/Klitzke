@@ -499,7 +499,7 @@ async function ListForn() {
                 const selectCell = document.createElement('th');
                 const checkbox = document.createElement('input');
                 checkbox.type = 'checkbox';
-                checkbox.className = 'form-check-input';
+                checkbox.className = 'form-check-input mb-3';
                 checkbox.value = f.id;
                 checkbox.dataset.id = f.company;
                 selectCell.appendChild(checkbox);

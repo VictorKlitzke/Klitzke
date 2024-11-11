@@ -314,6 +314,13 @@ if (isset($_GET['loggout'])) {
                                                 </a>
                                             </li>
                                         <?php endif; ?>
+                                        <?php if ($_SESSION['user_permissions']['register-portions']): ?>
+                                            <li>
+                                                <a class="dropdown-item" <?php SelectedMenu('register-portions'); ?>
+                                                    href="<?php echo INCLUDE_PATH; ?>register-portions">Criar Porção</a>
+                                                </a>
+                                            </li>
+                                        <?php endif; ?>
                                     </ul>
                                 </li>
                             <?php endif; ?>
@@ -435,7 +442,7 @@ if (isset($_GET['loggout'])) {
                                             <label for="value_debit" class="form-label">Débito</label>
                                             <input id="value_debit" class="form-control" type="text"
                                                 placeholder="Débito" name="value_debit"
-                                                value="<?php echo $total_debit; ?>" readonly/>
+                                                value="<?php echo $total_debit; ?>" readonly />
                                         </div>
                                     </div>
                                     <div class="col-md-6">
@@ -443,7 +450,7 @@ if (isset($_GET['loggout'])) {
                                             <label for="value_credit" class="form-label">Crédito</label>
                                             <input id="value_credit" class="form-control" type="text"
                                                 placeholder="Crédito" name="value_credit"
-                                                value="<?php echo $total_credit; ?>" readonly/>
+                                                value="<?php echo $total_credit; ?>" readonly />
                                         </div>
                                     </div>
                                 </div>
@@ -453,7 +460,7 @@ if (isset($_GET['loggout'])) {
                                         <div class="mb-3">
                                             <label for="value_pix" class="form-label">PIX</label>
                                             <input id="value_pix" class="form-control" type="text" placeholder="PIX"
-                                                name="value_pix" value="<?php echo $total_pix; ?>" readonly/>
+                                                name="value_pix" value="<?php echo $total_pix; ?>" readonly />
                                         </div>
                                     </div>
                                     <div class="col-md-6">
@@ -461,7 +468,7 @@ if (isset($_GET['loggout'])) {
                                             <label for="value_money" class="form-label">Dinheiro</label>
                                             <input id="value_money" class="form-control" type="text"
                                                 placeholder="Dinheiro" name="value_money"
-                                                value="<?php echo $total_money; ?>" readonly/>
+                                                value="<?php echo $total_money; ?>" readonly />
                                         </div>
                                     </div>
                                 </div>
@@ -472,7 +479,7 @@ if (isset($_GET['loggout'])) {
                                             <label for="value_aprazo" class="form-label">A Prazo</label>
                                             <input id="value_aprazo" class="form-control" type="text"
                                                 placeholder="A Prazo" name="value_aprazo"
-                                                value="<?php echo $total_aprazo; ?>" readonly/>
+                                                value="<?php echo $total_aprazo; ?>" readonly />
                                         </div>
                                     </div>
                                     <div class="col-md-6">
@@ -480,7 +487,7 @@ if (isset($_GET['loggout'])) {
                                             <label for="value_system" class="form-label">Abertura de Caixa</label>
                                             <input id="value_system" class="form-control" type="text"
                                                 placeholder="Caixa Sistema" name="value_system"
-                                                value="<?php echo $result_system['value_boxpdv']; ?>" readonly/>
+                                                value="<?php echo $result_system['value_boxpdv']; ?>" readonly />
                                         </div>
                                     </div>
                                 </div>
@@ -551,27 +558,24 @@ if (isset($_GET['loggout'])) {
                 </ul>
             </div> -->
 
-    <script language="JavaScript" type="text/javascript"
-        src="<?php echo INCLUDE_JAVASCRIPT; ?>const_globais.js">
+    <script language="JavaScript" type="text/javascript" src="<?php echo INCLUDE_JAVASCRIPT; ?>const_globais.js">
     </script>
     <script language="JavaScript" type="text/javascript" src="<?php echo INCLUDE_JAVASCRIPT; ?>alert.js"></script>
     <script language="JavaScript" type="text/javascript" src="<?php echo INCLUDE_JAVASCRIPT; ?>main.js"></script>
-    <script language="JavaScript" type="text/javascript"
-        src="<?php echo INCLUDE_JAVASCRIPT; ?>register_system.js">
+    <script language="JavaScript" type="text/javascript" src="<?php echo INCLUDE_JAVASCRIPT; ?>register_system.js">
     </script>
-    <script language="JavaScript" type="text/javascript"
-        src="<?php echo INCLUDE_JAVASCRIPT; ?>delete_system.js">
+    <script language="JavaScript" type="text/javascript" src="<?php echo INCLUDE_JAVASCRIPT; ?>delete_system.js">
     </script>
     <script language="JavaScript" type="text/javascript" src="<?php echo INCLUDE_JAVASCRIPT; ?>edit_system.js"></script>
     <script language="JavaScript" type="text/javascript" src="<?php echo INCLUDE_JAVASCRIPT; ?>values.js"></script>
     <script language="JavaScript" type="text/javascript" src="<?php echo INCLUDE_JAVASCRIPT; ?>menu.js"></script>
     <script language="JavaScript" type="text/javascript" src="<?php echo INCLUDE_JAVASCRIPT; ?>list_system.js"></script>
     <script language="JavaScript" type="text/javascript" src="<?php echo INCLUDE_JAVASCRIPT; ?>buy_request.js"></script>
-    <script language="JavaScript" type="text/javascript" src="<?php echo INCLUDE_JAVASCRIPT; ?>financial_control.js">
-    </script>
+    <script language="JavaScript" type="text/javascript" src="<?php echo INCLUDE_JAVASCRIPT; ?>financial_control.js"></script>
     <script src="<?php echo INCLUDE_JAVASCRIPT; ?>dashboard.js"></script>
     <script src="<?php echo INCLUDE_JAVASCRIPT; ?>querys.js"></script>
     <script src="<?php echo INCLUDE_JAVASCRIPT; ?>inventary.js"></script>
+    <script src="<?php echo INCLUDE_JAVASCRIPT; ?>create_portion.js"></script>
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>

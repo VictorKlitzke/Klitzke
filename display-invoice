@@ -1,0 +1,46 @@
+<?php 
+session_start();
+
+$notaInfo = $_SESSION['notaInfo'] ?? null;
+
+if (!$notaInfo) {
+    echo 'Nenhuma informação encontrada.';
+    exit;
+}
+?>
+
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Detalhes da Nota Fiscal</title>
+</head>
+<body>
+    <div class="container">
+        <h2>Detalhes da Nota Fiscal</h2>
+
+        <h3>Emitente</h3>
+        <p><strong>Razão Social:</strong> <?php echo htmlspecialchars($notaInfo['emitterName']); ?></p>
+        <p><strong>CNPJ:</strong> <?php echo htmlspecialchars($notaInfo['emitterCnpj']); ?></p>
+
+        <h3>Valor Total</h3>
+        <p><strong>R$ <?php echo htmlspecialchars($notaInfo['totalValue']); ?></strong></p>
+
+        <h3>Produtos</h3>
+        <table border="1" cellpadding="10">
+            <tr>
+                <th>Descrição</th>
+                <th>Quantidade</th>
+                <th>Valor</th>
+            </tr>
+            <?php foreach ($notaInfo['products'] as $product): ?>
+                <tr>
+                    <td><?php echo htmlspecialchars($product['description']); ?></td>
+                    <td><?php echo htmlspecialchars($product['quantity']); ?></td>
+                    <td><?php echo htmlspecialchars($product['value']); ?></td>
+                </tr>
+            <?php endforeach; ?>
+        </table>
+    </div>
+</body>
+</html>

@@ -30,8 +30,8 @@ function handleSolicitarClick(product) {
 }
 
 function updateSelectedProductsTable() {
-
   selectedProductsList.innerHTML = '';
+  SendSelectedProduct.length = 0;
 
   selectedProducts.forEach(product => {
     const row = document.createElement('tr');
@@ -47,9 +47,15 @@ function updateSelectedProductsTable() {
     inputValues.className = 'form-control border-dark';
     inputValues.value = product.quantity;
     inputValues.min = 1;
+
+    inputValues.oninput = (event) => {
+      const newQuantity = parseInt(event.target.value);
+      product.quantity = newQuantity; 
+      updateSendSelectedProduct(product); 
+    };
+
     quantityCell.appendChild(inputValues);
     row.appendChild(quantityCell);
-
 
     const actionCell = document.createElement('th');
     const buttonRemove = document.createElement('button');
@@ -60,19 +66,21 @@ function updateSelectedProductsTable() {
 
     row.appendChild(actionCell);
     selectedProductsList.appendChild(row);
-
-    const existingProduct = SendSelectedProduct.find(p => p.name === product.name);
-    if (existingProduct) {
-      existingProduct.quantity = product.quantity;
-    } else {
-      SendSelectedProduct.push({
-        id: product.id,
-        name: product.name,
-        quantity: product.quantity,
-      });
-    }
+    updateSendSelectedProduct(product);
   });
+}
 
+function updateSendSelectedProduct(product) {
+  const existingProduct = SendSelectedProduct.find(p => p.name === product.name);
+  if (existingProduct) {
+    existingProduct.quantity = product.quantity;
+  } else {
+    SendSelectedProduct.push({
+      id: product.id,
+      name: product.name,
+      quantity: product.quantity,
+    });
+  }
 }
 
 function handleRemoveClick(product) {
@@ -120,60 +128,7 @@ async function SendRequestEmail() {
     SendSelectedProduct: SendSelectedProduct,
     selectedForn: selectedForn
   }
-
-  continueMessage("Deseja realmente realizar essa solicitação?", "Sim", "Não", async function () {
-
-    try {
-
-      let url = `${BASE_CONTROLLERS}registers.php`;
-
-      const response = await fetch(url, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(responseSend)
-      });
-
-      const responseBody = await response.json();
-
-      if (responseBody.success) {
-        showMessage('Solicitação enviada com sucesso para o fornecedor', 'success')
-      } else {
-        showMessage('Erro ao fazer solicitação' + responseBody.error || responseBody.message, 'error')
-      }
-
-    } catch (error) {
-      showMessage('Erro na requisição' + error, 'error')
-    }
-
-  }, function () {
-    showMessage('Operação cancelada', 'warning')
-  })
-}
-
-async function SendRequestWhatsApp() {
-
-  document.querySelectorAll('#forn-list input[type="checkbox"]:checked').forEach(checkbox => {
-    selectedForn.push(
-      checkbox.value);
-  });
-
-  if (selectedForn.length === 0) {
-    showMessage('Nenhum fornecedor selecionado', 'warning');
-    return;
-  }
-
-  if (!SendRequestProduct) {
-    showMessage('Erro ao selecionar produtos', 'warning')
-  }
-
-  let = responseSend = {
-    type: 'RequestPurchase',
-    SendSelectedProduct: SendSelectedProduct,
-    selectedForn: selectedForn
-  }
-
+  
   continueMessage("Deseja realmente realizar essa solicitação?", "Sim", "Não", async function () {
 
     try {

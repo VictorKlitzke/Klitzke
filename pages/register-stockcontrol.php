@@ -26,7 +26,8 @@ if (!isset($_SESSION['user_permissions'][$page_permission]) || $_SESSION['user_p
         </div>
         <div class="col-md-4">
             <label class="form-label text-dark">Quantidade no estoque</label>
-            <input class="form-control border-dark" type="text" id="stock_quantity" placeholder="Quantidade em estoque" />
+            <input class="form-control border-dark" type="text" id="stock_quantity"
+                placeholder="Quantidade em estoque" />
             <span id="stock_quantity-error" class="error-message">Campo está invalido, Ajuste se possivel.</span>
         </div>
         <div class="col-md-4">
@@ -36,8 +37,8 @@ if (!isset($_SESSION['user_permissions'][$page_permission]) || $_SESSION['user_p
         </div>
         <div class="col-md-4">
             <label class="form-label text-dark">Preço</label>
-            <input class="form-control border-dark" type="text" id="value_product" id="value" oninput="formmaterReal(this)"
-                placeholder="R$ 0,00" />
+            <input class="form-control border-dark" type="text" id="value_product" id="value"
+                oninput="formmaterReal(this)" placeholder="R$ 0,00" />
             <span id="value_product-error" class="error-message">Campo está invalido, Ajuste se possivel.</span>
         </div>
         <div class="col-md-4">
@@ -88,27 +89,24 @@ if (!isset($_SESSION['user_permissions'][$page_permission]) || $_SESSION['user_p
 
 <br>
 
-<div class="container-fluid border shadow-lg rounded-4 bg-light p-4" id="file-pdf">
-    <div class="d-flex justify-content-between align-items-center">
-        <h2 class="text-dark mb-4">Cadastrar Produto por Nota Fiscal</h2>
-        <button type="button" class="top-0 end-0 m-3" aria-label="Close" onclick="closeModal()">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                class="bi bi-x-circle-fill" viewBox="0 0 16 16">
-                <path
-                    d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0M5.354 4.646a.5.5 0 1 0-.708.708L7.293 8l-2.647 2.646a.5.5 0 0 0 .708.708L8 8.707l2.646 2.647a.5.5 0 0 0 .708-.708L8.707 8l2.647-2.646a.5.5 0 0 0-.708-.708L8 7.293z" />
-            </svg>
-        </button>
-    </div>
-    <div class="row g-3">
-        <div class="col-md-12">
-            <label class="form-label text-dark">Arquivo</label>
-            <input class="form-control border-dark" type="file" id="files">
-            <span class="error-message">Campo está invalido, Ajuste se possivel.</span>
-        </div>
-        <div class="col-12">
-            <button class="btn btn-primary" onclick="RegisterFile()" type="button">Cadastrar</button>
+<div class="container-fluid border shadow-lg rounded-4 bg-light p-4">
+    <h2 class="text-dark mb-4">Cadastrar Produto por Nota Fiscal</h2>
+    <div class="row">
+        <div class="col">
+            <form action="http://localhost:3000/klitzke/controllers/pdf.php" method="POST" enctype="multipart/form-data" target="_blank">
+                <div class="col">
+                    <label class="form-label text-dark">Nota fiscal</label>
+                    <input class="form-control border-dark" name="pdf-file" type="file" accept=".pdf" required>
+                    <span class="error-message">Campo está inválido, ajuste se possível.</span>
+                </div>
+                <br>
+                <div class="col-md-12">
+                    <button class="btn btn-primary" type="submit">Enviar</button>
+                </div>
+            </form>
         </div>
     </div>
 </div>
+
 
 <script src="<?php echo INCLUDE_PATH_PANEL; ?>../js/values.js"></script>
