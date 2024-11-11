@@ -15,10 +15,18 @@
     <div class="card-body">
       <form id="createFormPortion">
         <div class="row">
-          <div class="col-md-12">
+          <div class="col-md-6">
             <div class="mb-3">
               <label for="inventaryDate" class="form-label">Nome da Porção</label>
               <input type="text" class="form-control border-dark" id="nameportion" placeholder="Nome da Porção">
+              <span id="value-error" class="error-message">Campo está invalido, Ajuste se possivel.</span>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="mb-3">
+              <label for="inventaryDate" class="form-label">Valor da Porção</label>
+              <input type="text" class="form-control border-dark" oninput="formmaterReal(this)" id="valuePortion" placeholder="Valor da Porção">
+              <span id="value-error" class="error-message">Campo está invalido, Ajuste se possivel.</span>
             </div>
           </div>
           <div class="col-md-12">

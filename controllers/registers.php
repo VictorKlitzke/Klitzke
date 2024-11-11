@@ -119,80 +119,86 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 class Register
 {
 
-    public static function RegisterPortionProduct($response_portion_product, $sql, $user_id, $today) {
+    public static function RegisterPortionProduct($response_portion_product, $sql, $user_id, $today)
+    {
 
         $PortionID = filter_var($response_portion_product['PortionID'], FILTER_SANITIZE_NUMBER_INT);
+        $type = 'saida';
 
         if (empty($PortionID)) {
             Response::json(false, 'Porção com id invalido', $today);
             return;
         }
-        try {
 
+        try {
             $sql->beginTransaction();
 
-            foreach ($response_portion_product['SelectedProductPortion'] as $productItens) {
-                $product_id = $productItens['productId'];
-                $counted_quantity = $productItens['productQuantity'];
+            if (isset($response_portion_product['selectedProductPortions']) && is_array($response_portion_product['selectedProductPortions'])) {
+                foreach ($response_portion_product['selectedProductPortions'] as $productItens) {
+                    $product_id = $productItens['id'];
+                    $counted_quantity = $productItens['productQuantity'];
 
-                $exec = $sql->prepare("INSERT INTO portion_itens (portion_id, product_id, quatity, created_at)
-                                        VALUES (:inventary_id, :product_id, :counted_quantity, NOW())");
+                    $exec = $sql->prepare("INSERT INTO portion_itens (portion_id, product_id, quantity, created_at)
+                                            VALUES (:portion_id, :product_id, :counted_quantity, NOW())");
 
-                $exec->bindParam(':inventary_id', $PortionID, PDO::PARAM_INT);
-                $exec->bindParam(':product_id', $product_id, PDO::PARAM_INT);
-                $exec->bindParam(':counted_quantity', $counted_quantity, PDO::PARAM_STR);
-                $exec->execute();
+                    $exec->bindParam(':portion_id', $PortionID, PDO::PARAM_INT);
+                    $exec->bindParam(':product_id', $product_id, PDO::PARAM_INT);
+                    $exec->bindParam(':counted_quantity', $counted_quantity, PDO::PARAM_STR);
+                    $exec->execute();
 
+                    $exec1 = $sql->prepare("INSERT INTO product_movements (product_id, quantity, date, type) 
+                                            VALUES(:product_id, :quantity, NOW(), :type)");
+                    $exec1->bindParam(':product_id', $product_id, PDO::PARAM_INT);
+                    $exec1->bindParam(':quantity', $counted_quantity, PDO::PARAM_STR);
+                    $exec1->bindParam(':type', $type, PDO::PARAM_STR);
+                    $exec1->execute();
+                }
+            } else {
+                Response::json(false, 'Nenhum produto selecionado para essa porção.', $today);
+                return;
             }
 
             $sql->commit();
 
             $message_log = "Produtos da porção criado com sucesso";
             Panel::LogAction($user_id, 'Produtos da porção criado Acesso', $message_log, $today);
-            Response::send(true, 'Produtos da porção criado com sucesso', $today);
+            Response::send(true, 'Produtos da porção criado com sucesso', [
+                'id' => $PortionID,
+                'date' => $today
+            ]);
 
         } catch (Exception $e) {
             $sql->rollBack();
-            http_response_code(500);
             Response::json(false, 'Erro ao adicionar Inventário: ' . $e->getMessage(), $today);
         }
-
     }
     public static function RegisterPortion($response_portion, $sql, $user_id, $today)
     {
 
-        $namePortion = filter_var($response_portion['namePortion'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+        $namePortion = filter_var($response_portion['namePortion'], FILTER_SANITIZE_STRING);
+        $valuePortion = (float) filter_var($response_portion['valuePortion'], FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION);
         $obsportion = filter_var($response_portion['obsportion'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
 
         try {
 
-            $exec1 = $sql->prepare("SELECT id, status FROM portion WHERE name_portion = :name_portion");
-            $exec1->bindParam(':name_portion', $namePortion, PDO::PARAM_STR);
-            $exec1->execute();
-            $result_query = $exec1->fetch(PDO::FETCH_ASSOC);
-
-            if ($result_query) {
-                $updateStatus = $sql->prepare("UPDATE portion SET status = 2 WHERE id = :id");
-                $updateStatus->bindParam(':id', $result_query['id'], PDO::PARAM_INT);
-                $updateStatus->execute();
-
-                Response::json(true, 'Porção existente. Status atualizado para 2', $today);
-                return;
-            }
+            // if (self::UserAccess($sql, $user_id) < 50) {
+            //     Response::json(false, 'Usuário não tem permissão para executar essa atividade', $today);
+            //     return;
+            // }
 
             $sql->beginTransaction();
 
             $status = 1;
-            $exec = $sql->prepare("INSERT INTO portion (name_portion, obs_portion, created_at, status) 
-                        VALUES (:name_portion, :obs_portion, NOW(), :status)");
+            $exec = $sql->prepare("INSERT INTO portion (name_portion, obs_portion, created_at, status, value) 
+                        VALUES (:name_portion, :obs_portion, NOW(), :status, :value)");
             $exec->bindParam(':name_portion', $namePortion, PDO::PARAM_STR);
             $exec->bindParam(':obs_portion', $obsportion, PDO::PARAM_STR);
-            $exec->bindValue(':status', $status, PDO::PARAM_INT); 
+            $exec->bindValue(':status', $status, PDO::PARAM_INT);
+            $exec->bindValue(':value', $valuePortion, PDO::PARAM_STR);
             $exec->execute();
 
             $id_portion = $sql->lastInsertId();
             $sql->commit();
-
 
             $message_log = "Porção criada com sucesso";
             Panel::LogAction($user_id, 'Porção criada Acesso', $message_log, $today);
@@ -1249,7 +1255,7 @@ class Register
             $sql->BeginTransaction();
 
             $exec = $sql->prepare("INSERT INTO boxpdv (id_users, value, observation, status, open_date) 
-                                   VALUES (:user_id, :value, :observation, :status, :open_date)");
+                                    VALUES (:user_id, :value, :observation, :status, :open_date)");
             $exec->bindParam(':user_id', $user_id, PDO::PARAM_INT);
             $exec->bindParam(':value', $value);
             $exec->bindParam(':observation', $observation);
