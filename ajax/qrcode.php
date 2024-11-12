@@ -19,13 +19,11 @@ function generateQrCodePIX($totalValue)
 {
   try {
     $sql = Db::Connection();
-    $exec = $sql->prepare("SELECT pix, account_name, city FROM bank_account WHERE id = :id LIMIT 1");
-    $id_pix = 1;
-    $exec->bindValue(':id', $id_pix, PDO::PARAM_INT);
+    $exec = $sql->prepare("SELECT id, pix, account_name, city FROM bank_account");
     $exec->execute();
     $pix = $exec->fetch(PDO::FETCH_ASSOC);
 
-    if (!$pix) {
+    if (!$pix['id']) {
       throw new Exception('Dados da conta bancária não encontrados.');
     }
 

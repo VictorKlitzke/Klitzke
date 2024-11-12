@@ -26,7 +26,9 @@ const menuMapping = {
   "list-companys": "Lista Empresas",
   "financial-control": "Controle Financeiro",
   "list-inventary": "Lista Inventario",
-  "register-portions": "Criar Porção"
+  "register-portions": "Criar Porção",
+  "register-companys": "Registrar Empresa",
+  "edit-companys": "Editar Empresa"
 };
 
 window.onload = function () {
@@ -337,7 +339,7 @@ async function AccessUsers(button) {
       body: JSON.stringify(responseUser)
     })
 
-    const responseTextUser = await response.text();
+    const responseTextUser = await response.json();
 
     try {
       const responseBodyUser = JSON.parse(responseTextUser);
@@ -390,6 +392,7 @@ function showAddMenus(userMenus) {
   modalUser.innerHTML = "";
 
   const UserIDMenu = userMenus.length > 0 ? userMenus[0].user_id : null;
+  console.log(userMenus.menu);
   const assignedMenus = userMenus.map(menu => menu.menu);
   const unassignedMenus = Object.keys(menuMapping).filter(menuKey => !assignedMenus.includes(menuKey));
 
@@ -397,7 +400,7 @@ function showAddMenus(userMenus) {
     modalUser.innerHTML = "<h1>O usuário já tem acesso a todos os menus.</h1>";
     return;
   }
-
+  
   unassignedMenus.forEach(menuKey => {
     const card = document.createElement('div');
     const menuName = menuMapping[menuKey];
@@ -430,6 +433,7 @@ async function AddMenuAccess(UserIDMenu) {
   const modalUser = document.getElementById('edit-menus-user');
   const checkboxes = modalUser.querySelectorAll('input[type="checkbox"]');
 
+  console.log(UserIDMenu);
   let menusToAdd = [];
 
   checkboxes.forEach(checkbox => {
@@ -470,7 +474,8 @@ async function AddMenuAccess(UserIDMenu) {
         body: JSON.stringify(responseMenuaccess)
       });
 
-      const responseBody = await response.json();
+      const responseBody = await response.text();
+      console.log(responseBody);
 
       if (responseBody.success) {
         showMessage("Menus adicionados com sucesso!", 'success');

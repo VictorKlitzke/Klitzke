@@ -162,7 +162,7 @@ class Register
                     $stmt->execute();
 
                 } else {
-                    $value_product = str_replace(',', '.', $item['value_product']); 
+                    $value_product = str_replace(',', '.', $item['value_product']);
                     $show_on_page = 0;
                     $invoice = 'Nota Fiscal';
                     $query = "
@@ -173,7 +173,7 @@ class Register
                     $stmt->bindParam(':name', $item['name_product']);
                     $stmt->bindParam(':quantity', $item['quantity_product']);
                     $stmt->bindParam(':stock_quantity', $item['quantity_product']);
-                    $stmt->bindParam(':value_product', $value_product); 
+                    $stmt->bindParam(':value_product', $value_product);
                     $stmt->bindParam(':unit', $item['unit_product']);
                     $stmt->bindParam(':invoice', $invoice);
                     $stmt->bindParam(':show_on_page', $show_on_page);
@@ -492,12 +492,17 @@ class Register
     {
         $today = date('Y-m-d H:i:s');
 
+        if (empty($response_add_access_menu['userID'])) {
+            Response::json(false, 'userID não encontrado', $today);
+            return;
+        }
+
         try {
             $sql->beginTransaction();
 
             foreach ($response_add_access_menu['menus'] as $menu) {
                 $check_menu = $sql->prepare("SELECT COUNT(*) FROM menu_access 
-                                            WHERE user_id = :user_id AND menu = :menu");
+                                        WHERE user_id = :user_id AND menu = :menu");
                 $check_menu->bindParam(':user_id', $response_add_access_menu['userID'], PDO::PARAM_INT);
                 $check_menu->bindParam(':menu', $menu, PDO::PARAM_STR);
                 $check_menu->execute();
@@ -506,10 +511,10 @@ class Register
 
                 if ($menu_exists == 0) {
                     $exec_menu = $sql->prepare("INSERT INTO menu_access (user_id, menu, creation_date, released) 
-                                                VALUES (:user_id, :menu, NOW(), :released)");
+                                            VALUES (:user_id, :menu, NOW(), :released)");
                     $exec_menu->bindParam(':user_id', $response_add_access_menu['userID'], PDO::PARAM_INT);
                     $exec_menu->bindParam(':menu', $menu, PDO::PARAM_STR);
-                    $released = 1;
+                    $released = 1; 
                     $exec_menu->bindParam(':released', $released, PDO::PARAM_INT);
                     $exec_menu->execute();
                 } else {
@@ -520,7 +525,8 @@ class Register
 
             $sql->commit();
 
-            $message_log = "Adiciona os menus com sucesso";
+            // Log de sucesso
+            $message_log = "Menus adicionados com sucesso ao usuário {$response_add_access_menu['userID']}";
             Panel::LogAction($user_id, 'Adicionar Menu Acesso', $message_log, $today);
             Response::send(true, 'Menus adicionados com sucesso', $today);
 
@@ -530,6 +536,7 @@ class Register
             Response::json(false, 'Erro ao adicionar menus: ' . $e->getMessage(), $today);
         }
     }
+
     public static function RegisterAccountsPayable($sql, $response_accounts_payable, $user_id, $today)
     {
         $dateTransaction = filter_var($response_accounts_payable['dateTransaction'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
@@ -917,6 +924,8 @@ class Register
             'dashboard' => ($menu_dashboard === 'sim') ? 1 : 0,
 
             'list-companys' => ($menu_my_company === 'sim') ? 1 : 0,
+            'register-companys' => ($menu_my_company === 'sim') ? 1 : 0,
+            'edit-companys' => ($menu_my_company === 'sim') ? 1 : 0,
 
             'financial-control' => ($menu_financial_control === 'sim') ? 1 : 0,
         ];
@@ -1134,12 +1143,17 @@ class Register
     public static function RegisterAccount($sql, $response_account, $user_id)
     {
         $today = date('Y-m-d H:i:s');
-        $id_company = Controllers::Select('company');
-        if (!$id_company) {
+
+        $stsm = $sql->prepare("SELECT id FROM company");
+        $stsm->execute();
+        $id_company = $stsm->fetchColumn();
+
+        if (empty($id_company)) {
             Response::json(false, 'Erro ao buscar dados da empresa', $today);
             return;
         }
-        $company = $id_company['id'];
+
+        $company = $id_company;
 
         $name_holder = filter_var($response_account['name_holder'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
         $bank = filter_var($response_account['bank'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
@@ -1151,7 +1165,7 @@ class Register
         $name_table = "bank_account";
 
         if (!$name_holder || !$pix || !$bank) {
-            Response::json(false, 'Campo invalido', $today);
+            Response::json(false, 'Campos invalido', $today);
             return;
         }
 
@@ -1167,11 +1181,12 @@ class Register
             $exec_verification->execute();
             $result_verification = $exec_verification->fetch(PDO::FETCH_ASSOC);
 
-            if ($result_verification['pix']) {
+            if ($result_verification && $result_verification['pix']) {
                 Response::json(false, 'Esse PIX já está cadastrado!', $today);
+                return;
             }
 
-            $sql->BeginTransaction();
+            $sql->beginTransaction();
 
             $exec = $sql->prepare("INSERT INTO $name_table (pix, account_name, bank, agency, account_type, account_number, id_company) 
                                 VALUES (:pix, :account_name, :bank, :agency, :account_type, :account_number, :id_company)");

@@ -649,8 +649,7 @@ async function RegisterAccount() {
                 },
                 body: JSON.stringify(responseAccount)
             });
-            const textResponse = await response.text();
-            const responseBody = JSON.parse(textResponse);
+            const responseBody = await response.json();
 
             if (responseBody.success) {
                 showMessage('Conta cadastrada com sucesso', 'success');
@@ -658,7 +657,7 @@ async function RegisterAccount() {
                     location.reload();
                 }, 2000);
             } else {
-                showMessage('Erro ao cadastrar conta bancária: ' + (responseBody.error || 'Erro desconhecido'), 'error');
+                showMessage('Erro ao cadastrar conta bancária: ' + responseBody.message, 'error');
             }
         } catch (error) {
             showMessage("Erro ao fazer requisição: " + error, 'error');

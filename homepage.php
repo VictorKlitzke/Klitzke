@@ -345,7 +345,7 @@ if (isset($_GET['loggout'])) {
                                 <ul class="dropdown-menu dropdown-menu-dark">
                                     <?php if (isset($_SESSION['user_permissions']['list-companys'])): ?>
                                         <li>
-                                            <a class="dropdown-item" <?php echo VerificationMenu(); ?><?php SelectedMenu('list-companys'); ?>
+                                            <a class="dropdown-item" <?php SelectedMenu('list-companys'); ?>
                                                 href="<?php echo INCLUDE_PATH; ?>list-companys">Empresa
                                             </a>
                                         </li>
