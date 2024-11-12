@@ -20,12 +20,14 @@ $products = Controllers::SelectAll('products');
         <a class="btn btn-success fw-bold px-4" <?php SelectedMenu('register-users') ?>
             href="<?php echo INCLUDE_PATH; ?>register-stockcontrol">+ Novo Produto</a>
     </div>
+    <input type="text" id="searchProduct" class="form-control border mb-3" placeholder="Buscar produto..." onkeyup="searchProduct()">
     <div class="row">
         <div class="col">
             <div class="table-responsive" style="max-height: 400px; overflow-y: auto; overflow-x: auto;">
                 <table class="table table-striped table-hover align-middle text-center bg-white rounded-3 shadow-sm">
                     <thead class="table-dark text-light">
                         <tr style="white-space: nowrap;">
+                            <th scope="col">#</th>
                             <th scope="col">Produtos</th>
                             <th scope="col">Quantidade</th>
                             <th scope="col">Codigo de barras</th>
@@ -50,6 +52,7 @@ $products = Controllers::SelectAll('products');
                         <tbody>
                             <tr style="white-space: nowrap;"
                                 class="<?php echo $value['status_product'] == 'negativado' ? 'table-warning' : ''; ?>">
+                                <th><?php echo htmlspecialchars($value['id']); ?></th>
                                 <th><?php echo htmlspecialchars($value['name']); ?></th>
                                 <th><?php echo htmlspecialchars($value['quantity']); ?></th>
                                 <th>
@@ -140,7 +143,7 @@ $result_quantity_product = number_format($result_quantity_product['quantity'], 2
                 <i class="fas fa-box-open me-2"></i>Quantidade total de itens
             </div>
             <div class="card-body text-center">
-                <h5 class="card-title display-6"><?php echo $result_quantity_product['quantity']; ?>0</h5>
+                <h5 class="card-title display-6"><?php echo $result_quantity_product; ?>0</h5>
             </div>
         </div>
     </div>

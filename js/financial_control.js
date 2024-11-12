@@ -75,8 +75,8 @@ const getFieldsAccountsPayable = () => {
       nameExterno: document.getElementById('nameExterno').value,
       descriptionTransaction: document.getElementById('descriptionTransaction').value,
       numberdoc: document.getElementById('numberdoc').value,
-      transactionType: document.getElementById('transactionType').value,
-      incomeExpense: document.getElementById('incomeExpense').value
+      transactionType: document.getElementById('categorys').value,
+      incomeExpense: document.getElementById('status-category').value
     },
     inputs: {
       dateTransaction: document.getElementById('dateTransaction'),
@@ -84,8 +84,8 @@ const getFieldsAccountsPayable = () => {
       nameExterno: document.getElementById('nameExterno'),
       descriptionTransaction: document.getElementById('descriptionTransaction'),
       numberdoc: document.getElementById('numberdoc'),
-      numberdoc: document.getElementById('transactionType'),
-      incomeExpense: document.getElementById('incomeExpense')
+      numberdoc: document.getElementById('categorys'),
+      incomeExpense: document.getElementById('status-category')
     }
   }
 }

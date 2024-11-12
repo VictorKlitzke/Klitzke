@@ -1349,8 +1349,7 @@ async function RegisterDisplayInvoice() {
             return;
         }
 
-        const responseBody = await response.text();
-        console.log(responseBody);
+        const responseBody = await response.json();
 
         if (responseBody.success) {
             alert('Produtos cadastrados com sucesso, volte à tela inicial');

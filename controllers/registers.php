@@ -128,21 +128,28 @@ class Register
             $sql->beginTransaction();
 
             foreach ($response_invoice['products'] as $item) {
-                $query = "SELECT id, stock_quantity FROM products WHERE id = :cod_product LIMIT 1";
+                $cod_product = strval($item['cod_product']);
+
+                $query = "SELECT id, stock_quantity FROM products WHERE id = :cod_product";
                 $stmt = $sql->prepare($query);
-                $stmt->bindParam(':cod_product', $item['cod_product']);
+                $stmt->bindParam(':cod_product', $cod_product);
                 $stmt->execute();
-                $product = $stmt->fetch();
+                $product = $stmt->fetch(PDO::FETCH_ASSOC);
+
+                var_dump($product);
 
                 if ($product) {
-                    $product_id = $product['product_id'];
-                    $new_quantity = $product['quantity_product'] + $item['stock_quantity'];
+                    $product_id = $product['id'];
+                    $new_quantity = $product['stock_quantity'] + $item['quantity_product'];
+
+                    var_dump($new_quantity);
+                    var_dump($product_id);
 
                     $query = "
-                    UPDATE products
-                    SET stock_quantity = :stock_quantity
-                    WHERE id = :product_id
-                ";
+                        UPDATE products
+                        SET stock_quantity = :stock_quantity
+                        WHERE id = :product_id
+                    ";
                     $stmt = $sql->prepare($query);
                     $stmt->bindParam(':stock_quantity', $new_quantity);
                     $stmt->bindParam(':product_id', $product_id);
@@ -161,15 +168,22 @@ class Register
                     $stmt->bindParam(':quantity', $item['quantity_product']);
                     $stmt->execute();
 
+                    $sql->commit();
+
+                    $message_log = "Quantidade da Nota de compra atualizada com sucesso";
+                    Panel::LogAction($user_id, 'Quantidade da Nota de compra atualizada', $message_log, $today);
+                    Response::send(true, 'Quantidade da Nota de compra atualizada com sucesso', $today);
+
                 } else {
                     $value_product = str_replace(',', '.', $item['value_product']);
                     $show_on_page = 0;
                     $invoice = 'Nota Fiscal';
                     $query = "
-                    INSERT INTO products (name, quantity, stock_quantity, value_product, unit, invoice, show_on_page)
-                    VALUES (:name, :quantity, :stock_quantity, :value_product, :unit, :invoice, :show_on_page)
+                    INSERT INTO products (id, name, quantity, stock_quantity, value_product, unit, invoice, show_on_page)
+                    VALUES (:id, :name, :quantity, :stock_quantity, :value_product, :unit, :invoice, :show_on_page)
                 ";
                     $stmt = $sql->prepare($query);
+                    $stmt->bindParam(':id', $cod_product);
                     $stmt->bindParam(':name', $item['name_product']);
                     $stmt->bindParam(':quantity', $item['quantity_product']);
                     $stmt->bindParam(':stock_quantity', $item['quantity_product']);
@@ -514,7 +528,7 @@ class Register
                                             VALUES (:user_id, :menu, NOW(), :released)");
                     $exec_menu->bindParam(':user_id', $response_add_access_menu['userID'], PDO::PARAM_INT);
                     $exec_menu->bindParam(':menu', $menu, PDO::PARAM_STR);
-                    $released = 1; 
+                    $released = 1;
                     $exec_menu->bindParam(':released', $released, PDO::PARAM_INT);
                     $exec_menu->execute();
                 } else {

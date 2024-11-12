@@ -571,3 +571,23 @@ async function submitReopenReason() {
     showMessage("Operação cancelada", "warning");
   })
 }
+
+function searchProduct() {
+  // Obtém o valor do campo de pesquisa
+  let searchValue = document.getElementById("searchProduct").value.toLowerCase();
+
+  // Obtém todas as linhas da tabela
+  let tableRows = document.querySelectorAll("table tbody tr");
+
+  // Percorre todas as linhas e esconde as que não correspondem à pesquisa
+  tableRows.forEach(row => {
+      let productName = row.querySelector("th:nth-child(2)").textContent.toLowerCase();
+      
+      // Verifica se o nome do produto contém o valor da busca
+      if (productName.includes(searchValue)) {
+          row.style.display = "";  // Exibe a linha
+      } else {
+          row.style.display = "none";  // Oculta a linha
+      }
+  });
+}

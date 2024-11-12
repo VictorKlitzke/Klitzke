@@ -246,7 +246,7 @@ if (!isset($_SESSION['user_permissions'][$page_permission]) || $_SESSION['user_p
           </div>
           <div class="col-md-4">
             <label class="form-label">Categoria</label>
-            <select id="categorys" class="form-select" id="transactionType" onchange="SelectFinancial()" required>
+            <select id="categorys" class="form-select" onchange="SelectFinancial()" required>
               <option value="" disabled selected>Selecione uma categoria</option>
               <option value="contas a pagar">Contas a Pagar</option>
               <option value="contas a receber">Contas a Receber</option>
@@ -255,7 +255,7 @@ if (!isset($_SESSION['user_permissions'][$page_permission]) || $_SESSION['user_p
           </div>
           <div class="col-md-12">
             <label class="form-label">Status</label>
-            <select id="status-category" disabled class="form-select" id="incomeExpense" required>
+            <select id="status-category" disabled class="form-select" required>
               <option value="" disabled selected>Selecione uma categoria</option>
               <option value="Despesa">Despesa</option>
               <option value="Receita">Receita</option>
