@@ -127,7 +127,7 @@ function addProductToTable(productId, productName, productPrice) {
         productId: productId,
         productName: productName,
         productPrice: productPrice,
-        quantity: 0
+        quantity: 1
     });
 
     clearSearch();
@@ -430,6 +430,7 @@ async function FinalizeAprazo() {
                         selectedProducts: selectedProducts.map(product => ({
                             productName: product.productName,
                             productPrice: parseFloat(product.productPrice),
+                            quantity: 1
                         }))
                     }
 
@@ -515,6 +516,7 @@ async function finalizeSalePortion() {
                         selectedProducts: selectedProducts.map(product => ({
                             productName: product.productName,
                             productPrice: parseFloat(product.productPrice),
+                            quantity: 1
                         }))
                     }
 
@@ -551,6 +553,7 @@ let printSales = {
     selectedProducts: selectedProducts.map(product => ({
         productName: product.productName,
         productPrice: parseFloat(product.productPrice),
+        quantity: 1
     }))
 };
 
@@ -561,38 +564,82 @@ async function printReceipt(saleDetails) {
         <html>
             <head>
                 <title>Comprovante de Venda</title>
+                <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
                 <style>
                     @media print {
                         body, html {
                             margin: 0;
                             padding: 0;
-                            width: 58mm; /* Largura comum para papel térmico */
+                            width: 58mm;
+                            font-size: 12px;
+                            font-family: 'Arial', sans-serif;
                         }
                         .receipt-container {
                             max-width: 58mm;
-                            padding: 5px;
+                            padding: 15px;
                             margin: 0;
                             text-align: center;
+                            border: 1px solid #ddd;
+                            border-radius: 10px;
+                            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+                        }
+                        .receipt-header {
+                            margin-bottom: 15px;
+                            font-size: 14px;
+                            color: #333;
+                        }
+                        .receipt-header h3 {
+                            font-size: 18px;
+                            font-weight: bold;
+                            color: #007bff;
+                            margin-bottom: 10px;
+                        }
+                        .receipt-header p {
+                            margin: 0;
+                            padding: 0;
+                            color: #666;
+                        }
+                        .receipt-items {
+                            margin-bottom: 15px;
+                            text-align: left;
+                        }
+                        .receipt-item {
+                            display: flex;
+                            justify-content: space-between;
+                            margin-bottom: 10px;
+                            font-size: 12px;
+                            color: #555;
+                        }
+                        .receipt-item .product-name {
+                            font-weight: bold;
+                            color: #222;
+                        }
+                        .receipt-item .product-price, .receipt-item .product-quantity {
+                            font-weight: normal;
+                            color: #333;
+                            text-align: right;
+                        }
+                        .receipt-total {
+                            font-size: 16px;
+                            margin-top: 20px;
+                            font-weight: bold;
+                            color: #000;
+                            text-align: center;
+                        }
+                        .receipt-footer {
+                            margin-top: 15px;
+                            font-size: 12px;
+                            color: #777;
+                            border-top: 1px solid #ddd;
+                            padding-top: 10px;
+                        }
+                        .receipt-footer p {
+                            margin: 0;
                         }
                     }
-                    .receipt-header, .receipt-footer {
-                        border-bottom: 1px dashed #000;
-                        margin-bottom: 5px;
-                        padding-bottom: 5px;
-                    }
-                    .receipt-items {
-                        border-bottom: 1px dashed #000;
-                        padding-bottom: 5px;
-                    }
-                    .receipt-item {
-                        display: flex;
-                        justify-content: space-between;
-                        font-size: 12px;
-                    }
-                    .receipt-total {
-                        font-weight: bold;
-                        font-size: 14px;
-                        margin-top: 5px;
+                    .receipt-container {
+                        font-family: 'Arial', sans-serif;
+                        color: #333;
                     }
                 </style>
             </head>
@@ -600,22 +647,27 @@ async function printReceipt(saleDetails) {
                 <div class="receipt-container">
                     <div class="receipt-header">
                         <h3>Comprovante de Venda</h3>
-                        <p>Data: ${saleDetails.date}</p>
-                        <p>Cliente: ${saleDetails.clientName || 'N/A'}</p>
+                        <p><strong>Data:</strong> ${saleDetails.date}</p>
+                        <p><strong>Cliente:</strong> ${saleDetails.clientName || 'N/A'}</p>
                     </div>
 
                     <div class="receipt-items">
-                        <h5>Itens</h5>
+                        <h5><strong>Itens</strong></h5>
                         ${saleDetails.selectedProducts.map(product => `
                             <div class="receipt-item">
-                                <span>${product.productName}</span>
-                                <span>R$ ${product.productPrice.toFixed(2)}</span>
+                                <span class="product-name">${product.productName}</span>
+                                <span class="product-quantity">(x${product.quantity})</span>
+                                <span class="product-price">R$ ${product.productPrice.toFixed(2)}</span>
                             </div>
                         `).join('')}
                     </div>
 
+                    <div class="receipt-total">
+                        <p>Total: R$ ${saleDetails.totalValue.toFixed(2)}</p>
+                    </div>
+
                     <div class="receipt-footer">
-                        <p class="receipt-total">Total: R$ ${saleDetails.totalValue.toFixed(2)}</p>
+                        <p><small>Klitzke Software</small></p>
                     </div>
                 </div>
             </body>
@@ -721,7 +773,10 @@ async function registerSale(requestData) {
             body: JSON.stringify(requestData),
         });
 
+        console.log(requestData);
+
         const responseBody = await responseSales.text();
+        console.log(responseBody);
         const responseData = JSON.parse(responseBody);
 
         if (responseData && responseData.success) {

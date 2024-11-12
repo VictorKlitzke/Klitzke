@@ -1283,3 +1283,83 @@ async function Inventaryquantity() {
         showMessage('Operação cancelada', 'warning');
     });
 }
+
+const getDisplayInvoice = () => {
+    const products = [];
+    const rows = document.querySelectorAll('table tbody tr');
+
+    rows.forEach(row => {
+        const cod_product = row.querySelector('#cod_product').textContent.trim();
+        const name_product = row.querySelector('#name_product').value.trim();
+        const unit_product = row.querySelector('#unit').value.trim();
+        const quantity_product = row.querySelector('#quantity').value.trim();
+        const value_product1 = row.querySelector('#value_product').value.trim();
+
+        function parseCurrency(value) {
+            value = value.replace(/[^0-9,.]/g, '');
+            value = value.replace(',', '.');
+            return parseFloat(value);
+        }
+        const value_product = parseCurrency(value_product1);
+
+        products.push({
+            cod_product,
+            name_product,
+            unit_product,
+            quantity_product,
+            value_product
+        });
+    });
+
+    return {
+        type: {
+            type: 'invoice',
+        },
+        values: products
+    };
+};
+
+async function RegisterDisplayInvoice() {
+    const { type, values } = await getDisplayInvoice();
+
+    if (values.length === 0 || values.some(product => product.name_product === "" || product.value_product === "")) {
+        alert('Campos vazios!');
+        return;
+    }
+
+    let responseDisplayInvoice = {
+        type: type.type,
+        products: values
+    };
+
+    console.log(responseDisplayInvoice);
+
+    try {
+        let url = `http://localhost:3000/klitzke/controllers/registers.php`;
+
+        let response = await fetch(url, {
+            method: "POST",
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(responseDisplayInvoice)
+        });
+
+        if (!response.ok) {
+            showMessage('Erro ao conectar com servidor, contate o suporte' + response.status, 'error');
+            return;
+        }
+
+        const responseBody = await response.text();
+        console.log(responseBody);
+
+        if (responseBody.success) {
+            alert('Produtos cadastrados com sucesso, volte à tela inicial');
+        } else {
+            alert(responseBody.message);
+        }
+
+    } catch (error) {
+        console.error(error);
+    }
+}

@@ -68,6 +68,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $response_reopen_boxpdv = $data;
     $response_portion = $data;
     $response_portion_product = $data;
+    $response_invoice = $data;
 
     if (isset($data['type'])) {
         if ($data['type'] == 'users') {
@@ -110,6 +111,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             Register::RegisterPortion($response_portion, $sql, $user_id, $today);
         } else if ($data['type'] === 'createproductsportion') {
             Register::RegisterPortionProduct($response_portion_product, $sql, $user_id, $today);
+        } else if ($data['type'] === 'invoice') {
+            Register::RegisterDisplayIncoice($response_invoice, $sql, $user_id, $today);
         }
     } else {
         Response::json(false, 'Tipo type não encontrado', $today);
@@ -119,6 +122,90 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 class Register
 {
 
+    public static function RegisterDisplayIncoice($response_invoice, $sql, $user_id, $today)
+    {
+        try {
+            $sql->beginTransaction();
+
+            foreach ($response_invoice['products'] as $item) {
+                $query = "SELECT id, stock_quantity FROM products WHERE id = :cod_product LIMIT 1";
+                $stmt = $sql->prepare($query);
+                $stmt->bindParam(':cod_product', $item['cod_product']);
+                $stmt->execute();
+                $product = $stmt->fetch();
+
+                if ($product) {
+                    $product_id = $product['product_id'];
+                    $new_quantity = $product['quantity_product'] + $item['stock_quantity'];
+
+                    $query = "
+                    UPDATE products
+                    SET stock_quantity = :stock_quantity
+                    WHERE id = :product_id
+                ";
+                    $stmt = $sql->prepare($query);
+                    $stmt->bindParam(':stock_quantity', $new_quantity);
+                    $stmt->bindParam(':product_id', $product_id);
+                    $stmt->execute();
+
+                    $type = 'Entrada';
+
+                    $query = "
+                    INSERT INTO product_movements (product_id, type, value, quantity, date)
+                    VALUES (:product_id, :type, :value, :quantity, NOW())
+                ";
+                    $stmt = $sql->prepare($query);
+                    $stmt->bindParam(':product_id', $product_id);
+                    $stmt->bindParam(':type', $type);
+                    $stmt->bindParam(':value', $item['value_product']);
+                    $stmt->bindParam(':quantity', $item['quantity_product']);
+                    $stmt->execute();
+
+                } else {
+                    $value_product = str_replace(',', '.', $item['value_product']); 
+                    $show_on_page = 0;
+                    $invoice = 'Nota Fiscal';
+                    $query = "
+                    INSERT INTO products (name, quantity, stock_quantity, value_product, unit, invoice, show_on_page)
+                    VALUES (:name, :quantity, :stock_quantity, :value_product, :unit, :invoice, :show_on_page)
+                ";
+                    $stmt = $sql->prepare($query);
+                    $stmt->bindParam(':name', $item['name_product']);
+                    $stmt->bindParam(':quantity', $item['quantity_product']);
+                    $stmt->bindParam(':stock_quantity', $item['quantity_product']);
+                    $stmt->bindParam(':value_product', $value_product); 
+                    $stmt->bindParam(':unit', $item['unit_product']);
+                    $stmt->bindParam(':invoice', $invoice);
+                    $stmt->bindParam(':show_on_page', $show_on_page);
+                    $stmt->execute();
+
+                    $product_id = $sql->lastInsertId();
+
+                    $type = 'Entrada';
+                    $query = "
+                    INSERT INTO product_movements (product_id, type, value, quantity, date)
+                    VALUES (:product_id, :type, :value, :quantity, NOW())
+                ";
+                    $stmt = $sql->prepare($query);
+                    $stmt->bindParam(':product_id', $product_id);
+                    $stmt->bindParam(':type', $type);
+                    $stmt->bindParam(':value', $item['value_product']);
+                    $stmt->bindParam(':quantity', $item['quantity_product']);
+                    $stmt->execute();
+                }
+            }
+
+            $sql->commit();
+
+            $message_log = "Nota de compra inserida com sucesso";
+            Panel::LogAction($user_id, 'Nota de compra inserida', $message_log, $today);
+            Response::send(true, 'Nota de compra inserida com sucesso', $today);
+
+        } catch (Exception $e) {
+            $sql->rollBack();
+            echo 'Erro ao registrar a nota de compra: ' . $e->getMessage();
+        }
+    }
     public static function RegisterPortionProduct($response_portion_product, $sql, $user_id, $today)
     {
 
@@ -178,6 +265,7 @@ class Register
         $namePortion = filter_var($response_portion['namePortion'], FILTER_SANITIZE_STRING);
         $valuePortion = (float) filter_var($response_portion['valuePortion'], FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION);
         $obsportion = filter_var($response_portion['obsportion'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+        $quantityPortion = filter_var($response_portion['quantityPortion'], FILTER_SANITIZE_NUMBER_INT);
 
         try {
 
@@ -189,15 +277,41 @@ class Register
             $sql->beginTransaction();
 
             $status = 1;
-            $exec = $sql->prepare("INSERT INTO portion (name_portion, obs_portion, created_at, status, value) 
-                        VALUES (:name_portion, :obs_portion, NOW(), :status, :value)");
+            $exec = $sql->prepare("INSERT INTO portion (name_portion, obs_portion, created_at, status, value, quantity) 
+                        VALUES (:name_portion, :obs_portion, NOW(), :status, :value, :quantity)");
             $exec->bindParam(':name_portion', $namePortion, PDO::PARAM_STR);
             $exec->bindParam(':obs_portion', $obsportion, PDO::PARAM_STR);
             $exec->bindValue(':status', $status, PDO::PARAM_INT);
             $exec->bindValue(':value', $valuePortion, PDO::PARAM_STR);
+            $exec->bindValue(':quantity', $quantityPortion, PDO::PARAM_INT);
             $exec->execute();
 
             $id_portion = $sql->lastInsertId();
+
+            $invoice = 'manual';
+            $status_product = 'Em Estoque';
+            $show_on_page = 0;
+            $exec1 = $sql->prepare("INSERT INTO products (name, value_product, quantity, stock_quantity, status_product, invoice, show_on_page) 
+                        VALUES (:name_portion, :value_product, :quantity, :stock_quantity, :status_product, :invoice, :show_on_page)");
+            $exec1->bindParam(':name_portion', $namePortion, PDO::PARAM_STR);
+            $exec1->bindValue(':value_product', $valuePortion, PDO::PARAM_STR);
+            $exec1->bindValue(':quantity', $quantityPortion, PDO::PARAM_INT);
+            $exec1->bindValue(':stock_quantity', $quantityPortion, PDO::PARAM_INT);
+            $exec1->bindValue(':status_product', $status_product, PDO::PARAM_STR);
+            $exec1->bindValue(':invoice', $invoice, PDO::PARAM_STR);
+            $exec1->bindValue(':show_on_page', $show_on_page, PDO::PARAM_INT);
+            $exec1->execute();
+            $id_product = $sql->lastInsertId();
+
+            $type = 'Entrada';
+            $exec2 = $sql->prepare("INSERT INTO product_movements (product_id, quantity, value, date, type) 
+                                            VALUES(:product_id, :quantity, :value, NOW(), :type)");
+            $exec2->bindParam(':product_id', $id_product, PDO::PARAM_INT);
+            $exec2->bindParam(':quantity', $quantityPortion, PDO::PARAM_INT);
+            $exec2->bindParam(':value', $valuePortion, PDO::PARAM_STR);
+            $exec2->bindParam(':type', $type, PDO::PARAM_STR);
+            $exec2->execute();
+
             $sql->commit();
 
             $message_log = "Porção criada com sucesso";

@@ -16,12 +16,14 @@ const getFieldsPortionProduct = () => {
     values: {
       namePortion: document.getElementById('nameportion').value,
       obsportion: document.getElementById('obsportion').value,
-      valuePortion: document.getElementById('valuePortion').value
+      valuePortion: document.getElementById('valuePortion').value,
+      quantityPortion: document.getElementById('quantityPortion').value
     },
     inputs: {
       namePortion: document.getElementById('nameportion'),
       obsportion: document.getElementById('obsportion'),
       valuePortion: document.getElementById('valuePortion'),
+      quantityPortion: document.getElementById('quantityPortion')
     }
   }
 }
@@ -29,14 +31,16 @@ const getFieldsPortionProduct = () => {
 async function CreatePortion() {
   const { type, values, inputs } = await getFieldsPortionProduct();
 
-  if (values.namePortion == "" || values.valuePortion == "") {
+  if (values.namePortion == "" || values.valuePortion == "" || values.quantityPortion == "") {
     showMessage('Campo nome ou valor da porção não pode ser vazio', 'warning');
 
     if (values.namePortion == "") inputs.namePortion.classList.add('error');
     if (values.valuePortion == "") inputs.valuePortion.classList.add('error');
+    if (values.quantityPortion == "") inputs.quantityPortion.classList.add('error');
     setTimeout(() => {
       inputs.namePortion.classList.remove('error');
       inputs.valuePortion.classList.remove('error');
+      inputs.quantityPortion.classList.remove('error');
     }, 3000);
 
     return;
@@ -54,10 +58,9 @@ async function CreatePortion() {
     type: type.type,
     namePortion: values.namePortion,
     obsportion: values.obsportion,
-    valuePortion: valuePortion
+    valuePortion: valuePortion,
+    quantityPortion: values.quantityPortion
   }
-
-  console.log(responsePortion);
 
   continueMessage("Deseja realizar a criação da porção?", "Sim", "Não", async function () {
 

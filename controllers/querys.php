@@ -104,10 +104,10 @@ class Querys
                 p.`name` AS product
             FROM 
                 sales s
-            INNER JOIN `sales_items` si ON si.`id_sales` = s.`id`
-            INNER JOIN `products` p ON p.`id` = si.`id_product`
-            INNER JOIN `clients` c ON c.id = s.`id_client`
-            INNER JOIN `form_payment` fp ON fp.`id` = s.`id_payment_method`
+                INNER JOIN `sales_items` si ON si.`id_sales` = s.`id`
+                INNER JOIN `products` p ON p.`id` = si.`id_product`
+                INNER JOIN `clients` c ON c.id = s.`id_client`
+                INNER JOIN `form_payment` fp ON fp.`id` = s.`id_payment_method`
             WHERE s.`id_client` = :id_client_details
         ");
 
