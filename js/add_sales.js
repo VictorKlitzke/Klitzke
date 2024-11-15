@@ -693,7 +693,11 @@ function calculateChange() {
     let receivedValue = parseFloat(trocoSales.value.replace('.', '').replace(',', '.')) || 0;
     let TotalChange = receivedValue - totalValue;
 
-    quantiyChange.textContent = 'R$ ' + TotalChange.toFixed(2).replace('.', ',');
+    if (TotalChange < 0) {
+        quantiyChange.textContent = 'Valor insuficiente';
+    } else {
+        quantiyChange.textContent = 'R$ ' + TotalChange.toFixed(2).replace('.', ',');
+    }
 }
 
 async function finalizeSale() {
@@ -704,7 +708,7 @@ async function finalizeSale() {
         let totalText = totalAmountElement.textContent.replace('R$ ', '').replace('.', '').replace(',', '.');
         totalValue = parseFloat(totalText) || 0;
     }
-    let quantiyChange = document.getElementById('change-amount').value;
+    let quantiyChange = document.getElementById('change-amount').textContent.replace('R$', '').replace(',', '.').trim();;
     let selectedPayment = document.querySelector('input[name="id_payment_method"]:checked');
     if (selectedPayment == null) {
         showMessage('Selecione uma forma de pagamento', 'warning');
@@ -717,7 +721,7 @@ async function finalizeSale() {
         selectedClientId: selectedClientId,
         totalValue: totalValue,
         quantiyChange: quantiyChange,
-        selectedProducts: selectedProducts
+        selectedProducts: selectedProducts,
     };
 
     if (selectedProducts.length === 0) {

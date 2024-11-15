@@ -1105,6 +1105,10 @@ async function ListAPrazo(searchTermFinancialControl = '') {
                 const value = parseFloat(fs.total_value) || 0;
                 totalValueCell.textContent = `R$ ${numberFormat(value)}`;
                 allSalesRow.appendChild(totalValueCell);
+                
+                const UserCell = document.createElement('td');
+                UserCell.textContent = fs.user || 'Sem Usuário';
+                allSalesRow.appendChild(UserCell);
 
                 const dateSalesCell = document.createElement('td');
                 if (fs.date_sales) {

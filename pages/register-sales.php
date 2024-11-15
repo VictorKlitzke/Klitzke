@@ -14,8 +14,6 @@ if (!isset($_SESSION['user_permissions'][$page_permission]) || $_SESSION['user_p
     <div class="container-fluid mt-5">
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h1 class="text-primary">Tela de Vendas</h1>
-            <button class="btn btn-success btn-lg" onclick="finalizeSale()" id="finish-sales" type="button">Fechar
-                Venda</button>
         </div>
 
         <div class="card card-custom mb-4">
@@ -64,6 +62,14 @@ if (!isset($_SESSION['user_permissions'][$page_permission]) || $_SESSION['user_p
                         </tbody>
                     </table>
                 </div>
+            </div>
+        </div>
+
+        <div class="row g-3">
+            <div class="col text-end">
+                <button class="btn btn-success btn-lg" onclick="finalizeSale()" id="finish-sales" type="button">Fechar
+                    Venda
+                </button>`
             </div>
         </div>
 

@@ -33,10 +33,10 @@ if (!$notaInfo) {
                 <p><strong>Numero da Nota:</strong> <?php echo htmlspecialchars($notaInfo['invoiceNumber']); ?></p>
 
                 <h3 class="h4">Valor Total</h3>
-                <p><strong>R$ <?php echo number_format($notaInfo['totalValue'], 2, ',', '.'); ?></strong></p>
+                <p><strong>R$ <?php echo $notaInfo['totalValue']; ?></strong></p>
 
                 <h3 class="h4">Produtos</h3>
-                <form method="POST"> 
+                <form method="POST">
                     <table class="table table-bordered table-striped table-hover">
                         <thead class="table-light">
                             <tr>
@@ -50,7 +50,10 @@ if (!$notaInfo) {
                         <tbody>
                             <?php foreach ($notaInfo['products'] as $product): ?>
                                 <tr>
-                                    <td id="cod_product"><?php echo htmlspecialchars($product['codigo']); ?></td>
+                                    <td>
+                                        <input type="number" value="<?php echo htmlspecialchars($product['codigo']); ?>"
+                                            name="cod[] " id="cod_product" />
+                                    </td>
                                     <td>
                                         <input type="text" class="form-control" id="name_product" name="description[]"
                                             value="<?php echo htmlspecialchars($product['descricao']); ?>" />
@@ -65,14 +68,15 @@ if (!$notaInfo) {
                                     </td>
                                     <td>
                                         <input type="text" class="form-control" id="value_product" name="unit_value[]"
-                                            value="R$ <?php echo number_format($product['valor_unitario'], 2, ',', '.'); ?>" />
+                                            value="R$ <?php echo $product['valor_unitario']; ?>" />
                                     </td>
                                 </tr>
                             <?php endforeach; ?>
                         </tbody>
                     </table>
 
-                    <button type="button" onclick="RegisterDisplayInvoice()" class="btn btn-success">Salvar Alterações</button>
+                    <button type="button" onclick="RegisterDisplayInvoice()" class="btn btn-success">Salvar
+                        Alterações</button>
                 </form>
             </div>
         </div>

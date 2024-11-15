@@ -300,11 +300,13 @@ class lists
                                 `form_payment`.`name` form_payment,
                                 sales.total_value,
                                 sales.date_sales,
-                                sales.id
+                                sales.id,
+                                u.name user
                             FROM 
                                 `sales` 
                                 LEFT JOIN clients on clients.id = sales.`id_client`
                                 INNER JOIN `form_payment` on `form_payment`.id = sales.`id_payment_method`
+                                INNER JOIN users u on u.id = sales.`id_users`
                             WHERE sales.`id_payment_method` in (1,2,3,4) ";
             $stmtSales = $sql->prepare($querySales);
             $stmtSales->execute();

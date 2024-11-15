@@ -55,5 +55,3 @@ function VerificationMenu()
 }
 
 $showMenuAdm = VerificationAccessADM();
-
-?>

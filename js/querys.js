@@ -133,12 +133,22 @@ async function NoticeBoard() {
     }
 
     let dataresponseNoticeBoard = await responseNoticeBoard.json();
+    console.log(dataresponseNoticeBoard)
     const query_warnings = dataresponseNoticeBoard.query_warnings;
 
+    if (!query_warnings || query_warnings.length === 0) {
+      showMessage('Nenhum aviso encontrado.', 'warning');
+      return;
+    }
+    
+    console.log(query_warnings)
+
     const noticeBoardContainer = document.getElementById('notice-board');
-    noticeBoardContainer.innerHTML = ''; // Limpa o conteúdo anterior
+    noticeBoardContainer.innerHTML = ''; 
 
     const today = new Date();
+    const limiteDataVencimento = new Date(today);
+    limiteDataVencimento.setDate(today.getDate() + 5);
 
     query_warnings.forEach(warning => {
       const [datePart, timePart] = warning.transaction_date.split(' ');
@@ -146,13 +156,11 @@ async function NoticeBoard() {
       const [hour, minute, second] = timePart.split(':');
       const dateVenciment = new Date(`${year}-${month}-${day}T${hour}:${minute}:${second}`);
 
-
       if (isNaN(dateVenciment)) {
         showMessage('Data inválida: ' + warning.transaction_date, 'warning');
         return;
       }
 
-      let avisoTexto = '';
       let icone = '';
       let classeCor = '';
       let statusTexto = '';
@@ -165,7 +173,7 @@ async function NoticeBoard() {
         icone = '<i class="fas fa-exclamation-circle"></i>';
         classeCor = 'table-danger';
         statusTexto = 'Vencido';
-      } else if (dateVenciment <= new Date(today.setDate(today.getDate() + 5))) {
+      } else if (dateVenciment <= limiteDataVencimento) {
         icone = '<i class="fas fa-hourglass-half"></i>';
         classeCor = 'table-warning';
         statusTexto = 'A vencer';
@@ -339,7 +347,7 @@ async function AccessUsers(button) {
       body: JSON.stringify(responseUser)
     })
 
-    const responseTextUser = await response.json();
+    const responseTextUser = await response.text();
 
     try {
       const responseBodyUser = JSON.parse(responseTextUser);
@@ -571,8 +579,7 @@ async function submitReopenReason() {
     showMessage("Operação cancelada", "warning");
   })
 }
-
-function searchProduct() {
+function searchListProduct() {
   // Obtém o valor do campo de pesquisa
   let searchValue = document.getElementById("searchProduct").value.toLowerCase();
 

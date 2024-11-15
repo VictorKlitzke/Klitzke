@@ -383,7 +383,8 @@ if (isset($_GET['loggout'])) {
                                         SUM(CASE WHEN sales.id_payment_method = 2 THEN total_value ELSE 0 END) AS total_debit,
                                         SUM(CASE WHEN sales.id_payment_method = 3 THEN total_value ELSE 0 END) AS total_credit,
                                         SUM(CASE WHEN sales.id_payment_method = 4 THEN total_value ELSE 0 END) AS total_money,
-                                        SUM(CASE WHEN sales.id_payment_method = 5 AND sales_aprazo.status = 'paga' THEN total_value ELSE 0 END) AS total_aprazo
+                                        SUM(CASE WHEN sales.id_payment_method = 5 AND sales_aprazo.status = 'paga' THEN total_value ELSE 0 END) AS total_aprazo,
+                                        SUM(CASE WHEN sales.id_payment_method = 4 THEN change_sales ELSE 0 END) AS change_sales
                                     FROM sales
                                     LEFT JOIN sales_aprazo ON sales_aprazo.sale_id = sales.id AND sales.id_payment_method = 5
                                     WHERE sales.id_boxpdv = :boxId AND sales.id_users = :id_users
@@ -399,6 +400,7 @@ if (isset($_GET['loggout'])) {
             $total_credit = $results['total_credit'];
             $total_money = $results['total_money'];
             $total_aprazo = $results['total_aprazo'];
+            $change_sales = $results['change_sales'];
 
 
             $exec = $sql->prepare("
@@ -442,7 +444,7 @@ if (isset($_GET['loggout'])) {
                                             <label for="value_debit" class="form-label">Débito</label>
                                             <input id="value_debit" class="form-control" type="text"
                                                 placeholder="Débito" name="value_debit"
-                                                value="<?php echo $total_debit; ?>" readonly />
+                                                value="<?php echo numberFormat($total_debit); ?>" readonly />
                                         </div>
                                     </div>
                                     <div class="col-md-6">
@@ -450,7 +452,7 @@ if (isset($_GET['loggout'])) {
                                             <label for="value_credit" class="form-label">Crédito</label>
                                             <input id="value_credit" class="form-control" type="text"
                                                 placeholder="Crédito" name="value_credit"
-                                                value="<?php echo $total_credit; ?>" readonly />
+                                                value="<?php echo numberFormat($total_credit); ?>" readonly />
                                         </div>
                                     </div>
                                 </div>
@@ -460,7 +462,7 @@ if (isset($_GET['loggout'])) {
                                         <div class="mb-3">
                                             <label for="value_pix" class="form-label">PIX</label>
                                             <input id="value_pix" class="form-control" type="text" placeholder="PIX"
-                                                name="value_pix" value="<?php echo $total_pix; ?>" readonly />
+                                                name="value_pix" value="<?php echo numberFormat($total_pix); ?>" readonly />
                                         </div>
                                     </div>
                                     <div class="col-md-6">
@@ -468,7 +470,7 @@ if (isset($_GET['loggout'])) {
                                             <label for="value_money" class="form-label">Dinheiro</label>
                                             <input id="value_money" class="form-control" type="text"
                                                 placeholder="Dinheiro" name="value_money"
-                                                value="<?php echo $total_money; ?>" readonly />
+                                                value="<?php echo numberFormat($total_money); ?>" readonly />
                                         </div>
                                     </div>
                                 </div>
@@ -479,7 +481,7 @@ if (isset($_GET['loggout'])) {
                                             <label for="value_aprazo" class="form-label">A Prazo</label>
                                             <input id="value_aprazo" class="form-control" type="text"
                                                 placeholder="A Prazo" name="value_aprazo"
-                                                value="<?php echo $total_aprazo; ?>" readonly />
+                                                value="<?php echo numberFormat($total_aprazo); ?>" readonly />
                                         </div>
                                     </div>
                                     <div class="col-md-6">
@@ -487,7 +489,7 @@ if (isset($_GET['loggout'])) {
                                             <label for="value_system" class="form-label">Abertura de Caixa</label>
                                             <input id="value_system" class="form-control" type="text"
                                                 placeholder="Caixa Sistema" name="value_system"
-                                                value="<?php echo $result_system['value_boxpdv']; ?>" readonly />
+                                                value="<?php echo numberFormat($result_system['value_boxpdv']); ?>" readonly />
                                         </div>
                                     </div>
                                 </div>
@@ -522,11 +524,19 @@ if (isset($_GET['loggout'])) {
                                                 placeholder="Soma: Dinheiro + caixa Sistema" readonly />
                                         </div>
                                     </div>
-                                    <div class="col-sm-12">
+                                    <div class="col-sm-6">
                                         <div class="mb-3">
                                             <label class="text-dark">Soma: Total + Abertura de Caixa</label>
                                             <input id="TotalizadorBox" class="form-control" type="text"
                                                 placeholder="Soma: Total + caixa Sistema" readonly />
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="change_sales" class="form-label">Total de Troco</label>
+                                            <input id="change_sales" class="form-control" type="text"
+                                                placeholder="Troco" name="change_sales"
+                                                value="<?php echo numberFormat($change_sales); ?>" readonly />
                                         </div>
                                     </div>
                                 </div>
@@ -571,7 +581,8 @@ if (isset($_GET['loggout'])) {
     <script language="JavaScript" type="text/javascript" src="<?php echo INCLUDE_JAVASCRIPT; ?>menu.js"></script>
     <script language="JavaScript" type="text/javascript" src="<?php echo INCLUDE_JAVASCRIPT; ?>list_system.js"></script>
     <script language="JavaScript" type="text/javascript" src="<?php echo INCLUDE_JAVASCRIPT; ?>buy_request.js"></script>
-    <script language="JavaScript" type="text/javascript" src="<?php echo INCLUDE_JAVASCRIPT; ?>financial_control.js"></script>
+    <script language="JavaScript" type="text/javascript"
+        src="<?php echo INCLUDE_JAVASCRIPT; ?>financial_control.js"></script>
     <script src="<?php echo INCLUDE_JAVASCRIPT; ?>dashboard.js"></script>
     <script src="<?php echo INCLUDE_JAVASCRIPT; ?>querys.js"></script>
     <script src="<?php echo INCLUDE_JAVASCRIPT; ?>inventary.js"></script>

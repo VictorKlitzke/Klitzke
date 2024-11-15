@@ -83,15 +83,15 @@ $boxpdv = Controllers::SelectBoxPdv('boxpdv', $user_filter);
                 <th><?php echo htmlspecialchars($value['Withdrawal']); ?></th>
                 <th><?php echo htmlspecialchars($value['retiradatotal']); ?></th>
 
-                <th class="gap-2 d-flex accessnivel">
+                <th class="gap-2 d-flex">
                   <?php if ($value['status'] == 1) { ?>
-                    <a class="btn btn-info w-100"
+                    <a class="btn btn-info w-100 accessnivel"
                       href="<?php echo INCLUDE_PATH ?>boxpdv-sangria?id=<?php echo base64_encode($value['id']); ?>">Retirar
                     </a>
                   <?php } else { ?>
                     <button class="btn btn-secondary w-100">Fechado</button>
                   <?php } ?>
-                <?php if ($value['status'] =! 1) {?>
+                <?php if ($value['status'] == 2) {?>
                   <button class="btn btn-light w-100 accessnivel" id="reopen-boxpdv"  data-id="<?php echo base64_encode($value['id']); ?>"
                     data-bs-toggle="modal" data-bs-target="#reopenModal" onclick="setBoxID(this)">Reabrir
                   </button>

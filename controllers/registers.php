@@ -112,7 +112,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         } else if ($data['type'] === 'createproductsportion') {
             Register::RegisterPortionProduct($response_portion_product, $sql, $user_id, $today);
         } else if ($data['type'] === 'invoice') {
-            Register::RegisterDisplayIncoice($response_invoice, $sql, $user_id, $today);
+            Register::RegisterDisplayInvoice($response_invoice, $sql, $user_id, $today);
         }
     } else {
         Response::json(false, 'Tipo type não encontrado', $today);
@@ -122,7 +122,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 class Register
 {
 
-    public static function RegisterDisplayIncoice($response_invoice, $sql, $user_id, $today)
+    public static function RegisterDisplayInvoice($response_invoice, $sql, $user_id, $today)
     {
         try {
             $sql->beginTransaction();
@@ -136,15 +136,10 @@ class Register
                 $stmt->execute();
                 $product = $stmt->fetch(PDO::FETCH_ASSOC);
 
-                var_dump($product);
-
                 if ($product) {
                     $product_id = $product['id'];
                     $new_quantity = $product['stock_quantity'] + $item['quantity_product'];
-
-                    var_dump($new_quantity);
-                    var_dump($product_id);
-
+                    
                     $query = "
                         UPDATE products
                         SET stock_quantity = :stock_quantity
@@ -276,7 +271,7 @@ class Register
     public static function RegisterPortion($response_portion, $sql, $user_id, $today)
     {
 
-        $namePortion = filter_var($response_portion['namePortion'], FILTER_SANITIZE_STRING);
+        $namePortion = filter_var($response_portion['namePortion'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
         $valuePortion = (float) filter_var($response_portion['valuePortion'], FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION);
         $obsportion = filter_var($response_portion['obsportion'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
         $quantityPortion = filter_var($response_portion['quantityPortion'], FILTER_SANITIZE_NUMBER_INT);
@@ -309,8 +304,8 @@ class Register
                         VALUES (:name_portion, :value_product, :quantity, :stock_quantity, :status_product, :invoice, :show_on_page)");
             $exec1->bindParam(':name_portion', $namePortion, PDO::PARAM_STR);
             $exec1->bindValue(':value_product', $valuePortion, PDO::PARAM_STR);
-            $exec1->bindValue(':quantity', $quantityPortion, PDO::PARAM_INT);
-            $exec1->bindValue(':stock_quantity', $quantityPortion, PDO::PARAM_INT);
+            $exec1->bindValue(':quantity', $quantityPortion, PDO::PARAM_STR);
+            $exec1->bindValue(':stock_quantity', $quantityPortion, PDO::PARAM_STR);
             $exec1->bindValue(':status_product', $status_product, PDO::PARAM_STR);
             $exec1->bindValue(':invoice', $invoice, PDO::PARAM_STR);
             $exec1->bindValue(':show_on_page', $show_on_page, PDO::PARAM_INT);
@@ -550,7 +545,6 @@ class Register
             Response::json(false, 'Erro ao adicionar menus: ' . $e->getMessage(), $today);
         }
     }
-
     public static function RegisterAccountsPayable($sql, $response_accounts_payable, $user_id, $today)
     {
         $dateTransaction = filter_var($response_accounts_payable['dateTransaction'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
@@ -823,7 +817,7 @@ class Register
                 $mail = new PHPMailer(true);
                 try {
                     $mail->isSMTP();
-                    $mail->Host = 'mail.klitzkesoftware.com.br';
+                    $mail->Host = 'smtp.titan.email';
                     $mail->Port = 465;
                     $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
                     $mail->SMTPAuth = true;

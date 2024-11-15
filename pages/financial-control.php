@@ -163,6 +163,7 @@ if (!isset($_SESSION['user_permissions'][$page_permission]) || $_SESSION['user_p
               <th>Clientes</th>
               <th>Formas de Pagamentos</th>
               <th>Valor Total</th>
+              <th>Usuários</th>
               <th>Data da Venda</th>
             </tr>
           </thead>

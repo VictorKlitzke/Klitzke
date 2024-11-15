@@ -20,7 +20,8 @@ $products = Controllers::SelectAll('products');
         <a class="btn btn-success fw-bold px-4" <?php SelectedMenu('register-users') ?>
             href="<?php echo INCLUDE_PATH; ?>register-stockcontrol">+ Novo Produto</a>
     </div>
-    <input type="text" id="searchProduct" class="form-control border mb-3" placeholder="Buscar produto..." onkeyup="searchProduct()">
+    <input type="text" id="searchProduct" class="form-control border mb-3" placeholder="Buscar produto..."
+        onkeyup="searchListProduct()">
     <div class="row">
         <div class="col">
             <div class="table-responsive" style="max-height: 400px; overflow-y: auto; overflow-x: auto;">
@@ -131,7 +132,7 @@ $result_cost_value_product = $exec->fetch(PDO::FETCH_ASSOC);
 
 $value_product = number_format($result_value_product['value_product'], 2, ',', '.');
 $cost_value_product = number_format($result_cost_value_product['cost_value'], 2, ',', '.');
-$result_quantity_product = number_format($result_quantity_product['quantity'], 2, ',', '.');
+$result_quantity_product = $result_quantity_product['quantity'];
 ?>
 
 <br>
@@ -143,7 +144,7 @@ $result_quantity_product = number_format($result_quantity_product['quantity'], 2
                 <i class="fas fa-box-open me-2"></i>Quantidade total de itens
             </div>
             <div class="card-body text-center">
-                <h5 class="card-title display-6"><?php echo $result_quantity_product; ?>0</h5>
+                <h5 class="card-title display-6"><?php echo $result_quantity_product; ?></h5>
             </div>
         </div>
     </div>

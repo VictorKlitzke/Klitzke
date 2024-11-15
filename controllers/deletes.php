@@ -156,9 +156,9 @@ class Deletes
             $exec->bindParam(':id_users_delete', $id_users_delete);
             $exec->execute();
 
-            $exec1 = $sql->prepare("DELETE * FROM menu_access WHERE user_id = :user_id");
-            $exec1->BindParam(':user_id', $id_users_delete, PDO::PARAM_INT);
-            $exec1->execute();
+            // $exec1 = $sql->prepare("DELETE * FROM menu_access WHERE user_id = :user_id");
+            // $exec1->BindParam(':user_id', $id_users_delete, PDO::PARAM_INT);
+            // $exec1->execute();
 
             $sql->commit();
 

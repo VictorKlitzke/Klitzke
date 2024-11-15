@@ -32,6 +32,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $id_sales_client = $requestData['selectedClientId'] ?? '';
     $selectedProducts = $requestData['selectedProducts'] ?? [];
     $totalValueSales = $requestData['totalValue'] ?? '';
+    $quantiyChange = $requestData['quantiyChange'] ?? 0;
 
     try {
 
@@ -70,8 +71,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 return;
             }
 
-            $exec = $sql->prepare("INSERT INTO sales (id_payment_method, id_client, id_boxpdv, id_users, date_sales, status, total_value) 
-                VALUES (:paymentMethod, :salesClient, :id_boxpdv, :id_users, NOW(), :status, :totalValueSales)");
+            $exec = $sql->prepare("INSERT INTO sales (id_payment_method, id_client, id_boxpdv, id_users, date_sales, status, total_value, change_sales) 
+                VALUES (:paymentMethod, :salesClient, :id_boxpdv, :id_users, NOW(), :status, :totalValueSales, :quantiyChange)");
             $exec->bindParam(':paymentMethod', $selectedPaymentMethod, PDO::PARAM_INT);
             $exec->bindParam(':salesClient', $id_sales_client, PDO::PARAM_INT);
             $exec->bindParam(':id_users', $user_id, PDO::PARAM_INT);
@@ -79,6 +80,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $status = 1;
             $exec->bindParam(':status', $status, PDO::PARAM_INT);
             $exec->bindParam(':totalValueSales', $totalValueSales, PDO::PARAM_INT);
+            $exec->bindParam(':quantiyChange', $quantiyChange, PDO::PARAM_STR);
             $exec->execute();
 
             $lastSaleId = $sql->lastInsertId();

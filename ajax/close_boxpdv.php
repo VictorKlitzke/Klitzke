@@ -32,6 +32,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $soma_money_system = $requestData['soma'] ?? 0;
     $totalizador_box_all = $requestData['TotalizadorBox'] ?? 0;
     $date_close = $requestData['date_close'] ?? '';
+    $change_sales = $requestData['Change_sales'] ?? 0;
 
     try {
 
@@ -49,26 +50,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if (!$id_boxpdv) {
             throw new Exception('Nenhum caixa aberto encontrado.');
         } else {
-            $value_debit = floatval($value_debit);
-            $value_credit = floatval($value_credit);
-            $value_pix = floatval($value_pix);
-            $value_money = floatval($value_money);
-            $value_aprazo = floatval($value_aprazo);
-            $value_system = floatval($value_system);
-            $value_fisico = floatval($value_fisico);
-            $value_difference = floatval($value_difference);
-            $soma_money_system = floatval($soma_money_system);
-            $totalizador_box_all = str_replace('.', '', $totalizador_box_all); 
-            $totalizador_box_all = str_replace(',', '.', $totalizador_box_all);
-
             $date_close = date('Y-m-d H:i:s', strtotime($date_close));
 
             $exec = $sql->prepare("INSERT INTO box_closing (id_boxpdv, value_debit, value_credit, 
                                             value_pix, value_money, value_aprazo, date_close, boxpdv_difference, value_fisico, value_system, 
-                                            soma_money_system, totalizador_box_all, status) 
+                                            soma_money_system, totalizador_box_all, status, change_sales) 
                                         VALUES (:id_boxpdv, :value_debit, :value_credit, :value_pix, :value_money, 
                                             :value_aprazo, :date_close, :boxpdv_difference, :value_fisico, 
-                                            :value_system, :soma_money_system, :totalizador_box_all, :status_closing)");
+                                            :value_system, :soma_money_system, :totalizador_box_all, :status_closing, :change_sales)");
 
             $exec->bindParam(':id_boxpdv', $id_boxpdv, PDO::PARAM_INT);
             $exec->bindParam(':value_debit', $value_debit, PDO::PARAM_STR);
@@ -83,6 +72,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $exec->bindParam(':soma_money_system', $soma_money_system, PDO::PARAM_STR);
             $exec->bindParam(':totalizador_box_all', $totalizador_box_all, PDO::PARAM_STR);
             $exec->bindParam(':status_closing', $status_closing, PDO::PARAM_STR);
+            $exec->bindParam(':change_sales', $change_sales, PDO::PARAM_STR);
             $exec->execute();
 
             $exec = $sql->prepare("UPDATE boxpdv SET status = :status_update WHERE id_users = :id_users");

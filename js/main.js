@@ -36,17 +36,18 @@ function printBoxReport(content) {
 
 async function closeBox() {
 
-  let valueDebit = parseFloat(document.getElementById('value_debit').value);
-  let valueCredit = parseFloat(document.getElementById('value_credit').value);
-  let valuePIX = parseFloat(document.getElementById('value_pix').value);
-  let valueMoney = parseFloat(document.getElementById('value_money').value);
-  let value_aprazo = parseFloat(document.getElementById('value_aprazo').value);
-  let value_difference = parseFloat(document.getElementById('value_difference').value);
-  let value_fisico = parseFloat(document.getElementById('value_fisico').value);
-  let value_system = parseFloat(document.getElementById('value_system').value);
-  let close_date = document.getElementById('date_close').value;
-  let soma = document.getElementById('soma').value;
-  let TotalizadorBox = document.getElementById('TotalizadorBox').value;
+  let valueDebit = parseFloat(document.getElementById('value_debit').value.replace('R$', '').replace(',', '.')) || 0;
+  let valueCredit = parseFloat(document.getElementById('value_credit').value.replace('R$', '').replace(',', '.')) || 0;
+  let valuePIX = parseFloat(document.getElementById('value_pix').value.replace('R$', '').replace(',', '.')) || 0;
+  let valueMoney = parseFloat(document.getElementById('value_money').value.replace('R$', '').replace(',', '.')) || 0;
+  let value_aprazo = parseFloat(document.getElementById('value_aprazo').value.replace('R$', '').replace(',', '.')) || 0;
+  let value_difference = parseFloat(document.getElementById('value_difference').value.replace('R$', '').replace(',', '.')) || 0;
+  let value_fisico = parseFloat(document.getElementById('value_fisico').value.replace('R$', '').replace(',', '.')) || 0;
+  let value_system = parseFloat(document.getElementById('value_system').value.replace('R$', '').replace(',', '.')) || 0;
+  let close_date = parseFloat(document.getElementById('date_close').value.replace('R$', '').replace(',', '.')) || 0;
+  let soma = parseFloat(document.getElementById('soma').value.replace('R$', '').replace(',', '.')) || 0;
+  let TotalizadorBox = parseFloat(document.getElementById('TotalizadorBox').value.replace('R$', '').replace(',', '.')) || 0;
+  let Change_sales = parseFloat(document.getElementById('change_sales').value.replace('R$', '').replace(',', '.').trim()) || 0;
 
   if (value_system == "" || value_fisico == "") {
     showMessage('Valor sistema ou valor fisico sem valor', 'warning');
@@ -64,7 +65,8 @@ async function closeBox() {
     value_difference: value_difference,
     close_date: close_date,
     soma: soma,
-    TotalizadorBox: TotalizadorBox
+    TotalizadorBox: TotalizadorBox,
+    Change_sales: Change_sales
   }
 
   continueMessage("Deseja realmente fechar o caixa?", "Sim", "Não", async function () {
@@ -82,6 +84,8 @@ async function closeBox() {
 
       const responseText = await response.text();
 
+      console.log(responseText);
+
       try {
         const data = JSON.parse(responseText);
 
@@ -90,14 +94,14 @@ async function closeBox() {
 
           const printContent = `
             <h3>Resumo do Fechamento de Caixa</h3>
-            <p><strong>Débito:</strong> R$ ${valueDebit.toFixed(2)}</p>
-            <p><strong>Crédito:</strong> R$ ${valueCredit.toFixed(2)}</p>
-            <p><strong>PIX:</strong> R$ ${valuePIX.toFixed(2)}</p>
-            <p><strong>Dinheiro:</strong> R$ ${valueMoney.toFixed(2)}</p>
-            <p><strong>A Prazo:</strong> R$ ${value_aprazo.toFixed(2)}</p>
-            <p><strong>Total do Sistema:</strong> R$ ${value_system.toFixed(2)}</p>
-            <p><strong>Total Físico:</strong> R$ ${value_fisico.toFixed(2)}</p>
-            <p><strong>Diferença:</strong> R$ ${value_difference.toFixed(2)}</p>
+            <p><strong>Débito:</strong> R$ ${valueDebit}</p>
+            <p><strong>Crédito:</strong> R$ ${valueCredit}</p>
+            <p><strong>PIX:</strong> R$ ${valuePIX}</p>
+            <p><strong>Dinheiro:</strong> R$ ${valueMoney}</p>
+            <p><strong>A Prazo:</strong> R$ ${value_aprazo}</p>
+            <p><strong>Total do Sistema:</strong> R$ ${value_system}</p>
+            <p><strong>Total Físico:</strong> R$ ${value_fisico}</p>
+            <p><strong>Diferença:</strong> R$ ${value_difference}</p>
             <p><strong>Diferença:</strong> R$ ${TotalizadorBox}</p>
           `;
 
@@ -134,39 +138,43 @@ async function closeBox() {
 }
 
 function calculateDifference() {
-  let systemValue = parseFloat(document.getElementById('value_system').value) || 0;
-  let fisicoValue = parseFloat(document.getElementById('value_fisico').value) || 0;
+  let systemValue = parseFloat(document.getElementById('value_system').value.replace('R$', '').replace(',', '.').trim()) || 0;
+  let fisicoValue = parseFloat(document.getElementById('value_fisico').value.replace('R$', '').replace(',', '.').trim()) || 0;
   let difference = systemValue - fisicoValue;
 
-  document.getElementById('value_difference').value = difference.toFixed(2);
+  document.getElementById('value_difference').value = numberFormat(difference);
 }
 
 function calculateMoneySystem() {
-  let value_system = parseFloat(document.getElementById('value_system').value) || 0;
-  let value_money = parseFloat(document.getElementById('value_money').value) || 0;
+  let value_system = parseFloat(document.getElementById('value_system').value.replace('R$', '').replace(',', '.').trim()) || 0;
+  let value_money = parseFloat(document.getElementById('value_money').value.replace('R$', '').replace(',', '.').trim()) || 0;
 
   let soma = value_system + value_money;
 
   const somaField = document.getElementById('soma');
   if (somaField) {
-    somaField.value = soma.toFixed(2);
+    somaField.value = numberFormat(soma);
   }
 }
 
 function calculateTotalizadoAll() {
   const values = [
-    parseFloat(document.getElementById('value_debit').value) || 0,
-    parseFloat(document.getElementById('value_credit').value) || 0,
-    parseFloat(document.getElementById('value_pix').value) || 0,
-    parseFloat(document.getElementById('value_money').value) || 0,
-    parseFloat(document.getElementById('value_aprazo').value) || 0,
-    parseFloat(document.getElementById('value_system').value) || 0,
+    parseFloat(document.getElementById('value_debit').value.replace('R$', '').replace(',', '.').trim()) || 0,
+    parseFloat(document.getElementById('value_credit').value.replace('R$', '').replace(',', '.').trim()) || 0,
+    parseFloat(document.getElementById('value_pix').value.replace('R$', '').replace(',', '.').trim()) || 0,
+    parseFloat(document.getElementById('value_money').value.replace('R$', '').replace(',', '.').trim()) || 0,
+    parseFloat(document.getElementById('value_aprazo').value.replace('R$', '').replace(',', '.').trim()) || 0,
+    parseFloat(document.getElementById('value_system').value.replace('R$', '').replace(',', '.').trim()) || 0,
   ];
 
   const totalAll = values.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
 
   const TotalizadoBox = document.getElementById('TotalizadorBox');
   if (TotalizadoBox) {
-    TotalizadoBox.value = numberFormat(totalAll); 
+    TotalizadoBox.value = numberFormat(totalAll);
   }
+}
+
+function numberFormat(value) {
+  return 'R$ ' + value.toFixed(2).replace('.', ',');
 }

@@ -1288,7 +1288,7 @@ const getDisplayInvoice = () => {
     const rows = document.querySelectorAll('table tbody tr');
 
     rows.forEach(row => {
-        const cod_product = row.querySelector('#cod_product').textContent.trim();
+        const cod_product = row.querySelector('#cod_product').value.trim();
         const name_product = row.querySelector('#name_product').value.trim();
         const unit_product = row.querySelector('#unit').value.trim();
         const quantity_product = row.querySelector('#quantity').value.trim();

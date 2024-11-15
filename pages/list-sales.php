@@ -104,6 +104,7 @@ $sales = Controllers::SelectSales('sales', $userFilter, $form_payment, $date_sta
                             <th scope="col">Forma de Pagamento</th>
                             <th scope="col">Status Venda</th>
                             <th scope="col">Valor Total</th>
+                            <th scope="col">Troco</th>
                             <th scope="col">Data</th>
                             <th scope="col">Ações</th>
 
@@ -129,7 +130,13 @@ $sales = Controllers::SelectSales('sales', $userFilter, $form_payment, $date_sta
                                 ?>
                                 <th><?php echo htmlspecialchars($value['form_payment']); ?></th>
                                 <th><?php echo htmlspecialchars($value['status_sales']); ?></th>
-                                <th><?php echo htmlspecialchars($value['total_value']); ?></th>
+                                <th><?php echo htmlspecialchars(numberFormat($value['total_value'])); ?></th>
+                                <?php if ($value['change_sales'] == null) {
+                                            echo '<th><p>' . 'Troco inexistente' . '</p></th>';
+                                        } else {
+                                            echo '<th><p>' . htmlspecialchars(numberFormat($value['change_sales'])) . '</p></th>';
+                                        }
+                                ?>
                                 <th><?php $date = new DateTime($value['date_sales']);
                                 echo htmlspecialchars($date->format('d/m/Y')); ?></th>
 

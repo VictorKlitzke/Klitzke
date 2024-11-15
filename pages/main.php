@@ -112,7 +112,7 @@ $count_sales = Controllers::SelectAll('sales');
 
 <div class="row g-4">
   <div class="col-sm-6">
-    <div class="card border-light shadow-lg rounded-4 border">
+    <div class="card border-light shadow-lg rounded-4 border h-100">
       <div class="card-body text-center">
         <h4 class="card-title text-primary fw-bold">Produtos em Estoque</h4>
         <h2 class="display-5 fw-bold text-primary mb-0">
@@ -123,7 +123,7 @@ $count_sales = Controllers::SelectAll('sales');
   </div>
 
   <div class="col-sm-6">
-    <div class="card border-light shadow-lg rounded-4 border">
+    <div class="card border-light shadow-lg rounded-4 border h-100">
       <div class="card-body text-center">
         <h4 class="card-title text-success fw-bold">Clientes</h4>
         <h2 class="display-5 fw-bold text-success mb-0">
@@ -134,7 +134,7 @@ $count_sales = Controllers::SelectAll('sales');
   </div>
 
   <div class="col-sm-6">
-    <div class="card border-light shadow-lg rounded-4 border">
+    <div class="card border-light shadow-lg rounded-4 border h-100">
       <div class="card-body text-center">
         <h4 class="card-title text-info fw-bold">Vendas</h4>
         <h2 class="display-5 fw-bold text-info mb-0">
@@ -145,12 +145,12 @@ $count_sales = Controllers::SelectAll('sales');
   </div>
 
   <div class="col-sm-6">
-    <div class="card border-light shadow-lg rounded-4 border">
+    <div class="card border-light shadow-lg rounded-4 border h-100">
       <div class="card-body text-center">
         <h4 class="card-title text-warning fw-bold">Produto Mais Vendido</h4>
-        <h2 class="display-5 fw-bold text-warning mb-0">
+        <h5 class="display-6 fw-bold text-warning mb-0">
           <?php echo htmlspecialchars($result_prod['name_product']); ?>
-        </h2>
+        </h5>
       </div>
     </div>
   </div>
