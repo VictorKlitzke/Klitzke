@@ -40,6 +40,7 @@ if (isset($_GET['loggout'])) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="<?php echo INCLUDE_PATH_PANEL; ?>../css/style.css" />
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://getbootstrap.com/docs/5.3/assets/css/docs.css" rel="stylesheet">
     <link rel="icon" href="<?php echo INCLUDE_PATH; ?>./public/logo/favicon.ico" type="image/x-icon" />
@@ -185,6 +186,13 @@ if (isset($_GET['loggout'])) {
                                         <li>
                                             <a class="dropdown-item" <?php SelectedMenu('list-sales'); ?>
                                                 href="<?php echo INCLUDE_PATH; ?>list-sales">Lista de Vendas
+                                            </a>
+                                        </li>
+                                    <?php endif; ?>
+                                    <?php if (isset($_SESSION['user_permissions']['list-conditional'])): ?>
+                                        <li>
+                                            <a class="dropdown-item" <?php SelectedMenu('list-conditional'); ?>
+                                                href="<?php echo INCLUDE_PATH; ?>list-conditional">Condicional
                                             </a>
                                         </li>
                                     <?php endif; ?>
@@ -587,6 +595,7 @@ if (isset($_GET['loggout'])) {
     <script src="<?php echo INCLUDE_JAVASCRIPT; ?>querys.js"></script>
     <script src="<?php echo INCLUDE_JAVASCRIPT; ?>inventary.js"></script>
     <script src="<?php echo INCLUDE_JAVASCRIPT; ?>create_portion.js"></script>
+    <script src="<?php echo INCLUDE_JAVASCRIPT; ?>conditional.js"></script>
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>

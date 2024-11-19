@@ -39,9 +39,64 @@ if (!empty($client_search)) {
     Searchs::searchClientsSales($client_search, $sql);
 }
 
+if (isset($_POST['product_list']) && $_POST['product_list'] === 'true') {
+    Searchs::searchProduct($sql);
+}
+if (isset($_POST['client_list']) && $_POST['client_list'] === 'true') {
+    Searchs::searchClients($sql);
+}
+if (isset($_POST['users_list']) && $_POST['users_list'] === 'true') {
+    Searchs::searchUsers($sql);
+}
+
+
 class Searchs
 {
+    public static function searchUsers($sql)
+    {
+        try {
 
+            $exec = $sql->prepare("SELECT name FROM users");
+            $exec->execute();
+            $users = $exec->fetchAll();
+
+            if ($users) {
+                echo json_encode($users);
+            }
+
+        } catch (Exception $e) {
+            echo '<p>Erro na execução da consulta: ' . htmlspecialchars($e->getMessage(), ENT_QUOTES) . '</p>';
+        }
+    }
+    public static function searchClients($sql)
+    {
+        try {
+
+            $exec = $sql->prepare("SELECT name FROM clients");
+            $exec->execute();
+            $clients = $exec->fetchAll();
+
+            if ($clients) {
+                echo json_encode($clients);
+            }
+
+        } catch (Exception $e) {
+            echo '<p>Erro na execução da consulta: ' . htmlspecialchars($e->getMessage(), ENT_QUOTES) . '</p>';
+        }
+    }
+    public static function searchProduct($sql)
+    {
+        try {
+            $exec = $sql->prepare("SELECT id, name, stock_quantity, value_product FROM products");
+            $exec->execute();
+            $product = $exec->fetchAll(PDO::FETCH_ASSOC);
+
+            echo json_encode($product);
+
+        } catch (Exception $e) {
+            echo '<p>Erro na execução da consulta: ' . htmlspecialchars($e->getMessage(), ENT_QUOTES) . '</p>';
+        }
+    }
     public static function searchClientsSales($client_search, $sql)
     {
         try {
@@ -65,7 +120,6 @@ class Searchs
             echo '<p>Erro na execução da consulta: ' . htmlspecialchars($e->getMessage(), ENT_QUOTES) . '</p>';
         }
     }
-
     public static function searchProductSales($product_search, $sql)
     {
         try {
@@ -78,7 +132,7 @@ class Searchs
                 echo '<ul class="list-group">';
                 while ($product = $exec->fetch(PDO::FETCH_ASSOC)) {
                     echo '<li class="list-group-item bi-cursor" onclick="addProductToTable(\'' . htmlspecialchars($product['id'], ENT_QUOTES) . '\', \'' . htmlspecialchars($product['name'], ENT_QUOTES) . '\', ' . $product['value_product'] . ')">'
-                    . '<i class="bi bi-cursor" style="margin-right: 8px;"></i>'
+                        . '<i class="bi bi-cursor" style="margin-right: 8px;"></i>'
                         . htmlspecialchars($product['name'], ENT_QUOTES) . ' - R$ ' . number_format($product['value_product'], 2, ',', '.') . '</li>';
                 }
                 echo '</ul>';
@@ -90,7 +144,6 @@ class Searchs
             echo '<p>Erro na execução da consulta: ' . htmlspecialchars($e->getMessage(), ENT_QUOTES) . '</p>';
         }
     }
-
     public static function searchTable($search_query, $sql)
     {
         try {
@@ -110,15 +163,14 @@ class Searchs
             echo '<li>Erro na execução da consulta: ' . $e->getMessage() . '</li>';
         }
     }
-
     public static function searchRequest($search_query_request, $sql)
     {
         try {
             $exec = $sql->prepare("SELECT id, name, stock_quantity, value_product FROM products 
-                                   WHERE name LIKE :search_query_request 
-                                   OR stock_quantity LIKE :search_query_request 
-                                   OR id LIKE :search_query_request 
-                                   OR value_product LIKE :search_query_request");
+                                    WHERE name LIKE :search_query_request 
+                                    OR stock_quantity LIKE :search_query_request 
+                                    OR id LIKE :search_query_request 
+                                    OR value_product LIKE :search_query_request");
             $exec->bindValue(':search_query_request', '%' . $search_query_request . '%', PDO::PARAM_STR);
             $exec->execute();
 
@@ -138,7 +190,6 @@ class Searchs
             echo '<li>Erro na execução da consulta: ' . $e->getMessage() . '</li>';
         }
     }
-
 }
 
 ?>
