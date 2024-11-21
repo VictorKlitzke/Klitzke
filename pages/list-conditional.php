@@ -35,11 +35,6 @@ if (!isset($_SESSION['user_permissions'][$page_permission]) || $_SESSION['user_p
       </thead>
 
       <tbody id="list-conditional" style="white-space: nowrap;">
-          <!-- <th>
-              <button class="btn btn-info">Editar</button>
-              <button class="btn btn-dark">Opções</button>
-              <button class="btn btn-success">Faturar</button>
-          </th> -->
       </tbody>
 
     </table>

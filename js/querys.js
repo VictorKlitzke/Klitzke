@@ -28,7 +28,8 @@ const menuMapping = {
   "list-inventary": "Lista Inventario",
   "register-portions": "Criar Porção",
   "register-companys": "Registrar Empresa",
-  "edit-companys": "Editar Empresa"
+  "edit-companys": "Editar Empresa",
+  "conditional-itens": "Faturar Condicional"
 };
 
 window.onload = function () {

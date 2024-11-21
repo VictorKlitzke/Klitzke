@@ -34,6 +34,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         'inventaryitens' => fn() => Lists::ListInventaryItens($sql, $input),
         'sumclosingbox' => fn() => Lists::SumBoxClosing($sql),
         'listconditional' => fn() => Lists::ListConditionals($sql),
+        'listconditionaldetails' => fn() => Lists::ListConditionalItens($sql),
     ];
 
     $matched = false;
@@ -52,6 +53,33 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 class lists
 {
+    public static function ListConditionalItens($sql) {
+        $today = date("Y-m-d H:i:s");
+        try {
+
+            $exec = $sql->prepare("select * from conditional_item");
+            $exec->execute();
+
+            $result_itens = $exec->fetchAll();
+
+            if (empty($result_itens)) {
+                Response::json(false, 'Erro ao pegar dados', $today);
+                return;
+            }
+
+            echo json_encode([
+                'success' => 'true',
+                'result_itens' => $result_itens
+            ]);
+
+        } catch (Exception $e) {
+            http_response_code(500);
+            echo json_encode([
+                'success' => false,
+                'message' => 'Erro no banco de dados: ' . $e->getMessage()
+            ]);
+        }
+    }
     public static function ListConditionals($sql) {
         $today = date('Y-m-d H:i:s');
         try {

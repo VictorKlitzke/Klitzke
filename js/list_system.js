@@ -14,7 +14,6 @@ window.onload = loadValuesFromLocalStorage;
 window.onload = AddVariationValues();
 window.onload = calculateTotalsListAPrazo();
 window.onload = ListInventary();
-window.onload = ListConditional();
 
 document.addEventListener('DOMContentLoaded', function () {
     ListDetailsAprazo();
@@ -474,111 +473,190 @@ async function InativarUsers(button) {
     });
 }
 
-async function ListConditional() {
-    try {
-        let url = `${BASE_CONTROLLERS}lists.php`;
+document.addEventListener('DOMContentLoaded', function () {
+    ListConditional();
+    async function ListConditional() {
+        try {
+            let url = `${BASE_CONTROLLERS}lists.php`;
 
-        const response = await fetch(url, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ type: 'listconditional' })
-        });
-
-        if (!response.ok) {
-            showMessage('Erro ao fazer requisição do servidor ' + response.statusText, 'warning');
-        }
-
-        const data = await response.json();
-
-        if (data.success) {
-            const conditional = data.result_condicional;
-            const ConditionalList = document.getElementById('list-conditional');
-
-            console.log(conditional);
-
-            ConditionalList.innerHTML = '';
-
-            conditional.forEach(c => {
-                const row = document.createElement('tr')
-
-                const idCell = document.createElement('th');
-                idCell.textContent = c.id;
-                row.appendChild(idCell);
-
-                const clientCell = document.createElement('th');
-                clientCell.textContent = c.clients;
-                row.appendChild(clientCell);
-
-                const userCell = document.createElement('th');
-                userCell.textContent = c.users;
-                row.appendChild(userCell);
-
-                const statusCell = document.createElement('th');
-                statusCell.textContent = c.status;
-                row.appendChild(statusCell);
-
-                const dateCell = document.createElement('th');
-                const [dateTransaction, timeTransaction] = c.creation_date.split(' ');
-                const [year, month, day] = dateTransaction.split('-');
-                const [hour, minute, second] = timeTransaction.split(':');
-                dateCell.textContent = `${day}/${month}/${year} ${hour}:${minute}:${second}`;
-                row.appendChild(dateCell);
-
-                const dateReturnCell = document.createElement('th');
-                const [dateTransaction1, timeTransaction1] = c.date_return.split(' ');
-                const [year1, month1, day1] = dateTransaction1.split('-');
-                const [hour1, minute1, second1] = timeTransaction1.split(':');
-                dateReturnCell.textContent = `${day1}/${month1}/${year1} ${hour1}:${minute1}:${second1}`;
-                row.appendChild(dateReturnCell);
-
-                const subTotalCell = document.createElement('th');
-                const subtotal = numberFormat(c.total);
-                subTotalCell.textContent = subtotal;
-                row.appendChild(subTotalCell);
-
-                const discountCell = document.createElement('th');
-                const discount = numberFormat(c.discount);
-                discountCell.textContent = discount;
-                row.appendChild(discountCell);
-
-                const totalCell = document.createElement('th');
-                const total_final = numberFormat(c.final_total);
-                totalCell.textContent = total_final;
-                row.appendChild(totalCell);
-
-                const buttonCell = document.createElement('th');
-
-                const faturarButton = document.createElement('button');
-                faturarButton.classList.add('btn', 'btn-success', 'btn-sm', 'me-1');
-                faturarButton.textContent = 'Faturar';
-                faturarButton.addEventListener('click', () => faturar(c.id));
-                buttonCell.appendChild(faturarButton);
-
-                const cancelarButton = document.createElement('button');
-                cancelarButton.classList.add('btn', 'btn-danger', 'btn-sm', 'me-1');
-                cancelarButton.textContent = 'Cancelar';
-                cancelarButton.addEventListener('click', () => cancelar(c.id));
-                buttonCell.appendChild(cancelarButton);
-
-                const editarButton = document.createElement('button');
-                editarButton.classList.add('btn', 'btn-warning', 'btn-sm');
-                editarButton.textContent = 'Editar';
-                editarButton.addEventListener('click', () => editar(c.id));
-                buttonCell.appendChild(editarButton);
-
-                row.appendChild(buttonCell);
-
-                ConditionalList.appendChild(row);
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ type: 'listconditional' })
             });
-        } else {
-            showMessage('Erro ao buscar dados: ' + data.message, 'error')
+
+            if (!response.ok) {
+                showMessage('Erro ao fazer requisição do servidor ' + response.statusText, 'warning');
+            }
+
+            const data = await response.json();
+
+            if (data.success) {
+                const conditional = data.result_condicional;
+                const ConditionalList = document.getElementById('list-conditional');
+
+                console.log(conditional);
+
+                ConditionalList.innerHTML = '';
+
+                conditional.forEach(c => {
+                    const row = document.createElement('tr')
+
+                    const idCell = document.createElement('th');
+                    idCell.textContent = c.id;
+                    row.appendChild(idCell);
+
+                    const clientCell = document.createElement('th');
+                    clientCell.textContent = c.clients;
+                    row.appendChild(clientCell);
+
+                    const userCell = document.createElement('th');
+                    userCell.textContent = c.users;
+                    row.appendChild(userCell);
+
+                    const statusCell = document.createElement('th');
+                    statusCell.textContent = c.status;
+                    row.appendChild(statusCell);
+
+                    const dateCell = document.createElement('th');
+                    const [dateTransaction, timeTransaction] = c.creation_date.split(' ');
+                    const [year, month, day] = dateTransaction.split('-');
+                    const [hour, minute, second] = timeTransaction.split(':');
+                    dateCell.textContent = `${day}/${month}/${year} ${hour}:${minute}:${second}`;
+                    row.appendChild(dateCell);
+
+                    const dateReturnCell = document.createElement('th');
+                    const [dateTransaction1, timeTransaction1] = c.date_return.split(' ');
+                    const [year1, month1, day1] = dateTransaction1.split('-');
+                    const [hour1, minute1, second1] = timeTransaction1.split(':');
+                    dateReturnCell.textContent = `${day1}/${month1}/${year1} ${hour1}:${minute1}:${second1}`;
+                    row.appendChild(dateReturnCell);
+
+                    const subTotalCell = document.createElement('th');
+                    const subtotal = numberFormat(c.total);
+                    subTotalCell.textContent = subtotal;
+                    row.appendChild(subTotalCell);
+
+                    const discountCell = document.createElement('th');
+                    const discount = numberFormat(c.discount);
+                    discountCell.textContent = discount;
+                    row.appendChild(discountCell);
+
+                    const totalCell = document.createElement('th');
+                    const total_final = numberFormat(c.final_total);
+                    totalCell.textContent = total_final;
+                    row.appendChild(totalCell);
+
+                    const buttonCell = document.createElement('th');
+
+                    const faturarButton = document.createElement('button');
+                    faturarButton.classList.add('btn', 'btn-info', 'btn-sm', 'me-1');
+                    faturarButton.textContent = 'Mais Detalhes';
+                    faturarButton.addEventListener('click', () => ListConditionalItens(c.id));
+                    buttonCell.appendChild(faturarButton);
+
+                    const cancelarButton = document.createElement('button');
+                    cancelarButton.classList.add('btn', 'btn-danger', 'btn-sm', 'me-1');
+                    cancelarButton.textContent = 'Cancelar';
+                    cancelarButton.addEventListener('click', () => cancelar(c.id));
+                    buttonCell.appendChild(cancelarButton);
+
+                    const editarButton = document.createElement('button');
+                    editarButton.classList.add('btn', 'btn-warning', 'btn-sm');
+                    editarButton.textContent = 'Editar';
+                    editarButton.addEventListener('click', () => editar(c.id));
+                    buttonCell.appendChild(editarButton);
+
+                    row.appendChild(buttonCell);
+
+                    ConditionalList.appendChild(row);
+                });
+            } else {
+                showMessage('Erro ao buscar dados: ' + data.message, 'error')
+            }
+        } catch (error) {
+            console.log('Erro ao fazer requisição: ' + error)
         }
-    } catch (error) {
-        console.log('Erro ao fazer requisição: ' + error)
     }
-}
+
+    async function ListConditionalItens(id) {
+        if (!id) {
+            showMessage('Não foi encontrado a condicional', 'warning');
+            return;
+        }
+
+        try {
+            let url = `${BASE_CONTROLLERS}lists.php`;
+
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ type: 'listconditionaldetails' })
+            });
+
+            if (!response.ok) {
+                showMessage('Erro ao fazer requisição do servidor ' + response.statusText, 'warning');
+                return;
+            }
+
+            const data = await response.json();
+
+            if (data.success) {
+                const result_itens = data.result_itens;
+                const filterId = result_itens.filter(ci => {
+                    return ci.conditional_id === id
+                });
+
+                setTimeout(function () {
+                    const resultItensList = document.getElementById('conditional-itens');
+
+                    if (!resultItensList) {
+                        console.error('Elemento com o ID "conditional-itens" não foi encontrado no DOM.');
+                        return;
+                    }
+
+                    resultItensList.innerHTML = '';
+
+                    filterId.forEach(ci => {
+                        const row = document.createElement('tr');
+
+                        const idCell = document.createElement('th');
+                        idCell.textContent = ci.id;
+                        row.appendChild(idCell);
+
+                        const productCell = document.createElement('th');
+                        productCell.textContent = ci.product_id;
+                        row.appendChild(productCell);
+
+                        const quantityCell = document.createElement('th');
+                        quantityCell.textContent = ci.quantity;
+                        row.appendChild(quantityCell);
+
+                        const unitPriceCell = document.createElement('th');
+                        unitPriceCell.textContent = numberFormat(ci.unit_price);
+                        row.appendChild(unitPriceCell);
+
+                        const subtotalCell = document.createElement('th');
+                        subtotalCell.textContent = numberFormat(ci.subtotal);
+                        row.appendChild(subtotalCell);
+
+                        resultItensList.appendChild(row);
+                    });
+                }, 500); 
+            }
+
+            window.open('http://localhost:3000/Klitzke/conditional-itens');
+
+        } catch (error) {
+            showMessage('Erro ao fazer requisição: ' + error, 'error');
+        }
+    }
+})
+
 async function ListForn() {
     try {
         let url = `${BASE_CONTROLLERS}lists.php`;
