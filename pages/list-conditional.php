@@ -21,35 +21,25 @@ if (!isset($_SESSION['user_permissions'][$page_permission]) || $_SESSION['user_p
     <table class="table table-striped table-hover align-middle text-center bg-white rounded-3 shadow-sm">
       <thead class="table-dark text-light">
         <tr>
+          <th escope="col">#</th>
           <th escope="col">Cliente</th>
-          <th escope="col">CNPJ</th>
-          <th escope="col">Escrição Estadual</th>
-          <th escope="col">Email</th>
-          <th escope="col">Contato</th>
-          <th escope="col">Cidade</th>
-          <th escope="col">Endereço</th>
-          <th escope="col">Estado</th>
+          <th escope="col">Vendedor</th>
+          <th escope="col">Status</th>
+          <th escope="col">Data</th>
+          <th escope="col">Data de devolução</th>
+          <th escope="col">Sub Total</th>
+          <th escope="col">Desconto</th>
+          <th escope="col">Total</th>
           <th escope="col">Ações</th>
         </tr>
       </thead>
 
-      <tbody style="white-space: nowrap;">
-        <tr>
-          <th><?php echo htmlspecialchars($value['name']); ?></th>
-          <th><?php echo htmlspecialchars($value['cnpj']); ?></th>
-          <th><?php echo htmlspecialchars($value['state_registration']); ?></th>
-          <th><?php echo htmlspecialchars($value['email']); ?></th>
-          <th><?php echo htmlspecialchars($value['phone']); ?></th>
-          <th><?php echo htmlspecialchars($value['city']); ?></th>
-          <th><?php echo htmlspecialchars($value['address']); ?></th>
-          <th><?php echo htmlspecialchars($value['state']); ?></th>
-
-          <th>
+      <tbody id="list-conditional" style="white-space: nowrap;">
+          <!-- <th>
               <button class="btn btn-info">Editar</button>
               <button class="btn btn-dark">Opções</button>
               <button class="btn btn-success">Faturar</button>
-          </th>
-        </tr>
+          </th> -->
       </tbody>
 
     </table>

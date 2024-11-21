@@ -21,33 +21,78 @@ $type = isset($input['type']) ? $input['type'] : null;
 $today = date('Y-m-d H:i:s');
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    if ($type === 'listproduct') {
-        Lists::ListProducts($sql);
-    } else if ($type === 'listforn') {
-        Lists::ListForn($sql);
-    } else if ($type === 'listbuyrequest') {
-        Lists::ListBuyRequest($sql, $input);
-    } else if ($type === 'listvariationvalues') {
-        lists::ListVariationValues($sql, $input);
-    } else if ($type === 'listFinancialControl') {
-        lists::ListFinancialControl($sql, $input);
-    } else if ($type === 'listFinancialControlDetals') {
-        lists::ListFinancialControlDetals($sql, $input);
-    } else if ($type === 'sumcontrolfinancial') {
-        lists::SumFinancialControl($sql);
-    } else if ($type === 'sumUsersSales') {
-        lists::UsersSumSales($sql);
-    } else if ($type === 'listinventary') {
-        lists::ListInventary($sql);
-    } else if ($type === 'inventaryitens') {
-        lists::ListInventaryItens($sql, $input);
-    } else if ($type === 'sumclosingbox') {
-        lists::SumBoxClosing($sql);
+    $handlers = [
+        'listproduct' => fn() => Lists::ListProducts($sql),
+        'listforn' => fn() => Lists::ListForn($sql),
+        'listbuyrequest' => fn() => Lists::ListBuyRequest($sql, $input),
+        'listvariationvalues' => fn() => Lists::ListVariationValues($sql, $input),
+        'listFinancialControl' => fn() => Lists::ListFinancialControl($sql, $input),
+        'listFinancialControlDetals' => fn() => Lists::ListFinancialControlDetals($sql, $input),
+        'sumcontrolfinancial' => fn() => Lists::SumFinancialControl($sql),
+        'sumUsersSales' => fn() => Lists::UsersSumSales($sql),
+        'listinventary' => fn() => Lists::ListInventary($sql),
+        'inventaryitens' => fn() => Lists::ListInventaryItens($sql, $input),
+        'sumclosingbox' => fn() => Lists::SumBoxClosing($sql),
+        'listconditional' => fn() => Lists::ListConditionals($sql),
+    ];
+
+    $matched = false;
+    foreach ($handlers as $key => $value) {
+        if ($type === $key) {
+            $value();
+            $matched = true;
+            break;
+        }
+    }
+
+    if (!$matched) {
+        Response::json(false, 'Tipo type não encontrado', $today);
     }
 }
 
 class lists
 {
+    public static function ListConditionals($sql) {
+        $today = date('Y-m-d H:i:s');
+        try {
+
+            $exec = $sql->Prepare("SELECT 
+                                    c.id,
+                                    c.creation_date,
+                                    c.date_return,
+                                    c.status,
+                                    c.total,
+                                    c.discount,
+                                    c.final_total,
+                                    c.note,
+                                    u.name AS users,
+                                    c2.name AS clients
+                                FROM 
+                                    conditional c 
+                                    INNER JOIN users u ON u.id = c.user_id 
+                                    INNER JOIN clients c2 ON c2.id = c.client_id");
+            $exec->execute();
+
+            $result = $exec->fetchAll(PDO::FETCH_ASSOC);
+
+            if (empty($result)) {
+                Response::json(false, 'Erro ao buscar condicional', $today);
+                return; 
+            }
+
+            echo json_encode([
+                'success' => 'true',
+                'result_condicional' => $result
+            ]);
+
+        } catch (Exception $e) {
+            http_response_code(500);
+            echo json_encode([
+                'success' => false,
+                'message' => 'Erro no banco de dados: ' . $e->getMessage()
+            ]);
+        }
+    }
     public static function SumBoxClosing($sql)
     {
         try {

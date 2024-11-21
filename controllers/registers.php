@@ -69,52 +69,43 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $response_portion = $data;
     $response_portion_product = $data;
     $response_invoice = $data;
+    $response_cond = $data;
 
-    if (isset($data['type'])) {
-        if ($data['type'] == 'users') {
-            Register::RegisterUsers($sql, $response_users, $user_id);
-        } else if ($data['type'] == 'table_request') {
-            Register::RegisterTableRequest($sql, $response_table, $user_id);
-        } else if ($data['type'] == 'account') {
-            Register::RegisterAccount($sql, $response_account, $user_id);
-        } else if ($data['type'] == 'forn') {
-            Register::RegisterForn($sql, $response_forn, $user_id);
-        } else if ($data['type'] == 'clients') {
-            Register::RegisterClient($sql, $response_clients, $user_id);
-        } else if ($data['type'] == 'products') {
-            Register::RegisterProducts($sql, $response_products, $user_id);
-        } else if ($data['type'] == 'company') {
-            Register::RegisterCompany($sql, $response_company, $user_id);
-        } else if ($data['type'] == 'boxpdv') {
-            Register::RegisterBoxPdv($sql, $response_boxpdv, $user_id);
-        } else if ($data['type'] == 'sangriapdv') {
-            Register::RegisterSangria($sql, $response_sangria, $user_id);
-        } else if ($data['type'] == 'multiply') {
-            Register::RegisterMultiply($sql, $response_multiply, $user_id);
-        } else if ($data['type'] == 'RequestEmail') {
-            Register::SendRequestEmail($sql, $response_email, $user_id);
-        } else if ($data['type'] == 'variation') {
-            Register::SendAddVariationValues($sql, $response_variation, $user_id);
-        } else if ($data['type'] == 'registerAccountsReceivable') {
-            Register::WriteAccountsReceivable($sql, $response_financial_control, $user_id, $today);
-        } else if ($data['type'] == 'AccountsPayable') {
-            Register::RegisterAccountsPayable($sql, $response_accounts_payable, $user_id, $today);
-        } else if ($data['type'] == 'addaccessmenu') {
-            Register::AddMenuAccess($response_add_access_menu, $user_id, $sql);
-        } else if ($data['type'] == 'createinventary') {
-            Register::RegisterCreateInventary($response_inventary, $sql, $user_id, $today);
-        } else if ($data['type'] === 'createinventaryitens') {
-            Register::RegisterUpdateInventary($response_intentary_itens, $sql, $user_id, $today);
-        } else if ($data['type'] === 'submitReaopenBoxPdv') {
-            Register::RegisterReopenBox($response_reopen_boxpdv, $sql, $user_id, $today);
-        } else if ($data['type'] === 'createportion') {
-            Register::RegisterPortion($response_portion, $sql, $user_id, $today);
-        } else if ($data['type'] === 'createproductsportion') {
-            Register::RegisterPortionProduct($response_portion_product, $sql, $user_id, $today);
-        } else if ($data['type'] === 'invoice') {
-            Register::RegisterDisplayInvoice($response_invoice, $sql, $user_id, $today);
+    $condicions = [
+        'users' => fn() => Register::RegisterUsers($sql, $response_users, $user_id),
+        'table_request' => fn() => Register::RegisterTableRequest($sql, $response_table, $user_id),
+        'account' => fn() => Register::RegisterAccount($sql, $response_account, $user_id),
+        'forn' => fn() => Register::RegisterForn($sql, $response_forn, $user_id),
+        'clients' => fn() => Register::RegisterClient($sql, $response_clients, $user_id),
+        'products' => fn() => Register::RegisterProducts($sql, $response_products, $user_id),
+        'company' => fn() => Register::RegisterCompany($sql, $response_company, $user_id),
+        'boxpdv' => fn() => Register::RegisterBoxPdv($sql, $response_boxpdv, $user_id),
+        'sangriapdv' => fn() => Register::RegisterSangria($sql, $response_sangria, $user_id),
+        'multiply' => fn() => Register::RegisterMultiply($sql, $response_multiply, $user_id),
+        'RequestEmail' => fn() => Register::SendRequestEmail($sql, $response_email, $user_id),
+        'variation' => fn() => Register::SendAddVariationValues($sql, $response_variation, $user_id),
+        'registerAccountsReceivable' => fn() => Register::WriteAccountsReceivable($sql, $response_financial_control, $user_id, $today),
+        'AccountsPayable' => fn() => Register::RegisterAccountsPayable($sql, $response_accounts_payable, $user_id, $today),
+        'addaccessmenu' => fn() => Register::AddMenuAccess($response_add_access_menu, $user_id, $sql),
+        'createinventary' => fn() => Register::RegisterCreateInventary($response_inventary, $sql, $user_id, $today),
+        'createinventaryitens' => fn() => Register::RegisterUpdateInventary($response_intentary_itens, $sql, $user_id, $today),
+        'submitReaopenBoxPdv' => fn() => Register::RegisterReopenBox($response_reopen_boxpdv, $sql, $user_id, $today),
+        'createportion' => fn() => Register::RegisterPortion($response_portion, $sql, $user_id, $today),
+        'createproductsportion' => fn() => Register::RegisterPortionProduct($response_portion_product, $sql, $user_id, $today),
+        'invoice' => fn() => Register::RegisterDisplayInvoice($response_invoice, $sql, $user_id, $today),
+        'registerconditional' => fn() => Register::RegisterConditional($response_cond, $user_id, $sql, $today),
+    ];
+
+    $matched = false;
+    foreach ($condicions as $type => $value) {
+        if ($data['type'] === $type) {
+            $value();
+            $matched = true;
+            break;
         }
-    } else {
+    }
+
+    if (!$matched) {
         Response::json(false, 'Tipo type não encontrado', $today);
     }
 }
@@ -122,6 +113,58 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 class Register
 {
 
+    public static function RegisterConditional($response_cond, $user_id, $sql, $today) {
+        try {
+            $sql->beginTransaction();
+
+            $status = 'Em Aberto';
+    
+            $stmtHeader = $sql->prepare("
+                INSERT INTO conditional (creation_date, date_return, total, discount, final_total, note, user_id, client_id, status) 
+                VALUES (:date_now, :date_return, :subtotal, :discount, :total, :obs, :user_id, :client_id, :status)
+            ");
+    
+            $stmtHeader->bindValue(':date_now', $response_cond['dateNow']);
+            $stmtHeader->bindValue(':date_return', $response_cond['dateReturn']);
+            $stmtHeader->bindValue(':subtotal', $response_cond['subTotal']);
+            $stmtHeader->bindValue(':discount', $response_cond['discount']);
+            $stmtHeader->bindValue(':total', $response_cond['total']);
+            $stmtHeader->bindValue(':obs', $response_cond['obs']);
+            $stmtHeader->bindValue(':user_id', $response_cond['UserId']);
+            $stmtHeader->bindValue(':client_id', $response_cond['ClientId']);
+            $stmtHeader->bindValue(':status', $status);
+    
+            $stmtHeader->execute();
+
+            $purchaseNoteId = $sql->lastInsertId();
+    
+            $stmtItems = $sql->prepare("
+                INSERT INTO conditional_item (conditional_id, product_id, quantity, unit_price, subtotal) 
+                VALUES (:conditional_id, :product_id, :quantity, :unit_price, :subtotal)
+            ");
+    
+            foreach ($response_cond['SelectedProducts'] as $product) {
+                $stmtItems->bindValue(':conditional_id', $purchaseNoteId);
+                $stmtItems->bindValue(':product_id', $product['ProductId']);
+                $stmtItems->bindValue(':quantity', $product['ProductQuantity']);
+                $stmtItems->bindValue(':unit_price', $product['ProductPrice']);
+                $stmtItems->bindValue(':subtotal', $product['ProductQuantity'] * $product['ProductPrice']);
+    
+                $stmtItems->execute();
+            }
+    
+            $sql->commit();
+    
+            $message_log = "Nota de compra inserida com sucesso";
+            Panel::LogAction($user_id, 'Nota de compra inserida', $message_log, $today);
+            Response::send(true, 'Nota de compra inserida com sucesso', $today);
+    
+        } catch (Exception $e) {
+            $sql->rollBack();
+            echo 'Erro ao registrar a nota de compra: ' . $e->getMessage();
+        }
+    }
+    
     public static function RegisterDisplayInvoice($response_invoice, $sql, $user_id, $today)
     {
         try {
@@ -139,7 +182,7 @@ class Register
                 if ($product) {
                     $product_id = $product['id'];
                     $new_quantity = $product['stock_quantity'] + $item['quantity_product'];
-                    
+
                     $query = "
                         UPDATE products
                         SET stock_quantity = :stock_quantity

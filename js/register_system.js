@@ -1331,8 +1331,6 @@ async function RegisterDisplayInvoice() {
         products: values
     };
 
-    console.log(responseDisplayInvoice);
-
     try {
         let url = `http://localhost:3000/klitzke/controllers/registers.php`;
 

@@ -56,7 +56,7 @@ class Searchs
     {
         try {
 
-            $exec = $sql->prepare("SELECT name FROM users");
+            $exec = $sql->prepare("SELECT id, name FROM users");
             $exec->execute();
             $users = $exec->fetchAll();
 
@@ -72,7 +72,7 @@ class Searchs
     {
         try {
 
-            $exec = $sql->prepare("SELECT name FROM clients");
+            $exec = $sql->prepare("SELECT id, name FROM clients");
             $exec->execute();
             $clients = $exec->fetchAll();
 

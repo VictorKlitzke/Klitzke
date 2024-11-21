@@ -9,72 +9,51 @@
         <!-- Linha 1: Cliente e Datas -->
         <div class="row mb-3">
           <div class="col-md-6">
-            <label for="cliente" class="form-label">Cliente <span class="text-danger">*</span></label>
+            <label class="form-label">Cliente <span class="text-danger">*</span></label>
             <select id="clients" class="form-select" required>
               <option value="" disabled selected>Selecione o cliente</option>
             </select>
           </div>
           <div class="col-md-3">
-            <label for="data" class="form-label">Data <span class="text-danger">*</span></label>
-            <input type="date" id="data" class="form-control" required>
+            <label class="form-label">Data <span class="text-danger">*</span></label>
+            <input type="date" id="date-now" class="form-control" required>
           </div>
           <div class="col-md-3">
-            <label for="dataDevolucao" class="form-label">Prev. de Devolução <span class="text-danger">*</span></label>
-            <input type="date" id="dataDevolucao" class="form-control" required>
+            <label class="form-label">Prev. de Devolução <span class="text-danger">*</span></label>
+            <input type="date" id="date-return" class="form-control" required>
           </div>
         </div>
 
-        <!-- Linha 2: Status e Vendedor -->
+        <!-- Linha 2: Vendedor -->
         <div class="row mb-3">
-          <div class="col-md-8">
+          <div class="col-md-12">
             <label for="cliente" class="form-label">Vendedor/Responsável <span class="text-danger">*</span></label>
             <select id="users" class="form-select" required>
               <option disabled selected>Selecione o Responsável</option>
             </select>
           </div>
-          <div class="col-md-4">
-            <label class="form-label">Status <span class="text-danger">*</span></label>
-            <div class="d-flex align-items-center gap-3">
-              <div class="form-check">
-                <input class="form-check-input" type="radio" name="status" id="statusAberto" value="aberto" checked>
-                <label class="form-check-label" for="statusAberto">Aberto</label>
-              </div>
-              <div class="form-check">
-                <input class="form-check-input" type="radio" name="status" id="statusAndamento" value="emAndamento">
-                <label class="form-check-label" for="statusAndamento">Em Andamento</label>
-              </div>
-              <div class="form-check">
-                <input class="form-check-input" type="radio" name="status" id="statusConcluido" value="concluido">
-                <label class="form-check-label" for="statusConcluido">Concluído</label>
-              </div>
-            </div>
-          </div>
         </div>
 
         <!-- Linha 3: Valores -->
         <div class="row mb-3">
-          <div class="col-md-3">
+          <div class="col-md-4">
             <label for="subtotal" class="form-label">R$ Sub:</label>
-            <input type="number" id="subtotal" class="form-control" placeholder="0,00" disabled>
+            <input id="sub-total" oninput="updateSubTotal()" class="form-control" placeholder="0,00" disabled>
           </div>
-          <div class="col-md-3">
-            <label for="frete" class="form-label">R$ Frete:</label>
-            <input type="number" id="frete" class="form-control" placeholder="0,00">
-          </div>
-          <div class="col-md-3">
-            <label for="desconto" class="form-label">R$ Desconto:</label>
-            <input type="number" id="desconto" class="form-control" placeholder="0,00">
-          </div>
-          <div class="col-md-3">
+          <div class="col-md-4">
+            <label class="form-label">R$ Desconto:</label>
+            <input type="text" id="discount" class="form-control" value="0,00" oninput="updateTotal()">
+            </div>
+          <div class="col-md-4">
             <label for="total" class="form-label">R$ Total:</label>
-            <span id="total" class="form-control" disabled>0,00</span>
+            <input id="total" oninput="updateTotal()" class="form-control" disabled placeholder="0,00"/>
           </div>
         </div>
 
         <!-- Linha 4: Observações -->
         <div class="mb-3">
           <label for="observacao" class="form-label">Observação</label>
-          <textarea id="observacao" class="form-control" rows="3" placeholder="Digite alguma observação"></textarea>
+          <textarea id="obs" class="form-control" rows="3" placeholder="Digite alguma observação"></textarea>
         </div>
 
         <!-- Linha 5: Produtos -->
@@ -102,7 +81,7 @@
             data-bs-target="#addProductModal">
             <i class="bi bi-plus-lg"></i> Adicionar Produto
           </button>
-          <button type="submit" class="btn btn-success"><i class="bi bi-save"></i> Salvar</button>
+          <button onclick="RegisterConditional()" type="button" class="btn btn-success"><i class="bi bi-save"></i> Salvar</button>
           <button type="reset" class="btn btn-secondary"><i class="bi bi-x-circle"></i> Cancelar</button>
         </div>
       </form>
@@ -110,7 +89,6 @@
   </div>
 </div>
 
-<!-- Modal Adicionar Produto -->
 <div class="modal fade" id="addProductModal" tabindex="-1" aria-labelledby="addProductModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">

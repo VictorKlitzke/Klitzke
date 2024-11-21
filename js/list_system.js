@@ -14,6 +14,7 @@ window.onload = loadValuesFromLocalStorage;
 window.onload = AddVariationValues();
 window.onload = calculateTotalsListAPrazo();
 window.onload = ListInventary();
+window.onload = ListConditional();
 
 document.addEventListener('DOMContentLoaded', function () {
     ListDetailsAprazo();
@@ -473,6 +474,111 @@ async function InativarUsers(button) {
     });
 }
 
+async function ListConditional() {
+    try {
+        let url = `${BASE_CONTROLLERS}lists.php`;
+
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ type: 'listconditional' })
+        });
+
+        if (!response.ok) {
+            showMessage('Erro ao fazer requisição do servidor ' + response.statusText, 'warning');
+        }
+
+        const data = await response.json();
+
+        if (data.success) {
+            const conditional = data.result_condicional;
+            const ConditionalList = document.getElementById('list-conditional');
+
+            console.log(conditional);
+
+            ConditionalList.innerHTML = '';
+
+            conditional.forEach(c => {
+                const row = document.createElement('tr')
+
+                const idCell = document.createElement('th');
+                idCell.textContent = c.id;
+                row.appendChild(idCell);
+
+                const clientCell = document.createElement('th');
+                clientCell.textContent = c.clients;
+                row.appendChild(clientCell);
+
+                const userCell = document.createElement('th');
+                userCell.textContent = c.users;
+                row.appendChild(userCell);
+
+                const statusCell = document.createElement('th');
+                statusCell.textContent = c.status;
+                row.appendChild(statusCell);
+
+                const dateCell = document.createElement('th');
+                const [dateTransaction, timeTransaction] = c.creation_date.split(' ');
+                const [year, month, day] = dateTransaction.split('-');
+                const [hour, minute, second] = timeTransaction.split(':');
+                dateCell.textContent = `${day}/${month}/${year} ${hour}:${minute}:${second}`;
+                row.appendChild(dateCell);
+
+                const dateReturnCell = document.createElement('th');
+                const [dateTransaction1, timeTransaction1] = c.date_return.split(' ');
+                const [year1, month1, day1] = dateTransaction1.split('-');
+                const [hour1, minute1, second1] = timeTransaction1.split(':');
+                dateReturnCell.textContent = `${day1}/${month1}/${year1} ${hour1}:${minute1}:${second1}`;
+                row.appendChild(dateReturnCell);
+
+                const subTotalCell = document.createElement('th');
+                const subtotal = numberFormat(c.total);
+                subTotalCell.textContent = subtotal;
+                row.appendChild(subTotalCell);
+
+                const discountCell = document.createElement('th');
+                const discount = numberFormat(c.discount);
+                discountCell.textContent = discount;
+                row.appendChild(discountCell);
+
+                const totalCell = document.createElement('th');
+                const total_final = numberFormat(c.final_total);
+                totalCell.textContent = total_final;
+                row.appendChild(totalCell);
+
+                const buttonCell = document.createElement('th');
+
+                const faturarButton = document.createElement('button');
+                faturarButton.classList.add('btn', 'btn-success', 'btn-sm', 'me-1');
+                faturarButton.textContent = 'Faturar';
+                faturarButton.addEventListener('click', () => faturar(c.id));
+                buttonCell.appendChild(faturarButton);
+
+                const cancelarButton = document.createElement('button');
+                cancelarButton.classList.add('btn', 'btn-danger', 'btn-sm', 'me-1');
+                cancelarButton.textContent = 'Cancelar';
+                cancelarButton.addEventListener('click', () => cancelar(c.id));
+                buttonCell.appendChild(cancelarButton);
+
+                const editarButton = document.createElement('button');
+                editarButton.classList.add('btn', 'btn-warning', 'btn-sm');
+                editarButton.textContent = 'Editar';
+                editarButton.addEventListener('click', () => editar(c.id));
+                buttonCell.appendChild(editarButton);
+
+                row.appendChild(buttonCell);
+
+                ConditionalList.appendChild(row);
+            });
+        } else {
+            showMessage('Erro ao buscar dados: ' + data.message, 'error')
+        }
+    } catch (error) {
+        console.log('Erro ao fazer requisição: ' + error)
+    }
+}
 async function ListForn() {
     try {
         let url = `${BASE_CONTROLLERS}lists.php`;
@@ -1105,7 +1211,7 @@ async function ListAPrazo(searchTermFinancialControl = '') {
                 const value = parseFloat(fs.total_value) || 0;
                 totalValueCell.textContent = `R$ ${numberFormat(value)}`;
                 allSalesRow.appendChild(totalValueCell);
-                
+
                 const UserCell = document.createElement('td');
                 UserCell.textContent = fs.user || 'Sem Usuário';
                 allSalesRow.appendChild(UserCell);
@@ -1162,20 +1268,20 @@ async function ListDetailsAprazo(id_detals) {
         if (data.success) {
             const financialcontroldetals = data.financialcontroldetals;
             const financialcontrolDetalsList = document.querySelector('.table-financial-control-detals');
-    
+
             financialcontrolDetalsList.innerHTML = '';
-    
+
             if (!Array.isArray(financialcontroldetals)) {
                 throw new Error('financialcontrol não é um array');
             }
-    
+
             financialcontroldetals.forEach(fp => {
                 const row = document.createElement('tr');
-    
+
                 if (fp.status === 'paga') {
                     row.classList.add('table-success');
                 }
-    
+
                 const selectCell = document.createElement('td');
                 const checkbox = document.createElement('input');
                 checkbox.type = 'checkbox';
@@ -1184,33 +1290,33 @@ async function ListDetailsAprazo(id_detals) {
                 checkbox.dataset.id = fp.sale_id;
                 selectCell.appendChild(checkbox);
                 row.appendChild(selectCell);
-    
+
                 const idCell = document.createElement('td');
                 idCell.textContent = fp.id;
                 row.appendChild(idCell);
-    
+
                 const DateVencimentCell = document.createElement('td');
                 const dateString = fp.date_venciment;
                 const [year, month, day] = dateString.split('-');
                 const formattedDate = `${day}/${month}/${year}`;
                 DateVencimentCell.textContent = formattedDate;
                 row.appendChild(DateVencimentCell);
-    
+
                 const ValuePagamentCell = document.createElement('td');
                 ValuePagamentCell.textContent = fp.value_aprazo;
                 row.appendChild(ValuePagamentCell);
-    
+
                 const StatusCell = document.createElement('td');
                 StatusCell.textContent = fp.status;
                 row.appendChild(StatusCell);
-    
+
                 const TypeCell = document.createElement('td');
                 TypeCell.textContent = fp.type;
                 row.appendChild(TypeCell);
-    
+
                 financialcontrolDetalsList.appendChild(row);
             });
-    
+
         } else {
             showMessage('Erro ao listar solicitações', 'error');
         }
