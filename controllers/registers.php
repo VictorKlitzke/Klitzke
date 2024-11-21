@@ -164,7 +164,6 @@ class Register
             echo 'Erro ao registrar a nota de compra: ' . $e->getMessage();
         }
     }
-    
     public static function RegisterDisplayInvoice($response_invoice, $sql, $user_id, $today)
     {
         try {
@@ -1278,6 +1277,7 @@ class Register
         $model = filter_var($response_products['model'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
         $brand = filter_var($response_products['brand'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
         $size = filter_var($response_products['size'], FILTER_SANITIZE_NUMBER_INT);
+        $units = filter_var($response_products['units'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
 
         if (!$name || !$quantity || !$value_product || !$cost_value || !$stock_quantity) {
             Response::json(false, 'Campos Invalidos', $today);
@@ -1295,9 +1295,9 @@ class Register
             $sql->BeginTransaction();
 
             $exec = $sql->prepare("INSERT INTO products (name, quantity, stock_quantity, barcode, value_product, 
-                                    cost_value, reference, model, brand, flow, show_on_page, size, invoice) 
+                                    cost_value, reference, model, brand, flow, show_on_page, size, invoice, units) 
                             VALUES (:name, :quantity, :stock_quantity, :barcode, :value_product, :cost_value, 
-                            :reference, :model, :brand, :flow, :show_on_page, :size, :invoice)");
+                            :reference, :model, :brand, :flow, :show_on_page, :size, :invoice, :units)");
 
             $exec->bindParam(':name', $name);
             $exec->bindParam(':quantity', $quantity);
@@ -1312,6 +1312,7 @@ class Register
             $exec->bindParam(':show_on_page', $show_on_page);
             $exec->bindParam(':size', $size);
             $exec->bindParam(':invoice', $invoice);
+            $exec->bindParam(':units', $units);
             $exec->execute();
 
             $lastSaleId = $sql->lastInsertId();

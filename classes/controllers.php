@@ -152,7 +152,7 @@ class Controllers
     public static function SelectAll($name_table)
     {
         $sql = Db::Connection();
-        $exec = $sql->prepare("SELECT * FROM $name_table ORDER BY id ASC");
+        $exec = $sql->prepare("SELECT * FROM $name_table ORDER BY id DESC");
         $exec->execute();
 
         return $exec->fetchAll(PDO::FETCH_ASSOC);

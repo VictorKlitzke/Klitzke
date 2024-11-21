@@ -475,6 +475,7 @@ async function InativarUsers(button) {
 
 document.addEventListener('DOMContentLoaded', function () {
     ListConditional();
+    
     async function ListConditional() {
         try {
             let url = `${BASE_CONTROLLERS}lists.php`;
@@ -608,7 +609,7 @@ document.addEventListener('DOMContentLoaded', function () {
             if (data.success) {
                 const result_itens = data.result_itens;
                 const filterId = result_itens.filter(ci => {
-                    return ci.conditional_id === id
+                    return ci.conditional_id === id;
                 });
 
                 setTimeout(function () {
@@ -646,16 +647,18 @@ document.addEventListener('DOMContentLoaded', function () {
 
                         resultItensList.appendChild(row);
                     });
+
+                    window.open('http://localhost:3000/Klitzke/conditional-itens');
                 }, 500); 
             }
-
-            window.open('http://localhost:3000/Klitzke/conditional-itens');
 
         } catch (error) {
             showMessage('Erro ao fazer requisição: ' + error, 'error');
         }
     }
+
 })
+
 
 async function ListForn() {
     try {

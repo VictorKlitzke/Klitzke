@@ -816,6 +816,7 @@ const getFieldsProducts = () => {
             model: document.getElementById('model').value,
             brand: document.getElementById('brand').value,
             size: document.getElementById('size').value,
+            units: document.getElementById('units').value,
             flow: flowFile,
         },
         inputs: {
@@ -829,6 +830,7 @@ const getFieldsProducts = () => {
             model: document.getElementById('model'),
             brand: document.getElementById('brand'),
             size: document.getElementById('size'),
+            units: document.getElementById('units'),
             flow: flowElement,
         }
     }
@@ -869,6 +871,17 @@ async function RegisterProducts() {
         if (values.cost_value.length > values.value_product.length) inputs.cost_value.classList.add('error');
         setTimeout(() => {
             inputs.cost_value.classList.remove('error');
+        }, 3000);
+
+        return;
+    }
+
+    if (values.units === "") {
+        showMessage('Unidade não pode ser vazio!', 'warning');
+
+        if (values.units === "") inputs.units.classList.add('error');
+        setTimeout(() => {
+            inputs.units.classList.remove('error');
         }, 3000);
 
         return;
@@ -933,6 +946,7 @@ async function RegisterProducts() {
             model: values.model,
             brand: values.brand,
             size: values.size,
+            units: values.units,
             flow: imageBase64
         };
 

@@ -77,6 +77,20 @@ if (!isset($_SESSION['user_permissions'][$page_permission]) || $_SESSION['user_p
             <span id="size-error" class="error-message">Campo está invalido, Ajuste se possivel.</span>
         </div>
         <div class="col-md-6">
+            <label class="form-label text-dark">Unidade</label>
+            <select id="units" class="form-select form-select-sm">
+                <?php
+                $units = Controllers::SelectAll('units');
+
+                foreach ($units as $key => $value) {
+                    ?>
+                    <option <?php if ($value['id'] == @$_POST['units'])
+                        echo 'selected'; ?>value="<?php echo $value['symbol'] ?>"><?php echo $value['symbol']; ?></option>
+                <?php } ?>
+            </select>
+            <span id="units-error" class="error-message">Campo está invalido, Ajuste se possivel.</span>
+        </div>
+        <div class="col-md-12">
             <label class="form-label text-dark">Imagem do Produto</label>
             <input class="form-control border-dark" type="file" id="flow">
             <span id="flow-error" class="error-message">Campo está invalido, Ajuste se possivel.</span>

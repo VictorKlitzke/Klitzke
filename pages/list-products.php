@@ -40,6 +40,7 @@ $products = Controllers::SelectAll('products');
                             <th scope="col">Usuário cadastro</th>
                             <th scope="col">Modelo</th>
                             <th scope="col">Situação</th>
+                            <th scope="col">Unidade</th>
                             <th scope="col">Ações</th>
                         </tr>
                     </thead>
@@ -95,6 +96,7 @@ $products = Controllers::SelectAll('products');
                                     <?php } ?>
                                 </th>
                                 <th><?php echo htmlspecialchars($value['status_product']); ?></th>
+                                <th><?php echo htmlspecialchars($value['units']); ?></th>
                                 <th>
                                     <!-- <button onclick="ShowOnPage(this)" data-id="<?php echo $value['id']; ?>" class="btn btn-dark">
                                         Mostrar na pagina
