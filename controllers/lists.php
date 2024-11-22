@@ -57,7 +57,7 @@ class lists
         $today = date("Y-m-d H:i:s");
         try {
 
-            $exec = $sql->prepare("select * from conditional_item");
+            $exec = $sql->prepare("select ci.*, p.name as product from conditional_item ci inner join products p on p.id = ci.product_id");
             $exec->execute();
 
             $result_itens = $exec->fetchAll();

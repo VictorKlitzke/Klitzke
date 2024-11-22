@@ -229,9 +229,9 @@ const getFields = () => {
       dateReturn: document.getElementById('date-return').value,
       dateNow: document.getElementById('date-now').value,
 
-      subTotal: document.getElementById('sub-total').value.replace(',','.'),
-      total: document.getElementById('total').value.replace(',','.'),
-      discount: document.getElementById('discount').value.replace(',','.'),
+      subTotal: document.getElementById('sub-total').value.replace(',', '.'),
+      total: document.getElementById('total').value.replace(',', '.'),
+      discount: document.getElementById('discount').value.replace(',', '.'),
 
       obs: document.getElementById('obs').value,
 
@@ -273,34 +273,34 @@ const RegisterConditional = async () => {
     SelectedProducts: SelectedProducts
   }
 
-  console.log(responseCond);
+  continueMessage("Deseja realmente registrar essa condicional?", "Sim", "Não", async function () {
+    try {
 
-  try {
+      let url = `${BASE_CONTROLLERS}registers.php`;
 
-    let url = `${BASE_CONTROLLERS}registers.php`;
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(responseCond)
+      })
 
-    const response = await fetch(url, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(responseCond)
-    })
+      if (!response.ok) {
+        showMessage('Erro ao enviar dados, contate o suporte', 'error');
+        return;
+      }
 
-    if (!response.ok) {
-      showMessage('Erro ao enviar dados, contate o suporte', 'error');
-      return;
+      const responseBody = await response.json();
+
+      if (responseBody && responseBody.success) {
+        showMessage('Condicional aberta com sucesso ', 'success');
+      } else {
+        showMessage('Erro ao finalizar condicinal ' + response.message, 'error');
+      }
+
+    } catch (error) {
+      showMessage('Erro ao fazer requisição ' + error, 'error');
     }
-
-    const responseBody = await response.json();
-
-    if (responseBody && responseBody.success) {
-      showMessage('Condicional aberta com sucesso ', 'success');
-    } else {
-      showMessage('Erro ao finalizar condicinal ' + response.message, 'error');
-    }
-
-  } catch (error) {
-    showMessage('Erro ao fazer requisição ' + error, 'error');
-  }
+  })
 }

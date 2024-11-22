@@ -116,6 +116,9 @@
 .message.warning {
     background-color: #ff9800;
 }
+.message.info {
+    background-color: #00aeff;
+}
 
 .message .close-btn {
     cursor: pointer;

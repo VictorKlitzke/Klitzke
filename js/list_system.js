@@ -19,6 +19,18 @@ document.addEventListener('DOMContentLoaded', function () {
     ListDetailsAprazo();
     ListAPrazo();
     ListConditional();
+    reopenModalIfSaved();
+    restoreBillingItems();
+
+    const isModalOpen = localStorage.getItem('fullScreenModal') === 'true';
+    if (isModalOpen) {
+        const modal = new bootstrap.Modal(document.getElementById('fullScreenModal'));
+        modal.show();
+    }
+});
+
+document.getElementById('fullScreenModal').addEventListener('hidden.bs.modal', () => {
+    RemoveModalItens();
 });
 
 function showToast(message, id) {
@@ -579,23 +591,21 @@ async function ListConditional() {
         console.log('Erro ao fazer requisição: ' + error)
     }
 }
-
 async function ListConditionalItens(id) {
-    window.open('http://localhost:3000/Klitzke/conditional-itens');
     if (!id) {
         showMessage('Não foi encontrado a condicional', 'warning');
         return;
     }
 
     try {
-        let url = `${BASE_CONTROLLERS}lists.php`;
+        const url = `${BASE_CONTROLLERS}lists.php`;
 
         const response = await fetch(url, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ type: 'listconditionaldetails' })
+            body: JSON.stringify({ type: 'listconditionaldetails' }),
         });
 
         if (!response.ok) {
@@ -606,49 +616,227 @@ async function ListConditionalItens(id) {
         const data = await response.json();
 
         if (data.success) {
-            const resultItensList = document.getElementById('conditional-itens');
-            const result_itens = data.result_itens;
-            const filterId = result_itens.filter(ci => {
-                return ci.conditional_id === id;
-            });
-
-            if (!resultItensList) {
-                console.error('Elemento com o ID "conditional-itens" não foi encontrado no DOM.');
-                return;
-            }
-
-            resultItensList.innerHTML = '';
-
-            filterId.forEach(ci => {
-                const row = document.createElement('tr');
-
-                const idCell = document.createElement('th');
-                idCell.textContent = ci.id;
-                row.appendChild(idCell);
-
-                const productCell = document.createElement('th');
-                productCell.textContent = ci.product_id;
-                row.appendChild(productCell);
-
-                const quantityCell = document.createElement('th');
-                quantityCell.textContent = ci.quantity;
-                row.appendChild(quantityCell);
-
-                const unitPriceCell = document.createElement('th');
-                unitPriceCell.textContent = numberFormat(ci.unit_price);
-                row.appendChild(unitPriceCell);
-
-                const subtotalCell = document.createElement('th');
-                subtotalCell.textContent = numberFormat(ci.subtotal);
-                row.appendChild(subtotalCell);
-
-                resultItensList.appendChild(row);
-            });
+            const filterId = data.result_itens.filter(ci => ci.conditional_id === id);
+            localStorage.setItem('conditionalItens', JSON.stringify(filterId));
+            populateTable(filterId);
+            OpenModalItens();
         }
-
     } catch (error) {
         showMessage('Erro ao fazer requisição: ' + error, 'error');
     }
+}
+function reopenModalIfSaved() {
+    const savedItens = localStorage.getItem('conditionalItens');
+
+    if (savedItens) {
+        const parsedItens = JSON.parse(savedItens);
+        populateTable(parsedItens);
+
+        const modal = new bootstrap.Modal(document.getElementById('fullScreenModal'));
+        modal.show();
+    }
+}
+function populateTable(items) {
+    const resultItensList = document.getElementById('conditional-itens');
+    if (!resultItensList) {
+        console.error('Elemento com o ID "conditional-itens" não foi encontrado no DOM.');
+        return;
+    }
+
+    resultItensList.innerHTML = '';
+
+    items.forEach(ci => {
+        const row = document.createElement('tr');
+
+        const idCell = document.createElement('th');
+        idCell.textContent = ci.id;
+        row.appendChild(idCell);
+
+        const productCell = document.createElement('th');
+        productCell.textContent = ci.product;
+        row.appendChild(productCell);
+
+        const quantityCell = document.createElement('th');
+        quantityCell.textContent = ci.quantity;
+        row.appendChild(quantityCell);
+
+        const unitPriceCell = document.createElement('th');
+        unitPriceCell.textContent = numberFormat(ci.unit_price);
+        row.appendChild(unitPriceCell);
+
+        const subtotalCell = document.createElement('th');
+        subtotalCell.textContent = numberFormat(ci.subtotal);
+        row.appendChild(subtotalCell);
+
+        const actionCell = document.createElement('td');
+        const selectButton = document.createElement('button');
+        selectButton.textContent = 'Selecionar';
+        selectButton.className = 'btn btn-primary btn-sm';
+        selectButton.addEventListener('click', () => InvoiceSelect(ci));
+        actionCell.appendChild(selectButton);
+        row.appendChild(actionCell);
+
+        resultItensList.appendChild(row);
+    });
+}
+
+const InvoiceSelect = (item) => {
+    if (!item) {
+        showMessage('Erro ao selecionar item', 'warning');
+        return;
+    }
+
+    const billingItemsList = document.getElementById('billing-items');
+    if (!billingItemsList) {
+        console.error('Tabela de faturamento não encontrada.');
+        return;
+    }
+
+    const storedItems = JSON.parse(localStorage.getItem('billingItems')) || [];
+    const existingItemIndex = storedItems.findIndex(storedItem => storedItem.id === item.id);
+
+    if (existingItemIndex !== -1) {
+        const storedItem = storedItems[existingItemIndex];
+        if (storedItem.quantity >= item.quantity) {
+            showMessage('Quantidade máxima atingida para este item.', 'warning');
+            return;
+        }
+
+        storedItem.quantity += 1;
+        storedItem.subtotal = storedItem.quantity * item.unit_price;
+        storedItems[existingItemIndex] = storedItem;
+
+        const existingRow = Array.from(billingItemsList.children).find(row => {
+            return row.querySelector('td:first-child')?.textContent === item.id.toString();
+        });
+
+        if (!existingRow) {
+            console.error(`Linha para o item com ID ${item.id} não encontrada na tabela.`);
+            return;
+        }
+
+        const quantityCell = existingRow.querySelector('td:nth-child(3)');
+        const subtotalCell = existingRow.querySelector('td:nth-child(5)');
+
+        quantityCell.textContent = storedItem.quantity;
+        subtotalCell.textContent = numberFormat(storedItem.subtotal);
+
+        localStorage.setItem('billingItems', JSON.stringify(storedItems));
+        showMessage('Quantidade incrementada no faturamento.', 'info');
+        Total();
+        return;
+    }
+
+    const newItem = {
+        id: item.id,
+        product: item.product,
+        quantity: 1,
+        unit_price: item.unit_price,
+        subtotal: item.unit_price
+    };
+    storedItems.push(newItem);
+    localStorage.setItem('billingItems', JSON.stringify(storedItems));
+
+    const row = document.createElement('tr');
+
+    const idCell = document.createElement('td');
+    idCell.textContent = newItem.id;
+    row.appendChild(idCell);
+
+    const productCell = document.createElement('td');
+    productCell.textContent = newItem.product;
+    row.appendChild(productCell);
+
+    const quantityCell = document.createElement('td');
+    quantityCell.textContent = newItem.quantity;
+    row.appendChild(quantityCell);
+
+    const unitPriceCell = document.createElement('td');
+    unitPriceCell.textContent = numberFormat(newItem.unit_price);
+    row.appendChild(unitPriceCell);
+
+    const subtotalCell = document.createElement('td');
+    subtotalCell.classList = 'total-final-invoice';
+    subtotalCell.textContent = numberFormat(newItem.subtotal);
+    row.appendChild(subtotalCell);
+
+    billingItemsList.appendChild(row);
+
+    showMessage('Item adicionado ao faturamento.', 'success');
+
+    Total();
+};
+
+function restoreBillingItems() {
+    const billingItemsList = document.getElementById('billing-items');
+    if (!billingItemsList) {
+        console.error('Tabela de faturamento não encontrada.');
+        return;
+    }
+
+    const storedItems = JSON.parse(localStorage.getItem('billingItems')) || [];
+
+    storedItems.forEach(item => {
+        const row = document.createElement('tr');
+
+        const idCell = document.createElement('td');
+        idCell.textContent = item.id;
+        row.appendChild(idCell);
+
+        const productCell = document.createElement('td');
+        productCell.textContent = item.product;
+        row.appendChild(productCell);
+
+        const quantityCell = document.createElement('td');
+        quantityCell.textContent = item.quantity;
+        row.appendChild(quantityCell);
+
+        const unitPriceCell = document.createElement('td');
+        unitPriceCell.textContent = numberFormat(item.unit_price);
+        row.appendChild(unitPriceCell);
+
+        const subtotalCell = document.createElement('td');
+        subtotalCell.textContent = numberFormat(item.subtotal);
+        subtotalCell.classList = 'total-final-invoice';
+        row.appendChild(subtotalCell);
+
+        billingItemsList.appendChild(row);
+
+        Total();
+    });
+}
+
+const Total = () => {
+    const rows = document.querySelectorAll('#billing-items tr');
+    let total = 0;
+
+    rows.forEach(row => {
+        const finalTotal = row.querySelector('.total-final-invoice');
+        if (finalTotal) {
+            const totalCell = parseFloat(finalTotal.textContent.replace(',', '.'));
+            if (!isNaN(totalCell)) {
+                total += totalCell;
+            }
+        }
+    });
+
+    document.getElementById('total-value').textContent = total.toFixed(2).replace('.', ',');
+};
+
+function OpenModalItens() {
+    const modal = new bootstrap.Modal(document.getElementById('fullScreenModal'));
+    modal.show();
+
+    localStorage.setItem('fullScreenModal', 'true');
+}
+function RemoveModalItens() {
+    const modalElement = document.getElementById('fullScreenModal');
+    const modalInstance = bootstrap.Modal.getInstance(modalElement);
+    modalInstance.hide();
+
+    localStorage.removeItem('fullScreenModal');
+    localStorage.removeItem('conditionalItens');
+    localStorage.removeItem('billingItems');
 }
 
 async function ListForn() {
