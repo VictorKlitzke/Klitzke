@@ -606,7 +606,6 @@ if (isset($_GET['loggout'])) {
     <script type="module" src="<?php echo INCLUDE_JAVASCRIPT; ?>querys.js"></script>
     <script type="module" src="<?php echo INCLUDE_JAVASCRIPT; ?>inventary.js"></script>
     <script type="module" src="<?php echo INCLUDE_JAVASCRIPT; ?>create_portion.js"></script>
-    <script type="module" src="<?php echo INCLUDE_JAVASCRIPT; ?>conditional.js"></script>
 
     <!-- CSS do Bootstrap -->
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">

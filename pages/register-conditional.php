@@ -1,4 +1,4 @@
-<!-- Container Principal -->
+
 <div id="app" class="container-fluid p-4 shadow-lg border rounded-4">
     <div class="card mb-3">
         <div class="card-header bg-primary text-white">
@@ -99,30 +99,151 @@
 </div>
 
 <div class="modal fade" id="addProductModal" tabindex="-1" aria-labelledby="addProductModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="addProductModalLabel">Adicionar Produto</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
-            </div>
-            <div class="modal-body">
-                <div class="mb-3">
-                    <label for="productSelect" class="form-label">Selecione o Produto</label>
-                    <v-select id="productSelect" v-model="selectedProduct" :options="products.map(p => p.name)" label="name" />
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addProductModalLabel">Adicionar Produto</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
                 </div>
-                <div class="mb-3">
-                    <label for="productQuantity" class="form-label">Quantidade</label>
-                    <input id="productQuantity" v-model="productQuantity" type="number" class="form-control" min="1" />
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="productSelect" class="form-label">Selecione o Produto</label>
+                        <v-select id="productSelect" v-model="selectedProduct" :options="products.map(p => p.name)" label="name" />
+                    </div>
+                    <div class="mb-3">
+                        <label for="productQuantity" class="form-label">Quantidade</label>
+                        <input id="productQuantity" v-model="productQuantity" type="number" class="form-control" min="1" />
+                    </div>
+                    <div class="mb-3">
+                        <label for="productPrice" class="form-label">Preço Unitário</label>
+                        <input id="productPrice" v-model="productPrice" type="number" class="form-control" min="0.01" />
+                    </div>
                 </div>
-                <div class="mb-3">
-                    <label for="productPrice" class="form-label">Preço Unitário</label>
-                    <input id="productPrice" v-model="productPrice" type="number" class="form-control" min="0.01" />
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                    <button type="button" class="btn btn-primary" @click="addProductToConditional">Adicionar</button>
                 </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
-                <button type="button" class="btn btn-primary" @click="addProductToConditional">Adicionar</button>
             </div>
         </div>
     </div>
-</div>
+
+
+<script setup>
+    import { onMounted } from "vue";
+    require('dotenv').config();
+
+    components: {
+        'v-select': VueSelect,
+    },
+    const form = ref({
+        ClientId: '',
+        UserId: '',
+        dateNow: '',
+        dateReturn: '',
+        discount: 0,
+        obs: ''
+    })Ï
+    const BASE_CONTROLLERS = process.env.BASE_CONTROLLERS;
+    const clients = ref([]);
+    const users = ref([]);
+    const products = ref([]);
+    const selectedProducts = ref([]);
+    const selectedProduct = ref(null);
+    const productQuantity = ref(1);
+    const productPrice = ref(0);
+    const subTotal = ref(0);
+    const total = ref(0);
+
+    const fetchClients = async () => {
+        try {
+            const response = await fetch(`${BASE_CONTROLLERS}searchs.php`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: new URLSearchParams({ client_list: 'true' }),
+            });
+            const data = await response.json();
+            if (data.success && Array.isArray(data.clients)) {
+                clients.value = data.clients;  // Ajuste caso a resposta contenha "clients"
+            } else {
+                console.log("Nenhum cliente encontrado.");
+            }
+        } catch (error) {
+            console.log("Erro na requisição de Busca: " + error);
+        }
+    };
+
+    const fetchUsers = async () => {
+        try {
+            const response = await fetch(`${BASE_CONTROLLERS}searchs.php`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: new URLSearchParams({ users_list: 'true' }),
+            });
+            const data = await response.json();
+            if (data.success && Array.isArray(data.users)) {
+                users.value = data.users;
+            } else {
+                console.log("Nenhum usuário encontrado.");
+            }
+        } catch (error) {
+            console.log("Erro na requisição de Usuários: " + error);
+        }
+    };
+
+    const fetchProducts = async () => {
+        try {
+            const response = await fetch(`${BASE_CONTROLLERS}searchs.php`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: new URLSearchParams({ product_list: 'true' }),
+            });
+            const data = await response.json();
+            if (data.success && Array.isArray(data.products)) {
+                products.value = data.products;
+            } else {
+                console.log("Nenhum produto encontrado.");
+            }
+        } catch (error) {
+            console.log("Erro na requisição de Produtos: " + error);
+        }
+    };
+
+    const addProductToConditional = () => {
+        if (selectedProduct.value && productQuantity.value > 0 && productPrice.value > 0) {
+            selectedProducts.value.push({
+                name: selectedProduct.value.name,
+                quantity: productQuantity.value,
+                price: productPrice.value,
+            });
+            updateTotal();
+        } else {
+            alert("Produto ou quantidade inválida.");
+        }
+    };
+
+    const removeProduct = (index) => {
+        selectedProducts.value.splice(index, 1);
+        updateTotal();
+    };
+
+    const updateTotal = () => {
+        subTotal.value = selectedProducts.value.reduce((sum, product) => {
+            return sum + (product.quantity * product.price);
+        }, 0);
+
+        total.value = (subTotal.value - form.value.discount).toFixed(2);
+    };
+
+    const registerConditional = () => {
+        // Lógica para registrar o condicional
+        console.log(form.value);
+    };
+
+    onMounted(async () => {
+        await fetchClients();
+        await fetchUsers();
+        await fetchProducts();
+    });
+
+
+</script>
