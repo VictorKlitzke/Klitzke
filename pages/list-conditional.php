@@ -98,7 +98,6 @@ if (!isset($_SESSION['user_permissions'][$page_permission]) || $_SESSION['user_p
                     </tr>
                   </tfoot>
                 </table>
-
               </div>
             </div>
           </div>
@@ -106,7 +105,31 @@ if (!isset($_SESSION['user_permissions'][$page_permission]) || $_SESSION['user_p
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
-        <button type="button" class="btn btn-success" data-bs-dismiss="modal">Faturar</button>
+        <button type="button" class="btn btn-success" onclick="FatConditional()">Faturar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal de Seleção de Formas de Pagamento -->
+<div class="modal fade" id="paymentModal" tabindex="-1" aria-labelledby="paymentModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="paymentModalLabel">Selecione as Formas de Pagamento</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div id="payment-options">
+        </div>
+        <div class="text-end mt-3">
+          <strong>Total Selecionado:</strong>
+          <span id="selected-total" class="text-success">R$ 0,00</span>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+        <button type="button" class="btn btn-success" id="confirmPayment">Confirmar Pagamento</button>
       </div>
     </div>
   </div>

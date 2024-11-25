@@ -70,6 +70,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $response_portion_product = $data;
     $response_invoice = $data;
     $response_cond = $data;
+    $response_cond_fat = $data;
 
     $condicions = [
         'users' => fn() => Register::RegisterUsers($sql, $response_users, $user_id),
@@ -94,6 +95,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         'createproductsportion' => fn() => Register::RegisterPortionProduct($response_portion_product, $sql, $user_id, $today),
         'invoice' => fn() => Register::RegisterDisplayInvoice($response_invoice, $sql, $user_id, $today),
         'registerconditional' => fn() => Register::RegisterConditional($response_cond, $user_id, $sql, $today),
+        'registerfatconditional' => fn() => Register::RegisterFatConditional($response_cond_fat, $user_id, $sql, $today),
     ];
 
     $matched = false;
@@ -113,17 +115,109 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 class Register
 {
 
-    public static function RegisterConditional($response_cond, $user_id, $sql, $today) {
+    public static function RegisterFatConditional($response_cond_fat, $user_id, $sql, $today)
+    {
+        $status = 1;
+        $status_boxpdv = 1;
+        try {
+
+            $sql->beginTransaction();
+
+            $firstItem = $response_cond_fat['SelectedFat'][0];
+            $client_id = $firstItem['client_id'];
+            $user_id1 = $firstItem['user_id'];
+
+            $boxQuery = $sql->prepare("SELECT id FROM boxpdv WHERE id_users = :id_users AND status = :status_boxpdv LIMIT 1");
+            $boxQuery->bindValue('id_users', $user_id1);
+            $boxQuery->bindValue('status_boxpdv', $status_boxpdv);
+            $boxQuery->execute();
+            $boxResult = $boxQuery->fetch(PDO::FETCH_ASSOC);
+
+            if (!$boxResult) {
+                Response::send(false, 'Nenhum caixa aberto encontrado para este usuário.', $today);
+                return;
+            }
+
+            $boxpdv_id = $boxResult['id'];
+            $exec = $sql->prepare("INSERT INTO sales (
+                id_client, 
+                id_boxpdv, 
+                id_users,
+                date_sales,
+                total_value,
+                status
+            ) VALUES( 
+                :id_client, 
+                :id_boxpdv, 
+                :id_users,
+                :date_sales,
+                :total_value,
+                :status
+            )");
+            $exec->bindValue('id_client', $client_id);
+            $exec->bindValue('id_boxpdv', $boxpdv_id);
+            $exec->bindValue('id_users', $user_id1);
+            $exec->bindValue('date_sales', $today);
+            $exec->bindValue('total_value', $response_cond_fat['totalValue']);
+            $exec->bindValue('status', $status);
+            $exec->execute();
+
+            $saleId = $sql->lastInsertId();
+
+            $exec_payment = $sql->prepare("INSERT INTO sales_payment (sales_id, form_payment_id, value_payment) 
+                                            VALUES(:sales_id, :form_payment_id, :value_payment)");
+            foreach($response_cond_fat['payments'] as $payment) {
+                $exec_payment->bindValue('sales_id', $saleId);
+                $exec_payment->bindValue('form_payment_id', $payment['id']);
+                $exec_payment->bindValue('value_payment', $payment['amount']);
+                $exec_payment->execute();
+            }
+
+            $execItems = $sql->prepare("INSERT INTO sales_items (
+                                                                    id_sales,
+                                                                    id_product,
+                                                                    amount,
+                                                                    price_sales
+                                                                ) 
+                                                                VALUES 
+                                                                (
+                                                                    :id_sales,
+                                                                    :id_product,
+                                                                    :quantity,
+                                                                    :unit_price
+                                                                )");
+
+            foreach ($response_cond_fat['SelectedFat'] as $item) {
+                $execItems->bindValue('id_sales', $saleId);
+                $execItems->bindValue('id_product', $item['productId']);
+                $execItems->bindValue('quantity', $item['quantity']);
+                $execItems->bindValue('unit_price', $item['unit_price']);
+                $execItems->execute();
+            }
+
+            $sql->commit();
+
+            $message_log = "Condicional Faturada com sucesso";
+            Panel::LogAction($user_id, 'Condicional Faturada inserida', $message_log, $today);
+            Response::send(true, 'Condicional Faturada com sucesso', $today);
+
+        } catch (Exception $e) {
+            $sql->rollBack();
+            echo 'Erro ao registrar: ' . $e->getMessage();
+        }
+    }
+    public static function RegisterConditional($response_cond, $user_id, $sql, $today)
+    {
         try {
             $sql->beginTransaction();
 
             $status = 'Em Aberto';
-    
+
             $stmtHeader = $sql->prepare("
                 INSERT INTO conditional (creation_date, date_return, total, discount, final_total, note, user_id, client_id, status) 
                 VALUES (:date_now, :date_return, :subtotal, :discount, :total, :obs, :user_id, :client_id, :status)
             ");
-    
+
             $stmtHeader->bindValue(':date_now', $response_cond['dateNow']);
             $stmtHeader->bindValue(':date_return', $response_cond['dateReturn']);
             $stmtHeader->bindValue(':subtotal', $response_cond['subTotal']);
@@ -133,35 +227,35 @@ class Register
             $stmtHeader->bindValue(':user_id', $response_cond['UserId']);
             $stmtHeader->bindValue(':client_id', $response_cond['ClientId']);
             $stmtHeader->bindValue(':status', $status);
-    
+
             $stmtHeader->execute();
 
             $purchaseNoteId = $sql->lastInsertId();
-    
+
             $stmtItems = $sql->prepare("
                 INSERT INTO conditional_item (conditional_id, product_id, quantity, unit_price, subtotal) 
                 VALUES (:conditional_id, :product_id, :quantity, :unit_price, :subtotal)
             ");
-    
+
             foreach ($response_cond['SelectedProducts'] as $product) {
                 $stmtItems->bindValue(':conditional_id', $purchaseNoteId);
                 $stmtItems->bindValue(':product_id', $product['ProductId']);
                 $stmtItems->bindValue(':quantity', $product['ProductQuantity']);
                 $stmtItems->bindValue(':unit_price', $product['ProductPrice']);
                 $stmtItems->bindValue(':subtotal', $product['ProductQuantity'] * $product['ProductPrice']);
-    
+
                 $stmtItems->execute();
             }
-    
+
             $sql->commit();
-    
-            $message_log = "Nota de compra inserida com sucesso";
-            Panel::LogAction($user_id, 'Nota de compra inserida', $message_log, $today);
-            Response::send(true, 'Nota de compra inserida com sucesso', $today);
-    
+
+            $message_log = "Condicional inserida com sucesso";
+            Panel::LogAction($user_id, 'Condicional inserida', $message_log, $today);
+            Response::send(true, 'Condicional inserida com sucesso', $today);
+
         } catch (Exception $e) {
             $sql->rollBack();
-            echo 'Erro ao registrar a nota de compra: ' . $e->getMessage();
+            echo 'Erro ao registrar: ' . $e->getMessage();
         }
     }
     public static function RegisterDisplayInvoice($response_invoice, $sql, $user_id, $today)

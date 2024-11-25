@@ -5,6 +5,7 @@ const FieldFormFinancialControl = document.getElementById('input-financial-contr
 
 let AddVariation = {};
 let notificationQueue = [];
+let SelectedFat = [];
 
 window.onload = ListProducts();
 window.onload = ListForn();
@@ -565,7 +566,7 @@ async function ListConditional() {
                 const faturarButton = document.createElement('button');
                 faturarButton.classList.add('btn', 'btn-info', 'btn-sm', 'me-1');
                 faturarButton.textContent = 'Mais Detalhes';
-                faturarButton.addEventListener('click', () => ListConditionalItens(c.id));
+                faturarButton.addEventListener('click', () => ListConditionalItens(c.id, c.client_id, c.user_id));
                 buttonCell.appendChild(faturarButton);
 
                 const cancelarButton = document.createElement('button');
@@ -591,7 +592,7 @@ async function ListConditional() {
         console.log('Erro ao fazer requisição: ' + error)
     }
 }
-async function ListConditionalItens(id) {
+async function ListConditionalItens(id, client_id, user_id) {
     if (!id) {
         showMessage('Não foi encontrado a condicional', 'warning');
         return;
@@ -617,35 +618,44 @@ async function ListConditionalItens(id) {
 
         if (data.success) {
             const filterId = data.result_itens.filter(ci => ci.conditional_id === id);
-            localStorage.setItem('conditionalItens', JSON.stringify(filterId));
-            populateTable(filterId);
+            localStorage.setItem('conditionalItens', JSON.stringify({ items: filterId, client_id, user_id }));
+
+            populateTable(filterId, client_id, user_id);
             OpenModalItens();
         }
     } catch (error) {
         showMessage('Erro ao fazer requisição: ' + error, 'error');
     }
 }
-function reopenModalIfSaved() {
-    const savedItens = localStorage.getItem('conditionalItens');
 
-    if (savedItens) {
-        const parsedItens = JSON.parse(savedItens);
-        populateTable(parsedItens);
+function reopenModalIfSaved() {
+    const savedData = localStorage.getItem('conditionalItens');
+
+    if (savedData) {
+        const parsedData = JSON.parse(savedData);
+
+        const { items, user_id, client_id } = parsedData;
+
+        populateTable(items, user_id, client_id);
 
         const modal = new bootstrap.Modal(document.getElementById('fullScreenModal'));
         modal.show();
     }
 }
-function populateTable(items) {
+
+function populateTable(items, client_id, user_id) {
     const resultItensList = document.getElementById('conditional-itens');
     if (!resultItensList) {
-        console.error('Elemento com o ID "conditional-itens" não foi encontrado no DOM.');
+        showMessage('Elemento com o ID "conditional-itens" não foi encontrado no DOM.', 'error');
         return;
     }
+
+    console.log('User ID:', user_id, 'Client ID:', client_id);
 
     resultItensList.innerHTML = '';
 
     items.forEach(ci => {
+
         const row = document.createElement('tr');
 
         const idCell = document.createElement('th');
@@ -668,11 +678,11 @@ function populateTable(items) {
         subtotalCell.textContent = numberFormat(ci.subtotal);
         row.appendChild(subtotalCell);
 
-        const actionCell = document.createElement('td');
+        const actionCell = document.createElement('th');
         const selectButton = document.createElement('button');
         selectButton.textContent = 'Selecionar';
         selectButton.className = 'btn btn-primary btn-sm';
-        selectButton.addEventListener('click', () => InvoiceSelect(ci));
+        selectButton.addEventListener('click', () => InvoiceSelect(ci, client_id, user_id));
         actionCell.appendChild(selectButton);
         row.appendChild(actionCell);
 
@@ -680,7 +690,7 @@ function populateTable(items) {
     });
 }
 
-const InvoiceSelect = (item) => {
+const InvoiceSelect = (item, client_id, user_id) => {
     if (!item) {
         showMessage('Erro ao selecionar item', 'warning');
         return;
@@ -729,10 +739,13 @@ const InvoiceSelect = (item) => {
 
     const newItem = {
         id: item.id,
+        productId: item.product_id,
         product: item.product,
         quantity: 1,
         unit_price: item.unit_price,
-        subtotal: item.unit_price
+        subtotal: item.unit_price,
+        client_id: client_id || item.client_id,
+        user_id: user_id || item.user_id
     };
     storedItems.push(newItem);
     localStorage.setItem('billingItems', JSON.stringify(storedItems));
@@ -761,12 +774,9 @@ const InvoiceSelect = (item) => {
     row.appendChild(subtotalCell);
 
     billingItemsList.appendChild(row);
-
     showMessage('Item adicionado ao faturamento.', 'success');
-
     Total();
 };
-
 function restoreBillingItems() {
     const billingItemsList = document.getElementById('billing-items');
     if (!billingItemsList) {
@@ -803,9 +813,9 @@ function restoreBillingItems() {
         billingItemsList.appendChild(row);
 
         Total();
+        SelectedFat.push(item);
     });
 }
-
 const Total = () => {
     const rows = document.querySelectorAll('#billing-items tr');
     let total = 0;
@@ -821,6 +831,150 @@ const Total = () => {
     });
 
     document.getElementById('total-value').textContent = total.toFixed(2).replace('.', ',');
+};
+
+const loadPaymentOptions = async () => {
+    try {
+        const response = await fetch(`${BASE_CONTROLLERS}lists.php`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ type: 'listpaymentmethods' })
+        });
+
+        if (!response.ok) {
+            showMessage('Erro ao carregar formas de pagamento.', 'error');
+            return;
+        }
+
+        const data = await response.json();
+        if (data.success) {
+            const paymentOptions = data.result_form;
+            renderPaymentOptions(paymentOptions);
+        } else {
+            showMessage('Nenhuma forma de pagamento encontrada.', 'warning');
+        }
+    } catch (error) {
+        showMessage('Erro ao buscar formas de pagamento: ' + error.message, 'error');
+    }
+};
+
+const renderPaymentOptions = (options) => {
+    const container = document.getElementById('payment-options');
+    container.innerHTML = '';
+
+    options.forEach(option => {
+        const paymentRow = document.createElement('div');
+        paymentRow.className = 'row align-items-center mb-2';
+
+        paymentRow.innerHTML = `
+        <div class="col-6">
+            <label class="form-check-label">${option.name}</label>
+        </div>
+        <div class="col-6">
+            <input type="number" class="form-control payment-input" data-id="${option.id}" placeholder="Valor (R$)" />
+        </div>
+        `;
+
+        container.appendChild(paymentRow);
+    });
+    document.querySelectorAll('.payment-input').forEach(input => {
+        input.addEventListener('input', updateSelectedTotal);
+    });
+};
+
+const updateSelectedTotal = () => {
+    let total = 0;
+    document.querySelectorAll('.payment-input').forEach(input => {
+        const value = parseFloat(input.value) || 0;
+        total += value;
+    });
+
+    document.getElementById('selected-total').textContent = `R$ ${total.toFixed(2)}`;
+};
+
+document.getElementById('confirmPayment').addEventListener('click', () => {
+    const totalValue = parseFloat(document.getElementById('total-value').textContent.replace(',', '.'));
+    const selectedPayments = Array.from(document.querySelectorAll('.payment-input'))
+        .filter(input => parseFloat(input.value) > 0)
+        .map(input => ({
+            id: input.dataset.id,
+            amount: parseFloat(input.value)
+        }));
+
+    const selectedTotal = selectedPayments.reduce((sum, payment) => sum + payment.amount, 0);
+
+    if (selectedTotal !== totalValue) {
+        showMessage('O total das formas de pagamento deve ser igual ao valor total da fatura.', 'warning');
+        return;
+    }
+
+    processPayment(selectedPayments, SelectedFat);
+});
+
+const processPayment = async (payments, SelectedFat) => {
+    const totalValue = parseFloat(document.getElementById('total-value').textContent.replace(',', '.'));
+    
+    console.log('Dados enviados:', SelectedFat);
+    let responseFatCond = {
+        payments: payments,
+        SelectedFat: SelectedFat,
+        totalValue: totalValue,
+        type: 'registerfatconditional'
+    }
+
+    if (SelectedFat.length === 0) {
+        showMessage('Nenhum item inserido!', 'warning');
+        return;
+    }
+
+    console.log(responseFatCond);
+
+    continueMessage("Deseja realmente faturar essa condicional?", "Sim", "Não", async function () {
+        try {
+
+            let url = `${BASE_CONTROLLERS}registers.php`;
+
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(responseFatCond)
+            })
+
+            if (!response.ok) {
+                showMessage('Erro ao enviar dados, contate o suporte', 'error');
+                return;
+            }
+
+            const responseBody = await response.text();
+
+            console.log(responseBody);
+
+            if (responseBody && responseBody.success) {
+                showMessage('Condicional faturada com sucesso ', 'success');
+            } else {
+                showMessage('Erro ao faturar a condicinal ' + responseBody.message, 'error');
+            }
+
+        } catch (error) {
+            showMessage('Erro ao fazer requisição: ' + error.message, 'error')
+        }
+
+    }, function () {
+        showMessage('Operação cancelada', 'warning');
+    })
+};
+
+const FatConditional = () => {
+    const totalValue = parseFloat(document.getElementById('total-value').textContent.replace(',', '.'));
+    if (totalValue <= 0) {
+        showMessage('Não há itens para faturar.', 'warning');
+        return;
+    }
+    loadPaymentOptions();
+    const paymentModal = new bootstrap.Modal(document.getElementById('paymentModal'));
+    paymentModal.show();
 };
 
 function OpenModalItens() {

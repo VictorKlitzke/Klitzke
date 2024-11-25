@@ -42,6 +42,7 @@ if (isset($_GET['loggout'])) {
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/vue-select@3.12.3/dist/vue-select.css">
     <link href="https://getbootstrap.com/docs/5.3/assets/css/docs.css" rel="stylesheet">
     <link rel="icon" href="<?php echo INCLUDE_PATH; ?>./public/logo/favicon.ico" type="image/x-icon" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
@@ -576,32 +577,42 @@ if (isset($_GET['loggout'])) {
                 </ul>
             </div> -->
 
-    <script language="JavaScript" type="text/javascript" src="<?php echo INCLUDE_JAVASCRIPT; ?>const_globais.js">
-    </script>
+    <!-- Vue -->
+    <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
+
+    <!-- Vue Select -->
+    <script src="https://unpkg.com/vue-select@latest"></script>
+
+    <!-- Outras dependências (Bootstrap, Popper, jQuery) -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+
+    <!-- Suas bibliotecas e scripts personalizados -->
+    <script language="JavaScript" type="text/javascript" src="<?php echo INCLUDE_JAVASCRIPT; ?>const_globais.js"></script>
     <script language="JavaScript" type="text/javascript" src="<?php echo INCLUDE_JAVASCRIPT; ?>alert.js"></script>
     <script language="JavaScript" type="text/javascript" src="<?php echo INCLUDE_JAVASCRIPT; ?>main.js"></script>
-    <script language="JavaScript" type="text/javascript" src="<?php echo INCLUDE_JAVASCRIPT; ?>register_system.js">
-    </script>
-    <script language="JavaScript" type="text/javascript" src="<?php echo INCLUDE_JAVASCRIPT; ?>delete_system.js">
-    </script>
+    <script language="JavaScript" type="text/javascript" src="<?php echo INCLUDE_JAVASCRIPT; ?>register_system.js"></script>
+    <script language="JavaScript" type="text/javascript" src="<?php echo INCLUDE_JAVASCRIPT; ?>delete_system.js"></script>
     <script language="JavaScript" type="text/javascript" src="<?php echo INCLUDE_JAVASCRIPT; ?>edit_system.js"></script>
     <script language="JavaScript" type="text/javascript" src="<?php echo INCLUDE_JAVASCRIPT; ?>values.js"></script>
     <script language="JavaScript" type="text/javascript" src="<?php echo INCLUDE_JAVASCRIPT; ?>menu.js"></script>
     <script language="JavaScript" type="text/javascript" src="<?php echo INCLUDE_JAVASCRIPT; ?>list_system.js"></script>
     <script language="JavaScript" type="text/javascript" src="<?php echo INCLUDE_JAVASCRIPT; ?>buy_request.js"></script>
-    <script language="JavaScript" type="text/javascript"
-        src="<?php echo INCLUDE_JAVASCRIPT; ?>financial_control.js"></script>
-    <script src="<?php echo INCLUDE_JAVASCRIPT; ?>dashboard.js"></script>
-    <script src="<?php echo INCLUDE_JAVASCRIPT; ?>querys.js"></script>
-    <script src="<?php echo INCLUDE_JAVASCRIPT; ?>inventary.js"></script>
-    <script src="<?php echo INCLUDE_JAVASCRIPT; ?>create_portion.js"></script>
-    <script src="<?php echo INCLUDE_JAVASCRIPT; ?>conditional.js"></script>
-    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"></script>
+    <script language="JavaScript" type="text/javascript" src="<?php echo INCLUDE_JAVASCRIPT; ?>financial_control.js"></script>
+
+    <!-- Scripts que usam módulos ES6 devem ser carregados como módulos -->
+    <script type="module" src="<?php echo INCLUDE_JAVASCRIPT; ?>dashboard.js"></script>
+    <script type="module" src="<?php echo INCLUDE_JAVASCRIPT; ?>querys.js"></script>
+    <script type="module" src="<?php echo INCLUDE_JAVASCRIPT; ?>inventary.js"></script>
+    <script type="module" src="<?php echo INCLUDE_JAVASCRIPT; ?>create_portion.js"></script>
+    <script type="module" src="<?php echo INCLUDE_JAVASCRIPT; ?>conditional.js"></script>
+
+    <!-- CSS do Bootstrap -->
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
-    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+
+    <!-- Outras bibliotecas, como Qrious -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"></script>
 
 </body>
 

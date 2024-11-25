@@ -35,6 +35,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         'sumclosingbox' => fn() => Lists::SumBoxClosing($sql),
         'listconditional' => fn() => Lists::ListConditionals($sql),
         'listconditionaldetails' => fn() => Lists::ListConditionalItens($sql),
+        'listpaymentmethods' => fn() => Lists::ListFormPayment($sql),
     ];
 
     $matched = false;
@@ -53,6 +54,33 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 class lists
 {
+    public static function ListFormPayment($sql) {
+        $today = date("Y-m-d H:i:s");
+        try {
+
+            $exec = $sql->prepare("select id,name from form_payment");
+            $exec->execute();
+
+            $result_form = $exec->fetchAll();
+
+            if (empty($result_form)) {
+                Response::json(false, 'Erro ao pegar dados', $today);
+                return;
+            }
+
+            echo json_encode([
+                'success' => 'true',
+                'result_form' => $result_form
+            ]);
+
+        } catch (Exception $e) {
+            http_response_code(500);
+            echo json_encode([
+                'success' => false,
+                'message' => 'Erro no banco de dados: ' . $e->getMessage()
+            ]);
+        }
+    }
     public static function ListConditionalItens($sql) {
         $today = date("Y-m-d H:i:s");
         try {
@@ -93,6 +121,8 @@ class lists
                                     c.discount,
                                     c.final_total,
                                     c.note,
+                                    c.client_id,
+                                    c.user_id,
                                     u.name AS users,
                                     c2.name AS clients
                                 FROM 
