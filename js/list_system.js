@@ -518,6 +518,7 @@ async function ListConditional() {
 
                 const idCell = document.createElement('th');
                 idCell.textContent = c.id;
+                idCell.id = 'id-conditional';
                 row.appendChild(idCell);
 
                 const clientCell = document.createElement('th');
@@ -563,23 +564,39 @@ async function ListConditional() {
 
                 const buttonCell = document.createElement('th');
 
-                const faturarButton = document.createElement('button');
-                faturarButton.classList.add('btn', 'btn-info', 'btn-sm', 'me-1');
-                faturarButton.textContent = 'Mais Detalhes';
-                faturarButton.addEventListener('click', () => ListConditionalItens(c.id, c.client_id, c.user_id));
-                buttonCell.appendChild(faturarButton);
+                if (c.status === 'Faturado') {
+                    const faturadoButton = document.createElement('button');
+                    faturadoButton.classList.add('btn', 'btn-success', 'btn-sm', 'me-1');
+                    faturadoButton.textContent = 'Fatutado';
+                    buttonCell.appendChild(faturadoButton);
+                } else if (c.status === 'Em Aberto') {
+                    const faturarButton = document.createElement('button');
+                    faturarButton.classList.add('btn', 'btn-info', 'btn-sm', 'me-1');
+                    faturarButton.textContent = 'Mais Detalhes';
+                    faturarButton.addEventListener('click', () => ListConditionalItens(c.id, c.client_id, c.user_id));
+                    buttonCell.appendChild(faturarButton);
+                }
 
-                const cancelarButton = document.createElement('button');
-                cancelarButton.classList.add('btn', 'btn-danger', 'btn-sm', 'me-1');
-                cancelarButton.textContent = 'Cancelar';
-                cancelarButton.addEventListener('click', () => cancelar(c.id));
-                buttonCell.appendChild(cancelarButton);
+                if (c.status === 'Em Aberto') {
+                    const cancelarButton = document.createElement('button');
+                    cancelarButton.classList.add('btn', 'btn-danger', 'btn-sm', 'me-1');
+                    cancelarButton.textContent = 'Cancelar';
+                    cancelarButton.addEventListener('click', () => cancelarCod(c.id));
+                    buttonCell.appendChild(cancelarButton);
+                } else if (c.status === 'Cancelada') {
+                    const CancelButton = document.createElement('button');
+                    CancelButton.classList.add('btn', 'btn-danger', 'btn-sm', 'me-1');
+                    CancelButton.textContent = 'Cancelada';
+                    buttonCell.appendChild(CancelButton);
+                }
 
-                const editarButton = document.createElement('button');
-                editarButton.classList.add('btn', 'btn-warning', 'btn-sm');
-                editarButton.textContent = 'Editar';
-                editarButton.addEventListener('click', () => editar(c.id));
-                buttonCell.appendChild(editarButton);
+                if (c.status === 'Em Aberto') {
+                    const editarButton = document.createElement('button');
+                    editarButton.classList.add('btn', 'btn-warning', 'btn-sm');
+                    editarButton.textContent = 'Editar';
+                    editarButton.addEventListener('click', () => editar(c.id));
+                    buttonCell.appendChild(editarButton);
+                }
 
                 row.appendChild(buttonCell);
 
@@ -626,6 +643,48 @@ async function ListConditionalItens(id, client_id, user_id) {
     } catch (error) {
         showMessage('Erro ao fazer requisição: ' + error, 'error');
     }
+}
+
+const cancelarCod = async (id) => {
+
+    if (!id) {
+        showMessage('Id da condicional não encontrado', 'warning');
+        return;
+    }
+
+    let responseCodDelete = {
+        id: id,
+        type: 'updateconditional'
+    }
+
+    continueMessage("Realmente deseja cancelar a condicional?", "Sim", "Não", async function () {
+
+        try {
+            let url = `${BASE_CONTROLLERS}edits.php`;
+
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(responseCodDelete)
+            });
+
+            const responseBody = await response.json();
+
+            if (responseBody.success) {
+                showMessage('Condiconal cancelada com sucesso', 'success');
+            } else {
+                showMessage('Erro ao cancelar condicional ' + responseBody.message, 'error');
+            }
+
+        } catch (error) {
+            showMessage('Error interno no servidor, contante o suporte ' + error, 'error');
+        }
+
+    }, function () {
+        showMessage('Operação cancelada', 'warning');
+    })
 }
 
 function reopenModalIfSaved() {
@@ -913,16 +972,17 @@ document.getElementById('confirmPayment').addEventListener('click', () => {
 
 const processPayment = async (payments, SelectedFat) => {
     const totalValue = parseFloat(document.getElementById('total-value').textContent.replace(',', '.'));
-    
-    console.log('Dados enviados:', SelectedFat);
+    const ConditionalId = document.getElementById('id-conditional').textContent;
+
     let responseFatCond = {
+        ConditionalId: ConditionalId,
         payments: payments,
         SelectedFat: SelectedFat,
         totalValue: totalValue,
         type: 'registerfatconditional'
     }
 
-    if (SelectedFat.length === 0) {
+    if (SelectedFat.length === null) {
         showMessage('Nenhum item inserido!', 'warning');
         return;
     }
@@ -947,12 +1007,15 @@ const processPayment = async (payments, SelectedFat) => {
                 return;
             }
 
-            const responseBody = await response.text();
-
-            console.log(responseBody);
+            const responseBody = await response.json();
 
             if (responseBody && responseBody.success) {
                 showMessage('Condicional faturada com sucesso ', 'success');
+
+                setTimeout( () => {
+                    location.reload();
+                }, 3000)
+
             } else {
                 showMessage('Erro ao faturar a condicinal ' + responseBody.message, 'error');
             }

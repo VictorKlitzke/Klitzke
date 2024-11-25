@@ -600,12 +600,11 @@ if (isset($_GET['loggout'])) {
     <script language="JavaScript" type="text/javascript" src="<?php echo INCLUDE_JAVASCRIPT; ?>list_system.js"></script>
     <script language="JavaScript" type="text/javascript" src="<?php echo INCLUDE_JAVASCRIPT; ?>buy_request.js"></script>
     <script language="JavaScript" type="text/javascript" src="<?php echo INCLUDE_JAVASCRIPT; ?>financial_control.js"></script>
-
-    <!-- Scripts que usam módulos ES6 devem ser carregados como módulos -->
-    <script type="module" src="<?php echo INCLUDE_JAVASCRIPT; ?>dashboard.js"></script>
-    <script type="module" src="<?php echo INCLUDE_JAVASCRIPT; ?>querys.js"></script>
-    <script type="module" src="<?php echo INCLUDE_JAVASCRIPT; ?>inventary.js"></script>
-    <script type="module" src="<?php echo INCLUDE_JAVASCRIPT; ?>create_portion.js"></script>
+    <script language="JavaScript" type="text/javascript" src="<?php echo INCLUDE_JAVASCRIPT; ?>querys.js"></script>
+    <script language="JavaScript" type="text/javascript" src="<?php echo INCLUDE_JAVASCRIPT; ?>dashboard.js"></script>
+    <script language="JavaScript" type="text/javascript" src="<?php echo INCLUDE_JAVASCRIPT; ?>inventary.js"></script>
+    <script language="JavaScript" type="text/javascript" src="<?php echo INCLUDE_JAVASCRIPT; ?>create_portion.js"></script>
+    <script language="JavaScript" type="text/javascript" src="<?php echo INCLUDE_JAVASCRIPT; ?>conditional.js"></script>
 
     <!-- CSS do Bootstrap -->
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">

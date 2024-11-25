@@ -13,8 +13,8 @@ if (!isset($_SESSION['user_permissions'][$page_permission]) || $_SESSION['user_p
 <div class="container-fluid bg-light p-4 rounded-4 border shadow-lg">
   <div class="d-flex justify-content-between align-items-center mb-3">
     <h2 class="text-dark">Lista de Condicionais</h2>
-    <a class="btn btn-success" <?php SelectedMenu('register-conditional'); ?>
-      href="<?php echo INCLUDE_PATH; ?>register-conditional">Nova Condicional
+    <a class="btn btn-success fw-bold" <?php SelectedMenu('register-conditional'); ?>
+      href="<?php echo INCLUDE_PATH; ?>register-conditional">+ Nova Condicional
     </a>
   </div>
   <div class="table-responsive" style="max-height: 500px; overflow-y: auto; overflow-x: auto;">

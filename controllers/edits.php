@@ -46,30 +46,83 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $response_account_payable = $data;
     $response_inventory = $data;
     $response_products = $data;
+    $response_cod = $data;
 
-    if (isset($data['type'])) {
-        if ($data['type'] == 'edituser') {
-            Edit::UpdateUser($sql, $response_users, $user_id);
-        } else if ($data['type'] == 'editclient') {
-            Edit::UpdateClient($sql, $response_clients, $user_id);
-        } else if ($data['type'] == 'editcompany') {
-            Edit::UpdateCompany($sql, $response_company, $user_id);
-        } else if ($data['type'] == 'editsuppliers') {
-            Edit::UpdateSupplier($sql, $response_forn, $user_id);
-        } else if ($data['type'] == 'editaccountpayable') {
-            Edit::UpdateAccountsPayable($sql, $response_account_payable, $user_id);
-        } else if ($data['type'] == 'editinventaryquantity') {
-            Edit::UpdateInventory($response_inventory, $sql, $user_id);
-        } else if ($data['type'] == 'editproducts') {
-            Edit::UpdateProduct($response_products, $sql, $user_id);
+    $condicions = [
+        'updateconditional' => fn() => Edit::UpdateConditional($response_cod, $user_id, $sql),
+        'edituser' => fn() => Edit::UpdateUser($sql, $response_users, $user_id),
+        'editclient' => fn() => Edit::UpdateClient($sql, $response_clients, $user_id),
+        'editcompany' => fn() => Edit::UpdateCompany($sql, $response_company, $user_id),
+        'editsuppliers' => fn() => Edit::UpdateSupplier($sql, $response_forn, $user_id),
+        'editaccountpayable' => fn() => Edit::UpdateAccountsPayable($sql, $response_account_payable, $user_id),
+        'editinventaryquantity' => fn() => Edit::UpdateInventory($response_inventory, $sql, $user_id),
+        'editproducts' => fn() => Edit::UpdateProduct($response_products, $sql, $user_id),
+    ];
+
+    $matched = false;
+    foreach ($condicions as $type => $value) {
+        if ($data['type'] === $type) {
+            $value();
+            $matched = true;
+            break;
         }
-    } else {
+    }
+
+    if (!$matched) {
         Response::json(false, 'Tipo type não encontrado', $today);
     }
 }
 
 class Edit
 {
+    public static function UpdateConditional($response_cod, $user_id, $sql) {
+
+        $today = date('Y-m-d H:i:s');
+        $conditionalId = filter_var($response_cod['id'], FILTER_SANITIZE_NUMBER_INT);
+        $statusCancel = 'Cancelada';
+
+        if (!$conditionalId) {
+            Response::json(false, 'Condicional não encontrada', $today);
+            return;
+        }
+
+        try {
+
+            if (self::UserAccess($sql, $user_id) < 50) {
+                Response::json(false, 'Usuário não tem permissão para executar essa atividade', $today);
+                return;
+            }
+
+            $exec1 = $sql->prepare("SELECT id FROM conditional WHERE id = :id AND status = :status");
+            $exec1->bindParam('status', $statusCancel, PDO::PARAM_STR);
+            $exec1->bindParam('id', $conditionalId, PDO::PARAM_INT);
+            $exec1->execute();
+            $resulId = $exec1->fetch(PDO::FETCH_ASSOC);
+
+            if ($resulId) {
+                Response::json(false, 'Condicional já foi cancelada', $today);
+                return;
+            }
+
+            $sql->beginTransaction();
+
+            $exec = $sql->prepare("UPDATE conditional SET status = :status WHERE id = :id");
+            $exec->bindParam('status', $statusCancel, PDO::PARAM_STR);
+            $exec->bindParam('id', $conditionalId, PDO::PARAM_INT);
+            $exec->execute();
+
+            $sql->commit();
+
+            $message_log = "Condicional cancelada com sucesso";
+            Panel::LogAction($user_id, 'Condicional cancelada', $message_log, $today);
+            Response::send(true, 'Condicional cancelada com sucesso', $today);
+
+        } catch (Exception $e) {
+            http_response_code(500);
+            echo json_encode(['error' => 'Erro no banco de dados: ' . $e->getMessage(), 'code' => $e->getCode()]);
+        }
+
+    }
     public static function UpdateProduct($response_products, $sql, $user_id)
     {
         $today = date('Y-m-d H:i:s');

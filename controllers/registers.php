@@ -118,14 +118,26 @@ class Register
     public static function RegisterFatConditional($response_cond_fat, $user_id, $sql, $today)
     {
         $status = 1;
+        $statusCod = 'Faturado';
         $status_boxpdv = 1;
         try {
 
             $sql->beginTransaction();
 
+            $conditionalId = $response_cond_fat['ConditionalId'];
             $firstItem = $response_cond_fat['SelectedFat'][0];
             $client_id = $firstItem['client_id'];
             $user_id1 = $firstItem['user_id'];
+
+            if (!$conditionalId) {
+                Response::json(false, 'Erro: id da condicional não encontrado!', $today);
+                return;
+            }
+
+            $updateCod = $sql->prepare("UPDATE conditional SET status = :status WHERE id = :id");
+            $updateCod->bindValue('status', $statusCod);
+            $updateCod->bindValue('id', $conditionalId);
+            $updateCod->execute();
 
             $boxQuery = $sql->prepare("SELECT id FROM boxpdv WHERE id_users = :id_users AND status = :status_boxpdv LIMIT 1");
             $boxQuery->bindValue('id_users', $user_id1);
