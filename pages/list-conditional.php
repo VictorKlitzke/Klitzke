@@ -17,6 +17,8 @@ if (!isset($_SESSION['user_permissions'][$page_permission]) || $_SESSION['user_p
       href="<?php echo INCLUDE_PATH; ?>register-conditional">+ Nova Condicional
     </a>
   </div>
+    <input type="text" id="searchCond" class="form-control border mb-3" placeholder="Buscar condicional..."
+           onkeyup="searchCond()">
   <div class="table-responsive" style="max-height: 500px; overflow-y: auto; overflow-x: auto;">
     <table class="table table-striped table-hover align-middle text-center bg-white rounded-3 shadow-sm">
       <thead class="table-dark text-light">

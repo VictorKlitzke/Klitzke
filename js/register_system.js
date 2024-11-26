@@ -61,6 +61,7 @@ const FieldsUsers = () => {
 
             sales: document.getElementById("faturamento-submenu-vendas").value,
             listSales: document.getElementById("faturamento-submenu-lista-vendas").value,
+            conditional: document.getElementById("faturamento-submenu-condicional").value,
 
             orders: document.getElementById("food-submenu-pedidos").value,
             listOrders: document.getElementById("food-submenu-lista-pedidos").value,
@@ -166,7 +167,8 @@ async function RegisterUsers() {
         registerPortion: menuaccess.registerPortion,
         dashboardADM: menuaccess.dashboardADM,
         financialControl: menuaccess.financialControl,
-        myCompany: menuaccess.myCompany
+        myCompany: menuaccess.myCompany,
+        conditional: menuaccess.conditional
     }
 
     continueMessage(

@@ -464,12 +464,11 @@ const printReceipt = (data) => {
         receiptWindow.document.write(receiptHTML);
         receiptWindow.document.close();
 
-        // Espera o conteúdo ser carregado completamente antes de chamar a impressão
         receiptWindow.onload = () => {
             setTimeout(() => {
                 receiptWindow.print();
                 receiptWindow.close();
-            }, 500); // Espera 500ms para garantir que tudo esteja renderizado
+            }, 500);
         };
     } else {
         showMessage('Erro ao abrir a janela para impressão', 'error');
@@ -559,4 +558,26 @@ const RegisterConditional = async () => {
             showMessage('Erro ao fazer requisição ' + error, 'error');
         }
     });
+};
+const searchCond = () => {
+    const input = document.getElementById('searchCond');
+    const filter = input.value.toLowerCase();
+    const table = document.getElementById('list-conditional');
+    const rows = table.getElementsByTagName('tr');
+
+    for (let i = 1; i < rows.length; i++) {
+        const cells = rows[i].getElementsByTagName('th');
+        let match = false;
+
+        for (let j = 0; j < cells.length; j++) {
+            if (cells[j]) {
+                const cellValue = cells[j].textContent || cells[j].innerText;
+                if (cellValue.toLowerCase().indexOf(filter) > -1) {
+                    match = true;
+                    break;
+                }
+            }
+        }
+        rows[i].style.display = match ? "" : "none";
+    }
 };

@@ -29,7 +29,8 @@ const menuMapping = {
   "register-portions": "Criar Porção",
   "register-companys": "Registrar Empresa",
   "edit-companys": "Editar Empresa",
-  "conditional-itens": "Faturar Condicional"
+  "list-conditional": "Lista Condicional",
+  "register-conditional": "Registrar Condicional"
 };
 
 window.onload = function () {
@@ -493,8 +494,7 @@ async function AddMenuAccess(UserIDMenu) {
         body: JSON.stringify(responseMenuaccess)
       });
 
-      const responseBody = await response.text();
-      console.log(responseBody);
+      const responseBody = await response.json();
 
       if (responseBody.success) {
         showMessage("Menus adicionados com sucesso!", 'success');

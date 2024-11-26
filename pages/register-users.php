@@ -135,6 +135,12 @@ if (!isset($_SESSION['user_permissions'][$page_permission]) || $_SESSION['user_p
               <option value="sim">Sim</option>
               <option value="nao" selected>Não</option>
             </select>
+          </div><div class="col">
+            <label for="faturamento-submenu-condicional" class="mt-2">Condicionais:</label>
+            <select id="faturamento-submenu-condicional" class="form-select">
+              <option value="sim">Sim</option>
+              <option value="nao" selected>Não</option>
+            </select>
           </div>
         </div>
       </div>

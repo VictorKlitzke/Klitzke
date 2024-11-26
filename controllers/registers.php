@@ -125,10 +125,15 @@ class Register
 
             $sql->beginTransaction();
 
-            $conditionalId = $response_cond_fat['ConditionalId'];
-            $firstItem = $response_cond_fat['SelectedFat'][0];
-            $client_id = $firstItem['client_id'];
-            $user_id1 = $firstItem['user_id'];
+            if (isset($response_cond_fat['SelectedFat']) && !empty($response_cond_fat['SelectedFat'])) {
+                $firstItem = $response_cond_fat['SelectedFat'][0];
+                $client_id = $firstItem['client_id'];
+                $user_id1 = $firstItem['user_id'];
+                $conditionalId = $firstItem['conditionalId'];
+            } else {
+                Response::json(false, 'Erro: Nenhum item selecionado para faturamento!', $today);
+                return;
+            }
 
             if (!$conditionalId) {
                 Response::json(false, 'Erro: id da condicional não encontrado!', $today);
@@ -1025,6 +1030,7 @@ class Register
 
         $menu_sales = filter_var($response_users['sales'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
         $menu_list_sales = filter_var($response_users['listSales'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+        $menu_conditional = filter_var($response_users['conditional'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
 
         $menu_orders = filter_var($response_users['orders'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
         $menu_list_orders = filter_var($response_users['listOrders'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
@@ -1063,6 +1069,8 @@ class Register
 
             'register-sales' => ($menu_sales === 'sim') ? 1 : 0,
             'list-sales' => ($menu_list_sales === 'sim') ? 1 : 0,
+            'list-conditional' => ($menu_conditional === 'sim') ? 1 : 0,
+            'register-conditional' => ($menu_conditional === 'sim') ? 1 : 0,
 
             'register-request' => ($menu_orders === 'sim') ? 1 : 0,
             'list-request' => ($menu_list_orders === 'sim') ? 1 : 0,

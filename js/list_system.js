@@ -589,17 +589,7 @@ async function ListConditional() {
                     CancelButton.textContent = 'Cancelada';
                     buttonCell.appendChild(CancelButton);
                 }
-
-                if (c.status === 'Em Aberto') {
-                    const editarButton = document.createElement('button');
-                    editarButton.classList.add('btn', 'btn-warning', 'btn-sm');
-                    editarButton.textContent = 'Editar';
-                    editarButton.addEventListener('click', () => editar(c.id));
-                    buttonCell.appendChild(editarButton);
-                }
-
                 row.appendChild(buttonCell);
-
                 ConditionalList.appendChild(row);
             });
         } else {
@@ -635,9 +625,9 @@ async function ListConditionalItens(id, client_id, user_id) {
 
         if (data.success) {
             const filterId = data.result_itens.filter(ci => ci.conditional_id === id);
-            localStorage.setItem('conditionalItens', JSON.stringify({ items: filterId, client_id, user_id }));
+            localStorage.setItem('conditionalItens', JSON.stringify({ items: filterId, client_id, user_id, id }));
 
-            populateTable(filterId, client_id, user_id);
+            populateTable(filterId, client_id, user_id, id);
             OpenModalItens();
         }
     } catch (error) {
@@ -702,14 +692,12 @@ function reopenModalIfSaved() {
     }
 }
 
-function populateTable(items, client_id, user_id) {
+function populateTable(items, client_id, user_id, id) {
     const resultItensList = document.getElementById('conditional-itens');
     if (!resultItensList) {
         showMessage('Elemento com o ID "conditional-itens" não foi encontrado no DOM.', 'error');
         return;
     }
-
-    console.log('User ID:', user_id, 'Client ID:', client_id);
 
     resultItensList.innerHTML = '';
 
@@ -741,7 +729,7 @@ function populateTable(items, client_id, user_id) {
         const selectButton = document.createElement('button');
         selectButton.textContent = 'Selecionar';
         selectButton.className = 'btn btn-primary btn-sm';
-        selectButton.addEventListener('click', () => InvoiceSelect(ci, client_id, user_id));
+        selectButton.addEventListener('click', () => InvoiceSelect(ci, client_id, user_id, id));
         actionCell.appendChild(selectButton);
         row.appendChild(actionCell);
 
@@ -749,7 +737,7 @@ function populateTable(items, client_id, user_id) {
     });
 }
 
-const InvoiceSelect = (item, client_id, user_id) => {
+const InvoiceSelect = (item, client_id, user_id, id) => {
     if (!item) {
         showMessage('Erro ao selecionar item', 'warning');
         return;
@@ -804,7 +792,8 @@ const InvoiceSelect = (item, client_id, user_id) => {
         unit_price: item.unit_price,
         subtotal: item.unit_price,
         client_id: client_id || item.client_id,
-        user_id: user_id || item.user_id
+        user_id: user_id || item.user_id,
+        conditionalId: id
     };
     storedItems.push(newItem);
     localStorage.setItem('billingItems', JSON.stringify(storedItems));
@@ -972,10 +961,8 @@ document.getElementById('confirmPayment').addEventListener('click', () => {
 
 const processPayment = async (payments, SelectedFat) => {
     const totalValue = parseFloat(document.getElementById('total-value').textContent.replace(',', '.'));
-    const ConditionalId = document.getElementById('id-conditional').textContent;
 
     let responseFatCond = {
-        ConditionalId: ConditionalId,
         payments: payments,
         SelectedFat: SelectedFat,
         totalValue: totalValue,
@@ -986,8 +973,6 @@ const processPayment = async (payments, SelectedFat) => {
         showMessage('Nenhum item inserido!', 'warning');
         return;
     }
-
-    console.log(responseFatCond);
 
     continueMessage("Deseja realmente faturar essa condicional?", "Sim", "Não", async function () {
         try {
@@ -1014,6 +999,7 @@ const processPayment = async (payments, SelectedFat) => {
 
                 setTimeout( () => {
                     location.reload();
+                    RemoveModalItens();
                 }, 3000)
 
             } else {
