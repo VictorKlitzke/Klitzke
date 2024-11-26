@@ -142,15 +142,27 @@ class Querys
     public static function QueryWarnings($sql)
     {
         try {
-
             $exec = $sql->prepare("SELECT * FROM financial_control");
             $exec->execute();
-            return $exec->fetchAll(PDO::FETCH_ASSOC);
+            $resultFinancialControl = $exec->fetchAll(PDO::FETCH_ASSOC);
+
+            $exec1 = $sql->prepare("SELECT * FROM conditional ORDER BY id DESC");
+            $exec1->execute();
+            $resultConditional = $exec1->fetchAll(PDO::FETCH_ASSOC);
+
+            return [
+                'financial_control' => $resultFinancialControl,
+                'conditional' => $resultConditional
+            ];
 
         } catch (Exception $e) {
-            return ['error' => 'Erro no banco de dados: ' . $e->getMessage(), 'code' => $e->getCode()];
+            return [
+                'error' => 'Erro no banco de dados: ' . $e->getMessage(),
+                'code' => $e->getCode()
+            ];
         }
     }
+
     public static function QueryListPortionProduct($sql) {
         try {
 

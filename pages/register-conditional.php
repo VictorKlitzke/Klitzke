@@ -10,9 +10,26 @@
                 <div class="row mb-3">
                     <div class="col-md-6">
                         <label class="form-label">Cliente <span class="text-danger">*</span></label>
-                        <select id="clients" class="form-select" required>
-                            <option value="" disabled selected>Selecione o cliente</option>
-                        </select>
+                        <div class="dropdown">
+                            <button
+                                    class="btn btn-outline-secondary dropdown-toggle w-100"
+                                    type="button"
+                                    id="clientDropdown"
+                                    data-bs-toggle="dropdown"
+                                    aria-expanded="false">
+                                Selecione um cliente
+                            </button>
+                            <ul class="dropdown-menu w-100" id="clientDropdownMenu">
+                                <li class="p-2">
+                                    <input
+                                            type="text"
+                                            id="clientSearch"
+                                            class="form-control"
+                                            placeholder="Buscar cliente..."
+                                    />
+                                </li>
+                            </ul>
+                        </div>
                     </div>
                     <div class="col-md-3">
                         <label class="form-label">Data <span class="text-danger">*</span></label>
@@ -27,10 +44,27 @@
                 <!-- Linha 2: Vendedor -->
                 <div class="row mb-3">
                     <div class="col-md-12">
-                        <label for="cliente" class="form-label">Vendedor/Responsável <span class="text-danger">*</span></label>
-                        <select id="users" class="form-select" required>
-                            <option disabled selected>Selecione o Responsável</option>
-                        </select>
+                        <label for="usersDropdown" class="form-label">Vendedor/Responsável <span class="text-danger">*</span></label>
+                        <div class="dropdown">
+                            <button
+                                    class="btn btn-outline-secondary dropdown-toggle w-100"
+                                    type="button"
+                                    id="usersDropdown"
+                                    data-bs-toggle="dropdown"
+                                    aria-expanded="false">
+                                Selecione o Responsável
+                            </button>
+                            <ul class="dropdown-menu w-100" id="usersDropdownMenu">
+                                <li class="p-2">
+                                    <input
+                                            type="text"
+                                            id="userSearch"
+                                            class="form-control"
+                                            placeholder="Buscar vendedor..."
+                                    />
+                                </li>
+                            </ul>
+                        </div>
                     </div>
                 </div>
 
@@ -98,11 +132,29 @@
             </div>
             <div class="modal-body">
                 <form id="addProductForm">
-                    <div class="mb-3">
-                        <label class="form-label">Produto</label>
-                        <select id="product-conditional" class="form-select" required>
-                            <option value="" disabled selected>Selecione um produto</option>
-                        </select>
+                    <div class="mb-3 position-relative">
+                        <label for="product-conditional" class="form-label">Produto</label>
+                        <div class="dropdown">
+                            <button
+                                    class="btn btn-outline-secondary dropdown-toggle w-100"
+                                    type="button"
+                                    id="productDropdown"
+                                    data-bs-toggle="dropdown"
+                                    aria-expanded="false">
+                                Selecione um produto
+                            </button>
+                            <ul class="dropdown-menu w-100" id="productDropdownMenu">
+                                <li class="p-2">
+                                    <input
+                                            type="text"
+                                            id="productSearch"
+                                            class="form-control"
+                                            placeholder="Buscar produto..."
+                                    />
+                                </li>
+                                <!-- As opções do select serão carregadas dinamicamente -->
+                            </ul>
+                        </div>
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Quantidade</label>

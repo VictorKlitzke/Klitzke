@@ -34,10 +34,9 @@ const menuMapping = {
 
 window.onload = function () {
   NivelAccess();
-  NoticeBoard();
   QueryListProducts();
 }
-
+window.onload = NoticeBoard();
 async function QueryListProducts() {
   try {
     let url = `${BASE_CONTROLLERS}querys.php`;
@@ -134,74 +133,85 @@ async function NoticeBoard() {
     }
 
     let dataresponseNoticeBoard = await responseNoticeBoard.json();
-    console.log(dataresponseNoticeBoard)
-    const query_warnings = dataresponseNoticeBoard.query_warnings;
 
-    if (!query_warnings || query_warnings.length === 0) {
+    const financialControl = Array.isArray(dataresponseNoticeBoard.query_warnings.financial_control)
+        ? dataresponseNoticeBoard.query_warnings.financial_control
+        : [];
+
+    const conditional = Array.isArray(dataresponseNoticeBoard.query_warnings.conditional)
+        ? dataresponseNoticeBoard.query_warnings.conditional
+        : [];
+
+    const query_warnings = [...financialControl, ...conditional];
+
+
+    if (!query_warnings.length) {
       showMessage('Nenhum aviso encontrado.', 'warning');
       return;
     }
-    
-    console.log(query_warnings)
 
     const noticeBoardContainer = document.getElementById('notice-board');
-    noticeBoardContainer.innerHTML = ''; 
+    noticeBoardContainer.innerHTML = '';
 
     const today = new Date();
     const limiteDataVencimento = new Date(today);
     limiteDataVencimento.setDate(today.getDate() + 5);
 
     query_warnings.forEach(warning => {
-      const [datePart, timePart] = warning.transaction_date.split(' ');
-      const [year, month, day] = datePart.split('-');
-      const [hour, minute, second] = timePart.split(':');
-      const dateVenciment = new Date(`${year}-${month}-${day}T${hour}:${minute}:${second}`);
+      let dateField = warning.transaction_date || warning.date_return;
 
-      if (isNaN(dateVenciment)) {
-        showMessage('Data inválida: ' + warning.transaction_date, 'warning');
-        return;
+      if (dateField) {
+        const [datePart, timePart] = dateField.split(' ');
+        const [year, month, day] = datePart.split('-');
+        const [hour, minute, second] = timePart.split(':');
+        const dateVenciment = new Date(`${year}-${month}-${day}T${hour}:${minute}:${second}`);
+
+        if (isNaN(dateVenciment)) {
+          showMessage('Data inválida: ' + dateField, 'warning');
+          return;
+        }
+
+        let icone = '';
+        let classeCor = '';
+        let statusTexto = '';
+
+        if (warning.pay === 'paga') {
+          icone = '<i class="fas fa-check-circle"></i>';
+          classeCor = 'table-success';
+          statusTexto = 'Pago';
+        } else if (dateVenciment < today) {
+          icone = '<i class="fas fa-exclamation-circle"></i>';
+          classeCor = 'table-danger';
+          statusTexto = 'Vencido';
+        } else if (dateVenciment <= limiteDataVencimento) {
+          icone = '<i class="fas fa-hourglass-half"></i>';
+          classeCor = 'table-warning';
+          statusTexto = 'A vencer';
+        } else {
+          return;
+        }
+
+        const avisoRow = document.createElement('tr');
+        avisoRow.className = `${classeCor} mb-2`;
+
+        const contaCell = document.createElement('td');
+        contaCell.innerHTML = `${warning.description || 'Sem descrição'}`;
+
+        const valorCell = document.createElement('td');
+        valorCell.innerHTML = `R$ ${warning.value || 'N/A'}`;
+
+        const dataCell = document.createElement('td');
+        dataCell.innerHTML = `${day}/${month}/${year} ${hour}:${minute}:${second}`;
+
+        const statusCell = document.createElement('td');
+        statusCell.innerHTML = `${icone} ${statusTexto}`;
+
+        avisoRow.appendChild(contaCell);
+        avisoRow.appendChild(valorCell);
+        avisoRow.appendChild(dataCell);
+        avisoRow.appendChild(statusCell);
+        noticeBoardContainer.appendChild(avisoRow);
       }
-
-      let icone = '';
-      let classeCor = '';
-      let statusTexto = '';
-
-      if (warning.pay === 'paga') {
-        icone = '<i class="fas fa-check-circle"></i>';
-        classeCor = 'table-success';
-        statusTexto = 'Pago';
-      } else if (dateVenciment < today) {
-        icone = '<i class="fas fa-exclamation-circle"></i>';
-        classeCor = 'table-danger';
-        statusTexto = 'Vencido';
-      } else if (dateVenciment <= limiteDataVencimento) {
-        icone = '<i class="fas fa-hourglass-half"></i>';
-        classeCor = 'table-warning';
-        statusTexto = 'A vencer';
-      } else {
-        return;
-      }
-
-      const avisoRow = document.createElement('tr');
-      avisoRow.className = `${classeCor} mb-2`;
-
-      const contaCell = document.createElement('td');
-      contaCell.innerHTML = `${warning.description || 'Sem descrição'}`;
-
-      const valorCell = document.createElement('td');
-      valorCell.innerHTML = `R$ ${warning.value || 'N/A'}`;
-
-      const dataCell = document.createElement('td');
-      dataCell.innerHTML = `${day}/${month}/${year} ${hour}:${minute}:${second}`;
-
-      const statusCell = document.createElement('td');
-      statusCell.innerHTML = `${icone} ${statusTexto}`;
-
-      avisoRow.appendChild(contaCell);
-      avisoRow.appendChild(valorCell);
-      avisoRow.appendChild(dataCell);
-      avisoRow.appendChild(statusCell);
-      noticeBoardContainer.appendChild(avisoRow);
     });
 
   } catch (error) {
@@ -581,21 +591,15 @@ async function submitReopenReason() {
   })
 }
 function searchListProduct() {
-  // Obtém o valor do campo de pesquisa
   let searchValue = document.getElementById("searchProduct").value.toLowerCase();
-
-  // Obtém todas as linhas da tabela
   let tableRows = document.querySelectorAll("table tbody tr");
 
-  // Percorre todas as linhas e esconde as que não correspondem à pesquisa
   tableRows.forEach(row => {
       let productName = row.querySelector("th:nth-child(2)").textContent.toLowerCase();
-      
-      // Verifica se o nome do produto contém o valor da busca
       if (productName.includes(searchValue)) {
-          row.style.display = "";  // Exibe a linha
+          row.style.display = "";
       } else {
-          row.style.display = "none";  // Oculta a linha
+          row.style.display = "none";
       }
   });
 }

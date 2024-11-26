@@ -118,6 +118,7 @@ class Register
     public static function RegisterFatConditional($response_cond_fat, $user_id, $sql, $today)
     {
         $status = 1;
+        $status_item = 1;
         $statusCod = 'Faturado';
         $status_boxpdv = 1;
         try {
@@ -189,14 +190,16 @@ class Register
                                                                     id_sales,
                                                                     id_product,
                                                                     amount,
-                                                                    price_sales
+                                                                    price_sales,
+                                                                    status_item
                                                                 ) 
                                                                 VALUES 
                                                                 (
                                                                     :id_sales,
                                                                     :id_product,
                                                                     :quantity,
-                                                                    :unit_price
+                                                                    :unit_price,
+                                                                    :status_item
                                                                 )");
 
             foreach ($response_cond_fat['SelectedFat'] as $item) {
@@ -204,6 +207,7 @@ class Register
                 $execItems->bindValue('id_product', $item['productId']);
                 $execItems->bindValue('quantity', $item['quantity']);
                 $execItems->bindValue('unit_price', $item['unit_price']);
+                $execItems->bindValue('status_item', $status_item);
                 $execItems->execute();
             }
 
